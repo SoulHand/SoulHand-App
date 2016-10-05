@@ -1,0 +1,32 @@
+{
+    "name": "SoulHand",
+    "description": "Aplicación Web para personas con discapacidad auditiva",
+    "keywords": ["microframework", "rest", "router", "psr7"],
+    "homepage": "http://github.com/matajm/SoulHand",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jhonny Mata",
+            "email": "solucionesmatajm@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.0",
+        "slim/slim": "^3.1",
+        "slim/php-view": "^2.0",
+        "monolog/monolog": "^1.17"
+    },
+    "require-dev": {
+        "phpunit/phpunit": ">=4.8 < 6.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+	"scripts": {
+        "start": "php -S 0.0.0.0:8032 -t public public/index.php",
+        "test": "phpunit"
+	}
+
+}
