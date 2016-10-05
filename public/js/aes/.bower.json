@@ -1,0 +1,36 @@
+{
+  "name": "aes",
+  "version": "0.0.1",
+  "homepage": "https://github.com/uzumaxy/aes-bower",
+  "authors": [
+    "uzumaxy <uzumaxy@gmail.com>"
+  ],
+  "description": "Implementation of AES algorithm.",
+  "main": "aes.js",
+  "keywords": [
+    "aes",
+    "encrypt",
+    "decrypt",
+    "security",
+    "cipher",
+    "cryptography"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "0.0.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.0.1",
+    "commit": "457192143deb71f4ddab690c6111d21ef71ca376"
+  },
+  "_source": "https://github.com/uzumaxy/aes-bower.git",
+  "_target": "^0.0.1",
+  "_originalSource": "aes",
+  "_direct": true
+}

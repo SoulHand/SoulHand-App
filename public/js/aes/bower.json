@@ -1,0 +1,26 @@
+{
+  "name": "aes",
+  "version": "0.0.1",
+  "homepage": "https://github.com/uzumaxy/aes-bower",
+  "authors": [
+    "uzumaxy <uzumaxy@gmail.com>"
+  ],
+  "description": "Implementation of AES algorithm.",
+  "main": "aes.js",
+  "keywords": [
+    "aes",
+    "encrypt",
+    "decrypt",
+    "security",
+    "cipher",
+    "cryptography"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
