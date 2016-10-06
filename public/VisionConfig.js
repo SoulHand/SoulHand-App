@@ -1,0 +1,25 @@
+var _CONFIG={
+	canonical:{
+		width:40,
+		height:52,
+	},
+	window:{
+		width:250,
+		height:100
+	},
+	ouput:{
+		width:750,
+		height:350,
+	},
+	animation:{
+		mode:"animation",
+	},
+	recognition:{
+		async:true,
+		mode:"LBP",
+		step:15,
+		pyramid:1.2,
+		path:"components/ciweb/min/Worker.js",
+		delay:100,
+	}
+}
