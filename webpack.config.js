@@ -7,7 +7,14 @@ module.exports = {
     filename: 'build.js'
   },
   resolve: {
-    extensions: ['', '.webpack.js', '.web.js', '.ts', '.tsx', '.js']
+    extensions: ['', '.webpack.js', '.web.js', '.ts', '.tsx', '.js'],
+    alias: {
+        jszip: "./bower_components/jszip/dist/jszip.min.js",
+        highcharts:"./bower_components/highcharts/highcharts.js",
+        RecordRTC:"./bower_components/recordrtc/RecordRTC.min.js",
+        aes:"./bower_components/aes/aes.js",
+        JVision:"./bower_components/ciweb/min/JVision.js"
+    }
   },
   // devtool: 'source-map',
   module: {
@@ -16,6 +23,7 @@ module.exports = {
     ],
   },
   externals: {
+    JVision:"JVision"
     /*
     jquery: {
         root: 'jquery',
@@ -51,6 +59,13 @@ module.exports = {
     }),
     new webpack.DefinePlugin({
         NODE_ENV: 'development'
-    })
+    })/*,
+     new BowerWebpackPlugin({
+      modulesDirectories: ["bower_components"],
+      manifestFiles:      "bower.json",
+      includes:           "/.*\/",
+      excludes:           [],
+      searchResolveModulesDirectories: true
+    })*/   
   ],
 }

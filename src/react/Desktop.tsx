@@ -13,23 +13,13 @@ export class Desktop extends React.Component<{}, {}> {
     }
 	  componentDidMount(){
       let video=document.createElement("video");
-      let canvas=document.querySelector("div#home > canvas#media").getContext("2d");
+      let parent=document.getElementById("home");
+      let canvas=parent.querySelector("canvas#media").getContext("2d");
       TouchDesktop();
       console.log('load Desktop');      
-      JVision.init(video,canvas,(data:Worker)=>{
-        JVision.objects=data[1];
-        for(var i=0,n=JVision.objects.length;i<n;i++){
-          for(var j=0,m=JVision.objects[i].length;j<m;j++){                
-            JVision.ouput.beginPath();
-            JVision.ouput.rect(JVision.objects[i][j].x,JVision.objects[i][j].y,JVision.objects[i][j].width,JVision.objects[i][j].height);
-            JVision.ouput.strokeStyle=(i==0) ? "red" : "blue";
-            JVision.ouput.lineWeight=3;
-            JVision.ouput.stroke();
-          }
-        }
-      });
+      JVision.init(video,canvas);
       video.addEventListener("canplay",()=>{
-          document.getElementById("home").setAttribute("data-playing","true");
+          parent.setAttribute("data-playing","true");
       })
       DockMainEvents();
     }

@@ -15,6 +15,7 @@
     "url": "git+https://github.com/SoulHand/SoulHand-App.git"
   },
   "devDependencies": {
+    "bower-webpack-plugin": "^0.1.9",
     "source-map-loader": "^0.1.5",
     "ts-loader": "^0.8.2",
     "typescript": "^1.8.10",
@@ -24,7 +25,7 @@
     "react": "^15.3.1",
     "react-dom": "^15.3.1",
     "react-router": "^2.7.0"
-},
+  },
   "keywords": [
     "LVS",
     "soulhand",

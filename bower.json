@@ -19,8 +19,9 @@
   ],
   "dependencies": {
     "jszip": "^3.1.2",
-    "aes":"^0.0.1",
-    "recordrtc":"^5.4.0",
-    "highcharts":"^5.0.0"
+    "aes": "^0.0.1",
+    "recordrtc": "^5.4.0",
+    "highcharts": "^5.0.0",
+    "ciweb": "https://github.com/matajmSoluciones/CIWeb.git"
   }
 }
