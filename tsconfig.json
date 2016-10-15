@@ -9,7 +9,7 @@
     "sourceMap": true,
     "jsx": "react",
     "experimentalDecorators": true,
-    "outDir": "build/"
+    "outDir": "build"
   },
   "include": ["src/react/**.ts"]
 }

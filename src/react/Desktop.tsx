@@ -11,16 +11,12 @@ export class Desktop extends React.Component<{}, {}> {
     componentWillUnmount(){
       console.log("DESKTOP SERA DESMONTADO!");
     }
-	  componentDidMount(){
-      let video=document.createElement("video");
+	  componentDidMount(){      
       let parent=document.getElementById("home");
       let canvas=parent.querySelector("canvas#media").getContext("2d");
+      JVision.ouput=canvas;
+      JVision.parent=parent;     
       TouchDesktop();
-      console.log('load Desktop');      
-      JVision.init(video,canvas);
-      video.addEventListener("canplay",()=>{
-          parent.setAttribute("data-playing","true");
-      })
       DockMainEvents();
     }
   render () {

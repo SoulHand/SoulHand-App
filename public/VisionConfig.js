@@ -1,7 +1,7 @@
 var _CONFIG={
 	canonical:{
 		width:40,
-		height:52,
+		height:52
 	},
 	window:{
 		width:250,
@@ -13,6 +13,7 @@ var _CONFIG={
 	},
 	animation:{
 		mode:"animation",
+		overlap:true
 	},
 	recognition:{
 		async:true,
@@ -20,6 +21,11 @@ var _CONFIG={
 		step:15,
 		pyramid:1.2,
 		path:"components/ciweb/min/Worker.js",
-		delay:100,
+		delay:100
+	},
+	draw:{
+		line:2,
+		color:"#FFFFFF",
+		font:38
 	}
 }

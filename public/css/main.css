@@ -81,7 +81,7 @@ a.icon:link{
  text-decoration:none;
  outline: none;   
 }
-.icon:hover,.icon:active,.icon.active{
+.icon:hover:not(.rec.active),.icon:active:not(.rec.active),.icon.active:not(.rec){
 	background-color: rgb(27, 27, 27) !important;
 }
 /* Position docks display */
@@ -173,7 +173,27 @@ div.content div.body div.docks[data-align="horizontal-bottom"].hiden,div.content
 			bottom: 0.35%;
 		}	*/
 }
-
+.icon.rec.active{
+	background-color: rgb(194, 45, 45);
+	transition: background-color 0.5s ease 0s;
+	animation: pipirec 3s ease infinite 2s;
+}
+@keyframes pipirec{
+    from{
+        background-color: rgb(210, 35, 35);
+    }
+    to{
+        background-color:  rgb(194, 45, 45);
+    }
+}
+@-webkit-keyframes pipirec{
+    from{
+        background-color: rgb(210, 35, 35);
+    }
+    to{
+        background-color: rgb(194, 45, 45);
+    }
+}
 
 /* Iconos de los menu y botones....*/
 .icon.config{	

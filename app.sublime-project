@@ -1,8 +1,9 @@
 {
 	"folders":
-	[
+	[		
 		{
-			"path": "."
+			"path": ".",
+			"ignore_path":["vendor"]
 		}
 	]
 }

@@ -6,6 +6,7 @@ export class PlayBox extends React.Component<{}, {}> {
     return (
 	<div id="playcall" className="docks hiden" data-align="horizontal-bottom-right" data-transition="ease-out">
      	<ul>
+            <li><a className="icon rec" id="rec" title="Grabar entorno" href="javascript:void(0);" draggable="false"></a></li>
             <li><a className="icon play" id="boxPlay" title="Reproducir" href="javascript:void(0);" draggable="false"></a></li>
             <li><a className="icon stop" id="stop" title="Detener" href="javascript:void(0);" draggable="false"></a></li>            
             <li><a className="icon sound" id="sound" title="Desactivar sonido" href="javascript:void(0);" draggable="false"></a></li>            
