@@ -1,26 +1,44 @@
-# Slim Framework 3 Skeleton Application
+Aplicación SoulHand
+=============================
 
-Use this skeleton application to quickly setup and start working on a new Slim Framework 3 application. This application uses the latest Slim 3 with the PHP-View template renderer. It also uses the Monolog logger.
+Herramienta bajo entorno web para personas con discapacidad auditiva y sorda para la interpretación de lengua de señas venezolana (LSV)
 
-This skeleton application was built for Composer. This makes setting up a new Slim Framework application quick and easy.
+## Formar parte del desarrollo
+	
+Puedes clonar este proyecto para usarlo con git libremente usa el siguiente comando.
 
-## Install the Application
+	$ git clone https://github.com/SoulHand/SoulHand-App.git
 
-Run this command from the directory in which you want to install your new Slim Framework application.
+## Instalar la aplicación
 
-    php composer.phar create-project slim/slim-skeleton [my-app-name]
+Ejecute este comando para crear una nueva aplicación Slim Framework.
 
-Replace `[my-app-name]` with the desired directory name for your new application. You'll want to:
+```bash
+	$ php composer.phar create-project slim/slim-skeleton SoulHand-App
+```
+Dependencias
+```bash
+	$ npm install
+	$ bower install
+	$ typings install
+	$ composer install
+```
 
-* Point your virtual host document root to your new application's `public/` directory.
-* Ensure `logs/` is web writeable.
+Compilar el proyecto cliente TypeScript + React
 
-To run the application in development, you can also run this command. 
+	webpack
+	# o sino
+	npm run compilar
 
-	php composer.phar start
+El resultado de la compilación se puede usar en public/js/build.js. 
 
-Run this command to run the test suite
+Para ejecutar esta aplicación en modo producción puede usar el siguiente comando. 
+```bash
+	$ php composer.phar start
+```	
 
-	php composer.phar test
+Ejecute este comando para hacer las pruebas
+```bash
+	$ php composer.phar test
+```
 
-That's it! Now go build something cool.
