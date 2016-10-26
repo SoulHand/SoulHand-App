@@ -28,7 +28,7 @@ Compilar el proyecto cliente TypeScript + React
 
 	webpack
 	# o sino
-	npm run compilar
+	npm run compiler
 
 El resultado de la compilación se puede usar en public/js/build.js. 
 
