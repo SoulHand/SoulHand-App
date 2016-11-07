@@ -11,5 +11,5 @@
     "experimentalDecorators": true,
     "outDir": "build"
   },
-  "include": ["src/react/**.ts"]
+  "include": ["src/FrontEnd/**.ts"]
 }

@@ -169,7 +169,7 @@ abstract class People{
 	}
 	static function get_soap_people($dni){
 		require_once('lib/nusoap/nusoap.php');
-		require_once('lib/utils.php');    
+		require_once('lib/utils.php');
     //token de seguridad
 		$clientToken = 'b2fa185110314ab3ac3c080fa2aecb83';
 	//dominio del directorio de personal y estudiantes

@@ -1,7 +1,7 @@
 var webpack = require('webpack');
 
 module.exports = {  
-  entry: './src/react/main.tsx',
+  entry: './src/FrontEnd/main.tsx',
   output: {
     path: './public/js/',
     filename: 'build.js'

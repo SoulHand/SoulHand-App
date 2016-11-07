@@ -14,17 +14,17 @@ require __DIR__ . '/../vendor/autoload.php';
 session_start();
 
 // Instantiate the app
-$settings = require __DIR__ . '/../src/php/settings.php';
+$settings = require __DIR__ . '/../src/BackEnd/settings.php';
 $app = new \Slim\App($settings);
 
 // Set up dependencies
-require __DIR__ . '/../src/php/dependencies.php';
+require __DIR__ . '/../src/BackEnd/dependencies.php';
 
 // Register middleware
-require __DIR__ . '/../src/php/middleware.php';
+require __DIR__ . '/../src/BackEnd/middleware.php';
 
 // Register routes
-require __DIR__ . '/../src/php/routes.php';
+require __DIR__ . '/../src/BackEnd/routes.php';
 
 // Run app
 $app->run();
