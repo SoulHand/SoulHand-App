@@ -1,7 +1,6 @@
 *.[oa]
 *~
 public/components/
-tests/
 vendor/
 typings/
 node_modules/
