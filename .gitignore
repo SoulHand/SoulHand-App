@@ -5,3 +5,4 @@ vendor/
 typings/
 node_modules/
 logs/
+*.sublime-*
