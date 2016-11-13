@@ -16,7 +16,7 @@ class Validator{
 		$this->rules= new v();
 	}
 	/**
-	* @return void; 
+	* @return void;
 	*/
 	private function rulesUser(){
 		$this->rules->key('name', v::stringType())
@@ -30,6 +30,11 @@ class Validator{
 	}
 	private function rulesUserDoc(){
 		$this->rules->key('dni',v::regex('/^[VE][0-9]{5,9}$/'));
+	}
+	private function rulesActivitiesBasic(){
+		$this->rules->key('activity_name',v::stringType()->length(4,45))
+		->key('activity_description',v::stringType())
+		->key('subject',v::stringType());
 	}
 	/**
 	* @param assoc_array as $data

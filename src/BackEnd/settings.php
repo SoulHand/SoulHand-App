@@ -16,7 +16,12 @@ return [
             'level' => \Monolog\Logger::DEBUG,
         ],
         'database'=>[
-            'connection' => "pgsql:port=5432 host=localhost  dbname=proyecto",
+            'connection' => "pgsql:port=5432;host=localhost;dbname=SoulHand-data",
+            "user"=>"phpconnect",
+            "password"=>"123"
+        ],
+        'test_database'=>[
+            'connection' => "pgsql:port=5432;host=localhost;dbname=SoulHand-testing",
             "user"=>"phpconnect",
             "password"=>"123"
         ]
