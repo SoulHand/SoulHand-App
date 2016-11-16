@@ -17,20 +17,29 @@ class Validator{
 	}
 	/**
 	* @return void;
-	*/
+	*/	
 	private function rulesUser(){
 		$this->rules->key('name', v::stringType())
 		->key('birthdate', v::date('d-m-Y'))
 		->key('phone',v::phone())
 		->key('email',v::email());		
 	}
+	/**
+	* @return void;
+	*/
 	private function rulesUserAuth(){
 		$this->rules->key('username',v::regex('/^[a-z\d_\\.]{4,20}$/i'))
 		->key('password',v::stringType()->length(6,20));
 	}
+	/**
+	* @return void;
+	*/
 	private function rulesUserDoc(){
 		$this->rules->key('dni',v::regex('/^[VE][0-9]{5,9}$/'));
 	}
+	/**
+	* @return void;
+	*/
 	private function rulesActivitiesBasic(){
 		$this->rules->key('activity_subject',v::stringType()->length(4,45))
 		->key('activity_name',v::stringType()->length(4,45))
@@ -38,7 +47,22 @@ class Validator{
 		->key('activity_expiration_date',v::date()->min('now + 1 days'));
 	}
 	/**
-	* @param assoc_array as $data
+	* @return void;
+	*/
+	private function rulesInstitute(){
+		$this->rules->key('institute_name',v::stringType()->length(4,45))
+		->key('institute_address',v::stringType())
+		->key('activity_name',v::stringType()->length(4,45))
+		->key('parroquia_name',v::stringType()->length(4,45));
+	}
+	/**
+	* @return void;
+	*/
+	private function rulesSubject(){
+		$this->rules->key('subject_name',v::stringType()->length(4,45));
+	}
+	/**
+	* @param \ArrayObject as $data
 	* @return boolean; 
 	*/
 	public function UserAll($data){
@@ -52,7 +76,7 @@ class Validator{
 		}
 	}
 	/**
-	* @param assoc_array as $data
+	* @param \ArrayObject as $data
 	* @return boolean; 
 	*/
 	public function UserAuth($data){
@@ -64,7 +88,7 @@ class Validator{
 		}
 	}
 	/**
-	* @param assoc_array as $data
+	* @param \ArrayObject as $data
 	* @return boolean; 
 	*/
 	public function UserPeople($data){
@@ -77,7 +101,7 @@ class Validator{
 		}
 	}
 	/**
-	* @param assoc_array as $data
+	* @param \ArrayObject as $data
 	* @return boolean; 
 	*/
 	public function UserDoc($data){
@@ -89,7 +113,7 @@ class Validator{
 		}
 	}
 	/**
-	* @param assoc_array as $data
+	* @param \ArrayObject as $data
 	* @return boolean; 
 	*/
 	public function User($data){
@@ -101,12 +125,36 @@ class Validator{
 		}
 	}
 	/**
-	* @param assoc_array as $data
+	* @param \ArrayObject as $data
 	* @return boolean; 
 	*/
 	public function Activity($data){
 		try{
 			$this->rulesActivitiesBasic();
+			return $this->rules->assert($data);
+		}catch(NestedValidationException $e){
+			throw new ValidatorException('Campos Invalidos', $e);
+		}
+	}
+	/**
+	* @param \ArrayObject as $data
+	* @return boolean; 
+	*/
+	public function Institute($data){
+		try{
+			$this->rulesInstitute();
+			return $this->rules->assert($data);
+		}catch(NestedValidationException $e){
+			throw new ValidatorException('Campos Invalidos', $e);
+		}
+	}
+	/**
+	* @param \ArrayObject as $data
+	* @return boolean;
+	*/
+	public function Subject($data){
+		try{
+			$this->rulesSubject();
 			return $this->rules->assert($data);
 		}catch(NestedValidationException $e){
 			throw new ValidatorException('Campos Invalidos', $e);
