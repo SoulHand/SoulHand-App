@@ -19,7 +19,7 @@ class DatabaseTestCase extends \Tests\Functional\BaseTestCase
         if(!file_exists($SQL_PATH)){
             throw new Exception("Falta el archivo en la siguiente ruta : ".$SQL_PATH);                       
         }
-        $SQL=file_get_contents($SQL_PATH);        
+        $SQL=file_get_contents($SQL_PATH);
     	$this->database->exec($SQL);
     }
     public function tearDown(){
