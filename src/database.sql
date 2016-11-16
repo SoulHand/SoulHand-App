@@ -23,7 +23,7 @@ CREATE TABLE  parroquia (
 CREATE TABLE  institucion (
   institucion_cod SERIAL NOT NULL,
   nombre VARCHAR(45) NOT NULL,
-  direccion VARCHAR(45) NULL,
+  direccion TEXT NULL,
   parroquia_parroquia_id INT NOT NULL,
   PRIMARY KEY (institucion_cod)
   )

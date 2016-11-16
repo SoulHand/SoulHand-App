@@ -32,9 +32,10 @@ class Validator{
 		$this->rules->key('dni',v::regex('/^[VE][0-9]{5,9}$/'));
 	}
 	private function rulesActivitiesBasic(){
-		$this->rules->key('activity_name',v::stringType()->length(4,45))
+		$this->rules->key('activity_subject',v::stringType()->length(4,45))
+		->key('activity_name',v::stringType()->length(4,45))
 		->key('activity_description',v::stringType())
-		->key('subject',v::stringType());
+		->key('activity_expiration_date',v::date()->min('now + 1 days'));
 	}
 	/**
 	* @param assoc_array as $data
@@ -94,6 +95,18 @@ class Validator{
 	public function User($data){
 		try{
 			$this->rulesUser();
+			return $this->rules->assert($data);
+		}catch(NestedValidationException $e){
+			throw new ValidatorException('Campos Invalidos', $e);
+		}
+	}
+	/**
+	* @param assoc_array as $data
+	* @return boolean; 
+	*/
+	public function Activity($data){
+		try{
+			$this->rulesActivitiesBasic();
 			return $this->rules->assert($data);
 		}catch(NestedValidationException $e){
 			throw new ValidatorException('Campos Invalidos', $e);
