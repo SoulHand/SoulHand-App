@@ -9,11 +9,14 @@ class Validator{
 	* @var \Respect\Validation\Validator as rules
 	 */
 	protected $rules;
+	protected $method;
 	/**
 	* @return void; 
 	*/
-	public function __construct(){
+	public function __construct($method){
 		$this->rules= new v();
+		$method='rules'.ucfirst($method);
+		$this->$method();
 	}
 	/**
 	* @return void;
@@ -52,7 +55,6 @@ class Validator{
 	private function rulesInstitute(){
 		$this->rules->key('institute_name',v::stringType()->length(4,45))
 		->key('institute_address',v::stringType())
-		->key('activity_name',v::stringType()->length(4,45))
 		->key('parroquia_name',v::stringType()->length(4,45));
 	}
 	/**
@@ -65,99 +67,20 @@ class Validator{
 	* @param \ArrayObject as $data
 	* @return boolean; 
 	*/
-	public function UserAll($data){
-		try{
-			$this->rulesUser();
-			$this->rulesUserAuth();
-			$this->rulesUserDoc();
-			return $this->rules->assert($data);
-		}catch(NestedValidationException $e){
-			throw new ValidatorException('Campos Invalidos', $e);
-		}
+	private function rulesUserAll(){
+		$this->rulesUser();
+		$this->rulesUserAuth();
+		$this->rulesUserDoc();
 	}
 	/**
 	* @param \ArrayObject as $data
 	* @return boolean; 
 	*/
-	public function UserAuth($data){
+	public function validate($data){
 		try{
-			$this->rulesUserAuth();
 			return $this->rules->assert($data);
 		}catch(NestedValidationException $e){
 			throw new ValidatorException('Campos Invalidos', $e);
-		}
-	}
-	/**
-	* @param \ArrayObject as $data
-	* @return boolean; 
-	*/
-	public function UserPeople($data){
-		try{
-			$this->rulesUser();
-			$this->rulesUserDoc();
-			return $this->rules->assert($data);
-		}catch(NestedValidationException $e){
-			throw new ValidatorException('Campos Invalidos', $e);
-		}
-	}
-	/**
-	* @param \ArrayObject as $data
-	* @return boolean; 
-	*/
-	public function UserDoc($data){
-		try{
-			$this->rulesUserDoc();
-			return $this->rules->assert($data);
-		}catch(NestedValidationException $e){
-			throw new ValidatorException('Campos Invalidos', $e);
-		}
-	}
-	/**
-	* @param \ArrayObject as $data
-	* @return boolean; 
-	*/
-	public function User($data){
-		try{
-			$this->rulesUser();
-			return $this->rules->assert($data);
-		}catch(NestedValidationException $e){
-			throw new ValidatorException('Campos Invalidos', $e);
-		}
-	}
-	/**
-	* @param \ArrayObject as $data
-	* @return boolean; 
-	*/
-	public function Activity($data){
-		try{
-			$this->rulesActivitiesBasic();
-			return $this->rules->assert($data);
-		}catch(NestedValidationException $e){
-			throw new ValidatorException('Campos Invalidos', $e);
-		}
-	}
-	/**
-	* @param \ArrayObject as $data
-	* @return boolean; 
-	*/
-	public function Institute($data){
-		try{
-			$this->rulesInstitute();
-			return $this->rules->assert($data);
-		}catch(NestedValidationException $e){
-			throw new ValidatorException('Campos Invalidos', $e);
-		}
-	}
-	/**
-	* @param \ArrayObject as $data
-	* @return boolean;
-	*/
-	public function Subject($data){
-		try{
-			$this->rulesSubject();
-			return $this->rules->assert($data);
-		}catch(NestedValidationException $e){
-			throw new ValidatorException('Campos Invalidos', $e);
-		}
+		}		
 	}
 }

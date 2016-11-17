@@ -3,7 +3,7 @@
 	[		
 		{
 			"path": ".",
-			"ignore_path":["vendor"]
+			"ignore_path":["vendor","node_modules"]
 		}
 	]
 }

@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"pg_escap",
+				"pg_escape_string"
+			],
+			[
 				"str_re",
 				"str_replace"
 			],
@@ -510,10 +514,6 @@
 			[
 				"COD",
 				"COD_TITLE_WORK"
-			],
-			[
-				"DNI_PEOPLE",
-				"DNI_PEOPLE"
 			]
 		]
 	},
@@ -615,32 +615,48 @@
 	"expanded_folders":
 	[
 		"/home/mata/Documentos/WebProject/SoulHand-App",
-		"/home/mata/Documentos/WebProject/SoulHand-App/public",
-		"/home/mata/Documentos/WebProject/SoulHand-App/public/js",
 		"/home/mata/Documentos/WebProject/SoulHand-App/src",
 		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd",
 		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand",
-		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand/UPTOSCR",
 		"/home/mata/Documentos/WebProject/SoulHand-App/tests",
-		"/home/mata/Documentos/WebProject/SoulHand-App/tests/Functional"
+		"/home/mata/Documentos/WebProject/SoulHand-App/tests/Functional",
+		"/home/mata/Documentos/WebProject/SoulHand-App/tests/Functional/Database"
 	],
 	"file_history":
 	[
+		"/media/mata/BackupDocument1/FEREST/colorferet/colorferet/dvd1/binaries/readme.txt",
+		"/home/mata/Documentos/WebProject/SoulHand-App/tests/Functional/SoapTest.php",
+		"/home/mata/Documentos/WebProject/SoulHand-App/tests/Functional/ValidatorTest.php",
+		"/home/mata/Documentos/WebProject/SoulHand-App/src/database.sql",
+		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand/Validator.php",
+		"/home/mata/Escritorio/database",
+		"/var/www/html/soulhand/include/interfaces.php",
+		"/home/mata/Documentos/WebProject/SoulHand-App/tests/Functional/Database/DatabaseTestCase.php",
+		"/home/mata/Documentos/WebProject/SoulHand-App/tests/Functional/HomepageTest.php",
+		"/home/mata/Documentos/WebProject/SoulHand-App/tests/Functional/BaseTestCase.php",
+		"/home/mata/Documentos/WebProject/SoulHand-App/app.sublime-project",
+		"/home/mata/Documentos/WebProject/SoulHand-App/tests/Functional/Database/createUserTest.php",
+		"/home/mata/Documentos/WebProject/SoulHand-App/.gitignore",
+		"/home/mata/Escritorio/data.sql",
+		"/home/mata/Documentos/WebProject/wire/test/Instapago/Transaction/DatabaseTestCase.php",
+		"/home/mata/Documentos/WebProject/wire/test/Instapago/Transaction/TransactionUpdateTestCase.php",
+		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/settings.php",
+		"/home/mata/Documentos/WebProject/SoulHand-App/tests/Functional/Database/FirtsTest.php",
 		"/home/mata/Documentos/WebProject/SoulHand-App/composer.json",
+		"/home/mata/Documentos/WebProject/SoulHand-App/tests/Functional/Database/DatabaseTest.php",
+		"/home/mata/Documentos/WebProject/wire/src/settings.php",
+		"/var/log/apache2/error.log",
+		"/var/www/html/fpdf/reporteCursos.php",
+		"/home/mata/Descargas/Telegram Desktop/fpdf/reporteCursos.php",
 		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/people.php",
 		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand/UPTOSCR/nusoap/nusoap.php",
 		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand/UPTOSCR/SOAP.php",
 		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand/UPTOSCR/ClientException.php",
-		"/home/mata/Documentos/WebProject/SoulHand-App/tests/Functional/SoapTest.php",
 		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand/ValidatorException.php",
-		"/home/mata/Documentos/WebProject/SoulHand-App/tests/Functional/ValidatorTest.php",
 		"/home/mata/Escritorio/Escritorio revision/revisar hoy/soap.json",
 		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand/Exception.php",
-		"/home/mata/Documentos/WebProject/SoulHand-App/tests/Functional/BaseTestCase.php",
 		"/home/mata/Documentos/trayecto 2/software/datos-iniciales.json",
 		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand/UPTOSCR/SOAPException.php",
-		"/home/mata/Documentos/WebProject/SoulHand-App/tests/Functional/HomepageTest.php",
-		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand/Validator.php",
 		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand/UPTOSCR/utils.php",
 		"/home/mata/Documentos/WebProject/SoulHand-App/README.md",
 		"/home/mata/Documentos/Proyecto Tray. 2/opencv-3.0.0/modules/objdetect/src/cascadedetect.cpp",
@@ -656,7 +672,6 @@
 		"/home/mata/Documentos/WebProject/SoulHand-App/public/VisionConfig.js",
 		"/home/mata/Escritorio/LBPCascade/init.m",
 		"/home/mata/Escritorio/LBPCascade/loadfor.m",
-		"/home/mata/Documentos/WebProject/SoulHand-App/app.sublime-project",
 		"/var/www/html/soulhand/js/main.js",
 		"/var/www/html/soulhand/lib/interface.src.js",
 		"/home/mata/Documentos/WebProject/SoulHand-App/public/components/recordrtc/Canvas-Recording/record-canvas-drawings.html",
@@ -736,24 +751,7 @@
 		"/home/mata/Documentos/WebProject/SoulHand/src/auth.php",
 		"/var/www/html/serviciosOdit/client.php",
 		"/home/mata/Documentos/WebProject/SoulHand/src/people.php",
-		"/home/mata/Documentos/WebProject/SoulHand/src/angular/main.ts",
-		"/home/mata/Documentos/WebProject/SoulHand/node_modules/@angular/core/package.json",
-		"/home/mata/Documentos/WebProject/SoulHand/src/angular/app.module.ts",
-		"/home/mata/Documentos/WebProject/SoulHand/systemjs.config.js",
-		"/home/mata/Documentos/WebProject/SoulHand/src/tsconfig.json",
-		"/home/mata/Documentos/WebProject/SoulHand/src/systemjs.config.js",
-		"/home/mata/Documentos/WebProject/SoulHand/.bowerrc",
-		"/home/mata/Documentos/WebProject/SoulHand/src/lib/utils.php",
-		"/home/mata/Documentos/WebProject/SoulHand/src/lib/nusoap/class.soapclient.php",
-		"/var/www/html/soulhand/include/interfaces.php",
-		"/var/www/html/firefoxos/messenger/debug/hosted/local/module.php",
-		"/home/mata/Documentos/WebProject/SoulHand/src/settings.php",
-		"/var/www/html/personas/src/ApiConnect.php",
-		"/var/www/html/personas/include/table.php",
-		"/var/www/html/personas/include/main.src.php",
-		"/var/www/html/personas/include/script.php",
-		"/home/mata/Documentos/WebProject/SoulHand/vendor/slim/slim/Slim/App.php",
-		"/home/mata/Documentos/WebProject/SoulHand/vendor/slim/slim/Slim/Routable.php"
+		"/home/mata/Documentos/WebProject/SoulHand/src/angular/main.ts"
 	],
 	"find":
 	{
@@ -772,6 +770,22 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"activity_name",
+			"PhoneNumber",
+			"faker",
+			"REFERENCES institucion",
+			"institucion",
+			"mydb",
+			"BLOB",
+			"ASC",
+			"AUTO_IN",
+			"ENGINE = InnoDB",
+			"ENGINE = InnoDB;",
+			"`",
+			"IF NOT EXISTS",
+			"NO ACTION",
+			"database",
+			"php",
 			"\"=>$",
 			"nusoap_client",
 			"CascadeClassifier",
@@ -883,23 +897,7 @@
 			"idWork",
 			"query_institute",
 			"institute':",
-			"get':",
-			"title",
-			"institute':",
-			"institute'",
-			"institute':",
-			"school':",
-			"institute':",
-			"\"edit\"",
-			"school':",
-			"school\":",
-			"FROM PEOPLE_INSTITUTE INNER JOIN STUDENTS_INST_PERIOD_SCHOOL",
-			"INSTITUTE",
-			"school",
-			"edit",
-			"loadField",
-			"edit=\\\"true",
-			"edit=\"true"
+			"get':"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -907,6 +905,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"",
 			"var ",
 			"var",
 			"[-$1]",
@@ -1033,7 +1032,7 @@
 		"rows":
 		[
 			0.0,
-			0.5,
+			0.587719298246,
 			1.0
 		]
 	},
@@ -1058,7 +1057,7 @@
 	"project": "app.sublime-project",
 	"replace":
 	{
-		"height": 46.0
+		"height": 64.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1067,6 +1066,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"data",
+				"src/database.sql"
+			]
 		],
 		"width": 0.0
 	},
