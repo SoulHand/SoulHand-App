@@ -162,7 +162,7 @@ class ValidatorTest extends BaseTestCase
     public function testValidatorActivityAlternativeDateValide(){
         $faker = Factory::create("es_ES");
         $faker->addProvider(new PhoneNumber($faker));
-        $objDate=$faker->dateTimeInInterval('1 days','+ 2 days', date_default_timezone_get());
+        $objDate=$faker->dateTimeInInterval('1 days','+ 1 days', date_default_timezone_get());
         $Validator=new Validator('ActivitiesBasic');
         $data=[
             "activity_subject"=>$faker->text(45),
@@ -170,6 +170,7 @@ class ValidatorTest extends BaseTestCase
             "activity_description"=>$faker->realText(),
             "activity_expiration_date"=>$objDate->format('d-m-Y H:i:s')
         ];
+        var_dump($data);
         $val=$Validator->validate($data);
         $this->assertTrue($val);
     }
