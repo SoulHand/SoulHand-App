@@ -3,12 +3,26 @@ CREATE TABLE  persona (
   persona_cedula VARCHAR(11) NOT NULL,
   persona_nombre VARCHAR(20) NOT NULL,
   persona_apellido VARCHAR(20) NOT NULL,
-  persona_telefono VARCHAR(11) NULL,
+  persona_telefono VARCHAR(15),
   persona_fecha_nacimiento DATE NOT NULL,
-  persona_correo TEXT NOT NULL,
+  persona_correo TEXT,
   persona_imagen bytea NULL,
   PRIMARY KEY (persona_cedula))
 ;
+CREATE TABLE usuario(
+  persona_cedula VARCHAR(11) NOT NULL,
+  usuario_nombre VARCHAR(20) NOT NULL,
+  usuario_contrasena VARCHAR(32) NOT NULL,
+  usuario_role VARCHAR(10) NOT NULL DEFAULT 'ALUMNO',
+  PRIMARY KEY (persona_cedula)
+);
+CREATE TABLE sesiones(
+  persona_cedula VARCHAR(11) NOT NULL,
+  sessiones_id VARCHAR(30) NOT NULL,
+  sessiones_user_agent TEXT NOT NULL,
+  sessiones_IP TEXT NOT NULL,
+  PRIMARY KEY(persona_cedula,sessiones_id)
+);
 -- -----------------------------------------------------
 -- Table mydb.parroquia
 -- -----------------------------------------------------

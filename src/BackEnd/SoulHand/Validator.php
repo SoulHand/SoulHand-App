@@ -22,7 +22,8 @@ class Validator{
 	* @return void;
 	*/	
 	private function rulesUser(){
-		$this->rules->key('name', v::stringType())
+		$this->rules->key('first_name', v::stringType())
+		->key('last_name', v::stringType())
 		->key('birthdate', v::date('d-m-Y'))
 		->key('phone',v::phone())
 		->key('email',v::email());		
