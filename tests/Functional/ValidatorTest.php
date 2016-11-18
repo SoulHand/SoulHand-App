@@ -19,7 +19,8 @@ class ValidatorTest extends BaseTestCase
         $faker->addProvider(new PhoneNumber($faker));
         $Validator=new Validator('userAll');
         $data=[
-            "name"=>$faker->name,
+            "first_name"=>$faker->firstName,
+            "last_name"=>$faker->lastName,
             "birthdate"=>$faker->dateTimeThisCentury->format('d-m-Y'),
             "phone"=>$faker->regexify('^\+58[2-4][0-9]{9}'),
             "email"=>$faker->email,
@@ -48,7 +49,8 @@ class ValidatorTest extends BaseTestCase
         $faker->addProvider(new PhoneNumber($faker));
         $Validator=new Validator('User');
         $data=[
-            "name"=>$faker->name,
+            "first_name"=>$faker->firstName,
+            "last_name"=>$faker->lastName,
             "birthdate"=>$faker->dateTimeThisCentury->format('d-m-Y'),
             "phone"=>$faker->regexify('^\+58[2-4][0-9]{9}'),
             "email"=>$faker->email,            
@@ -63,7 +65,8 @@ class ValidatorTest extends BaseTestCase
         $faker->addProvider(new PhoneNumber($faker));
         $Validator=new Validator('User');
         $data=[
-            "name"=>$faker->name,
+            "first_name"=>$faker->firstName,
+            "last_name"=>$faker->lastName,
             "birthdate"=>$faker->dateTimeThisCentury->format('d-m-Y'),
             "phone"=>$faker->regexify('^\+58[2-4][0-9]{9}'),
             "email"=>$faker->email
@@ -97,7 +100,8 @@ class ValidatorTest extends BaseTestCase
         $faker = Factory::create("es_ES");
         $Validator=new Validator('User');
         $data=[
-            "name"=>$faker->name,
+            "first_name"=>$faker->firstName,
+            "last_name"=>$faker->lastName,
             "birthdate"=>$faker->dateTimeThisCentury->format('d-m-Y'),
             "phone"=>$faker->email,
             "email"=>$faker->regexify('^\+58[2-4][0-9]{9}')
@@ -121,7 +125,8 @@ class ValidatorTest extends BaseTestCase
         $faker = Factory::create("es_ES");
         $Validator=new Validator('User');
         $data=[
-            "name"=>$faker->name,
+            "first_name"=>$faker->firstName,
+            "last_name"=>$faker->lastName,
             "birthdate"=>$faker->dateTimeThisCentury->format('d-m-Y'),
             "phone"=>$faker->email,
             "email"=>$faker->regexify('^\+58[2-4][0-9]{9}')            
@@ -134,7 +139,8 @@ class ValidatorTest extends BaseTestCase
     	$faker = Factory::create("es_ES");
     	$Validator=new Validator('UserAll');
     	$data=[
-    		"name"=>$faker->name,
+    		"first_name"=>$faker->firstName,
+            "last_name"=>$faker->lastName,
             "birthdate"=>$faker->dateTimeThisCentury->format('d-m-Y'),
             "phone"=>$faker->email,
             "email"=>$faker->regexify('^\+58[2-4][0-9]{9}'),
