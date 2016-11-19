@@ -7,20 +7,22 @@ CREATE TABLE  persona (
   persona_fecha_nacimiento DATE NOT NULL,
   persona_correo TEXT,
   persona_imagen bytea NULL,
-  PRIMARY KEY (persona_cedula))
-;
+  PRIMARY KEY (persona_cedula)
+  );
 CREATE TABLE usuario(
   persona_cedula VARCHAR(11) NOT NULL,
   usuario_nombre VARCHAR(20) NOT NULL,
   usuario_contrasena VARCHAR(32) NOT NULL,
   usuario_role VARCHAR(10) NOT NULL DEFAULT 'ALUMNO',
-  PRIMARY KEY (persona_cedula)
+  PRIMARY KEY (persona_cedula),
+  UNIQUE (usuario_nombre)
 );
 CREATE TABLE sesiones(
   persona_cedula VARCHAR(11) NOT NULL,
   sessiones_id VARCHAR(30) NOT NULL,
   sessiones_user_agent TEXT NOT NULL,
   sessiones_IP TEXT NOT NULL,
+  sessiones_fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY(persona_cedula,sessiones_id)
 );
 -- -----------------------------------------------------
@@ -29,19 +31,20 @@ CREATE TABLE sesiones(
 CREATE TABLE  parroquia (
   parroquia_id SERIAL NOT NULL,
   parroquia_nombre VARCHAR(45) NOT NULL,
-  PRIMARY KEY (parroquia_id))
-;
+  PRIMARY KEY (parroquia_id),
+  UNIQUE (parroquia_nombre)
+);
 -- -----------------------------------------------------
 -- Table mydb.institucion
 -- -----------------------------------------------------
 CREATE TABLE  institucion (
   institucion_cod SERIAL NOT NULL,
-  nombre VARCHAR(45) NOT NULL,
-  direccion TEXT NULL,
+  institucion_nombre VARCHAR(45) NOT NULL,
+  institucion_direccion TEXT NULL,
   parroquia_parroquia_id INT NOT NULL,
-  PRIMARY KEY (institucion_cod)
-  )
-;
+  PRIMARY KEY (institucion_cod),
+  UNIQUE (institucion_nombre)
+);
 -- -----------------------------------------------------
 -- Table mydb.docente
 -- -----------------------------------------------------
@@ -50,16 +53,16 @@ CREATE TABLE  docente (
   instruccion TEXT NULL,
   interprete TEXT NULL,
   PRIMARY KEY (docente_cedula)
-  )
-;
+);
 -- -----------------------------------------------------
 -- Table mydb.materia
 -- -----------------------------------------------------
 CREATE TABLE  materia (
   materia_cod SERIAL NOT NULL,
   materia_nombre VARCHAR(45) NOT NULL,
-  PRIMARY KEY (materia_cod))
-;
+  PRIMARY KEY (materia_cod),
+  UNIQUE (materia_nombre)
+);
 -- -----------------------------------------------------
 -- Table mydb.alumno
 -- -----------------------------------------------------

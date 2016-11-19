@@ -33,7 +33,9 @@ class DatabaseTestCase extends \Tests\Functional\BaseTestCase
         return $stm->fetch(\PDO::FETCH_ASSOC);
     }
     public function searchPeople($id){
+        $this->database->query("SET bytea_output=escape");
         $stm=$this->database->query("SELECT * FROM persona WHERE persona_cedula='{$id}'");
+        //$stm->bindColumn('persona_imagen', $data, PDO::PARAM_LOB);
         return $stm->fetch(\PDO::FETCH_ASSOC);
     }
     public function searchUser($id){

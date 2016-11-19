@@ -10,7 +10,8 @@ class createUserTest extends DatabaseTestCase
 {
     public function testInsertUserPeople()
     {
-    	$faker = Factory::create("es_ES");
+        $faker = Factory::create("es_ES");
+        $path=$faker->image('/tmp',1440,900,'cats',true,true,'Faker');
     	$data=[
     		"dni"=>$faker->regexify('/[VE][0-9]{6,10}/'),
     		"first_name"=>$faker->firstName,
@@ -19,22 +20,23 @@ class createUserTest extends DatabaseTestCase
     		"phone"=>$faker->phoneNumber,
     		"email"=>$faker->email,
     		"password"=>$faker->password,
-    		"username"=>$faker->username
+    		"username"=>$faker->username,
+            "image"=>file_get_contents($path)
     	];
-    	$people=new User($this->database);
-    	$people->create($data);
-		$search=$this->searchPeople($data["dni"]);
-		$user=$this->searchUser($data["dni"]);
-		$this->asserEquals($search["persona_cedula"],$data["dni"]);    	
-		$this->asserEquals($search["persona_nombre"],$data["first_name"]);    	
-		$this->asserEquals($search["persona_apellido"],$data["last_name"]);    	
-		$this->asserEquals($search["persona_fecha_nacimiento"],$data["birthdate"]);    	
-		$this->asserEquals($search["persona_telefono"],$data["phone"]);    	
-		$this->asserEquals($search["persona_correo"],$data["email"]);
-		$this->asserEquals($user["usuario_nombre"],$data["username"]);
-		$this->assertNotNull($user["usuario_contrasena"]);
-        /*$people=$this->insertPeople();
-        $user=$this->insertUser($people["persona_cedula"]);*/
+        $people=new User($this->database);
+        $people->create($data);
+        $search=$this->searchPeople($data["dni"]);
+        $user=$this->searchUser($data["dni"]);
+        //pg_unescape_bytea
+        //var_dump(pg_unescape_bytea($search["persona_imagen"]));
+		$this->assertEquals($search["persona_cedula"],$data["dni"]);    	
+		$this->assertEquals($search["persona_nombre"],$data["first_name"]);    	
+		$this->assertEquals($search["persona_apellido"],$data["last_name"]);    	
+		$this->assertEquals($search["persona_telefono"],$data["phone"]);    	
+		$this->assertEquals($search["persona_correo"],$data["email"]);
+		//$this->assertEquals(($search["persona_imagen"]),$data["image"]);
+        $this->assertEquals($user["usuario_nombre"],$data["username"]);
+		$this->assertNotNull($user["usuario_contrasena"]);        
     }
     public function testInsertUserAlone(){
     	$people=$this->insertPeople();
@@ -47,19 +49,21 @@ class createUserTest extends DatabaseTestCase
     		"phone"=>$people["persona_telefono"],
     		"email"=>$people["persona_correo"],
     		"password"=>$faker->password,
-    		"username"=>$faker->username
+    		"username"=>$faker->username,
+            "image"=>NULL
     	];
     	$user=new User($this->database);
-    	$user->create($data);
-		$search=$this->searchUser($data["dni"]);
-    	$this->asserEquals($search["persona_cedula"],$data["dni"]);    	
-		$this->asserEquals($search["usuario_nombre"],$data["first_name"]);    	
-		$this->asserEquals($search["persona_apellido"],$data["last_name"]);    	
-		$this->asserEquals($search["persona_fecha_nacimiento"],$data["birthdate"]);    	
-		$this->asserEquals($search["persona_telefono"],$data["phone"]);    	
-		$this->asserEquals($search["persona_correo"],$data["email"]);
-		$this->asserEquals($user["usuario_nombre"],$data["username"]);
-		$this->assertNotNull($user["usuario_contrasena"]);
+    	$search=$user->create($data);		
+    	$this->assertEquals($search["persona_cedula"],$data["dni"]);    	
+		$this->assertEquals($search["persona_nombre"],$data["first_name"]);    	
+		$this->assertEquals($search["persona_apellido"],$data["last_name"]);    	
+		$this->assertEquals($search["persona_fecha_nacimiento"],$data["birthdate"]);    	
+		$this->assertEquals($search["persona_telefono"],$data["phone"]);    	
+		$this->assertEquals($search["persona_correo"],$data["email"]);
+		$this->assertEquals($search["usuario_nombre"],$data["username"]);
+		$this->assertNotNull($search["usuario_contrasena"]);
+        $now=$this->searchUser($data["dni"]);
+        $this->assertNotFalse($now);
     }
     public function testEncryptUser(){
     	$faker = Factory::create("es_ES");
