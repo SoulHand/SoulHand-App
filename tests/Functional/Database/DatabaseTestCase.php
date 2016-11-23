@@ -23,7 +23,7 @@ class DatabaseTestCase extends \Tests\Functional\BaseTestCase
     	$this->database->exec($SQL);
     }
     public function tearDown(){
-        $stm=$this->database->query("SELECT tablename FROM pg_tables WHERE schemaname = 'public'");
+        $stm=$this->database->query("SHOW TABLES");
         while($table=$stm->fetch(\PDO::FETCH_NUM)){
             $this->database->exec("DROP TABLE {$table[0]}");
         }
@@ -37,7 +37,7 @@ class DatabaseTestCase extends \Tests\Functional\BaseTestCase
         return $stm->fetch(\PDO::FETCH_ASSOC);
     }
     public function searchUser($id){
-        $stm=$this->database->query("SELECT * FROM usuario WHERE persona_cedula='{$id}'");        
+        $stm=$this->database->query("SELECT * FROM usuario WHERE persona_cedula='{$id}'");      
         return $stm->fetch(\PDO::FETCH_ASSOC);
     }
     public function insertSubject(){

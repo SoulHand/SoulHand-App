@@ -25,8 +25,9 @@ class CreateStudentTest extends DatabaseTestCase
         $search=$people->create($data);
         $this->assertEquals($search["alumno_cedula"],$data["dni"]);        
         $this->assertEquals($search["persona_nombre"],$data["first_name"]);     
-        $this->assertEquals($search["persona_apellido"],$data["last_name"]);        
-        $this->assertEquals($search["persona_fecha_nacimiento"],$data["birthdate"]);
+        $this->assertEquals($search["persona_apellido"],$data["last_name"]);
+        $datetime = \DateTime::createFromFormat('d-m-Y', $data["birthdate"]);  
+        $this->assertEquals($search["persona_fecha_nacimiento"],$datetime->format('Y-m-d'));
         $this->assertEquals($search["persona_telefono"],$data["phone"]);        
         $this->assertEquals($search["persona_correo"],$data["email"]);
         $now=$people->find($data["dni"]);
