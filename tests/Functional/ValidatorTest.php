@@ -160,7 +160,7 @@ class ValidatorTest extends BaseTestCase
             "activity_subject"=>$faker->text(45),
             "activity_name"=>$faker->text(45),
             "activity_description"=>$faker->realText(),
-            "activity_expiration_date"=>$objDate->format('Y-m-d H:i:s')
+            "activity_expiration_date"=>$objDate->format('d-m-Y H:i:s')
         ];
         $val=$Validator->validate($data);
         $this->assertTrue($val);
