@@ -1,8 +1,8 @@
 
 CREATE TABLE  persona (
   persona_cedula VARCHAR(11) NOT NULL,
-  persona_nombre VARCHAR(20) NOT NULL,
-  persona_apellido VARCHAR(20) NOT NULL,
+  persona_nombre VARCHAR(25) NOT NULL,
+  persona_apellido VARCHAR(25) NOT NULL,
   persona_telefono VARCHAR(15),
   persona_fecha_nacimiento DATE NOT NULL,
   persona_correo TEXT,
@@ -11,7 +11,7 @@ CREATE TABLE  persona (
   );
 CREATE TABLE usuario(
   persona_cedula VARCHAR(11) NOT NULL,
-  usuario_nombre VARCHAR(20) NOT NULL,
+  usuario_nombre VARCHAR(25) NOT NULL,
   usuario_contrasena VARCHAR(32) NOT NULL,
   usuario_role VARCHAR(10) NOT NULL DEFAULT 'ALUMNO',
   PRIMARY KEY (persona_cedula),
@@ -50,8 +50,8 @@ CREATE TABLE  institucion (
 -- -----------------------------------------------------
 CREATE TABLE  docente (
   docente_cedula VARCHAR(11) NOT NULL,
-  instruccion TEXT NULL,
-  interprete TEXT NULL,
+  docente_instruccion TEXT NULL,
+  docente_interprete TEXT NULL,
   PRIMARY KEY (docente_cedula)
 );
 -- -----------------------------------------------------
