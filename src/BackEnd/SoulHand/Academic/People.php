@@ -8,7 +8,7 @@ class People{
 	public function __construct($pdo){
 		$this->database=$pdo;
 	}
-	public function create($input){		
+	public function create($input){
 		$data=[
 			"persona_cedula"=>$input["dni"],
 			"persona_nombre"=>$input["first_name"],
@@ -89,7 +89,7 @@ class People{
 		$stm=$this->database->prepare($SQL);
 		$query=$stm->execute($filters);
 		if($stm->rowCount()==0){
-			throw new PDOException("No existe la Persona!");
+			throw new PDOException("No existe personas con esta descripciones!");
 		}
 		return $stm->fetchAll(PDO::FETCH_ASSOC);
 	}

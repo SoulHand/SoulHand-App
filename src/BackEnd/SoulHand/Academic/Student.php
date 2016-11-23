@@ -9,7 +9,7 @@ use \PDO;
             throw new PDOException("La persona ya existe!");
         }
         $val=Parent::create($data);
-        $TEACHER=[
+        $STUDENT=[
             "docente_cedula"=>$val["persona_cedula"],
             "institucion_institucion_cod"=>$data["cod_institute"],
             "grado_sordera"=>$data["deafness"]
@@ -25,25 +25,25 @@ use \PDO;
                 :grado_sordera
             )
         ");
-        $query=$stm->execute($TEACHER);
+        $query=$stm->execute($STUDENT);
         if(!$query){
             throw new PDOException("El docente ya existe!");            
         }
-        return array_merge($val,$TEACHER);
+        return array_merge($val,$STUDENT);
     }
     public function find($dni){
-        $stm=$this->database->prepare("SELECT * FROM persona INNER JOIN docente on docente_cedula=persona.persona_cedula WHERE persona_cedula=?");
+        $stm=$this->database->prepare("SELECT * FROM persona INNER JOIN alumno on alumno_cedula=persona.persona_cedula WHERE persona_cedula=?");
         $query=$stm->execute([$dni]);
         if($stm->rowCount()==0){
-            throw new PDOException("No existe el docente!");
+            throw new PDOException("No existe el alumno!");
         }
         return $stm->fetch(PDO::FETCH_ASSOC);
     }
     public function delete($dni){
-        $stm=$this->database->prepare("DELETE FROM docente WHERE docente_cedula=?");
+        $stm=$this->database->prepare("DELETE FROM alumno WHERE alumno_cedula=?");
         $query=$stm->execute([$dni]);
         if($stm->rowCount()==0){
-            throw new PDOException("No existe el docente!");
+            throw new PDOException("No existe el alumno!");
         }
         Parent::delete($dni);
     }
@@ -53,13 +53,13 @@ use \PDO;
             $fields[]="{$key}=:{$key}";
         }
         $fields=implode(',',$fields);
-        $SQL="UPDATE docente SET {$fields} WHERE docente_cedula=:dni";      
+        $SQL="UPDATE alumno SET {$fields} WHERE alumno_cedula=:dni";      
         $stm=$this->database->prepare($SQL);
         $query=$stm->execute(array_merge($values,[
             "dni"=>$dni
         ]));
         if($stm->rowCount()==0){
-            throw new PDOException("No existe la Persona!");
+            throw new PDOException("No existe el alumno!");
         }
     }
     public function search($filters){
@@ -68,11 +68,11 @@ use \PDO;
             $fields[]="{$key}=:{$key}";
         }
         $fields=implode(' AND ',$fields);
-        $SQL="SELECT * FROM persona INNER JOIN docente on docente_cedula=persona.persona_cedula WHERE {$fields}";
+        $SQL="SELECT * FROM persona INNER JOIN alumno on alumno_cedula=persona.persona_cedula WHERE {$fields}";
         $stm=$this->database->prepare($SQL);
         $query=$stm->execute($filters);
         if($stm->rowCount()==0){
-            throw new PDOException("No existe la Persona!");
+            throw new PDOException("No existe alumnos con esta descripciones!");
         }
         return $stm->fetchAll(PDO::FETCH_ASSOC);
     }

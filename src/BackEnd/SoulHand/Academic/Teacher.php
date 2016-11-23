@@ -72,7 +72,7 @@ use \PDO;
         $stm=$this->database->prepare($SQL);
         $query=$stm->execute($filters);
         if($stm->rowCount()==0){
-            throw new PDOException("No existe la Persona!");
+            throw new PDOException("No existe docentes con esta descripciones!");
         }
         return $stm->fetchAll(PDO::FETCH_ASSOC);
     }
