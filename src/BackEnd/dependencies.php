@@ -8,7 +8,10 @@ $container['renderer'] = function ($c) {
     $settings = $c->get('settings')['renderer'];
     return new Slim\Views\PhpRenderer($settings['template_path']);
 };
-
+$container['database'] = function ($c) {
+    $settings = $c->get('settings')['database'];
+    return new \PDO($settings["connection"],$settings["user"],$settings["password"]);
+};
 // monolog
 $container['logger'] = function ($c) {
     $settings = $c->get('settings')['logger'];

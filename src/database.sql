@@ -1,4 +1,15 @@
-
+CREATE TABLE provincia(
+  provincia_id_pais VARCHAR(10) NOT NULL,
+  provincia_id VARCHAR(20) NOT NULL,
+  provincia_nombre TEXT NOT NULL,
+  PRIMARY KEY(provincia_id)
+);
+CREATE TABLE municipio(
+  municipio_id_provincia VARCHAR(20) NOT NULL,
+  municipio_id SERIAL NOT NULL,
+  municipio_nombre VARCHAR(25) NOT NULL,
+  PRIMARY KEY(municipio_nombre)
+);
 CREATE TABLE  persona (
   persona_cedula VARCHAR(11) NOT NULL,
   persona_nombre VARCHAR(25) NOT NULL,
@@ -29,6 +40,7 @@ CREATE TABLE sesiones(
 -- Table mydb.parroquia
 -- -----------------------------------------------------
 CREATE TABLE  parroquia (
+  parroquia_id_municipio VARCHAR(20) NOT NULL,
   parroquia_id SERIAL NOT NULL,
   parroquia_nombre VARCHAR(45) NOT NULL,
   PRIMARY KEY (parroquia_id),
@@ -124,3 +136,12 @@ CREATE TABLE  perfil_pedagogico (
   PRIMARY KEY (perfil_pedagogico_cod) 
   )
 ;
+
+INSERT INTO provincia 
+VALUES('VE','AMZ','Amazonas'),('VE','ANZ','Anzoategui'),('VE','AP','Apure'),('VE','ARG','Aragua'),('VE','BAN','Barinas'),('VE','BOL','Bolivar'),('VE','CAR','Carabobo'),('VE','COJ','Cojedes'),('VE','DLA','Delta Amacuro'),('VE','FL','Falcon'),('VE','GC','Guarico'),('VE','LR','Lara'),('VE','MR','Merida'),('VE','MD','Miranda'),('VE','MN','Monagas'),('VE','NE','Nueva Esparta'),('VE','PG','Portuguesa'),('VE','SUC','Sucre'),('VE','TCH','Tachira'),('VE','TR','Trujillo'),('VE','YR','Yaracuy'),('VE','ZL','Zulia'),('VE','DF','Distrito Federal');
+
+INSERT INTO municipio(municipio_id_provincia,municipio_id,municipio_nombre)
+VALUES('SUC',1,'Andres E. Blanco'),('SUC',2,'Andres Mata'),('SUC',3,'Arismendi'),('SUC',4,'Benitez'),('SUC',5,'Bermudez'),('SUC',6,'Bolivar'),('SUC',7,'Cajigal'),('SUC',8,'Cruz S. Acosta'),('SUC',9,'Libertador'),('SUC',10,'Mariño'),('SUC',11,'Mejia'),('SUC',12,'Montes'),('SUC',13,'Ribero'),('SUC',13,'Sucre'),('SUC',13,'Valdez');
+
+INSERT INTO parroquia
+VALUES(13,1,'Altagracia'),(13,2,'Ayacucho'),(13,3,'Gran Mariscal'),(13,4,'Raul Leoni'),(13,5,'San Juan'),(13,6,'Santa Ines'),(13,7,'Valentin Valiente');
