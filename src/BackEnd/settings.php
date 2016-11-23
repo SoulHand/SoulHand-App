@@ -21,9 +21,9 @@ return [
             "password"=>"123"
         ],
         'test_database'=>[
-            'connection' => "pgsql:port=5432;host=localhost;dbname=SoulHand-testing",
-            "user"=>"phpconnect",
-            "password"=>"123"
+            'connection' => "mysql:host=localhost;dbname=soulhand",
+            "user"=>"veca",
+            "password"=>"veca"
         ]
     ],
 ];

@@ -48,7 +48,7 @@ class Validator{
 		$this->rules->key('activity_subject',v::stringType()->length(4,45))
 		->key('activity_name',v::stringType()->length(4,45))
 		->key('activity_description',v::stringType())
-		->key('activity_expiration_date',v::date()->min('now + 1 days'));
+		->key('activity_expiration_date',v::date('d-m-Y')->min('now + 1 days'));
 	}
 	/**
 	* @return void;
