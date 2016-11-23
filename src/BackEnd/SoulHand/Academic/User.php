@@ -1,12 +1,13 @@
 <?php
  namespace SoulHand\Academic;
+use \PDOException;
 
  class User extends People{
  	protected $HASH="bcb04b7e103a0cd8b54763051cef08bc55abe029fdebae5e1d417e2ffb2a00a3"; 	
     public function create($data,$role='ALUMNO'){
         $val=Parent::isExist($data["dni"]);
         if(!$val){
-            $val=Parent::create($data);
+            throw new PDOException("No existe la siguiente persona!");
         }
         $USER=[
             "persona_cedula"=>$val["persona_cedula"],
