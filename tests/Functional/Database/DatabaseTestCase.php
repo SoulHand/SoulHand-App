@@ -33,13 +33,11 @@ class DatabaseTestCase extends \Tests\Functional\BaseTestCase
         return $stm->fetch(\PDO::FETCH_ASSOC);
     }
     public function searchPeople($id){
-        $this->database->query("SET bytea_output=escape");
         $stm=$this->database->query("SELECT * FROM persona WHERE persona_cedula='{$id}'");
-        //$stm->bindColumn('persona_imagen', $data, PDO::PARAM_LOB);
         return $stm->fetch(\PDO::FETCH_ASSOC);
     }
     public function searchUser($id){
-        $stm=$this->database->query("SELECT * FROM usuario WHERE persona_cedula='{$id}'");
+        $stm=$this->database->query("SELECT * FROM usuario WHERE persona_cedula='{$id}'");        
         return $stm->fetch(\PDO::FETCH_ASSOC);
     }
     public function insertSubject(){
@@ -57,6 +55,7 @@ class DatabaseTestCase extends \Tests\Functional\BaseTestCase
     }
     public function insertPeople(){
         $faker = Factory::create("es_ES");
+        //$faker->seed(1234);
         $data=[
             "persona_cedula"=>$faker->regexify('/[VE][0-9]{6,10}/'),
             "persona_nombre"=>$faker->firstName,
