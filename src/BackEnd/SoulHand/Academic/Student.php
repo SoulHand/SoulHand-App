@@ -10,7 +10,7 @@ use \PDO;
         }
         $val=Parent::create($data);
         $STUDENT=[
-            "docente_cedula"=>$val["persona_cedula"],
+            "alumno_cedula"=>$val["persona_cedula"],
             "institucion_institucion_cod"=>$data["cod_institute"],
             "grado_sordera"=>$data["deafness"]
         ];
