@@ -54,10 +54,10 @@ class Validator{
 	* @return void;
 	*/
 	private function rulesInstitute(){
-		$this->rules->key('institute_name',v::stringType()->length(4,45))
+		$this->rules->key('institute_name',v::stringType()->length(4,100))
 		->key('institute_address',v::stringType())
-		->key('parroquia_name',v::stringType()->length(4,45));
-	}
+		->key('parish_cod',v::intVal()->positive());
+	}	
 	/**
 	* @return void;
 	*/
@@ -77,6 +77,13 @@ class Validator{
 	* @param \ArrayObject as $data
 	* @return boolean; 
 	*/
+	public function rulescodInstitute($data){
+		try{
+			return $this->rules::intVal()->positive()->assert($data);
+		}catch(NestedValidationException $e){
+			throw new ValidatorException('Campos Invalidos', $e);
+		}
+	}
 	public function validate($data){
 		try{
 			return $this->rules->assert($data);

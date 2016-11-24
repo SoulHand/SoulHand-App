@@ -9,7 +9,7 @@ class Address{
 		$this->database=$PDO;
 	}	
 	public function findParish($id){
-		$stm=$this->database->prepare("SELECT * FROM parroquia WHERE parroquia_cod=?");
+		$stm=$this->database->prepare("SELECT * FROM parroquia WHERE parroquia_id=?");
 		$query=$stm->execute([$id]);
 		if($stm->rowCount()==0){
 			throw new PDOException("No existe la parroquia!");			
@@ -17,7 +17,7 @@ class Address{
 		return $stm->fetch(PDO::FETCH_ASSOC);
 	}
 	public function findProvince($id){
-		$stm=$this->database->prepare("SELECT * FROM provincia WHERE provincia_cod=?");
+		$stm=$this->database->prepare("SELECT * FROM provincia WHERE provincia_id=?");
 		$query=$stm->execute([$id]);
 		if($stm->rowCount()==0){
 			throw new PDOException("No existe la provincia!");			
@@ -25,7 +25,7 @@ class Address{
 		return $stm->fetch(PDO::FETCH_ASSOC);
 	}
 	public function findMunicipality($id){
-		$stm=$this->database->prepare("SELECT * FROM municipio WHERE municipio_cod=?");
+		$stm=$this->database->prepare("SELECT * FROM municipio WHERE municipio_id=?");
 		$query=$stm->execute([$id]);
 		if($stm->rowCount()==0){
 			throw new PDOException("No existe el municipio!");
@@ -33,26 +33,26 @@ class Address{
 		return $stm->fetch(PDO::FETCH_ASSOC);
 	}
 	public function getParish($municipality){
-		$stm=$this->database->prepare("SELECT * FROM parroquia  WHERE parroquia_id_municipio=? ORDER BY parroquia_nombre ASC");
+		$stm=$this->database->prepare("SELECT parroquia_id as id, parroquia_nombre as name FROM parroquia  WHERE parroquia_id_municipio=? ORDER BY parroquia_nombre ASC");
 		$query=$stm->execute([$municipality]);
 		if($stm->rowCount()==0){
-			throw new PDOException("No existe parroquias!");			
+			throw new PDOException("No existe parroquias para la siguiente consulta!");			
 		}
 		return $stm->fetchAll(PDO::FETCH_ASSOC);
 	}
 	public function getMunicipality($province){
-		$stm=$this->database->prepare("SELECT * FROM municipio WHERE municipio_id_provincia=? ORDER BY municipio_nombre ASC");
+		$stm=$this->database->prepare("SELECT municipio_id as id, municipio_nombre as name FROM municipio WHERE municipio_id_provincia=? ORDER BY municipio_nombre ASC");
 		$query=$stm->execute([$province]);
 		if($stm->rowCount()==0){
-			throw new PDOException("No existe municipios!");
+			throw new PDOException("No existe municipios para la siguiente consulta!");
 		}
 		return $stm->fetchAll(PDO::FETCH_ASSOC);
 	}
 	public function getProvince($country){
-		$stm=$this->database->prepare("SELECT * FROM provincia WHERE provincia_id_pais=?  ORDER BY provincia_nombre ASC");
+		$stm=$this->database->prepare("SELECT provincia_id as id, provincia_nombre as name FROM provincia WHERE provincia_id_pais=?  ORDER BY provincia_nombre ASC");
 		$query=$stm->execute([$country]);
 		if($stm->rowCount()==0){
-			throw new PDOException("No existe provincias!");
+			throw new PDOException("No existe provincias para la siguiente consulta!");
 		}
 		return $stm->fetchAll(PDO::FETCH_ASSOC);
 	}

@@ -20,3 +20,25 @@ $container['logger'] = function ($c) {
     $logger->pushHandler(new Monolog\Handler\StreamHandler($settings['path'], $settings['level']));
     return $logger;
 };
+$container['errorHandler'] = function ($c) {
+  /**
+    * @param Slim\Request $request
+    * @param Slim\Response $response
+    * @param Exception $exception
+    */
+  return function ($request, $response, $exception) use ($c) {
+    $httpStatus = 500;
+    /** @var \ArrayObject $body */
+    $body = [];    
+    if ($exception instanceof \SouldHand\Exception) {
+      $httpStatus = $exception->httpStatus;
+      $body = $exception->getJSON();
+    }else{
+      $body = [
+        'message' => $exception->getMessage(),
+        'code' => $exception->getCode()
+      ];      
+    }   
+    return $response->withJSON($body,$httpStatus);
+  };
+};

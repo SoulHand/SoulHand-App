@@ -1,4 +1,7 @@
 <?php
+use \SoulHand\Academic\Address;
+use \SoulHand\Academic\Institute;
+use \SoulHand\Validator;
 // Routes
 $app->get('/', function ($request, $response, $args) {
 	$base_url = $request->getUri()->getBasePath();
@@ -11,112 +14,69 @@ $app->get('/', function ($request, $response, $args) {
 $app->get('/info', function ($request, $response, $args) {   
     echo phpinfo();
 });
-//Api REST USER
-$app->group('/user',function(){
-	$this->get("/get[/{id}]",function($request,$response,$args){
-		include_once('people.php');
-		$users=People::get_users($this["settings"]["database"],$args["id"]);
-		return $response->withJson($users,200);
+$app->group('/v1',function() use($app){
+	/**
+	* Address Routes
+	* /Province/
+	* /Municipality/
+	* /Parish/
+	*/
+	$app->group('/Address',function()use($app){
+		$app->get('/Province[/{country}]',function($request,$response,$args){
+			$country='VE';
+			if(isset($args["country"])){
+				$country=strtoupper($args["country"]);
+			}
+			$address=new Address($this->database);
+			$province=$address->getProvince($country);
+			return $response->withJson($province,200);
+		});
+		$app->get('/Municipality[/{province}]',function($request,$response,$args){
+			$country='SUC';
+			if(isset($args["province"])){
+				$country=strtoupper($args["province"]);
+			}
+			$address=new Address($this->database);
+			$province=$address->getMunicipality($country);
+			return $response->withJson($province,200);
+		});
+		$app->get('/Parish[/{municipality}]',function($request,$response,$args){
+			$country='13';
+			if(isset($args["municipality"])){
+				$country=strtoupper($args["municipality"]);
+			}
+			$address=new Address($this->database);
+			$province=$address->getParish($country);
+			return $response->withJson($province,200);
+		});
 	});
-	$this->get("/delete/{id}",function($request,$response,$args){
-		include_once('people.php');
-		if(People::delete_user($this["settings"]["database"],$args["id"])){
-			$users=Array(
-				"message"=>"El usuario ha sido eliminado satisfactoriamente",
-				"status"=>200
-			);
-		}else{
-			$users=Array(
-				"message"=>"No se pudo eliminar los datos del usuario",
-				"status"=>406
-			);			
-		}
-		return $response->withJson($users,$users["status"]);
+	$app->group('/Academic',function()use($app){
+		$app->group('/Institute',function()use($app){
+			$app->post('/',function($request,$response,$args){
+				$post = $request->getParsedBody();
+				$Validator=new Validator('Institute');
+				$Validator->validate($post);
+				$address=new Address($this->database);
+				$province=$address->findParish($post["parish_cod"]);
+				$address=new Institute($this->database);
+				$province=$address->create($post);
+				return $response->withJson([
+					"cod"=>"001",
+					"message"=>"registro almacenado satisfactoriamente"
+				],200);
+			});
+			$app->get('/[{cod}]',function($request,$response,$args){
+				$address=new Institute($this->database);
+				if(isset($args["cod"])){
+					$Validator=new Validator('Institute');
+					$Validator->rulescodInstitute($args["cod"]);
+					$institute=$address->find($args["cod"]);
+					return $response->withJson($address->rowPrepare($institute),200);
+				}else{
+					$institutes=$address->getAll();
+					return $response->withJson($address->prepare($institutes),200);
+				}				
+			});
+		});
 	});
-	$this->post("/edit/{id}",function($request,$response,$args){
-		include_once('people.php');
-		$post=$this->request->getParsedBody();
-		if(People::edit_user($post,$args["id"],$this["settings"]["database"])){
-			$data=[
-				"message"=>"Datos actualizados satisfactoriamente",
-				"status"=>200
-			];
-		}else{
-			$data=[
-				"message"=>"Hubo un error durante la actualización de datos",
-				"status"=>406
-			];
-		}
-		return $response->withJson($data,$data["status"]);
-	});	
-	$this->post("/add[/]",function($request,$response,$args){
-		include_once('people.php');
-		$post=$this->request->getParsedBody();
-		if(People::add_user($post,$this["settings"]["database"])){
-			$data=[
-				"message"=>"Datos añadidos satisfactoriamente",
-				"status"=>200
-			];
-		}else{
-			$data=[
-				"message"=>"Hubo un error durante la inserción de datos",
-				"status"=>406
-			];
-		}
-		return $response->withJson($data,$data["status"]);
-	});
-});
-$app->group("/admin",function(){
-	$this->post("/set/{id}",function($request,$response,$args){
-		include_once('people.php');
-		$post=$this->request->getParsedBody();
-		if(!isset($post["value"])){
-			return $response->withJson([
-				"message"=>"Hubo un error durante la asignación de permisos",
-				"status"=>406
-			],406);
-		}
-		if(People::edit_perms($post["value"],$args["id"],$this["settings"]["database"])){
-			$data=[
-				"message"=>"permisos actualizados satisfactoriamente",
-				"status"=>200
-			];
-		}else{
-			$data=[
-				"message"=>"Hubo un error durante la asignación de permisos",
-				"status"=>406
-			];
-		}
-		return $response->withJson($data,$data["status"]);
-	});
-});
-$app->post("/auth[/]",function($request,$response,$args){
-	include_once('auth.php');
-	$post=$this->request->getParsedBody();
-	if(!isset($post["username"]) || !isset($post["password"])){
-		return $response->withJson([
-			"message"=>"Error en los parametros de autenticación",
-			"status"=>406
-			],406);
-	}
-	$user=Auth::login($post["username"],$post["password"],$this["settings"]["database"]);
-	if($user){
-			return $response->withJson($user,200);
-		}else{
-			return $response->withJson([
-			"message"=>"Error en autenticación: Usuario no existe o los datos de acceso son erroneos",
-			"status"=>406
-			],406);
-		}
-});
-$app->get("/token/{token}",function($request,$response,$args){
-	include_once('people.php');
-	$valor=People::get_soap_people($args["token"]);
-	var_dump($valor);
-	/*include_once('auth.php');
-	if(Auth::isValid($args["token"],$this["settings"]["database"])){
-		echo "APROBADO";
-	}else{
-		echo "FUERA";
-	}*/
 });
