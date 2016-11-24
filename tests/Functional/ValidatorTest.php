@@ -222,7 +222,7 @@ class ValidatorTest extends BaseTestCase
         $data=[
             "institute_name"=>$faker->text(45),
             "institute_address"=>$faker->address,
-            "parroquia_name"=>$faker->text(45)
+            "parish_cod"=>$faker->text(45)
         ];
         $val=$Validator->validate($data);
         $this->assertTrue($val);
@@ -233,7 +233,7 @@ class ValidatorTest extends BaseTestCase
         $data=[
             "institute_name"=>$faker->paragraphs(100),
             "institute_address"=>$faker->address,
-            "parroquia_name"=>$faker->paragraphs(100)
+            "parish_cod"=>$faker->paragraphs(100)
         ];
         $this->expectException(ValidatorException::class);
         $val=$Validator->validate($data);
