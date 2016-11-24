@@ -25,5 +25,5 @@ class AddressSelectTest extends DatabaseTestCase
         $address=new Address($this->database);
         $all=$address->getParish(1);
         $this->assertTrue(count($all)>0);
-    }    
+    }
 }

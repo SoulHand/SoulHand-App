@@ -23,7 +23,7 @@ class DatabaseTestCase extends \Tests\Functional\BaseTestCase
     	$this->database->exec($SQL);
     }
     public function tearDown(){
-        $stm=$this->database->query("SHOW TABLES");
+        $stm=$this->database->query("SELECT tablename FROM pg_tables WHERE schemaname = 'public'");
         while($table=$stm->fetch(\PDO::FETCH_NUM)){
             $this->database->exec("DROP TABLE {$table[0]}");
         }

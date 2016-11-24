@@ -6,7 +6,7 @@ CREATE TABLE  persona (
   persona_telefono VARCHAR(15),
   persona_fecha_nacimiento DATE NOT NULL,
   persona_correo TEXT,
-  persona_imagen blob NULL,
+  persona_imagen bytea NULL,
   PRIMARY KEY (persona_cedula)
   );
 CREATE TABLE usuario(
@@ -30,7 +30,7 @@ CREATE TABLE sesiones(
 -- -----------------------------------------------------
 CREATE TABLE  parroquia (
   parroquia_id_municipio VARCHAR(20) NOT NULL,
-  parroquia_id INT NOT NULL AUTO_INCREMENT,
+  parroquia_id SERIAL NOT NULL,
   parroquia_nombre VARCHAR(45) NOT NULL,
   PRIMARY KEY (parroquia_id),
   UNIQUE (parroquia_nombre)
@@ -39,7 +39,7 @@ CREATE TABLE  parroquia (
 -- Table mydb.institucion
 -- -----------------------------------------------------
 CREATE TABLE  institucion (
-  institucion_cod INT NOT NULL AUTO_INCREMENT,
+  institucion_cod SERIAL NOT NULL,
   institucion_nombre VARCHAR(45) NOT NULL,
   institucion_direccion TEXT NULL,
   parroquia_parroquia_id INT NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE  docente (
 -- Table mydb.materia
 -- -----------------------------------------------------
 CREATE TABLE  materia (
-  materia_cod INT NOT NULL AUTO_INCREMENT,
+  materia_cod SERIAL NOT NULL,
   materia_nombre VARCHAR(45) NOT NULL,
   PRIMARY KEY (materia_cod),
   UNIQUE (materia_nombre)
@@ -78,7 +78,7 @@ CREATE TABLE  alumno (
 -- Table mydb.actividades
 -- -----------------------------------------------------
 CREATE TABLE  actividades (
-  actividades_cod INT NOT NULL AUTO_INCREMENT,
+  actividades_cod SERIAL NOT NULL,
   materia_materia_cod INT NOT NULL,
   actividades_nombre VARCHAR(45) NOT NULL,
   actividades_descripcion TEXT NOT NULL,
@@ -91,14 +91,14 @@ CREATE TABLE  actividades (
 -- Table mydb.actividades_alumno
 -- -----------------------------------------------------
 CREATE TABLE  actividades_alumno (
-actividades_alumno INT NOT NULL AUTO_INCREMENT,
+actividades_alumno SERIAL NOT NULL,
   actividades_cod INT NOT NULL,
   actividades_materia_cod INT NOT NULL,
   docente_cedula VARCHAR(11) NOT NULL,
   alumno_cedula VARCHAR(11) NOT NULL,
   alumno_institucion_cod INT NOT NULL,
   alumno_actividades_puntaje FLOAT NULL,
-  alumno_actividades_video blob NULL,
+  alumno_actividades_video bytea NULL,
   alumno_actividades_formato TEXT NULL,
   alumno_actividades_fecha_creado TIMESTAMP NOT NULL,
   alumno_actividades_fecha_modificado TIMESTAMP NULL,
@@ -110,7 +110,7 @@ actividades_alumno INT NOT NULL AUTO_INCREMENT,
 -- Table mydb.perfil_pedagogico
 -- -----------------------------------------------------
 CREATE TABLE  perfil_pedagogico (
-  perfil_pedagogico_cod INT NOT NULL AUTO_INCREMENT,
+  perfil_pedagogico_cod SERIAL NOT NULL,
   docente_docente_cedula VARCHAR(11) NOT NULL,
   alumno_alumno_cedula VARCHAR(11) NOT NULL,
   alumno_institucion_institucion_cod INT NOT NULL,
@@ -133,7 +133,7 @@ CREATE TABLE provincia(
 );
 CREATE TABLE municipio(
   municipio_id_provincia VARCHAR(20) NOT NULL,
-  municipio_id INT NOT NULL AUTO_INCREMENT,
+  municipio_id SERIAL NOT NULL,
   municipio_nombre VARCHAR(25) NOT NULL,
   PRIMARY KEY(municipio_nombre)
 );

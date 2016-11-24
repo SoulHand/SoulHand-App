@@ -29,7 +29,8 @@
     },
 	"scripts": {
         "start": "php -S 0.0.0.0:8032 -t public public/index.php",
-        "test": "phpunit --testdox --verbose"
+        "test": "phpunit --testdox --verbose",
+        "load database":"php src/loadDatabase.php"
 	}
 
 }

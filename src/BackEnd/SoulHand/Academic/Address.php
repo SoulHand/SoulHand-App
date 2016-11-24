@@ -33,7 +33,8 @@ class Address{
 		return $stm->fetch(PDO::FETCH_ASSOC);
 	}
 	public function getParish($municipality){
-		$stm=$this->database->query("SELECT * FROM parroquia  WHERE parroquia_id_municipio=? ORDER BY parroquia_nombre ASC");
+		$stm=$this->database->prepare("SELECT * FROM parroquia  WHERE parroquia_id_municipio=? ORDER BY parroquia_nombre ASC");
+		$query=$stm->execute([$municipality]);
 		if($stm->rowCount()==0){
 			throw new PDOException("No existe parroquias!");			
 		}
@@ -41,11 +42,11 @@ class Address{
 	}
 	public function getMunicipality($province){
 		$stm=$this->database->prepare("SELECT * FROM municipio WHERE municipio_id_provincia=? ORDER BY municipio_nombre ASC");
-		$query=$stm->execute([$province]);	
+		$query=$stm->execute([$province]);
 		if($stm->rowCount()==0){
 			throw new PDOException("No existe municipios!");
 		}
-		return $stm->fetch(PDO::FETCH_ASSOC);
+		return $stm->fetchAll(PDO::FETCH_ASSOC);
 	}
 	public function getProvince($country){
 		$stm=$this->database->prepare("SELECT * FROM provincia WHERE provincia_id_pais=?  ORDER BY provincia_nombre ASC");
@@ -53,6 +54,6 @@ class Address{
 		if($stm->rowCount()==0){
 			throw new PDOException("No existe provincias!");
 		}
-		return $stm->fetch(PDO::FETCH_ASSOC);
+		return $stm->fetchAll(PDO::FETCH_ASSOC);
 	}
 }
