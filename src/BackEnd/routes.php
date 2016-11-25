@@ -51,6 +51,12 @@ $app->group('/v1',function() use($app){
 		});
 	});
 	$app->group('/Academic',function()use($app){
+		/**
+		* Institute Routes
+		* POST / create
+		* GET /[{cod}] get all or get one
+		* DELETE /{cod} delete
+		*/
 		$app->group('/Institute',function()use($app){
 			$app->post('/',function($request,$response,$args){
 				$post = $request->getParsedBody();
@@ -61,7 +67,7 @@ $app->group('/v1',function() use($app){
 				$address=new Institute($this->database);
 				$province=$address->create($post);
 				return $response->withJson([
-					"cod"=>"001",
+					"code"=>"001",
 					"message"=>"registro almacenado satisfactoriamente"
 				],200);
 			});
@@ -77,6 +83,47 @@ $app->group('/v1',function() use($app){
 					return $response->withJson($address->prepare($institutes),200);
 				}				
 			});
+			$app->delete('/{id}',function($request,$response,$args){
+				$institute=new Institute($this->database);
+				$Validator=new Validator('Institute');
+				$Validator->rulescodInstitute($args["id"]);
+				$institute->delete($args["id"]);
+				return $response->withJson([
+					"code"=>"001",
+					"message"=>"Registro eliminado satisfactoriamente"
+				],200);
+			});
+			$app->post('/{id}',function($request,$response,$args){
+				$input=$request->getParsedBody();
+				$fields=[
+					"institute_name"=>"institucion_nombre",
+					"institute_address"=>"institucion_direccion",
+					"parish_cod"=>"parroquia_parroquia_id",
+				];
+				$filters=[];
+				foreach ($input as $key => $value) {
+					if(array_key_exists($key, $input)){
+						$filters[$fields[$key]]=$value;
+					}
+				}
+				if(isset($filters["parroquia_parroquia_id"])){
+					$address=new Address($this->database);
+					$province=$address->findParish($filters["parroquia_parroquia_id"]);
+				}
+				$institute=new Institute($this->database);
+				$Validator=new Validator('Institute');
+				$Validator->rulescodInstitute($args["id"]);
+				$institute->update($args["id"],$filters);
+				return $response->withJson([
+					"code"=>"001",
+					"message"=>"Registro actualizado satisfactoriamente"
+				],200);
+			});
 		});
+		/*$app->group('/Subject',function()use($app){
+			$app->post('/',function($request,$response,$args){
+
+			});
+		});*/
 	});
 });
