@@ -62,6 +62,9 @@ class Institute{
     	$data["materia_cod"]=$id;
 		$stm=$this->database->prepare($SQL);
 		$query=$stm->execute($data);
+		if($stm->rowCount()==0){
+			throw new PDOException("No se modificó ningun registro!");			
+		}
 	}
 	public function delete($id){
 		$stm=$this->database->prepare("DELETE FROM institucion WHERE institucion_cod=?");
