@@ -73,6 +73,16 @@ class Validator{
 		$this->rulesUserAuth();
 		$this->rulesUserDoc();
 	}
+	private function rulesPeople(){
+		$this->rulesUser();
+		$this->rulesUserDoc();
+	}
+	private function rulesTeacher(){
+		$this->rulesUser();
+		$this->rulesUserDoc();
+		$this->rules->key('instruction',v::stringType())
+		->key('interpreter',v::stringType());
+	}
 	/**
 	* @param \ArrayObject as $data
 	* @return boolean; 

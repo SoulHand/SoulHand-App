@@ -16,7 +16,7 @@ class Exception extends \Exception {
    */
   public function getJSON() {
     return [
-      'error_code' => $this->errorCode,
+      'code' => $this->errorCode,
       'message' => $this->error->getMessage()
     ];
   }

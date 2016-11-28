@@ -2,5 +2,5 @@
 namespace SoulHand;
 
 class ValidatorException extends \SoulHand\Exception{
-	public $errorCode = '01';
+	public $errorCode = '02';
 }
