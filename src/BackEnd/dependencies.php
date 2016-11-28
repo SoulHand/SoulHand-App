@@ -29,16 +29,16 @@ $container['errorHandler'] = function ($c) {
   return function ($request, $response, $exception) use ($c) {
     $httpStatus = 500;
     /** @var \ArrayObject $body */
-    $body = [];    
-    if ($exception instanceof \SouldHand\Exception) {
+    $body = [];
+    if ($exception instanceof \SoulHand\Exception) {
       $httpStatus = $exception->httpStatus;
       $body = $exception->getJSON();
     }else{
       $body = [
         'message' => $exception->getMessage(),
         'code' => $exception->getCode()
-      ];      
-    }   
+      ];
+    }
     return $response->withJSON($body,$httpStatus);
   };
 };

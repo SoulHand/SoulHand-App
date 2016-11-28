@@ -1,7 +1,10 @@
 <?php
+use \SoulHand\Validator;
 use \SoulHand\Academic\Address;
 use \SoulHand\Academic\Institute;
-use \SoulHand\Validator;
+use \SoulHand\Academic\Subject;
+use \SoulHand\Academic\Teacher;
+
 // Routes
 $app->get('/', function ($request, $response, $args) {
 	$base_url = $request->getUri()->getBasePath();
@@ -65,10 +68,11 @@ $app->group('/v1',function() use($app){
 				$address=new Address($this->database);
 				$province=$address->findParish($post["parish_cod"]);
 				$address=new Institute($this->database);
-				$province=$address->create($post);
+				$id=$address->create($post);
 				return $response->withJson([
 					"code"=>"001",
-					"message"=>"registro almacenado satisfactoriamente"
+					"message"=>"registro almacenado satisfactoriamente",
+					"id"=>$id
 				],200);
 			});
 			$app->get('/[{cod}]',function($request,$response,$args){
@@ -120,10 +124,117 @@ $app->group('/v1',function() use($app){
 				],200);
 			});
 		});
-		/*$app->group('/Subject',function()use($app){
+		$app->group('/Subject',function()use($app){
 			$app->post('/',function($request,$response,$args){
-
+				$post = $request->getParsedBody();
+				$Validator=new Validator('Subject');
+				$Validator->validate($post);				
+				$address=new Subject($this->database);
+				$id=$address->create($post);
+				return $response->withJson([
+					"code"=>"001",
+					"message"=>"registro almacenado satisfactoriamente",
+					"id"=>$id
+				],200);
 			});
-		});*/
+			$app->get('/[{cod}]',function($request,$response,$args){
+				$address=new Subject($this->database);
+				if(isset($args["cod"])){
+					$Validator=new Validator('Institute');
+					$Validator->rulescodInstitute($args["cod"]);
+					$institute=$address->find($args["cod"]);
+					return $response->withJson($institute,200);
+				}else{
+					$institutes=$address->getAll();
+					return $response->withJson($institutes,200);
+				}				
+			});
+			$app->delete('/{id}',function($request,$response,$args){
+				$institute=new Subject($this->database);
+				$Validator=new Validator('Institute');
+				$Validator->rulescodInstitute($args["id"]);
+				$institute->delete($args["id"]);
+				return $response->withJson([
+					"code"=>"001",
+					"message"=>"Registro eliminado satisfactoriamente"
+				],200);
+			});
+			$app->post('/{id}',function($request,$response,$args){
+				$input=$request->getParsedBody();
+				$fields=[
+					"subject_name"=>"materia_nombre"
+				];
+				$filters=[];
+				foreach ($input as $key => $value) {
+					if(array_key_exists($key, $input)){
+						$filters[$fields[$key]]=$value;
+					}
+				}
+				$institute=new Subject($this->database);
+				$Validator=new Validator('Institute');
+				$Validator->rulescodInstitute($args["id"]);
+				$institute->update($args["id"],$filters);
+				return $response->withJson([
+					"code"=>"001",
+					"message"=>"Registro actualizado satisfactoriamente"
+				],200);
+			});
+		});
+		$app->group("/Teacher",function()use($app){
+			$app->post('/',function($request,$response,$args){
+				$post = $request->getParsedBody();
+				$Validator=new Validator('Teacher');
+				$Validator->validate($post);
+				$address=new Teacher($this->database);
+				$address->create($post);
+				return $response->withJson([
+					"code"=>"001",
+					"message"=>"registro almacenado satisfactoriamente"					
+				],200);
+			});
+			$app->get('/[{dni}]',function($request,$response,$args){
+				$address=new Teacher($this->database);
+				if(isset($args["dni"])){
+					$Validator=new Validator('UserDoc');
+					$Validator->validate($args);
+					$institute=$address->find($args["dni"]);
+					return $response->withJson($institute,200);
+				}else{
+					$institutes=$address->getAll();
+					return $response->withJson($institutes,200);
+				}
+			});
+			$app->delete('/{dni}',function($request,$response,$args){
+				$institute=new Teacher($this->database);
+				$Validator=new Validator('UserDoc');
+				$Validator->validate($args);
+				$institute->delete($args["dni"]);
+				return $response->withJson([
+					"code"=>"001",
+					"message"=>"Registro eliminado satisfactoriamente"
+				],200);
+			});
+			$app->post('/{dni}',function($request,$response,$args){
+				$input=$request->getParsedBody();
+				$fields=[
+					"instruction"=>"docente_instruccion",
+					"interpreter"=>"docente_interprete"
+				];
+				$filters=[];
+				foreach ($input as $key => $value) {
+					if(array_key_exists($key, $input)){
+						$filters[$fields[$key]]=$value;
+					}
+				}
+				$institute=new Teacher($this->database);
+				$Validator=new Validator('UserDoc');
+				$Validator->validate($args);
+				$institute->update($args["dni"],$filters);
+				return $response->withJson([
+					"code"=>"001",
+					"message"=>"Registro actualizado satisfactoriamente"
+				],200);
+			});
+		});
 	});
 });
