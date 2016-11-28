@@ -32,12 +32,19 @@ use \PDO;
         return array_merge($val,$TEACHER);
     }
     public function find($dni){
-        $stm=$this->database->prepare("SELECT * FROM persona INNER JOIN docente on docente_cedula=persona.persona_cedula WHERE persona_cedula=?");
+        $stm=$this->database->prepare("SELECT persona_cedula as dni, persona_nombre as firstName, persona_apellido as lastName, persona_telefono as tel, persona_fecha_nacimiento as birthdate, persona_correo as email, docente_instruccion as instruction, docente_interprete as interpreter FROM persona INNER JOIN docente on docente_cedula=persona.persona_cedula WHERE persona_cedula=?");
         $query=$stm->execute([$dni]);
         if($stm->rowCount()==0){
             throw new PDOException("No existe el docente!");
         }
         return $stm->fetch(PDO::FETCH_ASSOC);
+    }
+    public function getAll(){
+        $stm=$this->database->query("SELECT persona_cedula as dni, persona_nombre as firstName, persona_apellido as lastName, persona_telefono as tel, persona_fecha_nacimiento as birthdate, persona_correo as email, docente_instruccion as instruction, docente_interprete as interpreter FROM persona INNER JOIN docente on docente_cedula=persona.persona_cedula");
+        if($stm->rowCount()==0){
+            throw new PDOException("No existe docentes!");
+        }
+        return $stm->fetchAll(PDO::FETCH_ASSOC);
     }
     public function delete($dni){
         $stm=$this->database->prepare("DELETE FROM docente WHERE docente_cedula=?");

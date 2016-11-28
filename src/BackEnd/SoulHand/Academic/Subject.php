@@ -17,12 +17,19 @@ class Subject{
 		return $this->database->lastInsertId();
 	}
 	public function find($id){
-		$stm=$this->database->prepare("SELECT * FROM materia WHERE materia_cod=?");
+		$stm=$this->database->prepare("SELECT materia_cod as id,materia_nombre as name FROM materia WHERE materia_cod=?");
 		$query=$stm->execute([$id]);
 		if($stm->rowCount()==0){
 			throw new PDOException("No existe la materia!");			
 		}
 		return $stm->fetch(PDO::FETCH_ASSOC);
+	}
+	public function getAll(){
+		$stm=$this->database->query("SELECT materia_cod as id,materia_nombre as name FROM materia ORDER BY materia_nombre ASC");		
+		if($stm->rowCount()==0){
+			throw new PDOException("No existe materias!");
+		}
+		return $stm->fetchAll(PDO::FETCH_ASSOC);
 	}
 	public function update($id,$data){
 		$fields =[];
