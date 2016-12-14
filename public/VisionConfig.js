@@ -20,7 +20,7 @@ var _CONFIG={
 		mode:"LBP",
 		step:15,
 		pyramid:1.2,
-		path:"components/ciweb/min/Worker.js",
+		path:"/vendor/ciweb/min/Worker.js",
 		delay:100
 	},
 	draw:{
