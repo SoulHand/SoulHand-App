@@ -520,37 +520,10 @@
 	"buffers":
 	[
 		{
-			"file": "src/BackEnd/routes.php",
+			"file": "/home/mata/Documentos/WebProject/CIWeb/data/LBPCascade.js",
 			"settings":
 			{
-				"buffer_size": 7813,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/mata/Documentos/WebProject/CIWebOctaveTool/Tools/getFacesFrontal.js",
-			"settings":
-			{
-				"buffer_size": 987,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/database.sql",
-			"settings":
-			{
-				"buffer_size": 6025,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/BackEnd/SoulHand/Validator.php",
-			"settings":
-			{
-				"buffer_size": 2554,
+				"buffer_size": 56419,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -650,20 +623,38 @@
 	},
 	"expanded_folders":
 	[
-		"/home/mata/Documentos/WebProject/SoulHand-App"
+		"/home/mata/Documentos/WebProject/SoulHand-App",
+		"/home/mata/Documentos/WebProject/SoulHand-App/Test"
 	],
 	"file_history":
 	[
-		"/home/mata/Documentos/WebProject/SoulHand-App/app.sublime-project",
-		"/tmp/.fr-YyFID8/workspace/package.json",
+		"/home/mata/Documentos/WebProject/CIWeb/bower.json",
+		"/home/mata/Documentos/WebProject/SoulHand-App/package.json",
 		"/home/mata/Documentos/WebProject/chat/package.json",
+		"/home/mata/Documentos/WebProject/SoulHand-App/grunt.js",
+		"/home/mata/Documentos/WebProject/SoulHand-App/_SpecRunner.html",
+		"/home/mata/Documentos/WebProject/SoulHand-App/Test/requirejs.config.js",
+		"/home/mata/Documentos/WebProject/SoulHand-App/Test/homeWorkTest.js",
+		"/home/mata/Documentos/WebProject/SoulHand-App/tests/homeWorkTest.js",
+		"/home/mata/Documentos/WebProject/SoulHand-App/tests/requirejs.config.js",
+		"/home/mata/Documentos/WebProject/SoulHand-App/npm-debug.log",
+		"/home/mata/Documentos/WebProject/SoulHand-App/tsconfig.json",
+		"/home/mata/Documentos/WebProject/SoulHand-App/public/index.html",
+		"/home/mata/Documentos/WebProject/SoulHand-App/server.js",
+		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/routes.js",
+		"/home/mata/Documentos/WebProject/CIWebOctaveTool/Tools/getFacesFrontal.js",
+		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/routes.php",
+		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand/Validator.php",
+		"/home/mata/Documentos/WebProject/SoulHand-App/src/database.sql",
+		"/home/mata/Documentos/WebProject/SoulHand-App/public/VisionConfig.js",
+		"/home/mata/Documentos/WebProject/SoulHand-App/app.sublime-project",
+		"/home/mata/Documentos/WebProject/SoulHand-App/.bowerrc",
+		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/dependences.js",
+		"/tmp/.fr-YyFID8/workspace/package.json",
 		"/home/mata/Documentos/WebProject/CIWebOctaveTool/Tools/getSketch.js",
 		"/home/mata/Documentos/WebProject/CIWebOctaveTool/Tools/getFaceProfile.js",
-		"/home/mata/Documentos/WebProject/CIWebOctaveTool/Tools/getFacesFrontal.js",
 		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand/Academic/Teacher.php",
-		"/home/mata/Documentos/WebProject/SoulHand-App/src/database.sql",
 		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand/Academic/Subject.php",
-		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand/Validator.php",
 		"/home/mata/Documentos/WebProject/SoulHand-App/src/loadDatabase.php",
 		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand/Exception.php",
 		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/dependencies.php",
@@ -728,7 +719,6 @@
 		"/home/mata/Documentos/WebProject/SoulHand-App/src/react/App.tsx",
 		"/home/mata/Documentos/WebProject/SoulHand-App/src/react/EventsDocks.tsx",
 		"/home/mata/Documentos/WebProject/SoulHand-App/src/react/definition.d.ts",
-		"/home/mata/Documentos/WebProject/SoulHand-App/public/VisionConfig.js",
 		"/home/mata/Escritorio/LBPCascade/init.m",
 		"/home/mata/Escritorio/LBPCascade/loadfor.m",
 		"/var/www/html/soulhand/js/main.js",
@@ -742,10 +732,8 @@
 		"/home/mata/Documentos/WebProject/SoulHand-App/src/react/animations.tsx",
 		"/home/mata/Documentos/WebProject/SoulHand-App/bower_components/recordrtc/RecordRTC.min.js",
 		"/home/mata/Documentos/WebProject/SoulHand-App/public/components/ciweb/min/module.config.js",
-		"/home/mata/Documentos/WebProject/CIWeb/bower.json",
 		"/home/mata/Documentos/WebProject/SoulHand-App/public/components/ciweb/min/Worker.js",
 		"/home/mata/Documentos/WebProject/SoulHand-App/public/components/ciweb/min/VisionConfig.js",
-		"/home/mata/Documentos/WebProject/SoulHand-App/.bowerrc",
 		"/home/mata/Documentos/WebProject/SoulHand-App/webpack.config.js",
 		"/home/mata/Documentos/WebProject/CIWeb/src/JVision.js",
 		"/home/mata/Documentos/WebProject/SoulHand-App/typings/globals/react/index.d.ts",
@@ -754,7 +742,6 @@
 		"/home/mata/Documentos/WebProject/SoulHand-App/typings/globals/react/typings.json",
 		"/home/mata/Documentos/WebProject/SoulHand-App/typings/globals/react-router/index.d.ts",
 		"/home/mata/Documentos/WebProject/SoulHand-App/public/js/ciweb/VisionConfig.js",
-		"/home/mata/Documentos/WebProject/SoulHand-App/tsconfig.json",
 		"/home/mata/Documentos/WebProject/SoulHand-App/bower_components/recordrtc/RecordRTC-to-PHP/save.php",
 		"/home/mata/Documentos/WebProject/SoulHand-App/bower_components/highcharts/highcharts.js",
 		"/home/mata/Documentos/WebProject/SoulHand-App/bower.json",
@@ -768,20 +755,7 @@
 		"/home/mata/Documentos/WebProject/SoulHand/src/php/templates/index.phtml",
 		"/home/mata/Documentos/WebProject/SoulHand/public/css/main.css",
 		"/home/mata/Documentos/WebProject/SoulHand/public/css/app.css",
-		"/home/mata/Documentos/WebProject/SoulHand/src/react/EventsDocks.tsx",
-		"/home/mata/Documentos/WebProject/SoulHand/src/react/bottomdock.tsx",
-		"/home/mata/Documentos/WebProject/SoulHand/src/react/paintbox.tsx",
-		"/home/mata/Documentos/WebProject/SoulHand/src/react/animations.tsx",
-		"/home/mata/Documentos/WebProject/SoulHand/src/react/main.tsx",
-		"/home/mata/Documentos/WebProject/SoulHand/src/react/Desktop.tsx",
-		"/home/mata/Documentos/WebProject/CIWeb/package.json",
-		"/home/mata/Documentos/WebProject/SoulHand/src/react/Dockmain.tsx",
-		"/home/mata/Documentos/WebProject/CIWeb/Gruntfile.js",
-		"/home/mata/Documentos/WebProject/SoulHand/tsconfig.json",
-		"/home/mata/Documentos/WebProject/SoulHand/typings.json",
-		"/home/mata/Documentos/WebProject/SoulHand/webpack.config.js",
-		"/home/mata/Documentos/WebProject/CIWeb/min/*.min.js/Morphology.js",
-		"/home/mata/Documentos/WebProject/SoulHand/bower.json"
+		"/home/mata/Documentos/WebProject/SoulHand/src/react/EventsDocks.tsx"
 	],
 	"find":
 	{
@@ -800,6 +774,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"<?php echo $_BASE; ?>",
+			"components",
 			"id",
 			"cod",
 			"value",
@@ -925,9 +901,7 @@
 			"width",
 			"workers[",
 			"scale",
-			"[(",
-			"(",
-			"scale"
+			"[("
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1019,127 +993,24 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "src/BackEnd/routes.php",
+					"file": "/home/mata/Documentos/WebProject/CIWeb/data/LBPCascade.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7813,
+						"buffer_size": 56419,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1476,
-								1476
-							]
-						],
-						"settings":
-						{
-							"bracket_highlighter.busy": false,
-							"bracket_highlighter.locations":
-							{
-								"close":
-								{
-								},
-								"icon":
-								{
-								},
-								"open":
-								{
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.regions":
-							[
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
-							],
-							"syntax": "Packages/PHP/PHP.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 632.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "/home/mata/Documentos/WebProject/CIWebOctaveTool/Tools/getFacesFrontal.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 987,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								320,
-								320
+								49274,
+								49274
 							]
 						],
 						"settings":
@@ -1151,15 +1022,15 @@
 								{
 									"1":
 									[
-										984,
-										985
+										49267,
+										49268
 									]
 								},
 								"icon":
 								{
 									"1":
 									[
-										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"Packages/BracketHighlighter/icons/square_bracket.png",
 										"brackethighlighter.default"
 									]
 								},
@@ -1167,8 +1038,8 @@
 								{
 									"1":
 									[
-										319,
-										320
+										49244,
+										49245
 									]
 								},
 								"unmatched":
@@ -1177,276 +1048,71 @@
 							},
 							"bracket_highlighter.regions":
 							[
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
 								"bh_square",
 								"bh_square_center",
 								"bh_square_open",
 								"bh_square_close",
 								"bh_square_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
 								"bh_default",
 								"bh_default_center",
 								"bh_default_open",
 								"bh_default_close",
 								"bh_default_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
-							],
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 51.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "src/database.sql",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6025,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1807,
-								1807
-							]
-						],
-						"settings":
-						{
-							"bracket_highlighter.busy": false,
-							"bracket_highlighter.locations":
-							{
-								"close":
-								{
-								},
-								"icon":
-								{
-								},
-								"open":
-								{
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.regions":
-							[
 								"bh_tag",
 								"bh_tag_center",
 								"bh_tag_open",
 								"bh_tag_close",
 								"bh_tag_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
 								"bh_round",
 								"bh_round_center",
 								"bh_round_open",
 								"bh_round_close",
 								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content"
-							],
-							"syntax": "Packages/SQL/SQL.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": -0.0,
-						"translation.y": 714.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "src/BackEnd/SoulHand/Validator.php",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2554,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2067,
-								2067
-							]
-						],
-						"settings":
-						{
-							"bracket_highlighter.busy": false,
-							"bracket_highlighter.locations":
-							{
-								"close":
-								{
-								},
-								"icon":
-								{
-								},
-								"open":
-								{
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.regions":
-							[
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content"
+								"bh_double_quote_content"
 							],
-							"syntax": "Packages/PHP/PHP.sublime-syntax",
+							"color_scheme": "Packages/User/Color Highlighter/themes/Monokai.tmTheme",
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1275.0,
+						"translation.y": 91729.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
