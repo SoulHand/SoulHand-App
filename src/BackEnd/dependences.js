@@ -11,14 +11,6 @@ module.exports=function (app){
 			tel:{type:String, required: false},
 			image:{type:String, required:false}
 		}),
-		Teachers:mongoose.Schema({
-			data: structDb.Peoples,
-			interprete:{type:Boolean, required:true}
-		}),
-		Representatives:mongoose.Schema({
-			data: structDb.Peoples,
-			idStudent:{ type: mongoose.Schema.ObjectId, ref: "Students" },
-		}),
 		Grades:mongoose.Schema({
 			name:{type:String, required:true, trim:true, index:true}
 		}),
@@ -32,23 +24,85 @@ module.exports=function (app){
 			name:{type:String, required:true, trim:true, index:true}
 		}),
 		Cognitions:mongoose.Schema({
-			category:{type:mongoose.Schema.ObjectId, ref:"CategoryCognitions"}
-			name:{type:String, required:true, trim:true, index:true}
-		}),
-		Activities:mongoose.Schema({
-			name:{type:String, required:true, trim:true, index:true},
-			TeacherCreate:structDb.Teachers,
-			createDate:{type:Date, default:Date.now},
-			range:{
-				min:{type:Number, min:0},
-				max:{type:Number, min:0}				
-			}
-		}),
-		Students:mongoose.Schema({
-			data: structDb.Peoples,
-			grade:{ type: String, ref: "Grades" },
-			discapacityLevel:{type:Number, required:true, default:0}
+			category:{type:mongoose.Schema.ObjectId, ref:"CategoryCognitions"},
+			name:{type:String, trim:true}
 		})
+
+	};
+	structDb.Habilities=mongoose.Schema({
+		name:{type:String, trim:true},
+		createDate:{type:Date, default:Date.now},
+		cognitions:[structDb.Cognitions],
+		level:{type:Number,min:0,max:100}
+	});
+	structDb.Teachers=mongoose.Schema({
+		data: structDb.Peoples,
+		interprete:{type:Boolean, required:true}
+	});
+	structDb.Representatives=mongoose.Schema({
+		data: structDb.Peoples,
+		idStudent:{ type: mongoose.Schema.ObjectId, ref: "Students" }
+	});
+	structDb.ConflictCognitions=mongoose.Schema({
+		name:{type:String, trim:true},
+		createDate:{type:Date, default:Date.now},
+		cognitions:[structDb.Cognitions],
+		level:{type:Number,min:0,max:100}
+	});
+	structDb.Activities=mongoose.Schema({
+		name:{type:String, trim:true},
+		TeacherCreate:structDb.Teachers,
+		createDate:{type:Date, default:Date.now},
+		course:structDb.Courses,
+		range:{
+			level:{type:Number,min:0,max:100},
+			min:{type:Number, min:0},
+			max:{type:Number, min:0}
+		},
+		conflicts:[structDb.ConflictCognitions],
+		habilitys:[structDb.Habilities]
+	});
+	structDb.ActivitiesMaked=mongoose.Schema({
+		activity:structDb.Activities,
+		createDate:{type:Date, default:Date.now},
+		completeDate:{type:Date, required:false},
+		limitDate:{type:Date, min:Date.now},
+		ponderation:{type:Number,min:0,max:20},
+		conflicts:[structDb.ConflictCognitions],
+		habilitys:[structDb.Habilities]
+	});
+	structDb.Students=mongoose.Schema({
+		data: structDb.Peoples,
+		grade:{ type: String, ref: "Grades" },
+		discapacityLevel:{type:Number, required:true, default:0},
+		activities:[structDb.ActivitiesMaked],
+		conflicts:[structDb.ConflictCognitions],
+		habilitys:[structDb.Habilities]
+	});
+	var Schema={};
+	for( var i in structDb){
+		Schema[i]=db.model(i, structDb[i]);
+	}
+	return {
+		database:{
+			db:mongoose,
+			Schema:Schema			
+		},
+		ErrorHandler:function(error,request,response,next){
+			var body={
+				code:500,
+				message:null
+			},status=500;
+			if(error instanceof Exception){
+				body.code=error.code;
+				status=error.status;
+			}
+			console.log(error);
+			body.message=error.toString();
+			response.status(status).send(body);	
+		}
+	};
+}
 		/*
 		Account:mongoose.Schema({
 			name:{ type : String, trim : true , unique:true},
@@ -94,28 +148,3 @@ module.exports=function (app){
 			name:{ type : String, trim : true, unique:true},
 		   	code : { type : Number, trim : false, index : true , unique:true }		   	
 		})*/
-	};
-	var Schema={};
-	for( var i in structDb){
-		Schema[i]=db.model(i, structDb[i]);
-	}
-	return {
-		database:{
-			db:mongoose,
-			Schema:Schema			
-		},
-		ErrorHandler:function(error,request,response,next){
-			var body={
-				code:500,
-				message:null
-			},status=500;
-			if(error instanceof Exception){
-				body.code=error.code;
-				status=error.status;
-			}
-			console.log(error);
-			body.message=error.toString();
-			response.status(status).send(body);	
-		}
-	};
-}
