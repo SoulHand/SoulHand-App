@@ -22,14 +22,13 @@ module.exports=function (app){
 			name:{type:String, required:true, trim:true, index:true}
 		}),
 		CategoryCognitions:mongoose.Schema({
-			name:{type:String, required:true, trim:true, index:true}
-		}),
-		Cognitions:mongoose.Schema({
-			category:{type:mongoose.Schema.ObjectId, ref:"CategoryCognitions"},
-			name:{type:String, trim:true}
+			name:{type:String, required:true, trim:true}
 		})
-
 	};
+	structDb.Cognitions=mongoose.Schema({
+		category:structDb.CategoryCognitions,
+		name:{type:String, trim:true}
+	});
 	structDb.Habilities=mongoose.Schema({
 		name:{type:String, trim:true},
 		createDate:{type:Date, default:Date.now},

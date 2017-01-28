@@ -5,7 +5,7 @@ function CRUD(db){
 	this.add=function(query,input){
 		var p1=db.findOne(query).exec().then(function(data){
 			if(data){
-				throw new InsertException("No se pudo insertar el registro");
+				throw new InsertException("No se puede insertar un registro duplicado");
 			}
 			var grade= new db(input);
 			return grade.save();
