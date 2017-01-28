@@ -1,4 +1,5 @@
 var mongoose= require('mongoose');
+var Exception=require("./SoulHand/Exceptions/Exception.js");
 
 module.exports=function (app){
 	var db = mongoose.connect(app.settings.database.dns);

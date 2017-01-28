@@ -3,9 +3,12 @@ var app = express();
 var path = require('path');
 var server = require('http').Server(app);
 var bodyParser = require('body-parser');
+var multer = require('multer'); // v1.0.5
+var upload = multer(); // for parsing multipart/form-data
 //Global Config
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(upload.array()); // for parsing application/x-www-form-urlencoded
 app.settings=require('./src/BackEnd/config.js').settings(__dirname);
 //process.env.NODE_ENV = 'production';
 /* Dependences */
