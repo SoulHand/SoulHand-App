@@ -7,19 +7,19 @@ module.exports=function (app){
 		Peoples:mongoose.Schema({
 			dni:{type:String, trim: true, index:true, required: true, unique:true},
 			name:{type:String, trim:true, required: true},
-			birthDate:{type:Date, required: true},
+			birthDate:{type:String, required: true},
 			createDate:{type:Date, default:Date.now},
 			tel:{type:String, required: false},
 			image:{type:String, required:false}
 		}),
 		Grades:mongoose.Schema({
-			name:{type:String, required:true, trim:true, index:true}
+			name:{type:String, required:true, trim:true}
 		}),
 		Courses:mongoose.Schema({
-			name:{type:String, required:true, trim:true, index:true}
+			name:{type:String, required:true, trim:true}
 		}),
 		PeriodSchools:mongoose.Schema({
-			name:{type:String, required:true, trim:true, index:true}
+			name:{type:String, required:true, trim:true}
 		}),
 		CategoryCognitions:mongoose.Schema({
 			name:{type:String, required:true, trim:true}
