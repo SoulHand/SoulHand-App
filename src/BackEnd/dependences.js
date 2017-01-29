@@ -29,12 +29,6 @@ module.exports=function (app){
 		category:structDb.CategoryCognitions,
 		name:{type:String, trim:true}
 	});
-	structDb.Habilities=mongoose.Schema({
-		name:{type:String, trim:true},
-		createDate:{type:Date, default:Date.now},
-		cognitions:[structDb.Cognitions],
-		level:{type:Number,min:0,max:100}
-	});
 	structDb.Teachers=mongoose.Schema({
 		data: structDb.Peoples,
 		interprete:{type:Boolean, required:true}
@@ -43,11 +37,17 @@ module.exports=function (app){
 		data: structDb.Peoples,
 		idStudent:{ type: mongoose.Schema.ObjectId, ref: "Students" }
 	});
+	structDb.Habilities=mongoose.Schema({
+		name:{type:String, trim:true},
+		createDate:{type:Date, default:Date.now},
+		cognitions:[structDb.Cognitions],
+		level:{type:Number,min:0,max:100, default:0}
+	});
 	structDb.ConflictCognitions=mongoose.Schema({
 		name:{type:String, trim:true},
 		createDate:{type:Date, default:Date.now},
 		cognitions:[structDb.Cognitions],
-		level:{type:Number,min:0,max:100}
+		level:{type:Number,min:0,max:100,default:0}
 	});
 	structDb.Activities=mongoose.Schema({
 		name:{type:String, trim:true},
