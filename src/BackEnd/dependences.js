@@ -73,7 +73,7 @@ module.exports=function (app){
 	});
 	structDb.Students=mongoose.Schema({
 		data: structDb.Peoples,
-		grade:{ type: String, ref: "Grades" },
+		grade:structDb.Grades,
 		discapacityLevel:{type:Number, required:true, default:0},
 		activities:[structDb.ActivitiesMaked],
 		conflicts:[structDb.ConflictCognitions],
@@ -99,7 +99,7 @@ module.exports=function (app){
 			}
 			console.log(error);
 			body.message=error.toString();
-			response.status(status).send(body);	
+			response.status(status).send(body);
 		}
 	};
 }
