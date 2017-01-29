@@ -2,6 +2,7 @@ var Grade=require("./SoulHand/Grade.js");
 var Course=require("./SoulHand/Course.js");
 var Period=require("./SoulHand/Period.js");
 var People=require("./SoulHand/People.js");
+var Activities=require("./SoulHand/Activities.js");
 var SubPeople=require("./SoulHand/SubPeople.js");
 var Cognitions=require("./SoulHand/Cognitions.js");
 var Habilities=require("./SoulHand/Habilities.js");
@@ -117,6 +118,163 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	app.use("/v1/habilities",HabilitiesURI);
+	var ActivitiesURI = express.Router();
+	ActivitiesURI.post("/",function(request, response,next) {
+		var grade= new Activities(app.container.database.Schema.Activities);
+		var people= new SubPeople(app.container.database.Schema.Teachers);
+		var course= new Course(app.container.database.Schema.Courses);
+		var min=parseInt(request.body.minDate);
+		var max=parseInt(request.body.maxDate);
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("No se acepta campos nulos");
+		}
+		if(!Validator.isInt()(request.body.minDate) || min<3 || min>=150){
+			throw new ValidatorException("La edad minima no es aceptada");
+		}
+		if(!Validator.isInt()(request.body.maxDate) || max>150 || max <=3){
+			throw new ValidatorException("La edad máxima no es aceptada");
+		}
+		if((max-min)<=0){
+			throw new ValidatorException("El rango entre las edades debe ser mayor a cero");
+		}
+		var field={
+			name:request.body.name,
+			TeacherCreate:null,
+			course:null,
+			range:{
+				level:0,
+				min:min,
+				max:max
+			},
+			conflicts:[],
+			habilitys:[]
+		};
+		people.find({"data.dni":request.body.teacher}).then(function(teacher){
+			field.TeacherCreate=teacher;
+			return course.find({_id:request.body.course});
+		}).then(function(course){
+			field.course=course;
+			return grade.add(field);			
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	ActivitiesURI.get("/",function(request, response,next) {
+		var grade=new Activities(app.container.database.Schema.Activities);
+		grade.get().then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	ActivitiesURI.get("/:name",function(request, response,next) {
+		var grade= new Activities(app.container.database.Schema.Activities);			
+		grade.find({_id:request.params.name}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	ActivitiesURI.put("/:name",function(request, response,next) {
+		var grade= new Activities(app.container.database.Schema.Activities);
+		var people= new SubPeople(app.container.database.Schema.Teachers);
+		var course= new Course(app.container.database.Schema.Courses);
+		
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("No se acepta campos nulos");
+		}
+		if(request.body.max){
+			var max=parseInt(request.body.max);
+			console.log(max>150 || max <=3);
+			if(!Validator.isInt()(request.body.max) || max>150 || max <=3){
+				throw new ValidatorException("La edad máxima no es aceptada");
+			}
+			request.body.max=max;
+		}
+		if(request.body.min){
+			var min=parseInt(request.body.min);
+			if(!Validator.isInt()(request.body.min) || min<3 || min>=150){
+				throw new ValidatorException("La edad minima no es aceptada");
+			}
+			request.body.min=min;
+		}
+		if(request.body.max && request.body.min){
+			if((request.body.max-request.body.min)<=0){
+				throw new ValidatorException("El rango entre las edades debe ser mayor a cero");
+			}
+		}
+		var promise1;
+		if(request.body.course){			
+			promise1=course.find({_id:request.body.course}).then(function(course){
+				request.body.course=course;
+				return grade.update({_id:request.params.name},function(obj){					
+					if(!request.body.max || !request.body.min){
+						if(request.body.max && (request.body.max-obj.range.min)<=0){
+							throw new ValidatorException("El rango ingresado es menor al sistema");
+						}
+						if(request.body.min && (obj.range.max-request.body.min)<=0){
+							throw new ValidatorException("El rango entre las edades debe ser mayor a cero");
+						}
+					}
+					for (i in obj){
+						if(typeof obj[i]=="object" && Object.keys(obj[i]).length>0 && i!="TeacherCreate" && i!="conflicts" && i!="habilitys" && i!="course"){
+							for(j in obj[i]){
+								if(request.body[j]){
+									obj[i][j]=request.body[j];																		
+								}									
+							}
+						}else{
+							if(request.body[i] && i!="TeacherCreate" && i!="conflicts" && i!="habilitys"){
+								obj[i]=request.body[i];								
+							}
+						}
+					}
+					return obj;
+				})
+			});
+		}else{
+			promise1=grade.update({_id:request.params.name},function(obj){				
+				if(!request.body.max || !request.body.min){
+					if(request.body.max && (request.body.max-obj.range.min)<=0){
+						throw new ValidatorException("El rango ingresado es menor al sistema");
+					}
+					if(request.body.min && (obj.range.max-request.body.min)<=0){
+						throw new ValidatorException("El rango entre las edades debe ser mayor a cero");
+					}
+				}
+				for (i in obj){
+					if(typeof obj[i]=="object" && Object.keys(obj[i]).length>0 && i!="TeacherCreate" && i!="conflicts" && i!="habilitys" && i!="course"){
+						for(j in obj[i]){
+							if(request.body[j]){
+								obj[i][j]=request.body[j];																		
+							}									
+						}
+					}else{
+						if(request.body[i] && i!="TeacherCreate" && i!="conflicts" && i!="habilitys"){
+							obj[i]=request.body[i];								
+						}
+					}
+				}
+				return obj;
+			});
+		}
+		promise1.then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});		
+	});
+	ActivitiesURI.delete("/:name",function(request, response,next) {
+		var grade=new Activities(app.container.database.Schema.Activities);
+		grade.remove({_id:request.params.name}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	app.use("/v1/activities",ActivitiesURI);
 	var ConflictCognitionsURI = express.Router();
 	ConflictCognitionsURI.post("/",function(request, response,next) {
 		var grade=new Habilities(app.container.database.Schema.ConflictCognitions);
