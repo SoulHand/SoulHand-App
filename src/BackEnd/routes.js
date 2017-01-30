@@ -15,7 +15,7 @@ module.exports=function(app,express,server,__DIR__){
 	var gradeURI = express.Router();
 	gradeURI.post("/",function(request, response,next) {
 		var grade=new Grade(app.container.database.Schema.Grades);
-		if(!Validator.isAlphanumeric()(request.body.name)){
+		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("El nombre solo debe contener letras");
 		}
 		grade.add(request.body.name).then(function(data){
@@ -42,7 +42,7 @@ module.exports=function(app,express,server,__DIR__){
 	});
 	gradeURI.put("/:name",function(request, response,next) {
 		var grade=new Grade(app.container.database.Schema.Grades);
-		if(!Validator.isAlphanumeric()(request.body.name)){
+		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("El nombre solo debe contener letras");
 		}
 		grade.update({_id:request.params.name},function(obj){
@@ -333,7 +333,7 @@ module.exports=function(app,express,server,__DIR__){
 	var courseURI = express.Router();
 	courseURI.post("/",function(request, response,next) {
 		var course=new Course(app.container.database.Schema.Courses);
-		if(!Validator.isAlpha()(request.body.name)){
+		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("El nombre solo debe contener letras");
 		}
 		course.add(request.body.name).then(function(data){
@@ -360,7 +360,7 @@ module.exports=function(app,express,server,__DIR__){
 	});
 	courseURI.put("/:name",function(request, response,next) {
 		var course=new Course(app.container.database.Schema.Courses);
-		if(!Validator.isAlpha()(request.body.name)){
+		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("El nombre solo debe contener letras");
 		}
 		course.update({_id:request.params.name},function(obj){
@@ -435,10 +435,10 @@ module.exports=function(app,express,server,__DIR__){
 	var categoryCognitionURI = express.Router();
 	categoryCognitionURI.post("/",function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
-		if(!Validator.isAlpha()(request.body.name)){
+		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Solo se aceptan textos categoricos");
 		}
-		category.add(request.body.name).then(function(data){
+		category.add(request.body.name.toUpperCase()).then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -462,10 +462,10 @@ module.exports=function(app,express,server,__DIR__){
 	});
 	categoryCognitionURI.put("/:name",function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
-		if(!Validator.isAlpha()(request.body.name)){
+		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Solo se aceptan textos categoricos");
 		}
-		category.update({_id:request.params.name},function(obj){
+		category.update({_id:request.params.name.toUpperCase()},function(obj){
 			obj.name=request.body.name;
 			return obj;
 		}).then(function(data){
@@ -487,15 +487,15 @@ module.exports=function(app,express,server,__DIR__){
 	CognitionsURI.post("/",function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
 		var cognition=new Cognitions(app.container.database.Schema.Cognitions);
-		if(!Validator.isAlpha()(request.body.name)){
+		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Solo se aceptan caracteres alphabeticos");
 		}
-		if(!Validator.isAlphanumeric()(request.body.category)){
+		if(Validator.isNull()(request.body.category)){
 			throw new ValidatorException("Solo se aceptan categorias validas");
 		}
-		category.find({_id:request.body.category}).then(function(cat){
+		category.find({name:request.body.category.toUpperCase()}).then(function(cat){
 			return cognition.add({
-				name:request.body.name,
+				name:request.body.name.toUpperCase(),
 				category:cat
 			});
 		}).then(function(data){
@@ -520,16 +520,24 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	CognitionsURI.get("/category/:name",function(request, response,next) {
+		var cognition=new Cognitions(app.container.database.Schema.Cognitions);			
+		cognition.get({"category.name":request.params.name.toUpperCase()}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
 	CognitionsURI.put("/:name",function(request, response,next) {
 		var cognition=new Cognitions(app.container.database.Schema.Cognitions);
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
-		if(!Validator.isAlpha()(request.body.name)){
+		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Solo se aceptan caracteres alphabeticos");
 		}
-		if(!Validator.isAlphanumeric()(request.body.category)){
+		if(Validator.isNull()(request.body.category)){
 			throw new ValidatorException("Solo se aceptan categorias validas");
 		}
-		category.find({_id:request.body.category}).then(function(cat){
+		category.find({name:request.body.category.toUpperCase()}).then(function(cat){
 			return cognition.update({_id:request.params.name},function(obj){
 				obj.name=request.body.name;
 				obj.category=cat;
