@@ -3,7 +3,8 @@ module.exports.settings=function(__DIR__){
 		port:8080,
 		name:'App',
 		database:{
-			dns:'mongodb://localhost/SoulHand'
+			dns:'mongodb://localhost/SoulHand',
+			dnsTest:'mongodb://localhost/soulhand_test'
 		},
 		smtp:{
 	       	service: 'Gmail',

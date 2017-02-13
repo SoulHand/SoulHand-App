@@ -4,10 +4,10 @@
   "description": "Herramienta web basada en inteligencia artificial para la compresión lectora",
   "main": "server.js",
   "directories": {
-    "test": "tests"
-  },
+    "test": "Tests"
+  },  
   "scripts": {
-    "test": "grunt --gruntfile grunt.js jasmine:requirejs",
+    "test": "node node_modules/jasmine-node/bin/jasmine-node --verbose Test/",
     "compiler": "node node_modules/webpack/bin/webpack.js"
   },
   "repository": {
