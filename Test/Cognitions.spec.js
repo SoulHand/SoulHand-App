@@ -54,7 +54,7 @@ describe("CRUD clase Table Cognitions",function(){
 			done();
 		});
 	});
-	it("Create not exist category Element cognition",function(done){
+	/*it("Create not exist category Element cognition",function(done){
 		var input={
 			name:faker.name.findName(),
 			category:{
@@ -68,7 +68,7 @@ describe("CRUD clase Table Cognitions",function(){
 			expect(error instanceof InsertException).toEqual(true);
 			done();
 		});
-	});
+	});*/
 	it("Delete Element cognition",function(done){
 		cognition.remove({_id:find._id}).then(function(data){
 			done();
