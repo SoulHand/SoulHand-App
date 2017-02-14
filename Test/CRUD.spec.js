@@ -585,6 +585,265 @@ describe("CRUD clase Table Teachers",function(){
 	});
 });
 
+// Test CRUD from Table Students
+describe("CRUD clase Table Students",function(){
+	var Student=require("../src/BackEnd/SoulHand/CRUD.js");
+	var student=new Student(db.Students),find;
+	afterEach(function(done){
+		db.Students.find().then(function(data){
+			for (i in data){
+				data[i].remove();
+			}
+			done();
+		})
+	})
+	beforeEach(function(done){
+		var people=new  db.Peoples({
+			dni:"V"+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9),
+			name:faker.name.findName(),
+			birthDate:faker.date.past(),
+			tel:faker.phone.phoneNumber(),
+			image:faker.image.people()
+		});
+		find=new db.Students({
+			data:people,
+			grade:new  db.Grades({
+				name:faker.name.findName()
+			}),
+			activities:[],
+			conflicts:[],
+			habilitys:[]
+		});
+		find.save().then(function(){
+			done();
+		});
+	})
+	it("Create Element Students",function(done){
+		var input={
+			data:{
+				dni:"V"+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9),
+				name:faker.name.findName(),
+				birthDate:faker.date.past(),
+				tel:faker.phone.phoneNumber(),
+				image:faker.image.people()
+			},
+			grade:new  db.Grades({
+				name:faker.name.findName()
+			}),
+			activities:[],
+			conflicts:[],
+			habilitys:[]
+		};
+		student.add({"data.dni":input.data.dni},input).catch(function(error){
+			console.log(error.toString());
+		}).then(function(data){
+			expect(input.data.name.toUpperCase()).toBe(data.data.name);
+			done();
+		});
+	});
+	it("Create duplicated Element Students",function(done){
+		var input={
+			data:{
+				dni:find.data.dni,
+				name:faker.name.findName(),
+				birthDate:faker.date.past(),
+				tel:faker.phone.phoneNumber(),
+				image:faker.image.people()
+			},
+			grade:new  db.Grades({
+				name:faker.name.findName()
+			}),
+			activities:[],
+			conflicts:[],
+			habilitys:[]
+		};
+		student.add({"data.dni":input.data.dni},input).catch(function(error){
+			expect(error instanceof InsertException).toEqual(true);
+			done();
+		});
+	});
+	it("Delete Element Students",function(done){
+		student.remove({"data.dni":find.data.dni}).then(function(data){
+			done();
+		}).catch(function(error){
+			console.log(error.toString());
+			//throw error;
+			//fail(error.toString());
+		});
+	});
+	it("Delete not exist Element Students",function(done){
+		var id="V112322123";
+		student.remove({"data.dni":id}).catch(function(error){
+			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		});
+	});
+	it("Update Element Students",function(done){
+		var update=faker.name.findName();
+		student.update({"data.dni":find.data.dni},function(info){
+			info.data.name=update;
+			return info;
+		}).then(function(data){
+			expect(update.toUpperCase()).toBe(data.data.name);
+			done();
+		});
+	});
+	it("Update not exist Element Students",function(done){
+		var id="V32434545";
+		var update=faker.name.findName();
+		student.update({"data.dni":id},function(info){
+			info.data.name=update;
+			return info;
+		}).catch(function(error){
+			console.log(error.toString())
+			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		});
+	});
+	it("find Element Students",function(done){		
+		student.find({"data.dni":find.data.dni}).then(function(data){
+			expect(find.name).toBe(data.name);
+			done();
+		});
+	});
+	it("find not exist Element Students",function(done){
+		var id="V243243235";		
+		student.find({"data.dni":id}).catch(function(error){
+			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		});
+	});
+});
+
+// Test CRUD from Table Representatives
+describe("CRUD clase Table Representatives",function(){
+	var Student=require("../src/BackEnd/SoulHand/CRUD.js");
+	var student=new Student(db.Representatives),find,people;
+	afterEach(function(done){
+		db.Representatives.find().then(function(data){
+			for (i in data){
+				data[i].remove();
+			}
+			return db.Peoples.find();
+		}).then(function(data){
+			for (i in data){
+				data[i].remove();
+			}
+			done();
+		});
+	})
+	beforeEach(function(done){
+		people=new  db.Peoples({
+			dni:"V"+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9),
+			name:faker.name.findName(),
+			birthDate:faker.date.past(),
+			tel:faker.phone.phoneNumber(),
+			image:faker.image.people()
+		});
+		people.save().then(function(){
+			find=new db.Representatives({
+				data:new  db.Peoples({
+					dni:"V"+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9),
+					name:faker.name.findName(),
+					birthDate:faker.date.past(),
+					tel:faker.phone.phoneNumber(),
+					image:faker.image.people()
+				}),
+				idStudent:people._id
+			});
+			return find.save();
+			
+		}).then(function(){
+			done();
+		});
+	})
+	it("Create Element Representatives",function(done){
+		var input={
+			data:{
+				dni:"V"+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9),
+				name:faker.name.findName(),
+				birthDate:faker.date.past(),
+				tel:faker.phone.phoneNumber(),
+				image:faker.image.people()
+			},
+			idStudent:people._id
+		};
+		student.add({"data.dni":input.data.dni},input).catch(function(error){
+			console.log(error.toString());
+		}).then(function(data){
+			expect(input.data.name.toUpperCase()).toBe(data.data.name);
+			done();
+		});
+	});
+	it("Create duplicated Element Representatives",function(done){
+		var input={
+			data:{
+				dni:find.data.dni,
+				name:faker.name.findName(),
+				birthDate:faker.date.past(),
+				tel:faker.phone.phoneNumber(),
+				image:faker.image.people()
+			},
+			idStudent:people._id
+		};
+		student.add({"data.dni":input.data.dni},input).catch(function(error){
+			expect(error instanceof InsertException).toEqual(true);
+			done();
+		});
+	});
+	it("Delete Element Representatives",function(done){
+		student.remove({"data.dni":find.data.dni}).then(function(data){
+			done();
+		}).catch(function(error){
+			console.log(error.toString());
+			//throw error;
+			//fail(error.toString());
+		});
+	});
+	it("Delete not exist Element Representatives",function(done){
+		var id="V112322123";
+		student.remove({"data.dni":id}).catch(function(error){
+			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		});
+	});
+	it("Update Element Representatives",function(done){
+		var update=faker.name.findName();
+		student.update({"data.dni":find.data.dni},function(info){
+			info.data.name=update;
+			return info;
+		}).then(function(data){
+			expect(update.toUpperCase()).toBe(data.data.name);
+			done();
+		});
+	});
+	it("Update not exist Element Representatives",function(done){
+		var id="V32434545";
+		var update=faker.name.findName();
+		student.update({"data.dni":id},function(info){
+			info.data.name=update;
+			return info;
+		}).catch(function(error){
+			console.log(error.toString())
+			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		});
+	});
+	it("find Element Representatives",function(done){		
+		student.find({"data.dni":find.data.dni}).then(function(data){
+			expect(find.name).toBe(data.name);
+			done();
+		});
+	});
+	it("find not exist Element Representatives",function(done){
+		var id="V243243235";		
+		student.find({"data.dni":id}).catch(function(error){
+			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		});
+	});
+});
+
 // Test CRUD from Table Cognitions
 describe("CRUD clase Table Cognitions",function(){
 	var Cognition=require("../src/BackEnd/SoulHand/CRUD.js");
