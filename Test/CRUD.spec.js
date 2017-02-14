@@ -366,3 +366,447 @@ describe("CRUD clase Table CategoryCognitions",function(){
 		});
 	});
 });
+
+// Test CRUD from Table Peoples
+describe("CRUD clase Table Peoples",function(){
+	var CategoryCognition=require("../src/BackEnd/SoulHand/CRUD.js");
+	var categoryCognition=new CategoryCognition(db.Peoples),find;
+	afterEach(function(done){
+		db.Peoples.find().then(function(data){
+			for (i in data){
+				data[i].remove();
+			}
+			done();
+		})
+	})
+	beforeEach(function(done){
+		find=new  db.Peoples({
+			dni:"V12345678",
+			name:faker.name.findName(),
+			birthDate:faker.date.past(),
+			tel:faker.phone.phoneNumber(),
+			image:faker.image.people()
+		});
+		find.save().then(function(){
+			done();			
+		})
+	})
+	it("Create Element Peoples",function(done){
+		var input={
+			dni:"V12545678",
+			name:faker.name.findName(),
+			birthDate:faker.date.past(),
+			tel:faker.phone.phoneNumber(),
+			image:faker.image.people()
+		};
+		categoryCognition.add({dni:input.dni},input).then(function(data){
+			expect(input.name.toUpperCase()).toBe(data.name);
+			done();
+		});
+	});
+	it("Create duplicated Element Peoples",function(done){
+		var input={
+			dni:find.dni,
+			name:faker.name.findName(),
+			birthDate:faker.date.past(),
+			tel:faker.phone.phoneNumber(),
+			image:faker.image.people()
+		};
+		categoryCognition.add({dni:input.dni},input).catch(function(error){
+			expect(error instanceof InsertException).toEqual(true);
+			done();
+		});
+	});
+	it("Delete Element Peoples",function(done){
+		categoryCognition.remove({dni:find.dni}).then(function(data){
+			done();
+		}).catch(function(error){
+			console.log(error.toString());
+			//throw error;
+			//fail(error.toString());
+		});
+	});
+	it("Delete not exist Element Peoples",function(done){
+		var id="V112322123";
+		categoryCognition.remove({dni:id}).catch(function(error){
+			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		});
+	});
+	it("Update Element Peoples",function(done){
+		var update=faker.name.findName();
+		categoryCognition.update({dni:find.dni},function(info){
+			info.name=update;
+			return info;
+		}).then(function(data){
+			expect(update.toUpperCase()).toBe(data.name);
+			done();
+		});
+	});
+	it("Update not exist Element Peoples",function(done){
+		var id="V32434545";
+		var update=faker.name.findName();
+		categoryCognition.update({dni:id},function(info){
+			info.name=update;
+			return info;
+		}).catch(function(error){
+			console.log(error.toString())
+			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		});
+	});
+	it("find Element Peoples",function(done){		
+		categoryCognition.find({dni:find.dni}).then(function(data){
+			expect(find.name).toBe(data.name);
+			done();
+		});
+	});
+	it("find not exist Element Peoples",function(done){
+		var id="V243243235";		
+		categoryCognition.find({dni:id}).catch(function(error){
+			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		});
+	});
+});
+
+// Test CRUD from Table Cognitions
+describe("CRUD clase Table Cognitions",function(){
+	var Cognition=require("../src/BackEnd/SoulHand/CRUD.js");
+	var cognition=new Cognition(db.Cognitions),find,category;
+	afterEach(function(done){
+		db.Cognitions.find().then(function(data){
+			for (i in data){
+				data[i].remove();
+			}
+			return db.CategoryCognitions.find();
+		}).then(function(data){
+			for (i in data){
+				data[i].remove();
+			}
+			done();
+		})
+	})
+	beforeEach(function(done){
+		category=new db.CategoryCognitions({
+			name:faker.name.findName()			
+		});
+		category.save().then(function(data){
+			find=new  db.Cognitions({
+				name:faker.name.findName(),
+				category:data
+			});
+			return find.save(); 
+		}).then(function(){
+			done();			
+		})
+	})
+	it("Create Element cognition",function(done){
+		var input={
+			name:faker.name.findName(),
+			category:category
+		};
+		cognition.add({name:input.name},input).then(function(data){
+			expect(input.name.toUpperCase()).toBe(data.name);
+			done();
+		});
+	});
+	it("Create duplicated Element cognition",function(done){
+		var input={
+			name:find.name,
+			category:category
+		};
+		cognition.add({name:input.name},input).catch(function(error){
+			expect(error instanceof InsertException).toEqual(true);
+			done();
+		});
+	});
+	/*it("Create not exist category Element cognition",function(done){
+		var input={
+			name:faker.name.findName(),
+			category:{
+				_id:"58a1c1a27093140960ad3751",
+				name:faker.name.findName(),
+			}
+		};
+		cognition.add({$or:[{name:input.name},{"category._id":input.category._id}]},input).then(function(data){
+			console.log(data);
+		}).catch(function(error){
+			expect(error instanceof InsertException).toEqual(true);
+			done();
+		});
+	});*/
+	it("Delete Element cognition",function(done){
+		cognition.remove({_id:find._id}).then(function(data){
+			done();
+		}).catch(function(error){
+			console.log(error.toString());
+			//throw error;
+			//fail(error.toString());
+		});
+	});
+	it("Delete not exist Element cognition",function(done){
+		var id="58a1c1a27093140970ad3751";
+		cognition.remove({_id:id}).catch(function(error){
+			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		});
+	});
+	it("Update Element cognition",function(done){
+		var update=faker.name.findName();
+		cognition.update({_id:find._id},function(info){
+			info.name=update;
+			return info;
+		}).then(function(data){
+			expect(update.toUpperCase()).toBe(data.name);
+			done();
+		});
+	});
+	it("Update not exist Element cognition",function(done){
+		var id="58a1c1a27093140970ad3751";
+		var update=faker.name.findName();
+		cognition.update({_id:id},function(info){
+			info.name=update;
+			return info;
+		}).catch(function(error){
+			console.log(error.toString())
+			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		});
+	});
+	it("find Element cognition",function(done){		
+		cognition.find({_id:find._id}).then(function(data){
+			expect(find.name).toBe(data.name);
+			done();
+		});
+	});
+	it("find not exist Element cognition",function(done){
+		var id="58a1c1a27093140970ad3751";		
+		cognition.find({_id:id}).catch(function(error){
+			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		});
+	});
+});
+
+// Test CRUD from Table Habilities
+describe("CRUD clase Table Habilities",function(){
+	var Hability=require("../src/BackEnd/SoulHand/CRUD.js");
+	var hability=new Hability(db.Habilities),find,category,cognition;
+	afterEach(function(done){
+		db.Habilities.find().then(function(data){
+			for (i in data){
+				data[i].remove();
+			}
+			return db.CategoryCognitions.find();
+		}).then(function(data){
+			for (i in data){
+				data[i].remove();
+			}
+			done();
+		})
+	})
+	beforeEach(function(done){
+		category=new db.CategoryCognitions({
+			name:faker.name.findName()			
+		});
+		category.save().then(function(data){
+			cognition=new  db.Cognitions({
+				name:faker.name.findName(),
+				category:data
+			});
+			return cognition.save(); 
+		}).then(function(){
+			find=new db.Habilities({
+				name:faker.name.findName(),
+				Cognitions:[cognition]
+			});
+			return find.save();
+		}).then(function(){
+			done();
+		})
+	})
+	it("Create Element Habilities",function(done){
+		var input={
+			name:faker.name.findName(),
+			Cognitions:[]
+		};
+		hability.add({name:input.name},input).then(function(data){
+			expect(input.name.toUpperCase()).toBe(data.name);
+			done();
+		});
+	});
+	it("Create duplicated Element Habilities",function(done){
+		var input={
+			name:find.name,
+			Cognitions:[]
+		};
+		hability.add({name:input.name},input).catch(function(error){
+			expect(error instanceof InsertException).toEqual(true);
+			done();
+		});
+	});	
+	it("Delete Element Habilities",function(done){
+		hability.remove({_id:find._id}).then(function(data){
+			done();
+		}).catch(function(error){
+			console.log(error.toString());
+			//throw error;
+			//fail(error.toString());
+		});
+	});
+	it("Delete not exist Element Habilities",function(done){
+		var id="58a1c1a27093140970ad3751";
+		hability.remove({_id:id}).catch(function(error){
+			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		});
+	});
+	it("Update Element Habilities",function(done){
+		var update=faker.name.findName();
+		hability.update({_id:find._id},function(info){
+			info.name=update;
+			return info;
+		}).then(function(data){
+			expect(update.toUpperCase()).toBe(data.name);
+			done();
+		});
+	});
+	it("Update not exist Element Habilities",function(done){
+		var id="58a1c1a27093140970ad3751";
+		var update=faker.name.findName();
+		hability.update({_id:id},function(info){
+			info.name=update;
+			return info;
+		}).catch(function(error){
+			console.log(error.toString())
+			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		});
+	});
+	it("find Element Habilities",function(done){		
+		hability.find({_id:find._id}).then(function(data){
+			expect(find.name).toBe(data.name);
+			done();
+		});
+	});
+	it("find not exist Element Habilities",function(done){
+		var id="58a1c1a27093140970ad3751";		
+		hability.find({_id:id}).catch(function(error){
+			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		});
+	});
+});
+
+// Test CRUD from Table Habilities
+describe("CRUD clase Table ConflictCognitions",function(){
+	var Hability=require("../src/BackEnd/SoulHand/CRUD.js");
+	var hability=new Hability(db.ConflictCognitions),find,category,cognition;
+	afterEach(function(done){
+		db.Habilities.find().then(function(data){
+			for (i in data){
+				data[i].remove();
+			}
+			return db.CategoryCognitions.find();
+		}).then(function(data){
+			for (i in data){
+				data[i].remove();
+			}
+			done();
+		})
+	})
+	beforeEach(function(done){
+		category=new db.CategoryCognitions({
+			name:faker.name.findName()			
+		});
+		category.save().then(function(data){
+			cognition=new  db.Cognitions({
+				name:faker.name.findName(),
+				category:data
+			});
+			return cognition.save(); 
+		}).then(function(){
+			find=new db.ConflictCognitions({
+				name:faker.name.findName(),
+				Cognitions:[cognition]
+			});
+			return find.save();
+		}).then(function(){
+			done();
+		})
+	})
+	it("Create Element ConflictCognitions",function(done){
+		var input={
+			name:faker.name.findName(),
+			Cognitions:[]
+		};
+		hability.add({name:input.name},input).then(function(data){
+			expect(input.name.toUpperCase()).toBe(data.name);
+			done();
+		});
+	});
+	it("Create duplicated Element ConflictCognitions",function(done){
+		var input={
+			name:find.name,
+			Cognitions:[]
+		};
+		hability.add({name:input.name},input).then(function(data){
+			console.log(data);
+		}).catch(function(error){
+			expect(error instanceof InsertException).toEqual(true);
+			done();
+		});
+	});	
+	it("Delete Element ConflictCognitions",function(done){
+		hability.remove({_id:find._id}).then(function(data){
+			done();
+		}).catch(function(error){
+			console.log(error.toString());
+			//throw error;
+			//fail(error.toString());
+		});
+	});
+	it("Delete not exist Element ConflictCognitions",function(done){
+		var id="58a1c1a27093140970ad3751";
+		hability.remove({_id:id}).catch(function(error){
+			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		});
+	});
+	it("Update Element ConflictCognitions",function(done){
+		var update=faker.name.findName();
+		hability.update({_id:find._id},function(info){
+			info.name=update;
+			return info;
+		}).then(function(data){
+			expect(update.toUpperCase()).toBe(data.name);
+			done();
+		});
+	});
+	it("Update not exist Element ConflictCognitions",function(done){
+		var id="58a1c1a27093140970ad3751";
+		var update=faker.name.findName();
+		hability.update({_id:id},function(info){
+			info.name=update;
+			return info;
+		}).catch(function(error){
+			console.log(error.toString())
+			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		});
+	});
+	it("find Element ConflictCognitions",function(done){		
+		hability.find({_id:find._id}).then(function(data){
+			expect(find.name).toBe(data.name);
+			done();
+		});
+	});
+	it("find not exist Element ConflictCognitions",function(done){
+		var id="58a1c1a27093140970ad3751";		
+		hability.find({_id:id}).catch(function(error){
+			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		});
+	});
+});
