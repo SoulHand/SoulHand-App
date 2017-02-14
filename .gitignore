@@ -7,3 +7,4 @@ node_modules/
 logs/
 *.sublime-*
 *.log
+_SpecRunner.html
