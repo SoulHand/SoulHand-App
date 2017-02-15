@@ -12,7 +12,18 @@ var Validator=require('string-validator');
 var ValidatorException=require('./SoulHand/Exceptions/ValidatorException.js');
 
 module.exports=function(app,express,server,__DIR__){
+	/*
+	* Ruta /v1/grades
+	* @var gradeURI object enrutador para agrupar metodos
+	*/
 	var gradeURI = express.Router();
+	/*
+	* POST / Crear grado
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var grade<Grade>	objeto CRUD
+	*/
 	gradeURI.post("/",function(request, response,next) {
 		var grade=new Grade(app.container.database.Schema.Grades);
 		if(Validator.isNull()(request.body.name)){
@@ -24,6 +35,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* GET / Obtener todos los grados
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var grade<Grade>	objeto CRUD
+	*/
 	gradeURI.get("/",function(request, response,next) {
 		var grade=new Grade(app.container.database.Schema.Grades);		
 		grade.get().then(function(data){
@@ -32,6 +50,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* GET /:name Obtener un grado especifico
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var grade<Grade>	objeto CRUD
+	*/
 	gradeURI.get("/:name",function(request, response,next) {
 		var grade=new Grade(app.container.database.Schema.Grades);			
 		grade.find({_id:request.params.name}).then(function(data){
@@ -40,6 +65,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* PUT /:name Editar un grado
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var grade<Grade>	objeto CRUD
+	*/
 	gradeURI.put("/:name",function(request, response,next) {
 		var grade=new Grade(app.container.database.Schema.Grades);
 		if(Validator.isNull()(request.body.name)){
@@ -54,6 +86,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* DELETE /:name Eliminar un grado
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var grade<Grade>	objeto CRUD
+	*/
 	gradeURI.delete("/:name",function(request, response,next) {
 		var grade=new Grade(app.container.database.Schema.Grades);		
 		grade.remove({_id:request.params.name}).then(function(data){
