@@ -580,7 +580,18 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	app.use("/v1/courses",courseURI);
+	/*
+	* Ruta /v1/periods
+	* @var periodURI object enrutador para agrupar metodos
+	*/
 	var periodURI = express.Router();
+	/*
+	* POST / Crear periodo escolar
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var period<Period>	objeto CRUD
+	*/
 	periodURI.post("/",function(request, response,next) {
 		var period=new Period(app.container.database.Schema.PeriodSchools);
 		if(!Validator.matches(/[0-9]{4}\-[0-9]{4}/i)(request.body.name)){
@@ -592,6 +603,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* GET / Obtener todos los periodos escolares
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var period<Period>	objeto CRUD
+	*/
 	periodURI.get("/",function(request, response,next) {
 		var period=new Period(app.container.database.Schema.PeriodSchools);		
 		period.get().then(function(data){
@@ -600,6 +618,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* GET /:name Obtener un periodo escolar
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var period<Period>	objeto CRUD
+	*/
 	periodURI.get("/:name",function(request, response,next) {
 		var period=new Period(app.container.database.Schema.PeriodSchools);			
 		period.find({_id:request.params.name}).then(function(data){
@@ -608,6 +633,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* PUT /:name Editar periodo escolar
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var period<Period>	objeto CRUD
+	*/
 	periodURI.put("/:name",function(request, response,next) {
 		var period=new Period(app.container.database.Schema.PeriodSchools);
 		if(!Validator.matches(/[0-9]{4}\-[0-9]{4}/i)(request.body.name)){
@@ -622,6 +654,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* DELETE /:name Eliminar un periodo escolar
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var period<Period>	objeto CRUD
+	*/
 	periodURI.delete("/:name",function(request, response,next) {
 		var period=new Period(app.container.database.Schema.PeriodSchools);
 		period.remove({_id:request.params.name}).then(function(data){
@@ -631,7 +670,18 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	app.use("/v1/periods",periodURI);
+	/*
+	* Ruta /v1/category/cognitions
+	* @var categoryCognitionURI object enrutador para agrupar metodos
+	*/
 	var categoryCognitionURI = express.Router();
+	/*
+	* POST / Crear Categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions> objeto CRUD
+	*/
 	categoryCognitionURI.post("/",function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
 		if(Validator.isNull()(request.body.name)){
@@ -643,6 +693,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* GET / Obtener todas las categorias cognitivas
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
 	categoryCognitionURI.get("/",function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);		
 		category.get().then(function(data){
@@ -651,6 +708,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* GET /:name Obtener una categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
 	categoryCognitionURI.get("/:name",function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);			
 		category.find({_id:request.params.name}).then(function(data){
@@ -659,6 +723,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* PUT /:name Editar categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
 	categoryCognitionURI.put("/:name",function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
 		if(Validator.isNull()(request.body.name)){
@@ -673,6 +744,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* DELETE /:name Eliminar una categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
 	categoryCognitionURI.delete("/:name",function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
 		category.remove({_id:request.params.name}).then(function(data){
@@ -682,7 +760,19 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	app.use("/v1/category/cognitions",categoryCognitionURI);
+	/*
+	* Ruta /v1/cognitions
+	* @var CognitionsURI object enrutador para agrupar metodos
+	*/
 	var CognitionsURI = express.Router();
+	/*
+	* POST / Crear funcion cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions> objeto CRUD
+	* @var cognition<Cognitions> objeto CRUD
+	*/
 	CognitionsURI.post("/",function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
 		var cognition=new Cognitions(app.container.database.Schema.Cognitions);
@@ -703,6 +793,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* GET / Obtener todas las funciones cognitivas
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var cognition<Cognitions>	objeto CRUD
+	*/
 	CognitionsURI.get("/",function(request, response,next) {
 		var cognition=new Cognitions(app.container.database.Schema.Cognitions);		
 		cognition.get().then(function(data){
@@ -711,6 +808,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* GET /:name Obtener una funcion cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var cognition<Cognitions>	objeto CRUD
+	*/
 	CognitionsURI.get("/:name",function(request, response,next) {
 		var cognition=new Cognitions(app.container.database.Schema.Cognitions);			
 		cognition.find({_id:request.params.name}).then(function(data){
@@ -719,6 +823,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* GET /category/:name Obtener las funcion cognitiva correspondientes a una categoria
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var cognition<Cognitions>	objeto CRUD
+	*/
 	CognitionsURI.get("/category/:name",function(request, response,next) {
 		var cognition=new Cognitions(app.container.database.Schema.Cognitions);			
 		cognition.get({"category.name":request.params.name.toUpperCase()}).then(function(data){
@@ -727,6 +838,14 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* PUT /:name Editar funcion cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var cognition<Cognitions>	objeto CRUD
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
 	CognitionsURI.put("/:name",function(request, response,next) {
 		var cognition=new Cognitions(app.container.database.Schema.Cognitions);
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
@@ -748,6 +867,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});		
 	});
+	/*
+	* DELETE /:name Eliminar una funcion cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var cognition<Cognitions>	objeto CRUD
+	*/
 	CognitionsURI.delete("/:name",function(request, response,next) {
 		var cognition=new Cognitions(app.container.database.Schema.Cognitions);
 		cognition.remove({_id:request.params.name}).then(function(data){
@@ -757,7 +883,19 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	app.use("/v1/cognitions",CognitionsURI);
+	/*
+	* Ruta /v1/teachers
+	* @var PeopleURI object enrutador para agrupar metodos
+	*/
 	var PeopleURI = express.Router();
+	/*
+	* POST / Crear profesor
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*/
 	PeopleURI.post("/",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Teachers);
 		var people2=new People(app.container.database.Schema.Peoples);
@@ -787,6 +925,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* GET / Obtener todos los docentes
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<People>	objeto CRUD
+	*/
 	PeopleURI.get("/",function(request, response,next) {
 		var people=new People(app.container.database.Schema.Teachers);		
 		people.get().then(function(data){
@@ -795,6 +940,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* GET /:name Obtener un profesor
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<People>	objeto CRUD
+	*/
 	PeopleURI.get("/:name",function(request, response,next) {
 		var people=new People(app.container.database.Schema.Teachers);			
 		people.find({_id:request.params.name}).then(function(data){
@@ -803,6 +955,14 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* PUT /:name Editar profesor
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	*/
 	PeopleURI.put("/:name",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Teachers);
 		var people2=new People(app.container.database.Schema.Peoples);
@@ -841,6 +1001,14 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* DELETE /:name Eliminar un profesor
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	*/
 	PeopleURI.delete("/:name",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Teachers);
 		var people2=new People(app.container.database.Schema.Peoples);
@@ -852,7 +1020,19 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	app.use("/v1/teachers",PeopleURI);
+	/*
+	* Ruta /v1/students
+	* @var StudentsURI object enrutador para agrupar metodos
+	*/
 	var StudentsURI = express.Router();
+	/*
+	* POST / Crear alumno
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*/
 	StudentsURI.post("/",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		var people2=new People(app.container.database.Schema.Peoples);
@@ -889,6 +1069,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* GET / Obtener todos los alumnos
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<People>	objeto CRUD
+	*/
 	StudentsURI.get("/",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		people.get().then(function(data){
@@ -897,6 +1084,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* GET /:name Obtener un alumno
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	*/
 	StudentsURI.get("/:name",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		people.find({_id:request.params.name}).then(function(data){
@@ -905,6 +1099,14 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* PUT /:name Editar alumno
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	*/
 	StudentsURI.put("/:name",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		var people2=new People(app.container.database.Schema.Peoples);
@@ -960,6 +1162,14 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* DELETE /:name Eliminar un alumno
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	*/
 	StudentsURI.delete("/:name",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		var people2=new People(app.container.database.Schema.Peoples);
@@ -971,7 +1181,20 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	app.use("/v1/students",StudentsURI);
+	/*
+	* Ruta /v1/representives		
+	* @var ReferencesToURI object enrutador para agrupar metodos
+	*/
 	var ReferencesToURI = express.Router();
+	/*
+	* POST / Crear representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people3<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*/
 	ReferencesToURI.post("/",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Representatives);
 		var people3=new SubPeople(app.container.database.Schema.Students);
@@ -1005,6 +1228,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* GET / Obtener todos los representantes
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	*/
 	ReferencesToURI.get("/",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		people.get().then(function(data){
@@ -1013,6 +1243,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* GET /:name Obtener un representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	*/
 	ReferencesToURI.get("/:name",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		people.find({_id:request.params.name}).then(function(data){
@@ -1021,6 +1258,15 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* PUT /:name Editar representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	* @var grade<Grade>	objeto CRUD
+	*/
 	ReferencesToURI.put("/:name",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		var people2=new People(app.container.database.Schema.Peoples);
@@ -1076,6 +1322,14 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* DELETE /:name Eliminar un representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	*/
 	ReferencesToURI.delete("/:name",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		var people2=new People(app.container.database.Schema.Peoples);
