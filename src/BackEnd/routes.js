@@ -196,7 +196,20 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	app.use("/v1/habilities",HabilitiesURI);
+	/*
+	* Ruta /v1/activities
+	* @var ActivitiesURI object enrutador para agrupar metodos
+	*/
 	var ActivitiesURI = express.Router();
+	/*
+	* POST / Crear Actividad
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var grade<Activities>	objeto CRUD
+	* @var people<SubPeople>	objeto CRUD
+	* @var course<Course>	objeto CRUD
+	*/
 	ActivitiesURI.post("/",function(request, response,next) {
 		var grade= new Activities(app.container.database.Schema.Activities);
 		var people= new SubPeople(app.container.database.Schema.Teachers);
@@ -239,24 +252,47 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* GET / Obtener todas las actividades
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var activity<Activities>	objeto CRUD
+	*/
 	ActivitiesURI.get("/",function(request, response,next) {
-		var grade=new Activities(app.container.database.Schema.Activities);
-		grade.get().then(function(data){
+		var activity=new Activities(app.container.database.Schema.Activities);
+		activity.get().then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
 		});
 	});
+	/*
+	* GET /:name Obtener una actividad
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var activity<Activities>	objeto CRUD
+	*/
 	ActivitiesURI.get("/:name",function(request, response,next) {
-		var grade= new Activities(app.container.database.Schema.Activities);			
-		grade.find({_id:request.params.name}).then(function(data){
+		var activity= new Activities(app.container.database.Schema.Activities);			
+		activity.find({_id:request.params.name}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
 		});
 	});
+	/*
+	* PUT /:name Editar actividad
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var activity<Activities>	objeto CRUD
+	* @var people<SubPeople>	objeto CRUD
+	* @var course<Course>	objeto CRUD
+	*/
 	ActivitiesURI.put("/:name",function(request, response,next) {
-		var grade= new Activities(app.container.database.Schema.Activities);
+		var activity= new Activities(app.container.database.Schema.Activities);
 		var people= new SubPeople(app.container.database.Schema.Teachers);
 		var course= new Course(app.container.database.Schema.Courses);
 		
@@ -287,7 +323,7 @@ module.exports=function(app,express,server,__DIR__){
 		if(request.body.course){			
 			promise1=course.find({_id:request.body.course}).then(function(course){
 				request.body.course=course;
-				return grade.update({_id:request.params.name},function(obj){					
+				return activity.update({_id:request.params.name},function(obj){					
 					if(!request.body.max || !request.body.min){
 						if(request.body.max && (request.body.max-obj.range.min)<=0){
 							throw new ValidatorException("El rango ingresado es menor al sistema");
@@ -313,7 +349,7 @@ module.exports=function(app,express,server,__DIR__){
 				})
 			});
 		}else{
-			promise1=grade.update({_id:request.params.name},function(obj){				
+			promise1=activity.update({_id:request.params.name},function(obj){				
 				if(!request.body.max || !request.body.min){
 					if(request.body.max && (request.body.max-obj.range.min)<=0){
 						throw new ValidatorException("El rango ingresado es menor al sistema");
@@ -344,9 +380,16 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});		
 	});
+	/*
+	* DELETE /:name Eliminar una actividad
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var activity<Activities>	objeto CRUD
+	*/
 	ActivitiesURI.delete("/:name",function(request, response,next) {
-		var grade=new Activities(app.container.database.Schema.Activities);
-		grade.remove({_id:request.params.name}).then(function(data){
+		var activity=new Activities(app.container.database.Schema.Activities);
+		activity.remove({_id:request.params.name}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
