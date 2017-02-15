@@ -3,10 +3,11 @@ var structDb={
 		Peoples:mongoose.Schema({
 			dni:{type:String, trim: true, index:true, required: true, unique:true, uppercase: true},
 			name:{type:String, trim:true, required: true, uppercase: true},
-			birthDate:{type:String, required: true},
+			birthdate:{type:String, required: true},
 			createDate:{type:Date, default:Date.now},
 			tel:{type:String, required: false},
-			image:{type:String, required:false}
+			image:{type:String, required:false},
+			mode:{type:String, required:true}
 		}),
 		Grades:mongoose.Schema({
 			name:{type:String, required:true, trim:true, uppercase: true}
@@ -74,5 +75,25 @@ var structDb={
 		activities:[structDb.ActivitiesMaked],
 		conflicts:[structDb.ConflictCognitions],
 		habilitys:[structDb.Habilities]
+	});
+	structDb.User=mongoose.Schema({
+		username:{ type : String, trim : true, index : true , unique:true},
+	   	password : { type : String },
+	   	email:{ type : String, trim : true, unique:true},
+	   	dateCreated:{ type: Date, default: Date.now },
+	   	dateConfirmed:Date,
+	   	dateDelete:Date,
+	   	people:structDb.Peoples,
+	   	isAdmin:{type:Boolean, default:false}
+	});	
+	structDb.Sessions=mongoose.Schema({
+		privateKeyId:{ type : String, trim : true, index : true , unique:true},
+		publicKeyId:{ type : String, trim : true},
+	   	ip : { type : String, trim : false },
+	   	navigator : { type : String, trim : false },
+	   	dateCreated:{ type: Date, default: Date.now },
+	   	dateDeleted:Date,
+	   	dateLastConnect:Date,
+	   	idUser:{ type: mongoose.Schema.ObjectId, ref: "User" }
 	});
 module.exports=structDb;
