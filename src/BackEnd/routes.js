@@ -102,9 +102,20 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	app.use("/v1/grades",gradeURI);
+	/*
+	* Ruta /v1/habilities
+	* @var HabilitiesURI object enrutador para agrupar metodos
+	*/
 	var HabilitiesURI = express.Router();
+	/*
+	* POST / Crear habilidad
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var hability<Habilities>	objeto CRUD
+	*/
 	HabilitiesURI.post("/",function(request, response,next) {
-		var grade=new Habilities(app.container.database.Schema.Habilities);
+		var hability=new Habilities(app.container.database.Schema.Habilities);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("No se acepta campos nulos");
 		}
@@ -112,34 +123,55 @@ module.exports=function(app,express,server,__DIR__){
 			name:request.body.name,
 			cognitions:[]
 		};
-		grade.add(field).then(function(data){
+		hability.add(field).then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
 		});
 	});
+	/*
+	* GET / Obtener todas las habilidades
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var hability<Habilities>	objeto CRUD
+	*/
 	HabilitiesURI.get("/",function(request, response,next) {
-		var grade=new Habilities(app.container.database.Schema.Habilities);		
-		grade.get().then(function(data){
+		var hability=new Habilities(app.container.database.Schema.Habilities);		
+		hability.get().then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
 		});
 	});
+	/*
+	* GET /:name Obtener una habilidad
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var hability<Habilities>	objeto CRUD
+	*/
 	HabilitiesURI.get("/:name",function(request, response,next) {
-		var grade=new Habilities(app.container.database.Schema.Habilities);			
-		grade.find({_id:request.params.name}).then(function(data){
+		var hability=new Habilities(app.container.database.Schema.Habilities);			
+		hability.find({_id:request.params.name}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
 		});
 	});
+	/*
+	* PUT /:name Editar habilidad
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var hability<Habilities>	objeto CRUD
+	*/
 	HabilitiesURI.put("/:name",function(request, response,next) {
-		var grade=new Habilities(app.container.database.Schema.Habilities);
+		var hability=new Habilities(app.container.database.Schema.Habilities);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("No se acepta campos nulos");
 		}
-		grade.update({_id:request.params.name},function(obj){
+		hability.update({_id:request.params.name},function(obj){
 			obj.name=request.body.name;
 			return obj;
 		}).then(function(data){
@@ -148,6 +180,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* DELETE /:name Eliminar una habilidad
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var hability<Habilities>	objeto CRUD
+	*/
 	HabilitiesURI.delete("/:name",function(request, response,next) {
 		var grade=new Habilities(app.container.database.Schema.Habilities);
 		grade.remove({_id:request.params.name}).then(function(data){
