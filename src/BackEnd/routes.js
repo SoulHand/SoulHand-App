@@ -396,9 +396,20 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	app.use("/v1/activities",ActivitiesURI);
+	/*
+	* Ruta /v1/conflicts
+	* @var ConflictCognitionsURI object enrutador para agrupar metodos
+	*/
 	var ConflictCognitionsURI = express.Router();
+	/*
+	* POST / Crear Conflicto Cognitivo
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var conflict<Habilities>	objeto CRUD
+	*/
 	ConflictCognitionsURI.post("/",function(request, response,next) {
-		var grade=new Habilities(app.container.database.Schema.ConflictCognitions);
+		var conflict=new Habilities(app.container.database.Schema.ConflictCognitions);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("No se acepta campos nulos");
 		}
@@ -406,34 +417,55 @@ module.exports=function(app,express,server,__DIR__){
 			name:request.body.name,
 			cognitions:[]
 		};
-		grade.add(field).then(function(data){
+		conflict.add(field).then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
 		});
 	});
+	/*
+	* GET / Obtener todas los conflictos cognitivos
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var conflict<Habilities>	objeto CRUD
+	*/
 	ConflictCognitionsURI.get("/",function(request, response,next) {
-		var grade=new Habilities(app.container.database.Schema.ConflictCognitions);		
-		grade.get().then(function(data){
+		var conflict=new Habilities(app.container.database.Schema.ConflictCognitions);		
+		conflict.get().then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
 		});
 	});
+	/*
+	* GET /:name Obtener un conflicto cognitivo
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var conflict<Habilities>	objeto CRUD
+	*/
 	ConflictCognitionsURI.get("/:name",function(request, response,next) {
-		var grade=new Habilities(app.container.database.Schema.ConflictCognitions);			
-		grade.find({_id:request.params.name}).then(function(data){
+		var conflict=new Habilities(app.container.database.Schema.ConflictCognitions);			
+		conflict.find({_id:request.params.name}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
 		});
 	});
+	/*
+	* PUT /:name Editar conflicto cognitivo
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var conflict<Habilities>	objeto CRUD
+	*/
 	ConflictCognitionsURI.put("/:name",function(request, response,next) {
-		var grade=new Habilities(app.container.database.Schema.ConflictCognitions);
+		var conflict=new Habilities(app.container.database.Schema.ConflictCognitions);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("No se acepta campos nulos");
 		}
-		grade.update({_id:request.params.name},function(obj){
+		conflict.update({_id:request.params.name},function(obj){
 			obj.name=request.body.name;
 			return obj;
 		}).then(function(data){
@@ -442,16 +474,34 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* DELETE /:name Eliminar un conflicto cognitivo
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var activity<Activities>	objeto CRUD
+	*/
 	ConflictCognitionsURI.delete("/:name",function(request, response,next) {
-		var grade=new Habilities(app.container.database.Schema.ConflictCognitions);
-		grade.remove({_id:request.params.name}).then(function(data){
+		var conflict=new Habilities(app.container.database.Schema.ConflictCognitions);
+		conflict.remove({_id:request.params.name}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
 		});
 	});
 	app.use("/v1/conflicts",ConflictCognitionsURI);
+	/*
+	* Ruta /v1/courses
+	* @var courseURI object enrutador para agrupar metodos
+	*/
 	var courseURI = express.Router();
+	/*
+	* POST / Crear materia
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var course<Course>	objeto CRUD
+	*/
 	courseURI.post("/",function(request, response,next) {
 		var course=new Course(app.container.database.Schema.Courses);
 		if(Validator.isNull()(request.body.name)){
@@ -463,6 +513,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* GET / Obtener todas las materias
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var course<Course>	objeto CRUD
+	*/
 	courseURI.get("/",function(request, response,next) {
 		var course=new Course(app.container.database.Schema.Courses);		
 		course.get().then(function(data){
@@ -471,6 +528,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* GET /:name Obtener una materia
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var course<Course>	objeto CRUD
+	*/
 	courseURI.get("/:name",function(request, response,next) {
 		var course=new Course(app.container.database.Schema.Courses);			
 		course.find({_id:request.params.name}).then(function(data){
@@ -479,6 +543,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* PUT /:name Editar materia
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var course<Course>	objeto CRUD
+	*/
 	courseURI.put("/:name",function(request, response,next) {
 		var course=new Course(app.container.database.Schema.Courses);
 		if(Validator.isNull()(request.body.name)){
@@ -493,6 +564,13 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* DELETE /:name Eliminar una materia
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var course<Course>	objeto CRUD
+	*/
 	courseURI.delete("/:name",function(request, response,next) {
 		var course=new Course(app.container.database.Schema.Courses);
 		course.remove({_id:request.params.name}).then(function(data){
