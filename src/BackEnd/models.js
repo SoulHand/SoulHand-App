@@ -94,6 +94,6 @@ var structDb={
 	   	dateCreated:{ type: Date, default: Date.now },
 	   	dateDeleted:Date,
 	   	dateLastConnect:Date,
-	   	idUser:{ type: mongoose.Schema.ObjectId, ref: "User" }
+	   	user:{ type: mongoose.Schema.ObjectId, ref: "User" }
 	});
 module.exports=structDb;

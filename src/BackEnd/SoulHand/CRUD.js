@@ -13,7 +13,7 @@ function CRUD(db){
 		return p1;
 	};
 	this.find=function(query){
-		var p1=db.findOne(query).exec().then(function(data){
+		var p1=db.findOne(query).then(function(data){
 			if(!data){
 				throw new VoidException("No existe un registro de este tipo");
 			}
@@ -22,7 +22,7 @@ function CRUD(db){
 		return p1;
 	};
 	this.get=function(query){
-		var p1=db.find(query).exec().then(function(data){
+		var p1=db.find(query).then(function(data){
 			if(data.length==0){
 				throw new VoidException("No existe un resultado de busqueda");
 			}

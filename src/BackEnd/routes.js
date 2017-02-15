@@ -9,6 +9,7 @@ var Habilities=require("./SoulHand/Habilities.js");
 var ConflictCognitions=require("./SoulHand/ConflictCognitions.js");
 var CategoryCoginitions=require("./SoulHand/CategoryCoginitions.js");
 var User=require("./SoulHand/User.js");
+var Token=require("./SoulHand/Token.js");
 var Validator=require('string-validator');
 var ValidatorException=require('./SoulHand/Exceptions/ValidatorException.js');
 var UserException=require('./SoulHand/Exceptions/UserException.js');
@@ -1640,6 +1641,14 @@ module.exports=function(app,express,server,__DIR__){
 		});		
 	});
 	app.use("/v1/users",UsersURI);
+	/*
+	* @api {get} /v1/auth/ Obtener todos los representantes
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var user<User>	objeto CRUD
+	* Authorization: Basic base64(username:pass)
+	*/
 	app.get('/v1/auth',basicAuth(function(username, pass,next){
 		const base64=require('base-64');
 		var user=new User(app.container.database.Schema.User);
@@ -1652,6 +1661,34 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});		
 	}),function(request,response,next){
-		response.send("hola");
+		var user=new Token(app.container.database.Schema.Sessions);
+		const uuidV4 = require('uuid/v4');
+		const base64=require('base-64');
+		var address=request.connection.address() || request.socket.address();
+		var navigator=request.headers['user-agent'];
+		var insert=false;
+		user.find({$and:[{user:request.user._id},{ip:address.address},{navigator:navigator},{dateDeleted:null}]}).then(function(token){
+			if(!token){
+				token= new app.container.database.Schema.Sessions({
+					privateKeyId:uuidV4(),
+					publicKeyId:base64.encode(request.user._id),
+					ip:address.address,
+					navigator:navigator,
+					dateCreated:Date.now(),
+					dateLastConnect:Date.now(),
+					user:request.user._id
+				});
+				insert=true;
+			}
+			token.dateLastConnect=Date.now();
+			return token.save();
+		}).then(function(token){
+			if(insert==true){
+				token.user=request.user;
+			}
+			response.send(token);
+		}).catch(function(error){
+			next(error);
+		});
 	});
 }
