@@ -48,6 +48,7 @@ var structDb={
 	});
 	structDb.Activities=mongoose.Schema({
 		name:{type:String, trim:true, uppercase: true},
+		description:{type:String,trim:true,uppercase:true},
 		TeacherCreate:structDb.Teachers,
 		createDate:{type:Date, default:Date.now},
 		course:structDb.Courses,

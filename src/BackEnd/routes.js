@@ -221,7 +221,7 @@ module.exports=function(app,express,server,__DIR__){
 		var course= new Course(app.container.database.Schema.Courses);
 		var min=parseInt(request.body.minDate);
 		var max=parseInt(request.body.maxDate);
-		if(Validator.isNull()(request.body.name)){
+		if(Validator.isNull()(request.body.name) || Validator.isNull()(request.body.description)){
 			throw new ValidatorException("No se acepta campos nulos");
 		}
 		if(!Validator.isInt()(request.body.minDate) || min<3 || min>=150){
@@ -233,9 +233,14 @@ module.exports=function(app,express,server,__DIR__){
 		if((max-min)<=0){
 			throw new ValidatorException("El rango entre las edades debe ser mayor a cero");
 		}
-		var field={
+		if(!request.people){
+			throw new ValidatorException("Un usuario root por defecto no puede insertar actividades!");
+		}
+		//var a=;
+		var field={			
 			name:request.body.name,
-			TeacherCreate:null,
+			TeacherCreate:new app.container.database.Schema.Teachers(request.people),
+			description:request.body.description,
 			course:null,
 			range:{
 				level:0,
@@ -245,10 +250,7 @@ module.exports=function(app,express,server,__DIR__){
 			conflicts:[],
 			habilitys:[]
 		};
-		people.find({"data.dni":request.body.teacher}).then(function(teacher){
-			field.TeacherCreate=teacher;
-			return course.find({_id:request.body.course});
-		}).then(function(course){
+		course.find({_id:request.body.course}).then(function(course){
 			field.course=course;
 			return grade.add(field);			
 		}).then(function(data){
