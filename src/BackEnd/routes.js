@@ -14,6 +14,7 @@ var Validator=require('string-validator');
 var ValidatorException=require('./SoulHand/Exceptions/ValidatorException.js');
 var UserException=require('./SoulHand/Exceptions/UserException.js');
 var basicAuth = require('basic-auth-connect');
+var Auth = require('./SoulHand/Auth.js');
 
 module.exports=function(app,express,server,__DIR__){
 	/*
@@ -28,7 +29,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var grade<Grade>	objeto CRUD
 	*/
-	gradeURI.post("/",function(request, response,next) {
+	gradeURI.post("/",Auth.isTeacher.bind(app.container),function(request, response,next) {
 		var grade=new Grade(app.container.database.Schema.Grades);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("El nombre solo debe contener letras");
@@ -1662,30 +1663,9 @@ module.exports=function(app,express,server,__DIR__){
 		});		
 	}),function(request,response,next){
 		var user=new Token(app.container.database.Schema.Sessions);
-		const uuidV4 = require('uuid/v4');
-		const base64=require('base-64');
 		var address=request.connection.address() || request.socket.address();
 		var navigator=request.headers['user-agent'];
-		var insert=false;
-		user.find({$and:[{user:request.user._id},{ip:address.address},{navigator:navigator},{dateDeleted:null}]}).then(function(token){
-			if(!token){
-				token= new app.container.database.Schema.Sessions({
-					privateKeyId:uuidV4(),
-					publicKeyId:base64.encode(request.user._id),
-					ip:address.address,
-					navigator:navigator,
-					dateCreated:Date.now(),
-					dateLastConnect:Date.now(),
-					user:request.user._id
-				});
-				insert=true;
-			}
-			token.dateLastConnect=Date.now();
-			return token.save();
-		}).then(function(token){
-			if(insert==true){
-				token.user=request.user;
-			}
+		user.add(request.user,address.address,navigator).then(function(token){			
 			response.send(token);
 		}).catch(function(error){
 			next(error);
