@@ -29,7 +29,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var grade<Grade>	objeto CRUD
 	*/
-	gradeURI.post("/",Auth.isTeacher.bind(app.container),function(request, response,next) {
+	gradeURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var grade=new Grade(app.container.database.Schema.Grades);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("El nombre solo debe contener letras");
@@ -77,7 +77,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var grade<Grade>	objeto CRUD
 	*/
-	gradeURI.put("/:id",function(request, response,next) {
+	gradeURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var grade=new Grade(app.container.database.Schema.Grades);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("El nombre solo debe contener letras");
@@ -98,7 +98,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var grade<Grade>	objeto CRUD
 	*/
-	gradeURI.delete("/:id",function(request, response,next) {
+	gradeURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var grade=new Grade(app.container.database.Schema.Grades);		
 		grade.remove({_id:request.params.id}).then(function(data){
 			response.send(data);
@@ -119,7 +119,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var hability<Habilities>	objeto CRUD
 	*/
-	HabilitiesURI.post("/",function(request, response,next) {
+	HabilitiesURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var hability=new Habilities(app.container.database.Schema.Habilities);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("No se acepta campos nulos");
@@ -171,7 +171,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var hability<Habilities>	objeto CRUD
 	*/
-	HabilitiesURI.put("/:id",function(request, response,next) {
+	HabilitiesURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var hability=new Habilities(app.container.database.Schema.Habilities);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("No se acepta campos nulos");
@@ -192,7 +192,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var hability<Habilities>	objeto CRUD
 	*/
-	HabilitiesURI.delete("/:id",function(request, response,next) {
+	HabilitiesURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var grade=new Habilities(app.container.database.Schema.Habilities);
 		grade.remove({_id:request.params.id}).then(function(data){
 			response.send(data);
