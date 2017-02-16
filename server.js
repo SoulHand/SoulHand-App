@@ -20,6 +20,8 @@ require('./src/BackEnd/middleware.js')(app,express,server,__dirname);
 /* Routes */
 require('./src/BackEnd/routes.js')(app,express,server,__dirname);
 
+require('./src/BackEnd/testInit.js')(app,express,server,__dirname);
+
 server.listen(app.settings.port || 8080, function() {
 	var addr = server.address();
 	console.log("Chat server listening at", addr.address + ":" + addr.port);
