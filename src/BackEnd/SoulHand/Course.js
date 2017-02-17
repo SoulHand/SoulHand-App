@@ -6,7 +6,7 @@ function Course(db){
 	this.superConstructor(db);
 	var add=this.add.bind(this);
 	this.add=function(name){
-		var query={name:name};
+		var query={name:name.toUpperCase()};
 		return add(query,query);
 	}
 }

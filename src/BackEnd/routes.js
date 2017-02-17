@@ -80,7 +80,7 @@ module.exports=function(app,express,server,__DIR__){
 	gradeURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var grade=new Grade(app.container.database.Schema.Grades);
 		if(Validator.isNull()(request.body.name)){
-			throw new ValidatorException("El nombre solo debe contener letras");
+			throw new ValidatorException("El nombre solo debe contener letras o numeros");
 		}
 		grade.update({_id:request.params.id},function(obj){
 			obj.name=request.body.name;
@@ -303,12 +303,11 @@ module.exports=function(app,express,server,__DIR__){
 		var people= new SubPeople(app.container.database.Schema.Teachers);
 		var course= new Course(app.container.database.Schema.Courses);
 		
-		if(Validator.isNull()(request.body.name)){
-			throw new ValidatorException("No se acepta campos nulos");
+		if(request.body.name){
+			throw new ValidatorException("No puede modificar el campo nombre");
 		}
 		if(request.body.max){
 			var max=parseInt(request.body.max);
-			console.log(max>150 || max <=3);
 			if(!Validator.isInt()(request.body.max) || max>150 || max <=3){
 				throw new ValidatorException("La edad máxima no es aceptada");
 			}
@@ -509,7 +508,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var course<Course>	objeto CRUD
 	*/
-	courseURI.post("/",function(request, response,next) {
+	courseURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var course=new Course(app.container.database.Schema.Courses);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("El nombre solo debe contener letras");
