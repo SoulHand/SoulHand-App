@@ -5,4 +5,7 @@ module.exports=function(app,express,server,__DIR__){
 	app.use(express.static(path.resolve(__DIR__, 'public')));
 	app.use("/v1/activities",Auth.isTeacher.bind(app.container));
 	app.use("/v1/conflicts",Auth.isTeacherOrNot.bind(app.container));
+	app.use("/v1/teachers",Auth.isAdmin.bind(app.container));
+	app.use("/v1/students",Auth.isAdmin.bind(app.container));
+	app.use("/v1/representives",Auth.isAdmin.bind(app.container));
 }

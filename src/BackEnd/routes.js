@@ -556,7 +556,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var course<Course>	objeto CRUD
 	*/
-	courseURI.put("/:id",function(request, response,next) {
+	courseURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var course=new Course(app.container.database.Schema.Courses);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("El nombre solo debe contener letras");
@@ -577,7 +577,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var course<Course>	objeto CRUD
 	*/
-	courseURI.delete("/:id",function(request, response,next) {
+	courseURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var course=new Course(app.container.database.Schema.Courses);
 		course.remove({_id:request.params.id}).then(function(data){
 			response.send({data});
@@ -598,7 +598,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var period<Period>	objeto CRUD
 	*/
-	periodURI.post("/",function(request, response,next) {
+	periodURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var period=new Period(app.container.database.Schema.PeriodSchools);
 		if(!Validator.matches(/[0-9]{4}\-[0-9]{4}/i)(request.body.name)){
 			throw new ValidatorException("Solo se acepta formato de periodo escolar");
@@ -646,7 +646,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var period<Period>	objeto CRUD
 	*/
-	periodURI.put("/:id",function(request, response,next) {
+	periodURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var period=new Period(app.container.database.Schema.PeriodSchools);
 		if(!Validator.matches(/[0-9]{4}\-[0-9]{4}/i)(request.body.name)){
 			throw new ValidatorException("Solo se acepta formato de periodo escolar");
@@ -667,7 +667,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var period<Period>	objeto CRUD
 	*/
-	periodURI.delete("/:id",function(request, response,next) {
+	periodURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var period=new Period(app.container.database.Schema.PeriodSchools);
 		period.remove({_id:request.params.id}).then(function(data){
 			response.send({data});
@@ -688,7 +688,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions> objeto CRUD
 	*/
-	categoryCognitionURI.post("/",function(request, response,next) {
+	categoryCognitionURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Solo se aceptan textos categoricos");
@@ -736,7 +736,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	categoryCognitionURI.put("/:id",function(request, response,next) {
+	categoryCognitionURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Solo se aceptan textos categoricos");
@@ -757,7 +757,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	categoryCognitionURI.delete("/:id",function(request, response,next) {
+	categoryCognitionURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
 		category.remove({_id:request.params.id}).then(function(data){
 			response.send({data});
@@ -779,7 +779,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var category<CategoryCoginitions> objeto CRUD
 	* @var cognition<Cognitions> objeto CRUD
 	*/
-	CognitionsURI.post("/",function(request, response,next) {
+	CognitionsURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
 		var cognition=new Cognitions(app.container.database.Schema.Cognitions);
 		if(Validator.isNull()(request.body.name)){
@@ -836,7 +836,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var cognition<Cognitions>	objeto CRUD
 	*/
-	CognitionsURI.get("/category/:id",function(request, response,next) {
+	CognitionsURI.get("/category/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var cognition=new Cognitions(app.container.database.Schema.Cognitions);			
 		cognition.get({"category.name":request.params.id.toUpperCase()}).then(function(data){
 			response.send(data);
@@ -852,7 +852,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var cognition<Cognitions>	objeto CRUD
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	CognitionsURI.put("/:id",function(request, response,next) {
+	CognitionsURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var cognition=new Cognitions(app.container.database.Schema.Cognitions);
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
 		if(Validator.isNull()(request.body.name)){
@@ -880,7 +880,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var cognition<Cognitions>	objeto CRUD
 	*/
-	CognitionsURI.delete("/:id",function(request, response,next) {
+	CognitionsURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var cognition=new Cognitions(app.container.database.Schema.Cognitions);
 		cognition.remove({_id:request.params.id}).then(function(data){
 			response.send({data});
@@ -902,7 +902,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var people<SubPeople> objeto CRUD
 	* @var people2<People> objeto CRUD
 	*/
-	PeopleURI.post("/",function(request, response,next) {
+	PeopleURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Teachers);
 		var people2=new People(app.container.database.Schema.Peoples);
 		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
@@ -1350,165 +1350,6 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	app.use("/v1/representives",ReferencesToURI);/*
-	* Ruta /v1/representives		
-	* @var ReferencesToURI object enrutador para agrupar metodos
-	*/
-	var ReferencesToURI = express.Router();
-	/*
-	* @api {post} / Crear representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople> objeto CRUD
-	* @var people3<SubPeople> objeto CRUD
-	* @var people2<People> objeto CRUD
-	*/
-	ReferencesToURI.post("/",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Representatives);
-		var people3=new SubPeople(app.container.database.Schema.Students);
-		var people2=new People(app.container.database.Schema.Peoples);
-		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
-			throw new ValidatorException("Solo se aceptan documentos de identidad");
-		}
-		if(Validator.matches(/[0-9]/)(request.body.name)){
-			throw new ValidatorException("Solo se aceptan nombres validos");
-		}
-		if(!Validator.isDate()(request.body.birthDate)){
-			throw new ValidatorException("La fecha de nacimiento no es valida");
-		}
-		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
-			throw new ValidatorException("El telefono no tiene un formato valido");
-		}
-		var fields={
-			data:JSON.parse(JSON.stringify(request.body)),
-			idStudent:request.body.idStudent			
-		};
-		delete(fields.data.idStudent);
-		people3.find({"data.dni":request.body.idStudent}).then(function(data){
-			fields.idStudent=data._id;
-			return people2.add(fields.data);
-		}).then(function(data){
-			fields.data=data;
-			return people.add(fields);
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} / Obtener todos los representantes
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople>	objeto CRUD
-	*/
-	ReferencesToURI.get("/",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		people.get().then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} /:id Obtener un representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople>	objeto CRUD
-	*/
-	ReferencesToURI.get("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		people.find({_id:request.params.id}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {put} /:id Editar representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople>	objeto CRUD
-	* @var people2<People>	objeto CRUD
-	* @var grade<Grade>	objeto CRUD
-	*/
-	ReferencesToURI.put("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		var people2=new People(app.container.database.Schema.Peoples);
-		var grade=new Grade(app.container.database.Schema.Grades);
-		if(request.body.dni && !Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
-			throw new ValidatorException("Solo se aceptan documentos de identidad");
-		}
-		if(request.body.name && Validator.matches(/[0-9]/)(request.body.name)){
-			throw new ValidatorException("Solo se aceptan nombres validos");
-		}
-		if(request.body.birthDate && !Validator.isDate()(request.body.birthDate)){
-			throw new ValidatorException("La fecha de nacimiento no es valida");
-		}
-		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
-			throw new ValidatorException("El telefono no tiene un formato valido");
-		}
-		var promise1;
-		if(request.body.grade){
-			promise1=grade.find({name:request.body.grade}).then(function(data){
-				request.body.grade=data;
-				return people.update({_id:request.params.id},function(obj){
-					for (i in obj.data){
-						if(request.body[i] && i!="dni"){
-							obj.data[i]=request.body[i];
-						}
-					}
-					obj.grade=request.body.grade;
-					return obj;
-				})
-			});
-		}else{
-			promise1=people.update({_id:request.params.id},function(obj){
-				for (i in obj.data){
-					if(request.body[i] && i!="dni"){
-						obj.data[i]=request.body[i];
-					}
-				}
-				return obj;
-			});
-		}
-		promise1.then(function(data){
-			return people2.find({_id:data.data._id});
-		}).then(function(data){
-			for (i in data){
-				if(request.body[i] && i!="dni"){
-					data[i]=request.body[i];
-				}
-			}
-			return data.save();
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {delete} /:id Eliminar un representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople>	objeto CRUD
-	* @var people2<People>	objeto CRUD
-	*/
-	ReferencesToURI.delete("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		var people2=new People(app.container.database.Schema.Peoples);
-		people.remove({_id:request.params.id}).then(function(data){
-			response.send(data);
-			return people2.remove(data.data._id);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	app.use("/v1/representives",ReferencesToURI);
 	/*
 	* Ruta /v1/users		
 	* @var UsersURI object enrutador para agrupar metodos
