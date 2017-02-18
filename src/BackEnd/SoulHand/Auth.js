@@ -103,29 +103,3 @@ module.exports.isTeacher=function(request,response,next){
 		next(error);		
 	})
 }
-
-module.exports.isEditable=function(request,response,next){
-	var Schema=this.database.Schema;
-	var address=request.connection.address() || request.socket.address();
-	var navigator=request.headers['user-agent'];
-	user.find({
-		$and:[
-			{publicKeyId:request.query.PublicKeyId},
-			{privateKeyId:request.query.PrivateKeyId},
-			{ip:address.address},
-			{navigator:navigator},
-			{dateDeleted:null}
-		]
-	}).then(function(data){
-		if(data.user.people.mode!="TEACHER"){
-			throw new UserException('No posee permisos de docente');			
-		}
-		request.user=data.user;
-		return Schema.Teachers.findOne({"data._id":data.user.people._id});
-	}).then(function(data){
-		request.people=data;
-		next();		
-	}).catch(function(error){
-		next(error);		
-	})
-}

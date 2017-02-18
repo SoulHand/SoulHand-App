@@ -1404,7 +1404,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var user<User>	objeto CRUD
 	*/
-	UsersURI.get("/",function(request, response,next) {
+	UsersURI.get("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var user=new User(app.container.database.Schema.User);
 		user.get().then(function(data){
 			response.send(data);
@@ -1419,7 +1419,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var user<User>	objeto CRUD
 	*/
-	UsersURI.get("/:id",function(request, response,next) {
+	UsersURI.get("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var user=new User(app.container.database.Schema.User);
 		user.find({_id:request.params.id}).then(function(data){
 			response.send(data);
@@ -1434,7 +1434,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var user<User>	objeto CRUD
 	*/
-	UsersURI.put("/:id",function(request, response,next) {
+	UsersURI.put("/:id",Auth.isUser.bind(app.container),function(request, response,next) {
 		if(request.body.isAdmin){
 			throw new ValidatorException("no puede realizar un cambio de administración");
 		}
@@ -1456,6 +1456,9 @@ module.exports=function(app,express,server,__DIR__){
 		}
 		var user=new User(app.container.database.Schema.User);
 		user.update({_id:request.params.id},function(data){
+		if(request.user.isAdmin!=true && data._id!=request.user._id){
+			throw new ValidatorException("No tiene permisos para editar este registro");
+		}
 			for (i in data){
 				if(request.body[i] && i!='people'){
 					data[i]=request.body[i];
@@ -1475,7 +1478,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var user<User>	objeto CRUD
 	*/
-	UsersURI.delete("/:id",function(request, response,next) {
+	UsersURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var user=new User(app.container.database.Schema.User);
 		user.remove({_id:request.params.id}).then(function(data){
 			response.send(data);
