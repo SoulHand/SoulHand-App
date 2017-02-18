@@ -979,7 +979,7 @@ module.exports=function(app,express,server,__DIR__){
 		if(request.body.name && Validator.matches(/[0-9]/)(request.body.name)){
 			throw new ValidatorException("Solo se aceptan nombres validos");
 		}
-		if(request.body.birthdate && !Validator.isDate()(request.body.birthDate)){
+		if(request.body.birthdate && !Validator.isDate()(request.body.birthdate)){
 			throw new ValidatorException("La fecha de nacimiento no es valida");
 		}
 		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
@@ -1050,7 +1050,7 @@ module.exports=function(app,express,server,__DIR__){
 		if(Validator.matches(/[0-9]/)(request.body.name)){
 			throw new ValidatorException("Solo se aceptan nombres validos");
 		}
-		if(!Validator.isDate()(request.body.birthDate)){
+		if(!Validator.isDate()(request.body.birthdate)){
 			throw new ValidatorException("La fecha de nacimiento no es valida");
 		}
 		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
@@ -1065,7 +1065,7 @@ module.exports=function(app,express,server,__DIR__){
 		};
 		fields.data.mode="STUDENT";		
 		delete(fields.data.grade);
-		grade.find({name:request.body.grade}).then(function(data){
+		grade.find({name:request.body.grade.toUpperCase()}).then(function(data){
 			fields.grade=data;
 			return people2.add(fields.data);
 		}).then(function(data){
@@ -1125,7 +1125,7 @@ module.exports=function(app,express,server,__DIR__){
 		if(request.body.name && Validator.matches(/[0-9]/)(request.body.name)){
 			throw new ValidatorException("Solo se aceptan nombres validos");
 		}
-		if(request.body.birthDate && !Validator.isDate()(request.body.birthDate)){
+		if(request.body.birthdate && !Validator.isDate()(request.body.birthdate)){
 			throw new ValidatorException("La fecha de nacimiento no es valida");
 		}
 		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
@@ -1213,7 +1213,7 @@ module.exports=function(app,express,server,__DIR__){
 		if(Validator.matches(/[0-9]/)(request.body.name)){
 			throw new ValidatorException("Solo se aceptan nombres validos");
 		}
-		if(!Validator.isDate()(request.body.birthDate)){
+		if(!Validator.isDate()(request.body.birthdate)){
 			throw new ValidatorException("La fecha de nacimiento no es valida");
 		}
 		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
@@ -1286,7 +1286,7 @@ module.exports=function(app,express,server,__DIR__){
 		if(request.body.name && Validator.matches(/[0-9]/)(request.body.name)){
 			throw new ValidatorException("Solo se aceptan nombres validos");
 		}
-		if(request.body.birthDate && !Validator.isDate()(request.body.birthDate)){
+		if(request.body.birthdate && !Validator.isDate()(request.body.birthdate)){
 			throw new ValidatorException("La fecha de nacimiento no es valida");
 		}
 		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
