@@ -88,7 +88,6 @@ var structDb={
 	   	email:{ type : String, trim : true, unique:true},
 	   	dateCreated:{ type: Date, default: Date.now },
 	   	dateConfirmed:Date,
-	   	dateDelete:Date,
 	   	people:structDb.Peoples,
 	   	isAdmin:{type:Boolean, default:false}
 	});	
@@ -101,5 +100,113 @@ var structDb={
 	   	dateDeleted:Date,
 	   	dateLastConnect:Date,
 	   	user:{ type: mongoose.Schema.ObjectId, ref: "User" }
+	});
+	structDb.ItemsInteligence=mongoose.Schema({
+		name:{ type : String, trim : true},
+		age:{
+			min:{type:Number,min:0,max:100},
+			max:{type:Number,min:0,max:120}
+		},
+		value:{
+			min:{type:Number,min:0,max:100},
+			max:{type:Number,min:0,max:100},
+			correct:{type:Number,min:0,max:100}
+		}
+	});
+	structDb.SerieInteligence=mongoose.Schema({
+		name:{ type : String, trim : true},
+		items:[structDb.ItemsInteligence]
+	});
+	structDb.RangeInteligence=mongoose.Schema({
+		"5":{
+			"20":{type:Number,min:0},
+			"25":{type:Number,min:0},
+			"30":{type:Number,min:0},
+			"35":{type:Number,min:0},
+			"40":{type:Number,min:0},
+			"45":{type:Number,min:0},
+			"50":{type:Number,min:0},
+			"55":{type:Number,min:0},
+			"60":{type:Number,min:0},
+			"65":{type:Number,min:0},
+		},
+		"10":{
+			"20":{type:Number,min:0},
+			"25":{type:Number,min:0},
+			"30":{type:Number,min:0},
+			"35":{type:Number,min:0},
+			"40":{type:Number,min:0},
+			"45":{type:Number,min:0},
+			"50":{type:Number,min:0},
+			"55":{type:Number,min:0},
+			"60":{type:Number,min:0},
+			"65":{type:Number,min:0},
+		},
+		"25":{
+			"20":{type:Number,min:0},
+			"25":{type:Number,min:0},
+			"30":{type:Number,min:0},
+			"35":{type:Number,min:0},
+			"40":{type:Number,min:0},
+			"45":{type:Number,min:0},
+			"50":{type:Number,min:0},
+			"55":{type:Number,min:0},
+			"60":{type:Number,min:0},
+			"65":{type:Number,min:0},
+		},
+		"50":{
+			"20":{type:Number,min:0},
+			"25":{type:Number,min:0},
+			"30":{type:Number,min:0},
+			"35":{type:Number,min:0},
+			"40":{type:Number,min:0},
+			"45":{type:Number,min:0},
+			"50":{type:Number,min:0},
+			"55":{type:Number,min:0},
+			"60":{type:Number,min:0},
+			"65":{type:Number,min:0},
+		},
+		"75":{
+			"20":{type:Number,min:0},
+			"25":{type:Number,min:0},
+			"30":{type:Number,min:0},
+			"35":{type:Number,min:0},
+			"40":{type:Number,min:0},
+			"45":{type:Number,min:0},
+			"50":{type:Number,min:0},
+			"55":{type:Number,min:0},
+			"60":{type:Number,min:0},
+			"65":{type:Number,min:0},
+		},
+		"90":{
+			"20":{type:Number,min:0},
+			"25":{type:Number,min:0},
+			"30":{type:Number,min:0},
+			"35":{type:Number,min:0},
+			"40":{type:Number,min:0},
+			"45":{type:Number,min:0},
+			"50":{type:Number,min:0},
+			"55":{type:Number,min:0},
+			"60":{type:Number,min:0},
+			"65":{type:Number,min:0},
+		},
+		"95":{
+			"20":{type:Number,min:0},
+			"25":{type:Number,min:0},
+			"30":{type:Number,min:0},
+			"35":{type:Number,min:0},
+			"40":{type:Number,min:0},
+			"45":{type:Number,min:0},
+			"50":{type:Number,min:0},
+			"55":{type:Number,min:0},
+			"60":{type:Number,min:0},
+			"65":{type:Number,min:0},
+		}
+	});
+	structDb.TestInteligence=mongoose.Schema({
+		name:{ type : String, trim : true, index : true , unique:true},
+		serie:[structDb.SerieInteligence],
+	   	dateCreated:{ type: Date, default: Date.now },
+	   	range:structDb.RangeInteligence
 	});
 module.exports=structDb;
