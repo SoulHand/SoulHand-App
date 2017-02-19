@@ -18,13 +18,13 @@ var structDb={
 		PeriodSchools:mongoose.Schema({
 			name:{type:String, required:true, trim:true, uppercase: true}
 		}),
-		CategoryCognitions:mongoose.Schema({
-			name:{type:String, required:true, trim:true, uppercase: true}
-		})
+		Cognitions:mongoose.Schema({
+			name:{type:String, trim:true, uppercase: true}
+		})		
 	};
-	structDb.Cognitions=mongoose.Schema({
-		category:structDb.CategoryCognitions,
-		name:{type:String, trim:true, uppercase: true}
+	structDb.CategoryCognitions=mongoose.Schema({
+		name:{type:String, required:true, trim:true, uppercase: true},
+		cognitions:[structDb.Cognitions]
 	});
 	structDb.Teachers=mongoose.Schema({
 		data: structDb.Peoples,
@@ -39,6 +39,11 @@ var structDb={
 		createDate:{type:Date, default:Date.now},
 		cognitions:[structDb.Cognitions],
 		level:{type:Number,min:0,max:100, default:0}
+	});
+	structDb.CategoryHabilities=mongoose.Schema({
+		name:{type:String, trim:true, uppercase: true},
+		createDate:{type:Date, default:Date.now},
+		habilities:[structDb.Habilities]
 	});
 	structDb.ConflictCognitions=mongoose.Schema({
 		name:{type:String, trim:true, uppercase: true},

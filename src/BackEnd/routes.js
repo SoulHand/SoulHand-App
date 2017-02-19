@@ -677,7 +677,7 @@ module.exports=function(app,express,server,__DIR__){
 	});
 	app.use("/v1/periods",periodURI);
 	/*
-	* Ruta /v1/category/cognitions
+	* Ruta /v1/cognitions
 	* @var categoryCognitionURI object enrutador para agrupar metodos
 	*/
 	var categoryCognitionURI = express.Router();
@@ -715,15 +715,15 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	/*
-	* @api {get} /:id Obtener una categoria cognitiva
+	* @api {get} /:name Obtener una categoria cognitiva
 	* @params request peticiones del cliente
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	categoryCognitionURI.get("/:id",function(request, response,next) {
+	categoryCognitionURI.get("/:name",function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);			
-		category.find({_id:request.params.id}).then(function(data){
+		category.find({name:request.params.name.toUpperCase()}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -765,12 +765,6 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
-	app.use("/v1/category/cognitions",categoryCognitionURI);
-	/*
-	* Ruta /v1/cognitions
-	* @var CognitionsURI object enrutador para agrupar metodos
-	*/
-	var CognitionsURI = express.Router();
 	/*
 	* @api {post} / Crear funcion cognitiva
 	* @params request peticiones del cliente
@@ -779,66 +773,26 @@ module.exports=function(app,express,server,__DIR__){
 	* @var category<CategoryCoginitions> objeto CRUD
 	* @var cognition<Cognitions> objeto CRUD
 	*/
-	CognitionsURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	categoryCognitionURI.post("/:name",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
-		var cognition=new Cognitions(app.container.database.Schema.Cognitions);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Solo se aceptan caracteres alphabeticos");
 		}
-		if(Validator.isNull()(request.body.category)){
+		if(Validator.isNull()(request.params.name)){
 			throw new ValidatorException("Solo se aceptan categorias validas");
 		}
-		category.find({name:request.body.category.toUpperCase()}).then(function(cat){
-			return cognition.add({
-				name:request.body.name.toUpperCase(),
-				category:cat
+		category.update({name:request.params.name.toUpperCase()},function(cat){
+			name=request.body.name.toUpperCase().trim();
+			cat.cognitions.filter(function(row){
+				if(name==row.name){
+					throw new ValidatorException("Ya existe un registro identico!");
+				}
 			});
+			cat.cognitions.push({
+				name:name,
+			});
+			return cat;
 		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} / Obtener todas las funciones cognitivas
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var cognition<Cognitions>	objeto CRUD
-	*/
-	CognitionsURI.get("/",function(request, response,next) {
-		var cognition=new Cognitions(app.container.database.Schema.Cognitions);		
-		cognition.get().then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} /:id Obtener una funcion cognitiva
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var cognition<Cognitions>	objeto CRUD
-	*/
-	CognitionsURI.get("/:id",function(request, response,next) {
-		var cognition=new Cognitions(app.container.database.Schema.Cognitions);			
-		cognition.find({_id:request.params.id}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} /category/:id Obtener las funcion cognitiva correspondientes a una categoria
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var cognition<Cognitions>	objeto CRUD
-	*/
-	CognitionsURI.get("/category/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var cognition=new Cognitions(app.container.database.Schema.Cognitions);			
-		cognition.get({"category.name":request.params.id.toUpperCase()}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -852,21 +806,22 @@ module.exports=function(app,express,server,__DIR__){
 	* @var cognition<Cognitions>	objeto CRUD
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	CognitionsURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var cognition=new Cognitions(app.container.database.Schema.Cognitions);
+	categoryCognitionURI.put("/:name/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Solo se aceptan caracteres alphabeticos");
 		}
-		if(Validator.isNull()(request.body.category)){
+		if(Validator.isNull()(request.params.name)){
 			throw new ValidatorException("Solo se aceptan categorias validas");
 		}
-		category.find({name:request.body.category.toUpperCase()}).then(function(cat){
-			return cognition.update({_id:request.params.id},function(obj){
-				obj.name=request.body.name;
-				obj.category=cat;
-				return obj;
+		category.update({name:request.params.name.toUpperCase()},function(cat){
+			cat.cognitions=cat.cognitions.map(function(row){
+				if(row._id==request.params.id){
+					row.name=request.body.name.toUpperCase();
+				}
+				return row;
 			});
+			return cat;
 		}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -880,15 +835,29 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var cognition<Cognitions>	objeto CRUD
 	*/
-	CognitionsURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var cognition=new Cognitions(app.container.database.Schema.Cognitions);
-		cognition.remove({_id:request.params.id}).then(function(data){
-			response.send({data});
+	categoryCognitionURI.delete("/:name/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("Solo se aceptan caracteres alphabeticos");
+		}
+		if(Validator.isNull()(request.params.name)){
+			throw new ValidatorException("Solo se aceptan categorias validas");
+		}
+		category.update({name:request.params.name.toUpperCase()},function(cat){
+			for (i in cat.cognitions){
+				if(cat.cognitions[i]._id==request.params.id){
+					cat.cognitions[i].remove();
+					return cat;
+				}
+			}
+			throw new ValidatorException("No existe un registro de este tipo");			
+		}).then(function(data){
+			response.send(data);
 		}).catch(function(error){
 			next(error);
 		});
 	});
-	app.use("/v1/cognitions",CognitionsURI);
+	app.use("/v1/cognitions",categoryCognitionURI);
 	/*
 	* Ruta /v1/teachers
 	* @var PeopleURI object enrutador para agrupar metodos
