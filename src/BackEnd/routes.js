@@ -8,6 +8,7 @@ var Cognitions=require("./SoulHand/Cognitions.js");
 var Habilities=require("./SoulHand/Habilities.js");
 var ConflictCognitions=require("./SoulHand/ConflictCognitions.js");
 var CategoryCoginitions=require("./SoulHand/CategoryCoginitions.js");
+var CRUD=require("./SoulHand/CRUD.js");
 var User=require("./SoulHand/User.js");
 var Token=require("./SoulHand/Token.js");
 var Validator=require('string-validator');
@@ -1485,4 +1486,201 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+
+	/*
+	* Ruta /v1/test		
+	* @var testParent object enrutador para agrupar metodos
+	*/
+	var testParent = express.Router();
+	/*
+	* @api {post} / Crear un test
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var test<CRUD> objeto CRUD
+	*/
+	testParent.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var test=new CRUD(app.container.database.Schema.TestInteligence);		
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("Es requerido un nombre");
+		}
+		if(request.body.range && !Validator.isJSON(request.body.range)){
+			throw new ValidatorException("Los datos de rangos no son validos");
+		}
+		var fields={
+			name:request.body.name.toString(),
+			range:(request.body.range) ? new app.container.database.Schema.RangeInteligence(JSON.parse(request.body.range)) : null
+		};
+		test.add({name:fields.name},fields).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todos los test
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var test<CRUD>	objeto CRUD
+	*/
+	testParent.get("/",Auth.isTeacherOrNot.bind(app.container),function(request, response,next) {
+		var test=new CRUD(app.container.database.Schema.TestInteligence);		
+		test.get().then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} /:id Obtener un representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var test<CRUD>	objeto CRUD
+	*/
+	testParent.get("/:id",Auth.isTeacherOrNot.bind(app.container),function(request, response,next) {
+		var test=new CRUD(app.container.database.Schema.TestInteligence);
+		test.find({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {put} /:id Editar representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var test<CRUD>	objeto CRUD
+	*/
+	testParent.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		if(!Validator.isJSON(request.body.range)){
+			throw new ValidatorException("Los datos de rangos no son validos");
+		}
+		var test=new CRUD(app.container.database.Schema.TestInteligence);
+		test.update({_id:request.params.id},function(data){
+			data.range= new app.container.database.Schema.RangeInteligence(JSON.parse(request.body.range));
+			return data;
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {delete} /:id Eliminar un test
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var test<CRUD>	objeto CRUD
+	*/
+	testParent.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var test=new CRUD(app.container.database.Schema.TestInteligence);
+		test.remove({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {post} /:name Crear una serie de un test
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var test<CRUD> objeto CRUD
+	*/
+	testParent.post("/:name",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var min=parseInt(request.body.minDate);
+		var max=parseInt(request.body.maxDate);
+		var count=parseInt(request.body.count);
+		if(!Validator.isInt()(request.body.minDate) || min<3 || min>=150){
+			throw new ValidatorException("La edad minima no es aceptada");
+		}
+		if(!Validator.isInt()(request.body.maxDate) || max>150 || max <=3){
+			throw new ValidatorException("La edad máxima no es aceptada");
+		}
+		if((max-min)<=0 || count<=0){
+			throw new ValidatorException("El rango entre las edades debe ser mayor a cero");
+		}
+		var test=new CRUD(app.container.database.Schema.TestInteligence);			
+		test.update({name:request.params.name.toUpperCase()},function(data){
+			var serie=new app.container.database.Schema.SerieInteligence({
+				name:request.body.name,
+				age:{
+					min:min,
+					max:max
+				},
+				length:count
+			});
+			data.serie.filter(function(row){
+				if(row.name==serie.name){
+					throw new ValidatorException("Ya existe un item con elementos similares");
+				}
+			})
+			data.serie.push(serie);
+			return data;
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {delete} /:id Eliminar una serie
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var test<CRUD>	objeto CRUD
+	*/
+	testParent.delete("/:name/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var test=new CRUD(app.container.database.Schema.TestInteligence);				
+		test.update({name:request.params.name.toUpperCase()},function(data){
+			for (i in data.serie){
+				if(data.serie[i]._id==request.params.id){
+					data.serie[i].remove();
+					return data;
+				}
+			}
+			throw new ValidatorException("No existe un registro de este tipo");
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {post} /:name/:id añadir un item a una serie de un test
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var test<CRUD> objeto CRUD
+	*/
+	testParent.post("/:name/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var test=new CRUD(app.container.database.Schema.TestInteligence);		
+		if(Validator.isNull()(request.params.name)){
+			throw new ValidatorException("Es requerido un nombre");
+		}
+		if(request.body.range && !Validator.isJSON(request.body.range)){
+			throw new ValidatorException("Los datos de rangos no son validos");
+		}		
+		test.update({name:request.params.name.toUpperCase()},function(data){
+			for (i in data.serie){
+				if(data.serie[i]._id==request.params.id){
+					var item=new app.container.database.Schema.ItemsInteligence({
+						name:request.body.name,						
+						value:request.body.correct
+					});
+					data.serie[i].items.push(item);
+					return data;
+				}
+			}
+			throw new ValidatorException("No existe un registro de este tipo");			
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	app.use("/v1/test",testParent);
 }
