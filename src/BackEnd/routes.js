@@ -1661,12 +1661,15 @@ module.exports=function(app,express,server,__DIR__){
 		if(Validator.isNull()(request.params.name)){
 			throw new ValidatorException("Es requerido un nombre");
 		}
-		if(request.body.range && !Validator.isJSON(request.body.range)){
-			throw new ValidatorException("Los datos de rangos no son validos");
+		if(!Validator.isNumeric()(request.body.correct)){
+			throw new ValidatorException("Es necesario un numero para la respuesta correcta al item");
 		}		
 		test.update({name:request.params.name.toUpperCase()},function(data){
 			for (i in data.serie){
 				if(data.serie[i]._id==request.params.id){
+					if(!(request.body.correct>=0 && request.body.correct<data.serie[i].length)){
+						throw new ValidatorException("El valor correcto del item esta fuera del rango aceptado por la serie");
+					}
 					var item=new app.container.database.Schema.ItemsInteligence({
 						name:request.body.name,						
 						value:request.body.correct
@@ -1676,6 +1679,33 @@ module.exports=function(app,express,server,__DIR__){
 				}
 			}
 			throw new ValidatorException("No existe un registro de este tipo");			
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {delete} /:id Eliminar una serie
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var test<CRUD>	objeto CRUD
+	*/
+	testParent.delete("/:name/:id/:item",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var test=new CRUD(app.container.database.Schema.TestInteligence);				
+		test.update({name:request.params.name.toUpperCase()},function(data){
+			for (i in data.serie){
+				if(data.serie[i]._id==request.params.id){
+					for(j in data.serie[i].items){
+						if(data.serie[i].items[j]._id==request.params.item){
+							data.serie[i].items[j].remove();
+							return data;
+						}
+					}					
+				}
+			}
+			throw new ValidatorException("No existe un registro de este tipo");
 		}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
