@@ -1712,5 +1712,135 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* @api {post} /range añadir un rango de inteligencia
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var test<CRUD> objeto CRUD
+	*/
+	testParent.post("/inteligence/range",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var user=new CRUD(app.container.database.Schema.groupsInteligence);		
+		var min=parseInt(request.body.min);
+		var max=parseInt(request.body.max);
+		var count=parseInt(request.body.count);
+		if(!Validator.isInt()(request.body.min) || min<=0){
+			throw new ValidatorException("el rango minimo no es aceptada");
+		}
+		if(!Validator.isInt()(request.body.max) || max>150){
+			throw new ValidatorException("el rango máximo no es aceptada");
+		}
+		if((max-min)<=0 || count<=0){
+			throw new ValidatorException("El rango entre las edades debe ser mayor a cero");
+		}
+		if(Validator.isNull()(request.params.name)){
+			throw new ValidatorException("Es requerido un nombre");
+		}
+		if(Validator.isNull()(request.params.simbol)){
+			throw new ValidatorException("Es requerido un simbolo del rango");
+		}
+		var fields={
+			name:request.body.name.toString(),
+			range:{
+				min:min,
+				max:max
+			},
+			simbol:request.params.simbol
+		};
+		user.add({name:fields.name},fields).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
 	app.use("/v1/test",testParent);
+	/*
+	* Ruta /v1/inteligence
+	* @var inteligenceURI object enrutador para agrupar metodos
+	*/
+	var inteligenceURI = express.Router();	
+	/*
+	* @api {post} /range añadir un rango de inteligencia
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var test<CRUD> objeto CRUD
+	*/
+	inteligenceURI.post("/range",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var user=new CRUD(app.container.database.Schema.groupsInteligence);		
+		var min=parseInt(request.body.min);
+		var max=parseInt(request.body.max);
+		var count=parseInt(request.body.count);
+		if(!Validator.isInt()(request.body.min) || min<=0){
+			throw new ValidatorException("el rango minimo no es aceptada");
+		}
+		if(!Validator.isInt()(request.body.max) || max>150){
+			throw new ValidatorException("el rango máximo no es aceptada");
+		}
+		if((max-min)<=0 || count<=0){
+			throw new ValidatorException("El rango entre las edades debe ser mayor a cero");
+		}		
+		if(Validator.isNull()(request.body.simbol)){
+			throw new ValidatorException("Es requerido un simbolo del rango");
+		}
+		var fields={
+			name:request.body.name.toString(),
+			range:{
+				min:min,
+				max:max
+			},
+			simbol:request.body.simbol.toString()
+		};
+		user.add({name:fields.name},fields).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todos los test
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var test<CRUD>	objeto CRUD
+	*/
+	inteligenceURI.get("/range",Auth.isTeacherOrNot.bind(app.container),function(request, response,next) {
+		var user=new CRUD(app.container.database.Schema.groupsInteligence);		
+		user.get().then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} /:id Obtener un representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var test<CRUD>	objeto CRUD
+	*/
+	inteligenceURI.get("/range/:id",Auth.isTeacherOrNot.bind(app.container),function(request, response,next) {
+		var user=new CRUD(app.container.database.Schema.groupsInteligence);		
+		user.find({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {delete} /:id Eliminar un representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var user<User>	objeto CRUD
+	*/
+	inteligenceURI.delete("/range/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var user=new CRUD(app.container.database.Schema.groupsInteligence);		
+		user.remove({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});		
+	});
+	app.use("/v1/inteligence",inteligenceURI);
 }

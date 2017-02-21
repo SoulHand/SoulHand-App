@@ -74,14 +74,6 @@ var structDb={
 		conflicts:[structDb.ConflictCognitions],
 		habilitys:[structDb.Habilities]
 	});
-	structDb.Students=mongoose.Schema({
-		data: structDb.Peoples,
-		grade:structDb.Grades,
-		discapacityLevel:{type:Number, required:true, default:0},
-		activities:[structDb.ActivitiesMaked],
-		conflicts:[structDb.ConflictCognitions],
-		habilitys:[structDb.Habilities]
-	});
 	structDb.User=mongoose.Schema({
 		username:{ type : String, trim : true, index : true , unique:true},
 	   	password : { type : String },
@@ -201,9 +193,40 @@ var structDb={
 		}
 	});
 	structDb.TestInteligence=mongoose.Schema({
-		name:{ type : String, trim : true, index : true , unique:true,uppercase: true},
+		name:{ type : String, trim : true, index : true, unique:true,uppercase: true},
 		serie:[structDb.SerieInteligence],
 	   	dateCreated:{ type: Date, default: Date.now },
 	   	range:structDb.RangeInteligence
+	});	
+	structDb.serieStudent=mongoose.Schema({
+		name:{ type : String, trim : true,uppercase: true},
+		items:[structDb.ItemsInteligence],
+		value:{type:Number,min:0}
+	});
+	structDb.groupsInteligence=mongoose.Schema({
+		name:{ type : String, trim : true, unique:true, uppercase: true},
+		range:{
+			min:{type:Number,min:0,max:100},
+			max:{type:Number,min:0,max:120}
+		},
+		simbol:{ type : String, trim : true, unique:true, uppercase: true}
+	});
+	structDb.testIntStudent=mongoose.Schema({
+		name:{ type : String, trim : true,uppercase: true},
+		serie:[structDb.serieStudent],
+	   	dateCreated:{ type: Date, default: Date.now },
+	   	value:{type:Number,min:0,max:100},
+	   	percentil:{type:Number,min:0,max:100},
+	   	group:structDb.groupsInteligence
+	});
+	structDb.Students=mongoose.Schema({
+		data: structDb.Peoples,
+		grade:structDb.Grades,
+		discapacityLevel:{type:Number, required:true, default:0},
+		activities:[structDb.ActivitiesMaked],
+		conflicts:[structDb.ConflictCognitions],
+		habilitys:[structDb.Habilities],
+		test:[structDb.testIntStudent],
+	   	group:structDb.groupsInteligence
 	});
 module.exports=structDb;
