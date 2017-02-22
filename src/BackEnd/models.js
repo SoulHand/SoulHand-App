@@ -217,7 +217,8 @@ var structDb={
 	   	dateCreated:{ type: Date, default: Date.now },
 	   	value:{type:Number,min:0,max:100},
 	   	percentil:{type:Number,min:0,max:100},
-	   	group:structDb.groupsInteligence
+	   	group:structDb.groupsInteligence,
+	   	time:{type:Number,min:0}
 	});
 	structDb.Students=mongoose.Schema({
 		data: structDb.Peoples,

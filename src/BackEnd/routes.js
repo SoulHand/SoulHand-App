@@ -1158,6 +1158,55 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* @api {post} /:dni/test/:test Crear test alumno
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*/
+	StudentsURI.post("/:dni/test/:test",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Students);
+		var test=new CRUD(app.container.database.Schema.TestInteligence);
+		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.params.dni)){
+			throw new ValidatorException("Solo se aceptan documentos de identidad");
+		}		
+		var input=JSON.parse(request.body.test);
+		if(!Validator.isInt()(input.time,{min:5000})){
+			throw new ValidatorException("El tiempo de prueba registrado no cumple las expectativas!");
+		}		
+		test.find({name:request.params.test}).then(function(inteligence){
+			return people.update({"data.dni":request.params.dni},function(data){
+				var age=date.now()-data.data.birthdate.getMilliseconds();
+				var value=0,percentil=0;
+				inteligence.serie.forEach(function(serie){
+					if(input.serie[serie.name] && !(serie.age.min>=age && serie.age.max<=age)){
+						throw new ValidatorException("No tiene la edad suficiente para realizar una serie de este tipo");
+					}
+					for (i in input.serie[serie.name]){
+						if(serie.items[i]){
+							value+=input.serie[serie.name][i]==serie.items[i].value;
+						}
+					}
+				});
+				var test=new app.container.database.Schema.testIntStudent({
+					name:inteligence.name,
+					value:value,
+					percentil:0,
+					time:input.time,
+					serie:input.serie
+				});
+				// Es necesario validar campos y valores
+				data.test.push(test);			
+				return data;
+			})
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
 	app.use("/v1/students",StudentsURI);
 	/*
 	* Ruta /v1/representives		
