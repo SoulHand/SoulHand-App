@@ -1176,9 +1176,11 @@ module.exports=function(app,express,server,__DIR__){
 		if(!Validator.isInt()(input.time,{min:5000})){
 			throw new ValidatorException("El tiempo de prueba registrado no cumple las expectativas!");
 		}		
-		test.find({name:request.params.test}).then(function(inteligence){
+		test.find({name:request.params.test.toUpperCase()}).then(function(inteligence){
 			return people.update({"data.dni":request.params.dni},function(data){
-				var age=date.now()-data.data.birthdate.getMilliseconds();
+				var time=new Date(data.data.birthdate);
+				var age=Math.floor((Date.now()-time.getTime())/(86400000*364));
+				console.log(age);
 				var value=0,percentil=0;
 				inteligence.serie.forEach(function(serie){
 					if(input.serie[serie.name] && !(serie.age.min>=age && serie.age.max<=age)){

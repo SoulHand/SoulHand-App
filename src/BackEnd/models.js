@@ -94,11 +94,11 @@ var structDb={
 	   	user:{ type: mongoose.Schema.ObjectId, ref: "User" }
 	});
 	structDb.ItemsInteligence=mongoose.Schema({
-		name:{ type : String, trim : true},
+		name:{ type : String, trim : true, uppercase:true},
 		value:{type:Number,min:0,max:100}
 	});
 	structDb.SerieInteligence=mongoose.Schema({
-		name:{ type : String, trim : true},
+		name:{ type : String, trim : true, uppercase:true},
 		items:[structDb.ItemsInteligence],
 		age:{
 			min:{type:Number,min:0,max:100},
