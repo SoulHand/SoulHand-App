@@ -193,7 +193,7 @@ var structDb={
 		}
 	});
 	structDb.TestInteligence=mongoose.Schema({
-		name:{ type : String, trim : true, index : true, unique:true,uppercase: true},
+		name:{ type : String, trim : true, uppercase: true},
 		serie:[structDb.SerieInteligence],
 	   	dateCreated:{ type: Date, default: Date.now },
 	   	range:structDb.RangeInteligence
@@ -204,12 +204,12 @@ var structDb={
 		value:{type:Number,min:0}
 	});
 	structDb.groupsInteligence=mongoose.Schema({
-		name:{ type : String, trim : true, unique:true, uppercase: true},
+		name:{ type : String, trim : true, uppercase: true},
 		range:{
 			min:{type:Number,min:0,max:100},
 			max:{type:Number,min:0,max:120}
 		},
-		simbol:{ type : String, trim : true, unique:true, uppercase: true}
+		simbol:{ type : String, trim : true, uppercase: true}
 	});
 	structDb.testIntStudent=mongoose.Schema({
 		name:{ type : String, trim : true,uppercase: true},
