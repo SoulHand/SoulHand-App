@@ -3,6 +3,7 @@ var VoidException=require("../src/BackEnd/SoulHand/Exceptions/VoidException.js")
 var db=require("./prepare.js");
 var faker = require('faker');
 
+jasmine.DEFAULT_TIMEOUT_INTERVAL=1000;
 // Test CRUD from Table Grades
 describe("CRUD clase Table Grades",function(){
 	var Grade=require("../src/BackEnd/SoulHand/CRUD.js");
@@ -13,6 +14,8 @@ describe("CRUD clase Table Grades",function(){
 				data[i].remove();
 			}
 			done();
+		}).catch(function(error){
+			throw error;
 		})
 	})
 	beforeEach(function(done){
@@ -21,7 +24,9 @@ describe("CRUD clase Table Grades",function(){
 		});
 		find.save().then(function(){
 			done();			
-		})
+		}).catch(function(error){
+			throw error;
+		});
 	})
 	it("Create Element Grade",function(done){
 		var input={
@@ -29,6 +34,9 @@ describe("CRUD clase Table Grades",function(){
 		};
 		grade.add(input,input).then(function(data){
 			expect(input.name.toUpperCase()).toBe(data.name);
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
 			done();
 		});
 	});
@@ -45,15 +53,17 @@ describe("CRUD clase Table Grades",function(){
 		grade.remove({_id:find._id}).then(function(data){
 			done();
 		}).catch(function(error){
-			console.log(error.toString());
-			//throw error;
-			//fail(error.toString());
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Delete not exist Element Grade",function(done){
 		var id="58a1c1a27093140970ad3751";
 		grade.remove({_id:id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -65,6 +75,9 @@ describe("CRUD clase Table Grades",function(){
 		}).then(function(data){
 			expect(update.toUpperCase()).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Update not exist Element Grade",function(done){
@@ -74,7 +87,6 @@ describe("CRUD clase Table Grades",function(){
 			info.name=update;
 			return info;
 		}).catch(function(error){
-			console.log(error.toString())
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
 		});
@@ -83,12 +95,18 @@ describe("CRUD clase Table Grades",function(){
 		grade.find({_id:find._id}).then(function(data){
 			expect(find.name).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("find not exist Element Grade",function(done){
 		var id="58a1c1a27093140970ad3751";		
 		grade.find({_id:id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -121,6 +139,9 @@ describe("CRUD clase Table Courses",function(){
 		course.add(input,input).then(function(data){
 			expect(input.name.toUpperCase()).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Create duplicated Element Course",function(done){
@@ -130,21 +151,26 @@ describe("CRUD clase Table Courses",function(){
 		course.add(input,input).catch(function(error){
 			expect(error instanceof InsertException).toEqual(true);
 			done();
+		}).then(function(error){
+			expect(error).toBeNull();
+			done();
 		});
 	});
 	it("Delete Element Course",function(done){
 		course.remove({_id:find._id}).then(function(data){
 			done();
 		}).catch(function(error){
-			console.log(error.toString());
-			//throw error;
-			//fail(error.toString());
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Delete not exist Element Course",function(done){
 		var id="58a1c1a27093140970ad3751";
 		course.remove({_id:id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -156,6 +182,9 @@ describe("CRUD clase Table Courses",function(){
 		}).then(function(data){
 			expect(update.toUpperCase()).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Update not exist Element Course",function(done){
@@ -165,7 +194,6 @@ describe("CRUD clase Table Courses",function(){
 			info.name=update;
 			return info;
 		}).catch(function(error){
-			console.log(error.toString())
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
 		});
@@ -174,12 +202,18 @@ describe("CRUD clase Table Courses",function(){
 		course.find({_id:find._id}).then(function(data){
 			expect(find.name).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("find not exist Element Course",function(done){
 		var id="58a1c1a27093140970ad3751";		
 		course.find({_id:id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -212,6 +246,9 @@ describe("CRUD clase Table PeriodSchools",function(){
 		periodSchool.add(input,input).then(function(data){
 			expect(input.name.toUpperCase()).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Create duplicated Element PeriodSchools",function(done){
@@ -221,21 +258,26 @@ describe("CRUD clase Table PeriodSchools",function(){
 		periodSchool.add(input,input).catch(function(error){
 			expect(error instanceof InsertException).toEqual(true);
 			done();
+		}).then(function(error){
+			expect(error).toBeNull();
+			done();
 		});
 	});
 	it("Delete Element PeriodSchools",function(done){
 		periodSchool.remove({_id:find._id}).then(function(data){
 			done();
 		}).catch(function(error){
-			console.log(error.toString());
-			//throw error;
-			//fail(error.toString());
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Delete not exist Element PeriodSchools",function(done){
 		var id="58a1c1a27093140970ad3751";
 		periodSchool.remove({_id:id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -247,6 +289,9 @@ describe("CRUD clase Table PeriodSchools",function(){
 		}).then(function(data){
 			expect(update.toUpperCase()).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Update not exist Element PeriodSchools",function(done){
@@ -256,7 +301,6 @@ describe("CRUD clase Table PeriodSchools",function(){
 			info.name=update;
 			return info;
 		}).catch(function(error){
-			console.log(error.toString())
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
 		});
@@ -265,12 +309,18 @@ describe("CRUD clase Table PeriodSchools",function(){
 		periodSchool.find({_id:find._id}).then(function(data){
 			expect(find.name).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("find not exist Element PeriodSchools",function(done){
 		var id="58a1c1a27093140970ad3751";		
 		periodSchool.find({_id:id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -303,6 +353,9 @@ describe("CRUD clase Table CategoryCognitions",function(){
 		categoryCognition.add(input,input).then(function(data){
 			expect(input.name.toUpperCase()).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Create duplicated Element categoryCognition",function(done){
@@ -312,21 +365,26 @@ describe("CRUD clase Table CategoryCognitions",function(){
 		categoryCognition.add(input,input).catch(function(error){
 			expect(error instanceof InsertException).toEqual(true);
 			done();
+		}).then(function(error){
+			expect(error).toBeNull();
+			done();
 		});
 	});
 	it("Delete Element categoryCognition",function(done){
 		categoryCognition.remove({_id:find._id}).then(function(data){
 			done();
 		}).catch(function(error){
-			console.log(error.toString());
-			//throw error;
-			//fail(error.toString());
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Delete not exist Element categoryCognition",function(done){
 		var id="58a1c1a27093140970ad3751";
 		categoryCognition.remove({_id:id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -347,7 +405,6 @@ describe("CRUD clase Table CategoryCognitions",function(){
 			info.name=update;
 			return info;
 		}).catch(function(error){
-			console.log(error.toString())
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
 		});
@@ -356,6 +413,9 @@ describe("CRUD clase Table CategoryCognitions",function(){
 		categoryCognition.find({_id:find._id}).then(function(data){
 			expect(find.name).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("find not exist Element categoryCognition",function(done){
@@ -363,10 +423,13 @@ describe("CRUD clase Table CategoryCognitions",function(){
 		categoryCognition.find({_id:id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
+		}).then(function(error){
+			expect(error).toBeNull();
+			done();
 		});
 	});
 });
-
+/*
 // Test CRUD from Table Peoples
 describe("CRUD clase Table Peoples",function(){
 	var CategoryCognition=require("../src/BackEnd/SoulHand/CRUD.js");
@@ -397,10 +460,14 @@ describe("CRUD clase Table Peoples",function(){
 			name:faker.name.findName(),
 			birthDate:faker.date.past(),
 			tel:faker.phone.phoneNumber(),
-			image:faker.image.people()
+			image:null
 		};
 		categoryCognition.add({dni:input.dni},input).then(function(data){
+			console.log(data)
 			expect(input.name.toUpperCase()).toBe(data.name);
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
 			done();
 		});
 	});
@@ -415,21 +482,26 @@ describe("CRUD clase Table Peoples",function(){
 		categoryCognition.add({dni:input.dni},input).catch(function(error){
 			expect(error instanceof InsertException).toEqual(true);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Delete Element Peoples",function(done){
 		categoryCognition.remove({dni:find.dni}).then(function(data){
 			done();
 		}).catch(function(error){
-			console.log(error.toString());
-			//throw error;
-			//fail(error.toString());
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Delete not exist Element Peoples",function(done){
 		var id="V112322123";
 		categoryCognition.remove({dni:id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
 			done();
 		});
 	});
@@ -440,6 +512,9 @@ describe("CRUD clase Table Peoples",function(){
 			return info;
 		}).then(function(data){
 			expect(update.toUpperCase()).toBe(data.name);
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
 			done();
 		});
 	});
@@ -453,11 +528,17 @@ describe("CRUD clase Table Peoples",function(){
 			console.log(error.toString())
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("find Element Peoples",function(done){		
 		categoryCognition.find({dni:find.dni}).then(function(data){
 			expect(find.name).toBe(data.name);
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
 			done();
 		});
 	});
@@ -465,6 +546,9 @@ describe("CRUD clase Table Peoples",function(){
 		var id="V243243235";		
 		categoryCognition.find({dni:id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
 			done();
 		});
 	});
@@ -514,6 +598,9 @@ describe("CRUD clase Table Teachers",function(){
 		}).then(function(data){
 			expect(input.data.name.toUpperCase()).toBe(data.data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Create duplicated Element Teachers",function(done){
@@ -530,21 +617,26 @@ describe("CRUD clase Table Teachers",function(){
 		teacher.add({"data.dni":input.data.dni},input).catch(function(error){
 			expect(error instanceof InsertException).toEqual(true);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Delete Element Teachers",function(done){
 		teacher.remove({"data.dni":find.data.dni}).then(function(data){
 			done();
 		}).catch(function(error){
-			console.log(error.toString());
-			//throw error;
-			//fail(error.toString());
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Delete not exist Element Teachers",function(done){
 		var id="V112322123";
 		teacher.remove({"data.dni":id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
 			done();
 		});
 	});
@@ -556,6 +648,9 @@ describe("CRUD clase Table Teachers",function(){
 		}).then(function(data){
 			expect(update.toUpperCase()).toBe(data.data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Update not exist Element Teachers",function(done){
@@ -565,7 +660,6 @@ describe("CRUD clase Table Teachers",function(){
 			info.data.name=update;
 			return info;
 		}).catch(function(error){
-			console.log(error.toString())
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
 		});
@@ -574,12 +668,18 @@ describe("CRUD clase Table Teachers",function(){
 		teacher.find({"data.dni":find.data.dni}).then(function(data){
 			expect(find.name).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("find not exist Element Teachers",function(done){
 		var id="V243243235";		
 		teacher.find({"data.dni":id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
 			done();
 		});
 	});
@@ -639,6 +739,9 @@ describe("CRUD clase Table Students",function(){
 		}).then(function(data){
 			expect(input.data.name.toUpperCase()).toBe(data.data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Create duplicated Element Students",function(done){
@@ -660,21 +763,26 @@ describe("CRUD clase Table Students",function(){
 		student.add({"data.dni":input.data.dni},input).catch(function(error){
 			expect(error instanceof InsertException).toEqual(true);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Delete Element Students",function(done){
 		student.remove({"data.dni":find.data.dni}).then(function(data){
 			done();
 		}).catch(function(error){
-			console.log(error.toString());
-			//throw error;
-			//fail(error.toString());
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Delete not exist Element Students",function(done){
 		var id="V112322123";
 		student.remove({"data.dni":id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
 			done();
 		});
 	});
@@ -686,6 +794,9 @@ describe("CRUD clase Table Students",function(){
 		}).then(function(data){
 			expect(update.toUpperCase()).toBe(data.data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Update not exist Element Students",function(done){
@@ -695,7 +806,6 @@ describe("CRUD clase Table Students",function(){
 			info.data.name=update;
 			return info;
 		}).catch(function(error){
-			console.log(error.toString())
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
 		});
@@ -704,12 +814,18 @@ describe("CRUD clase Table Students",function(){
 		student.find({"data.dni":find.data.dni}).then(function(data){
 			expect(find.name).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("find not exist Element Students",function(done){
 		var id="V243243235";		
 		student.find({"data.dni":id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
 			done();
 		});
 	});
@@ -773,6 +889,9 @@ describe("CRUD clase Table Representatives",function(){
 		}).then(function(data){
 			expect(input.data.name.toUpperCase()).toBe(data.data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Create duplicated Element Representatives",function(done){
@@ -789,21 +908,26 @@ describe("CRUD clase Table Representatives",function(){
 		student.add({"data.dni":input.data.dni},input).catch(function(error){
 			expect(error instanceof InsertException).toEqual(true);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Delete Element Representatives",function(done){
 		student.remove({"data.dni":find.data.dni}).then(function(data){
 			done();
 		}).catch(function(error){
-			console.log(error.toString());
-			//throw error;
-			//fail(error.toString());
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Delete not exist Element Representatives",function(done){
 		var id="V112322123";
 		student.remove({"data.dni":id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
 			done();
 		});
 	});
@@ -815,6 +939,9 @@ describe("CRUD clase Table Representatives",function(){
 		}).then(function(data){
 			expect(update.toUpperCase()).toBe(data.data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Update not exist Element Representatives",function(done){
@@ -824,7 +951,6 @@ describe("CRUD clase Table Representatives",function(){
 			info.data.name=update;
 			return info;
 		}).catch(function(error){
-			console.log(error.toString())
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
 		});
@@ -833,6 +959,9 @@ describe("CRUD clase Table Representatives",function(){
 		student.find({"data.dni":find.data.dni}).then(function(data){
 			expect(find.name).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("find not exist Element Representatives",function(done){
@@ -840,10 +969,13 @@ describe("CRUD clase Table Representatives",function(){
 		student.find({"data.dni":id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 });
-
+*/
 // Test CRUD from Table Cognitions
 describe("CRUD clase Table Cognitions",function(){
 	var Cognition=require("../src/BackEnd/SoulHand/CRUD.js");
@@ -883,6 +1015,9 @@ describe("CRUD clase Table Cognitions",function(){
 		cognition.add({name:input.name},input).then(function(data){
 			expect(input.name.toUpperCase()).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Create duplicated Element cognition",function(done){
@@ -892,6 +1027,9 @@ describe("CRUD clase Table Cognitions",function(){
 		};
 		cognition.add({name:input.name},input).catch(function(error){
 			expect(error instanceof InsertException).toEqual(true);
+			done();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -914,15 +1052,17 @@ describe("CRUD clase Table Cognitions",function(){
 		cognition.remove({_id:find._id}).then(function(data){
 			done();
 		}).catch(function(error){
-			console.log(error.toString());
-			//throw error;
-			//fail(error.toString());
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Delete not exist Element cognition",function(done){
 		var id="58a1c1a27093140970ad3751";
 		cognition.remove({_id:id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
+			done();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -934,6 +1074,9 @@ describe("CRUD clase Table Cognitions",function(){
 		}).then(function(data){
 			expect(update.toUpperCase()).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Update not exist Element cognition",function(done){
@@ -943,7 +1086,6 @@ describe("CRUD clase Table Cognitions",function(){
 			info.name=update;
 			return info;
 		}).catch(function(error){
-			console.log(error.toString())
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
 		});
@@ -951,6 +1093,9 @@ describe("CRUD clase Table Cognitions",function(){
 	it("find Element cognition",function(done){		
 		cognition.find({_id:find._id}).then(function(data){
 			expect(find.name).toBe(data.name);
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
 			done();
 		});
 	});
@@ -1008,6 +1153,9 @@ describe("CRUD clase Table Habilities",function(){
 		hability.add({name:input.name},input).then(function(data){
 			expect(input.name.toUpperCase()).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Create duplicated Element Habilities",function(done){
@@ -1024,9 +1172,8 @@ describe("CRUD clase Table Habilities",function(){
 		hability.remove({_id:find._id}).then(function(data){
 			done();
 		}).catch(function(error){
-			console.log(error.toString());
-			//throw error;
-			//fail(error.toString());
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Delete not exist Element Habilities",function(done){
@@ -1044,6 +1191,9 @@ describe("CRUD clase Table Habilities",function(){
 		}).then(function(data){
 			expect(update.toUpperCase()).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Update not exist Element Habilities",function(done){
@@ -1053,7 +1203,6 @@ describe("CRUD clase Table Habilities",function(){
 			info.name=update;
 			return info;
 		}).catch(function(error){
-			console.log(error.toString())
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
 		});
@@ -1062,6 +1211,9 @@ describe("CRUD clase Table Habilities",function(){
 		hability.find({_id:find._id}).then(function(data){
 			expect(find.name).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("find not exist Element Habilities",function(done){
@@ -1069,7 +1221,7 @@ describe("CRUD clase Table Habilities",function(){
 		hability.find({_id:id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
-		});
+		})
 	});
 });
 
@@ -1118,6 +1270,9 @@ describe("CRUD clase Table ConflictCognitions",function(){
 		hability.add({name:input.name},input).then(function(data){
 			expect(input.name.toUpperCase()).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Create duplicated Element ConflictCognitions",function(done){
@@ -1125,8 +1280,9 @@ describe("CRUD clase Table ConflictCognitions",function(){
 			name:find.name,
 			Cognitions:[]
 		};
-		hability.add({name:input.name},input).then(function(data){
-			console.log(data);
+		hability.add({name:input.name},input).then(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		}).catch(function(error){
 			expect(error instanceof InsertException).toEqual(true);
 			done();
@@ -1136,9 +1292,8 @@ describe("CRUD clase Table ConflictCognitions",function(){
 		hability.remove({_id:find._id}).then(function(data){
 			done();
 		}).catch(function(error){
-			console.log(error.toString());
-			//throw error;
-			//fail(error.toString());
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Delete not exist Element ConflictCognitions",function(done){
@@ -1156,6 +1311,9 @@ describe("CRUD clase Table ConflictCognitions",function(){
 		}).then(function(data){
 			expect(update.toUpperCase()).toBe(data.name);
 			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Update not exist Element ConflictCognitions",function(done){
@@ -1165,7 +1323,6 @@ describe("CRUD clase Table ConflictCognitions",function(){
 			info.name=update;
 			return info;
 		}).catch(function(error){
-			console.log(error.toString())
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
 		});
@@ -1173,6 +1330,9 @@ describe("CRUD clase Table ConflictCognitions",function(){
 	it("find Element ConflictCognitions",function(done){		
 		hability.find({_id:find._id}).then(function(data){
 			expect(find.name).toBe(data.name);
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
 			done();
 		});
 	});
