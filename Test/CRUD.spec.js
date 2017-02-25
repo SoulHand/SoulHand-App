@@ -557,7 +557,7 @@ describe("CRUD clase Table Peoples",function(){
 		});
 	});
 });
-/*
+
 // Test CRUD from Table Teachers
 describe("CRUD clase Table Teachers",function(){
 	var Teacher=require("../src/BackEnd/SoulHand/CRUD.js");
@@ -576,7 +576,9 @@ describe("CRUD clase Table Teachers",function(){
 			name:faker.name.findName(),
 			birthDate:faker.date.past(),
 			tel:faker.phone.phoneNumber(),
-			image:faker.image.people()
+			image:faker.image.people(),
+			mode:"TEACHER",
+			birthdate:faker.date.past()
 		});
 		find=new db.Teachers({
 			data:people,
@@ -584,6 +586,8 @@ describe("CRUD clase Table Teachers",function(){
 		});
 		find.save().then(function(){
 			done();			
+		}).catch(function(error){
+			console.log(error.toString())
 		});
 	})
 	it("Create Element Teachers",function(done){
@@ -593,13 +597,13 @@ describe("CRUD clase Table Teachers",function(){
 				name:faker.name.findName(),
 				birthDate:faker.date.past(),
 				tel:faker.phone.phoneNumber(),
-				image:faker.image.people()
+				image:faker.image.people(),
+				mode:"TEACHER",
+				birthdate:faker.date.past()
 			},
 			interprete:true
 		};
-		teacher.add({"data.dni":input.data.dni},input).catch(function(error){
-			console.log(error.toString());
-		}).then(function(data){
+		teacher.add({"data.dni":input.data.dni},input).then(function(data){
 			expect(input.data.name.toUpperCase()).toBe(data.data.name);
 			done();
 		}).catch(function(error){
@@ -621,8 +625,8 @@ describe("CRUD clase Table Teachers",function(){
 		teacher.add({"data.dni":input.data.dni},input).catch(function(error){
 			expect(error instanceof InsertException).toEqual(true);
 			done();
-		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -639,8 +643,8 @@ describe("CRUD clase Table Teachers",function(){
 		teacher.remove({"data.dni":id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
-		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -682,8 +686,8 @@ describe("CRUD clase Table Teachers",function(){
 		teacher.find({"data.dni":id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
-		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -707,7 +711,9 @@ describe("CRUD clase Table Students",function(){
 			name:faker.name.findName(),
 			birthDate:faker.date.past(),
 			tel:faker.phone.phoneNumber(),
-			image:faker.image.people()
+			image:faker.image.people(),
+			mode:"STUDENT",
+			birthdate:faker.date.past()
 		});
 		find=new db.Students({
 			data:people,
@@ -720,6 +726,8 @@ describe("CRUD clase Table Students",function(){
 		});
 		find.save().then(function(){
 			done();
+		}).catch(function(error){
+			console.log(error.toString());
 		});
 	})
 	it("Create Element Students",function(done){
@@ -729,7 +737,9 @@ describe("CRUD clase Table Students",function(){
 				name:faker.name.findName(),
 				birthDate:faker.date.past(),
 				tel:faker.phone.phoneNumber(),
-				image:faker.image.people()
+				image:faker.image.people(),
+				mode:"STUDENT",
+				birthdate:faker.date.past()
 			},
 			grade:new  db.Grades({
 				name:faker.name.findName()
@@ -738,9 +748,7 @@ describe("CRUD clase Table Students",function(){
 			conflicts:[],
 			habilitys:[]
 		};
-		student.add({"data.dni":input.data.dni},input).catch(function(error){
-			console.log(error.toString());
-		}).then(function(data){
+		student.add({"data.dni":input.data.dni},input).then(function(data){
 			expect(input.data.name.toUpperCase()).toBe(data.data.name);
 			done();
 		}).catch(function(error){
@@ -755,7 +763,9 @@ describe("CRUD clase Table Students",function(){
 				name:faker.name.findName(),
 				birthDate:faker.date.past(),
 				tel:faker.phone.phoneNumber(),
-				image:faker.image.people()
+				image:faker.image.people(),
+				mode:"STUDENT",
+				birthdate:faker.date.past()
 			},
 			grade:new  db.Grades({
 				name:faker.name.findName()
@@ -767,8 +777,8 @@ describe("CRUD clase Table Students",function(){
 		student.add({"data.dni":input.data.dni},input).catch(function(error){
 			expect(error instanceof InsertException).toEqual(true);
 			done();
-		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -785,8 +795,8 @@ describe("CRUD clase Table Students",function(){
 		student.remove({"data.dni":id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
-		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -828,8 +838,8 @@ describe("CRUD clase Table Students",function(){
 		student.find({"data.dni":id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
-		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -858,7 +868,9 @@ describe("CRUD clase Table Representatives",function(){
 			name:faker.name.findName(),
 			birthDate:faker.date.past(),
 			tel:faker.phone.phoneNumber(),
-			image:faker.image.people()
+			image:faker.image.people(),
+			mode:"REPRESENT",
+			birthdate:faker.date.past()
 		});
 		people.save().then(function(){
 			find=new db.Representatives({
@@ -867,7 +879,9 @@ describe("CRUD clase Table Representatives",function(){
 					name:faker.name.findName(),
 					birthDate:faker.date.past(),
 					tel:faker.phone.phoneNumber(),
-					image:faker.image.people()
+					image:faker.image.people(),
+					mode:"REPRESENT",
+					birthdate:faker.date.past()
 				}),
 				idStudent:people._id
 			});
@@ -884,13 +898,13 @@ describe("CRUD clase Table Representatives",function(){
 				name:faker.name.findName(),
 				birthDate:faker.date.past(),
 				tel:faker.phone.phoneNumber(),
-				image:faker.image.people()
+				image:faker.image.people(),
+				mode:"REPRESENT",
+				birthdate:faker.date.past()
 			},
 			idStudent:people._id
 		};
-		student.add({"data.dni":input.data.dni},input).catch(function(error){
-			console.log(error.toString());
-		}).then(function(data){
+		student.add({"data.dni":input.data.dni},input).then(function(data){
 			expect(input.data.name.toUpperCase()).toBe(data.data.name);
 			done();
 		}).catch(function(error){
@@ -905,15 +919,17 @@ describe("CRUD clase Table Representatives",function(){
 				name:faker.name.findName(),
 				birthDate:faker.date.past(),
 				tel:faker.phone.phoneNumber(),
-				image:faker.image.people()
+				image:faker.image.people(),
+				mode:"REPRESENT",
+				birthdate:faker.date.past()
 			},
 			idStudent:people._id
 		};
 		student.add({"data.dni":input.data.dni},input).catch(function(error){
 			expect(error instanceof InsertException).toEqual(true);
 			done();
-		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -930,8 +946,8 @@ describe("CRUD clase Table Representatives",function(){
 		student.remove({"data.dni":id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
-		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -973,13 +989,13 @@ describe("CRUD clase Table Representatives",function(){
 		student.find({"data.dni":id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
-		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
 });
-*/
+
 // Test CRUD from Table Cognitions
 describe("CRUD clase Table Cognitions",function(){
 	var Cognition=require("../src/BackEnd/SoulHand/CRUD.js");
@@ -1046,7 +1062,8 @@ describe("CRUD clase Table Cognitions",function(){
 			}
 		};
 		cognition.add({$or:[{name:input.name},{"category._id":input.category._id}]},input).then(function(data){
-			console.log(data);
+			expect(data).toBeNull();
+			done();
 		}).catch(function(error){
 			expect(error instanceof InsertException).toEqual(true);
 			done();
