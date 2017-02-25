@@ -429,7 +429,7 @@ describe("CRUD clase Table CategoryCognitions",function(){
 		});
 	});
 });
-/*
+
 // Test CRUD from Table Peoples
 describe("CRUD clase Table Peoples",function(){
 	var CategoryCognition=require("../src/BackEnd/SoulHand/CRUD.js");
@@ -448,11 +448,13 @@ describe("CRUD clase Table Peoples",function(){
 			name:faker.name.findName(),
 			birthDate:faker.date.past(),
 			tel:faker.phone.phoneNumber(),
-			image:faker.image.people()
+			image:faker.image.people(),
+			mode:"TEACHER",
+			birthdate:faker.date.past()
 		});
 		find.save().then(function(){
 			done();			
-		})
+		});
 	})
 	it("Create Element Peoples",function(done){
 		var input={
@@ -460,10 +462,11 @@ describe("CRUD clase Table Peoples",function(){
 			name:faker.name.findName(),
 			birthDate:faker.date.past(),
 			tel:faker.phone.phoneNumber(),
-			image:null
+			image:faker.image.people(),
+			mode:"TEACHER",
+			birthdate:faker.date.past()
 		};
 		categoryCognition.add({dni:input.dni},input).then(function(data){
-			console.log(data)
 			expect(input.name.toUpperCase()).toBe(data.name);
 			done();
 		}).catch(function(error){
@@ -477,13 +480,15 @@ describe("CRUD clase Table Peoples",function(){
 			name:faker.name.findName(),
 			birthDate:faker.date.past(),
 			tel:faker.phone.phoneNumber(),
-			image:faker.image.people()
+			image:faker.image.people(),
+			mode:"TEACHER",
+			birthdate:faker.date.past()
 		};
 		categoryCognition.add({dni:input.dni},input).catch(function(error){
 			expect(error instanceof InsertException).toEqual(true);
 			done();
-		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -500,8 +505,8 @@ describe("CRUD clase Table Peoples",function(){
 		categoryCognition.remove({dni:id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
-		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -525,11 +530,10 @@ describe("CRUD clase Table Peoples",function(){
 			info.name=update;
 			return info;
 		}).catch(function(error){
-			console.log(error.toString())
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
-		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
@@ -547,13 +551,13 @@ describe("CRUD clase Table Peoples",function(){
 		categoryCognition.find({dni:id}).catch(function(error){
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
-		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+		}).then(function(error){
+			expect(error).toBeNull();
 			done();
 		});
 	});
 });
-
+/*
 // Test CRUD from Table Teachers
 describe("CRUD clase Table Teachers",function(){
 	var Teacher=require("../src/BackEnd/SoulHand/CRUD.js");
