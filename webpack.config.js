@@ -8,49 +8,30 @@ module.exports = {
   },
   resolve: {
     extensions: ['', '.webpack.js', '.web.js', '.ts', '.tsx', '.js'],
-    alias: {
-        jszip: "./bower_components/jszip/dist/jszip.min.js",
-        highcharts:"./bower_components/highcharts/highcharts.js",
-        RecordRTC:"./bower_components/recordrtc/RecordRTC.min.js",
-        aes:"./bower_components/aes/aes.js",
-        JVision:"./bower_components/ciweb/min/JVision.js"
-    }
+    modulesDirectories: ['src/FrontEnd', 'node_modules'],
   },
   // devtool: 'source-map',
   module: {
     loaders: [
-      { test: /\.tsx?$/, loader: "ts-loader" }
-    ],
-  },
+      { test: /\.tsx?$/, loader: "ts-loader" },
+      { test: /\.scss$/, loader: "style-loader!css-loader!sass-loader" },
+      { test: /\.css$/, loader: "style-loader!css-loader" }
+    ]
+  },/*
   externals: {
-    JVision:"JVision"
-    /*
-    jquery: {
-        root: 'jquery',
-        commonjs2: 'jquery',
-        commonjs: 'jquery',
-        amd: 'jquery',
-    },
-    react: {
-        root: 'React',
-        commonjs2: 'react',
-        commonjs: 'react',
-        amd: 'react',
-    },
-    'react-dom': {
-        root: 'ReactDOM',
-        commonjs2: 'react-dom',
-        commonjs: 'react-dom',
-        amd: 'react-dom',
-    }
-    'react-router': {
-        root: 'ReactRouter',
-        commonjs2: 'react-router',
-        commonjs: 'react-router',
-        amd: 'react-router',
-    }*/
-  },
+    "react": "React",
+    "react-dom": "ReactDOM",
+    "react-router": "ReactRouter"
+  },*/
   plugins: [
+    new webpack.ProvidePlugin({
+       $: "jquery",
+       jQuery: "jquery",
+       Tether:"tether",
+       React: "react",
+       ReactDOM: "react-dom",
+       ReactRouter: "react-router"
+    })/*,
     // new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js'),
     new webpack.optimize.UglifyJsPlugin({
         compress: {

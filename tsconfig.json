@@ -11,5 +11,5 @@
     "experimentalDecorators": true,
     "outDir": "build"
   },
-  "include": ["src/FrontEnd/**.ts"]
+  "include": ["src/FrontEnd/**.tsx"]
 }
