@@ -103,6 +103,16 @@ structDb.ActivitiesMaked=mongoose.Schema({
 	isCompleted:{type:Boolean, default:false},
 	objetives:[structDb.LearningObjetive]
 });
+structDb.Sessions=mongoose.Schema({
+	privateKeyId:{ type : String, trim : true, index : true , unique:true},
+	publicKeyId:{ type : String, trim : true},
+   	ip : { type : String, trim : false },
+   	navigator : { type : String, trim : false },
+   	dateCreated:{ type: Date, default: Date.now },
+   	dateDeleted:Date,
+   	dateLastConnect:Date,
+   	user:{ type: mongoose.Schema.ObjectId, ref: "User" }
+});
 /*var structDb={
 		Peoples:mongoose.Schema({
 			dni:{type:String, trim: true, index:true, required: true, unique:true, uppercase: true},

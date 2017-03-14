@@ -43195,15 +43195,21 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	var React = __webpack_require__(1);
+	var react_router_1 = __webpack_require__(32);
 	var NavBar_1 = __webpack_require__(250);
 	var App = (function (_super) {
 	    __extends(App, _super);
 	    function App() {
 	        return _super.apply(this, arguments) || this;
 	    }
-	    App.prototype.routerWillLeave = function (nextLocation) {
-	        console.log("hola jajaja");
-	        return true;
+	    App.prototype.componentDidMount = function () {
+	        var session = localStorage.getItem("session");
+	        if (!session) {
+	            react_router_1.hashHistory.push('/auth');
+	        }
+	        this.setState({
+	            user: JSON.parse(session)
+	        });
 	    };
 	    App.prototype.render = function () {
 	        return (React.createElement("div", null,
@@ -43302,20 +43308,52 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	var React = __webpack_require__(1);
+	var jquery_1 = __webpack_require__(242);
 	var Login = (function (_super) {
 	    __extends(Login, _super);
 	    function Login() {
-	        return _super.apply(this, arguments) || this;
+	        var _this = _super.apply(this, arguments) || this;
+	        _this.user = {
+	            username: null,
+	            password: null
+	        };
+	        return _this;
 	    }
+	    Login.prototype.componentDidMount = function () {
+	        console.log(this);
+	    };
+	    Login.prototype.getFields = function (event) {
+	        this.user[event.target.id] = event.target.value;
+	        console.log(this.user);
+	    };
+	    Login.prototype.auth = function (event) {
+	        var _this = this;
+	        jquery_1.ajax({
+	            method: "get",
+	            url: '//0.0.0:8080/v1/auth',
+	            dataType: "json",
+	            data: null,
+	            beforeSend: function (xhr) {
+	                xhr.setRequestHeader("Authorization", "Basic " + btoa(_this.user.username + ":" + _this.user.password));
+	            },
+	            success: function (data) {
+	                console.log(data);
+	                var user = JSON.stringify(data);
+	                _this.setState({ user: user });
+	                localStorage.setItem("session", user);
+	            }
+	        });
+	    };
 	    Login.prototype.render = function () {
+	        var _this = this;
 	        return (React.createElement("div", { className: "container" },
 	            React.createElement("div", { className: "box" },
-	                React.createElement("form", { className: "form-signin" },
+	                React.createElement("form", { className: "form-signin", onSubmit: function (e) { _this.auth(e); } },
 	                    React.createElement("h2", { className: "form-signin-heading" }, "Iniciar Secci\u00F3n"),
-	                    React.createElement("label", { htmlFor: "nombre_usuario", className: "sr-only" }, "Nombre de usuario"),
-	                    React.createElement("input", { type: "email", id: "usuario", className: "form-control", placeholder: "usuario", required: true, autoFocus: true }),
-	                    React.createElement("label", { htmlFor: "contraseña", className: "sr-only" }, "Contrase\u00F1a"),
-	                    React.createElement("input", { type: "password", value: "", className: "form-control", id: "contraseña", maxLength: 18, required: true, autoFocus: true }),
+	                    React.createElement("label", { htmlFor: "username", className: "sr-only" }, "Nombre de usuario"),
+	                    React.createElement("input", { type: "text", id: "username", className: "form-control", placeholder: "usuario", onChange: function (e) { _this.getFields(e); }, required: true, autoFocus: true }),
+	                    React.createElement("label", { htmlFor: "password", className: "sr-only" }, "Contrase\u00F1a"),
+	                    React.createElement("input", { type: "password", className: "form-control", id: "password", maxLength: 18, onChange: function (e) { _this.getFields(e); }, required: true }),
 	                    React.createElement("button", { className: "btn btn-lg btn-primary btn-block", type: "submit" }, "Entrar")))));
 	    };
 	    return Login;
@@ -43338,10 +43376,16 @@
 	var PageTeacher = (function (_super) {
 	    __extends(PageTeacher, _super);
 	    function PageTeacher() {
-	        return _super.apply(this, arguments) || this;
+	        var _this = _super.apply(this, arguments) || this;
+	        _this.PrivateKeyId = "d8a03b84-c5b7-48a2-876b-2e93aec1dd36";
+	        _this.PublicKeyId = "NThjN2ZiZTQ3NTkxZDMwZTZiM2E4NDYz";
+	        _this.teachers = [];
+	        return _this;
 	    }
 	    PageTeacher.prototype.componentDidMount = function () {
-	        jquery_1.getJSON("//0.0.0:8080/v1/teachers/?token=", function (data) {
+	        var _this = this;
+	        jquery_1.getJSON("//0.0.0:8080/v1/teachers/?PublicKeyId=" + this.PublicKeyId + "&PrivateKeyId=" + this.PrivateKeyId, function (data) {
+	            _this.teachers = data;
 	            console.log(data);
 	        });
 	    };
@@ -43354,24 +43398,19 @@
 	            React.createElement("table", { className: "table table-striped" },
 	                React.createElement("thead", null,
 	                    React.createElement("tr", null,
-	                        React.createElement("th", null, "Nombre"),
-	                        React.createElement("th", null, "Apellido>"),
+	                        React.createElement("th", null, "Nombre y Apellido"),
 	                        React.createElement("th", null, "Email"),
 	                        React.createElement("th", null, "interprete"),
 	                        React.createElement("th", null, "Modificar/Eliminar"))),
-	                React.createElement("tbody", null,
+	                React.createElement("tbody", null, this.teachers.forEach(function (row) {
 	                    React.createElement("tr", null,
-	                        React.createElement("th", null,
-	                            React.createElement("h4", null)),
-	                        React.createElement("th", null,
-	                            React.createElement("h4", null)),
-	                        React.createElement("th", null,
-	                            React.createElement("h4", null)),
-	                        React.createElement("th", null,
-	                            React.createElement("h4", null)),
-	                        React.createElement("th", null,
+	                        React.createElement("td", null, row.data.name),
+	                        React.createElement("td", null, row.data.email),
+	                        React.createElement("td", null, (row.interprete == true) ? 'Sí' : 'No'),
+	                        React.createElement("td", null,
 	                            React.createElement("button", { type: "button", className: "btn btn-warning" }, "Editar"),
-	                            React.createElement("button", { type: "button", className: "btn btn-danger" }, "Eliminar")))))));
+	                            React.createElement("button", { type: "button", className: "btn btn-danger" }, "Eliminar")));
+	                })))));
 	    };
 	    return PageTeacher;
 	}(React.Component));
