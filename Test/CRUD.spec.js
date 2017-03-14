@@ -326,110 +326,6 @@ describe("CRUD clase Table PeriodSchools",function(){
 	});
 });
 
-// Test CRUD from Table CategoryCognitions
-describe("CRUD clase Table CategoryCognitions",function(){
-	var CategoryCognition=require("../src/BackEnd/SoulHand/CRUD.js");
-	var categoryCognition=new CategoryCognition(db.CategoryCognitions),find;
-	afterEach(function(done){
-		db.CategoryCognitions.find().then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
-			done();
-		})
-	})
-	beforeEach(function(done){
-		find=new  db.CategoryCognitions({
-			name:faker.name.findName()
-		});
-		find.save().then(function(){
-			done();			
-		})
-	})
-	it("Create Element categoryCognition",function(done){
-		var input={
-			name:faker.name.findName()
-		};
-		categoryCognition.add(input,input).then(function(data){
-			expect(input.name.toUpperCase()).toBe(data.name);
-			done();
-		}).catch(function(error){
-			expect(error.toString()).toBeNull();
-			done();
-		});
-	});
-	it("Create duplicated Element categoryCognition",function(done){
-		var input={
-			name:find.name
-		};
-		categoryCognition.add(input,input).catch(function(error){
-			expect(error instanceof InsertException).toEqual(true);
-			done();
-		}).then(function(error){
-			expect(error).toBeNull();
-			done();
-		});
-	});
-	it("Delete Element categoryCognition",function(done){
-		categoryCognition.remove({_id:find._id}).then(function(data){
-			done();
-		}).catch(function(error){
-			expect(error.toString()).toBeNull();
-			done();
-		});
-	});
-	it("Delete not exist Element categoryCognition",function(done){
-		var id="58a1c1a27093140970ad3751";
-		categoryCognition.remove({_id:id}).catch(function(error){
-			expect(error instanceof VoidException).toEqual(true);					
-			done();
-		}).then(function(error){
-			expect(error).toBeNull();
-			done();
-		});
-	});
-	it("Update Element categoryCognition",function(done){
-		var update=faker.name.findName();
-		categoryCognition.update({_id:find._id},function(info){
-			info.name=update;
-			return info;
-		}).then(function(data){
-			expect(update.toUpperCase()).toBe(data.name);
-			done();
-		});
-	});
-	it("Update not exist Element categoryCognition",function(done){
-		var id="58a1c1a27093140970ad3751";
-		var update=faker.name.findName();
-		categoryCognition.update({_id:id},function(info){
-			info.name=update;
-			return info;
-		}).catch(function(error){
-			expect(error instanceof VoidException).toEqual(true);					
-			done();
-		});
-	});
-	it("find Element categoryCognition",function(done){		
-		categoryCognition.find({_id:find._id}).then(function(data){
-			expect(find.name).toBe(data.name);
-			done();
-		}).catch(function(error){
-			expect(error.toString()).toBeNull();
-			done();
-		});
-	});
-	it("find not exist Element categoryCognition",function(done){
-		var id="58a1c1a27093140970ad3751";		
-		categoryCognition.find({_id:id}).catch(function(error){
-			expect(error instanceof VoidException).toEqual(true);					
-			done();
-		}).then(function(error){
-			expect(error).toBeNull();
-			done();
-		});
-	});
-});
-
 // Test CRUD from Table Peoples
 describe("CRUD clase Table Peoples",function(){
 	var CategoryCognition=require("../src/BackEnd/SoulHand/CRUD.js");
@@ -1005,25 +901,14 @@ describe("CRUD clase Table Cognitions",function(){
 			for (i in data){
 				data[i].remove();
 			}
-			return db.CategoryCognitions.find();
-		}).then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
 			done();
-		})
+		});
 	})
 	beforeEach(function(done){
-		category=new db.CategoryCognitions({
-			name:faker.name.findName()			
+		find=new  db.Cognitions({
+			name:faker.name.findName()
 		});
-		category.save().then(function(data){
-			find=new  db.Cognitions({
-				name:faker.name.findName(),
-				category:data
-			});
-			return find.save(); 
-		}).then(function(){
+		find.save().then(function(){
 			done();			
 		})
 	})
@@ -1129,6 +1014,7 @@ describe("CRUD clase Table Cognitions",function(){
 	});
 });
 
+/*
 // Test CRUD from Table Habilities
 describe("CRUD clase Table Habilities",function(){
 	var Hability=require("../src/BackEnd/SoulHand/CRUD.js");
@@ -1245,18 +1131,13 @@ describe("CRUD clase Table Habilities",function(){
 		})
 	});
 });
-
-// Test CRUD from Table Habilities
+*/
+// Test CRUD from Table ConflictCognitions
 describe("CRUD clase Table ConflictCognitions",function(){
 	var Hability=require("../src/BackEnd/SoulHand/CRUD.js");
 	var hability=new Hability(db.ConflictCognitions),find,category,cognition;
 	afterEach(function(done){
-		db.Habilities.find().then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
-			return db.CategoryCognitions.find();
-		}).then(function(data){
+		db.ConflictCognitions.find().then(function(data){
 			for (i in data){
 				data[i].remove();
 			}
@@ -1264,16 +1145,10 @@ describe("CRUD clase Table ConflictCognitions",function(){
 		})
 	})
 	beforeEach(function(done){
-		category=new db.CategoryCognitions({
-			name:faker.name.findName()			
-		});
-		category.save().then(function(data){
-			cognition=new  db.Cognitions({
+		cognition=new  db.Cognitions({
 				name:faker.name.findName(),
-				category:data
-			});
-			return cognition.save(); 
-		}).then(function(){
+		});
+		cognition.save().then(function(){
 			find=new db.ConflictCognitions({
 				name:faker.name.findName(),
 				Cognitions:[cognition]

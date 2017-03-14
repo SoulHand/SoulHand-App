@@ -8,7 +8,9 @@
   },
   "scripts": {
     "test": "node node_modules/jasmine-node/bin/jasmine-node --verbose Test/",
-    "compiler": "node node_modules/webpack/bin/webpack.js"
+    "compiler": "node node_modules/webpack/bin/webpack.js",
+    "export" : "mongodump --db SoulHand --out database",
+    "import": "mongorestore database"
   },
   "repository": {
     "type": "git",

@@ -12,25 +12,14 @@ describe("CRUD clase Table Cognitions",function(){
 			for (i in data){
 				data[i].remove();
 			}
-			return db.CategoryCognitions.find();
-		}).then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
 			done();
-		})
+		});
 	})
 	beforeEach(function(done){
-		category=new db.CategoryCognitions({
-			name:faker.name.findName()			
+		find=new  db.Cognitions({
+			name:faker.name.findName(),
 		});
-		category.save().then(function(data){
-			find=new  db.Cognitions({
-				name:faker.name.findName(),
-				category:data
-			});
-			return find.save(); 
-		}).then(function(){
+		find.save().then(function(){
 			done();			
 		})
 	})

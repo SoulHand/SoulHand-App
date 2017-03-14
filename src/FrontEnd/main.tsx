@@ -5,19 +5,26 @@ import 'jquery';
 import 'tether';
 import 'bootstrap';
 import './scss/main.scss';
-import {NavBar} from './templates/NavBar';
+import {App} from './App';
+import {PageIndex} from './templates/PageIndex';
+import {Login} from './templates/Login';
+import {PageTeacher} from './templates/PageTeacher';
+import {PageTeacherCreate} from './templates/PageTeacherCreate';
 
-
-			//<IndexRoute component={Desktop}/>
-/*
- <Router history={hashHistory}>
-	    <Route path="/" component={NavBar}>
-	    </Route>  	
-	  </Router>
-	  */
 window.addEventListener("load",()=>{
 	render((
-	 <NavBar/>
+	 	<Router history={hashHistory}>
+		    <Route path="/" component={App}>
+		    	<IndexRoute component={PageIndex}/>
+		    </Route>
+		    <Route path="/auth" component={App}>
+		    	<IndexRoute component={Login}/>
+		    </Route>
+		    <Route path="/teacher" component={App}>
+		    	<IndexRoute component={PageTeacher}/>
+		    	<Route path="create" component={PageTeacherCreate}/>
+		    </Route>
+	  	</Router>
 	  ), document.body
 	);
 });
