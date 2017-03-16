@@ -54,6 +54,20 @@ describe("Test route grade",function(){
 			done();
 		});
 	});
+	it("POST /v1/grades/",function(done){
+		var name=faker.name.findName().toUpperCase();
+		utils.runApp("POST","/v1/grades/?PublicKeyId="+data.publicKeyId+"&PrivateKeyId="+data.privateKeyId,{
+			form:{
+				name:name
+			}
+		}).then(function(response){
+			expect(response.name).toBe(name);
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
+		});
+	});
 	it("GET /v1/grades/:id",function(done){
 		find=new  db.schema.Grades({
 			name:faker.name.findName()

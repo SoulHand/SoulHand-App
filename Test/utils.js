@@ -54,7 +54,7 @@ module.exports.runApp=function(method,uri,args){
 		});
 	}).then(function(port){
 		var p2=new Promise(function(complete,reject){
-			request[method.toLowerCase()]("http://0.0.0.0:"+port+uri,function(error,request,response){
+			request[method.toLowerCase()]("http://0.0.0.0:"+port+uri,args,function(error,request,response){
 				app.container.database.db.close(function(){
 					server.close(function(){
 						complete(JSON.parse(response));
