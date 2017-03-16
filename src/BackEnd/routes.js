@@ -390,6 +390,218 @@ module.exports=function(app,express,server,__DIR__){
 	});
 	app.use("/v1/learning",learningURI);
 
+	/*
+	* Ruta /v1/knowedge
+	* @var cognitions object enrutador para agrupar metodos
+	*/
+	var cognitions = express.Router();
+	/*
+	* @api {post} / Crear Categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions> objeto CRUD
+	*/
+	cognitions.post("/:domain/cognitions",Auth.isAdmin.bind(app.container),function(request, response,next) {		
+		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("Solo se aceptan textos categoricos");
+		}
+		if(Validator.isNull()(request.params.domain)){
+			throw new ValidatorException("Solo se aceptan dominios validos");
+		}
+		domain.find({name:request.params.domain.toUpperCase()}).then(function(row){
+			row.cognitions.push(app.container.database.Schema.Cognitions({
+				name:request.body.name.toUpperCase()
+			}));
+			return row.save();
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todas las categorias cognitivas
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	cognitions.get("/:domain/cognitions",function(request, response,next) {
+		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
+		if(Validator.isNull()(request.params.domain)){
+			throw new ValidatorException("Solo se aceptan dominios validos");
+		}
+		domain.find({name:request.params.domain.toUpperCase()}).then(function(row){
+			response.send(row.cognitions);			
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} /:name Obtener una categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	cognitions.get("/:domain/cognitions/:name",function(request, response,next) {
+		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);			
+		domain.find({name:request.params.domain.toUpperCase()}).then(function(data){
+			var name=request.params.name.toUpperCase();
+			for (i in data.cognitions){
+				if(data.cognitions[i].name==name){
+					response.send(data.cognitions[i]);
+					break;
+				}
+			}
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {put} /:id Editar categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	cognitions.put("/:domain/cognitions/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("Solo se aceptan textos categoricos");
+		}
+		category.update({name:request.params.domain.toUpperCase()},function(obj){
+			obj.cognitions=obj.cognitions.map(function(row){
+				if(request.params.id==row.id){
+					row.name=request.body.name;
+				}
+				return row;
+			});
+			return obj;
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {delete} /:id Eliminar una categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	cognitions.delete("/:domain/cognitions/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
+		category.update({name:request.params.domain.toUpperCase()},function(obj){
+			for(i in obj.cognitions){
+				if(obj.cognitions[i]._id==request.params.id){
+					obj.cognitions[i].remove();
+					break;
+				}
+			}
+			return obj;			
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {post} / Crear funcion cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions> objeto CRUD
+	* @var cognition<Cognitions> objeto CRUD
+	*/
+	cognitions.post("/:name",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("Solo se aceptan caracteres alphabeticos");
+		}
+		if(Validator.isNull()(request.params.name)){
+			throw new ValidatorException("Solo se aceptan categorias validas");
+		}
+		category.update({name:request.params.name.toUpperCase()},function(cat){
+			name=request.body.name.toUpperCase().trim();
+			cat.cognitions.filter(function(row){
+				if(name==row.name){
+					throw new ValidatorException("Ya existe un registro identico!");
+				}
+			});
+			cat.cognitions.push({
+				name:name,
+			});
+			return cat;
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {put} /:id Editar funcion cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var cognition<Cognitions>	objeto CRUD
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	cognitions.put("/:name/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("Solo se aceptan caracteres alphabeticos");
+		}
+		if(Validator.isNull()(request.params.name)){
+			throw new ValidatorException("Solo se aceptan categorias validas");
+		}
+		category.update({name:request.params.name.toUpperCase()},function(cat){
+			cat.cognitions=cat.cognitions.map(function(row){
+				if(row._id==request.params.id){
+					row.name=request.body.name.toUpperCase();
+				}
+				return row;
+			});
+			return cat;
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});		
+	});
+	/*
+	* @api {delete} /:id Eliminar una funcion cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var cognition<Cognitions>	objeto CRUD
+	*/
+	cognitions.delete("/:name/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("Solo se aceptan caracteres alphabeticos");
+		}
+		if(Validator.isNull()(request.params.name)){
+			throw new ValidatorException("Solo se aceptan categorias validas");
+		}
+		category.update({name:request.params.name.toUpperCase()},function(cat){
+			for (i in cat.cognitions){
+				if(cat.cognitions[i]._id==request.params.id){
+					cat.cognitions[i].remove();
+					return cat;
+				}
+			}
+			throw new ValidatorException("No existe un registro de este tipo");			
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	app.use("/v1/knowedge",cognitions);
 
 /*
 
