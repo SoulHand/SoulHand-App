@@ -112,7 +112,7 @@ module.exports=function(app,express,server,__DIR__){
 	});
 	app.use("/v1/grades",gradeURI);
 
-/*
+	/*
 	* Ruta /v1/courses
 	* @var courseURI object enrutador para agrupar metodos
 	*/
@@ -206,6 +206,102 @@ module.exports=function(app,express,server,__DIR__){
 	});
 	app.use("/v1/courses",courseURI);
 
+	/*
+	* Ruta /v1/learning
+	* @var learningURI object enrutador para agrupar metodos
+	*/
+	var learningURI = express.Router();
+	/*
+	* @api {post} / Crear tipo de aprendizaje
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var course<Course>	objeto CRUD
+	*/
+	learningURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var course=new Course(app.container.database.Schema.typeLearning);
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("El nombre solo debe contener letras");
+		}
+		course.add(request.body.name).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todas las tipos de aprendizaje
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var course<Course>	objeto CRUD
+	*/
+	learningURI.get("/",function(request, response,next) {
+		var course=new Course(app.container.database.Schema.typeLearning);		
+		course.get().then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} /:name Obtener un tipo de aprendizaje
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var course<Course>	objeto CRUD
+	*/
+	learningURI.get("/:name",function(request, response,next) {		
+		var course=new Course(app.container.database.Schema.typeLearning);			
+		course.find({name:request.params.name.toUpperCase()}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {put} /:id Editar tipo de aprendizaje
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var course<Course>	objeto CRUD
+	*/
+	learningURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var course=new Course(app.container.database.Schema.typeLearning);
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("El nombre solo debe contener letras");
+		}
+		course.update({_id:request.params.id},function(obj){
+			obj.name=request.body.name;
+			return obj;
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {delete} /:id Eliminar una materia
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var course<Course>	objeto CRUD
+	*/
+	learningURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		var course=new Course(app.container.database.Schema.typeLearning);
+		course.remove({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	app.use("/v1/learning",learningURI);
 
 
 
