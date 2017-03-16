@@ -3,8 +3,8 @@ import {getJSON} from 'jquery'
 //import * as settings from "../settings"
 
 export class PageTeacher extends React.Component<{}, {}> {
-	public PrivateKeyId="d8a03b84-c5b7-48a2-876b-2e93aec1dd36";
-	public PublicKeyId="NThjN2ZiZTQ3NTkxZDMwZTZiM2E4NDYz"
+	public PrivateKeyId="1dec3409-dbc9-4314-8bb4-a38ef808c702";
+	public PublicKeyId="NThjODg5ZWIxMjA3OTIwYTcwY2E2NDkz"
 	public teachers:any=[];
 	componentDidMount(){
 		getJSON(`//0.0.0:8080/v1/teachers/?PublicKeyId=${this.PublicKeyId}&PrivateKeyId=${this.PrivateKeyId}`,(data)=>{

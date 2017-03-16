@@ -1,22 +1,23 @@
 var InsertException=require("../src/BackEnd/SoulHand/Exceptions/InsertException.js");
 var VoidException=require("../src/BackEnd/SoulHand/Exceptions/VoidException.js");
-var db=require("./prepare.js");
+var utils=require("./utils.js");
 var faker = require('faker');
 
 // Test CRUD from Table Cognitions
 describe("CRUD clase Table Cognitions",function(){
+	var cognition, find, category;
 	var Cognition=require("../src/BackEnd/SoulHand/Cognitions.js");
-	var cognition=new Cognition(db.Cognitions),find,category;
 	afterEach(function(done){
-		db.Cognitions.find().then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
-			done();
+		db.db.dropDatabase(function(){
+			db.db.close(function(){
+				done();				
+			});
 		});
 	})
 	beforeEach(function(done){
-		find=new  db.Cognitions({
+		db=utils.getDatabase();
+		cognition=new Cognition(db.schema.Cognitions);
+		find=new  db.schema.Cognitions({
 			name:faker.name.findName(),
 		});
 		find.save().then(function(){
@@ -62,9 +63,8 @@ describe("CRUD clase Table Cognitions",function(){
 		cognition.remove({_id:find._id}).then(function(data){
 			done();
 		}).catch(function(error){
-			console.log(error.toString());
-			//throw error;
-			//fail(error.toString());
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Delete not exist Element cognition",function(done){
@@ -91,7 +91,6 @@ describe("CRUD clase Table Cognitions",function(){
 			info.name=update;
 			return info;
 		}).catch(function(error){
-			console.log(error.toString())
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
 		});

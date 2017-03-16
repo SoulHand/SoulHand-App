@@ -43377,8 +43377,8 @@
 	    __extends(PageTeacher, _super);
 	    function PageTeacher() {
 	        var _this = _super.apply(this, arguments) || this;
-	        _this.PrivateKeyId = "d8a03b84-c5b7-48a2-876b-2e93aec1dd36";
-	        _this.PublicKeyId = "NThjN2ZiZTQ3NTkxZDMwZTZiM2E4NDYz";
+	        _this.PrivateKeyId = "1dec3409-dbc9-4314-8bb4-a38ef808c702";
+	        _this.PublicKeyId = "NThjODg5ZWIxMjA3OTIwYTcwY2E2NDkz";
 	        _this.teachers = [];
 	        return _this;
 	    }

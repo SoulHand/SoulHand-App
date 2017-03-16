@@ -113,6 +113,10 @@ structDb.Sessions=mongoose.Schema({
    	dateLastConnect:Date,
    	user:{ type: mongoose.Schema.ObjectId, ref: "User" }
 });
+structDb.CategoryCognitions=mongoose.Schema({
+	name:{type:String, required:true, trim:true, uppercase: true},
+	cognitions:[structDb.Cognitions]
+});
 /*var structDb={
 		Peoples:mongoose.Schema({
 			dni:{type:String, trim: true, index:true, required: true, unique:true, uppercase: true},
@@ -135,11 +139,7 @@ structDb.Sessions=mongoose.Schema({
 		Cognitions:mongoose.Schema({
 			name:{type:String, trim:true, uppercase: true}
 		})		
-	};
-	structDb.CategoryCognitions=mongoose.Schema({
-		name:{type:String, required:true, trim:true, uppercase: true},
-		cognitions:[structDb.Cognitions]
-	});
+	};	
 	structDb.Teachers=mongoose.Schema({
 		data: structDb.Peoples,
 		interprete:{type:Boolean, required:true}

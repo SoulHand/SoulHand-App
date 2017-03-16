@@ -2,7 +2,7 @@ var mongoose= require('mongoose');
 var Exception=require("./SoulHand/Exceptions/Exception.js");
 
 module.exports=function (app){
-	var db = mongoose.connect(app.settings.database.dns);
+	var db = mongoose.createConnection(app.settings.database.dns);
 	var structDb=require("./models.js");
 	var Schema={};
 	for( var i in structDb){
@@ -10,7 +10,7 @@ module.exports=function (app){
 	}
 	return {
 		database:{
-			db:mongoose,
+			db:db,
 			Schema:Schema			
 		},
 		ErrorHandler:function(error,request,response,next){
@@ -22,8 +22,8 @@ module.exports=function (app){
 				body.code=error.code;
 				status=error.status;
 			}
-			console.log(error);
 			body.message=error.toString();
+			console.log(body.message);
 			response.status(status).send(body);
 		}
 	};
