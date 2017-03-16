@@ -111,6 +111,111 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	app.use("/v1/grades",gradeURI);
+
+/*
+	* Ruta /v1/courses
+	* @var courseURI object enrutador para agrupar metodos
+	*/
+	var courseURI = express.Router();
+	/*
+	* @api {post} / Crear materia
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var course<Course>	objeto CRUD
+	*/
+	courseURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var course=new Course(app.container.database.Schema.Courses);
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("El nombre solo debe contener letras");
+		}
+		course.add(request.body.name).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todas las materias
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var course<Course>	objeto CRUD
+	*/
+	courseURI.get("/",function(request, response,next) {
+		var course=new Course(app.container.database.Schema.Courses);		
+		course.get().then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} /:id Obtener una materia
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var course<Course>	objeto CRUD
+	*/
+	courseURI.get("/:id",function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		var course=new Course(app.container.database.Schema.Courses);			
+		course.find({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {put} /:id Editar materia
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var course<Course>	objeto CRUD
+	*/
+	courseURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var course=new Course(app.container.database.Schema.Courses);
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("El nombre solo debe contener letras");
+		}
+		course.update({_id:request.params.id},function(obj){
+			obj.name=request.body.name;
+			return obj;
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {delete} /:id Eliminar una materia
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var course<Course>	objeto CRUD
+	*/
+	courseURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var course=new Course(app.container.database.Schema.Courses);
+		course.remove({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	app.use("/v1/courses",courseURI);
+
+
+
+
+
+
+
+
+
+
+
 	/*
 	* Ruta /v1/habilities
 	* @var HabilitiesURI object enrutador para agrupar metodos
@@ -355,6 +460,7 @@ module.exports=function(app,express,server,__DIR__){
 							}
 						}
 					}
+	
 					return obj;
 				})
 			});
@@ -500,96 +606,6 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	app.use("/v1/conflicts",ConflictCognitionsURI);
-	/*
-	* Ruta /v1/courses
-	* @var courseURI object enrutador para agrupar metodos
-	*/
-	var courseURI = express.Router();
-	/*
-	* @api {post} / Crear materia
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var course<Course>	objeto CRUD
-	*/
-	courseURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var course=new Course(app.container.database.Schema.Courses);
-		if(Validator.isNull()(request.body.name)){
-			throw new ValidatorException("El nombre solo debe contener letras");
-		}
-		course.add(request.body.name).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} / Obtener todas las materias
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var course<Course>	objeto CRUD
-	*/
-	courseURI.get("/",function(request, response,next) {
-		var course=new Course(app.container.database.Schema.Courses);		
-		course.get().then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} /:id Obtener una materia
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var course<Course>	objeto CRUD
-	*/
-	courseURI.get("/:id",function(request, response,next) {
-		var course=new Course(app.container.database.Schema.Courses);			
-		course.find({_id:request.params.id}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {put} /:id Editar materia
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var course<Course>	objeto CRUD
-	*/
-	courseURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var course=new Course(app.container.database.Schema.Courses);
-		if(Validator.isNull()(request.body.name)){
-			throw new ValidatorException("El nombre solo debe contener letras");
-		}
-		course.update({_id:request.params.id},function(obj){
-			obj.name=request.body.name;
-			return obj;
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {delete} /:id Eliminar una materia
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var course<Course>	objeto CRUD
-	*/
-	courseURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var course=new Course(app.container.database.Schema.Courses);
-		course.remove({_id:request.params.id}).then(function(data){
-			response.send({data});
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	app.use("/v1/courses",courseURI);
 	/*
 	* Ruta /v1/periods
 	* @var periodURI object enrutador para agrupar metodos
