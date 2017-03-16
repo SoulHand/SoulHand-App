@@ -23,7 +23,6 @@ module.exports=function (app){
 				status=error.status;
 			}
 			body.message=error.toString();
-			console.log(body.message);
 			response.status(status).send(body);
 		}
 	};

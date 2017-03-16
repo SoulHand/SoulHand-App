@@ -64,6 +64,9 @@ module.exports=function(app,express,server,__DIR__){
 	* @var grade<Grade>	objeto CRUD
 	*/
 	gradeURI.get("/:id",function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
 		var grade=new Grade(app.container.database.Schema.Grades);			
 		grade.find({_id:request.params.id}).then(function(data){
 			response.send(data);

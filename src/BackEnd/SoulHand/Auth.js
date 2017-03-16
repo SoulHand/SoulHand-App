@@ -8,7 +8,7 @@ module.exports.isAdmin=function(request,response,next){
 	}
 	var user=new Token(this.database.Schema.Sessions);
 	var address=request.connection.address() || request.socket.address();
-	var navigator=request.headers['user-agent'];
+	var navigator=request.headers['user-agent'];	
 	user.find({
 		$and:[
 			{publicKeyId:request.query.PublicKeyId},
@@ -18,7 +18,6 @@ module.exports.isAdmin=function(request,response,next){
 			{dateDeleted:null}
 		]
 	}).then(function(data){
-		console.log(data)
 		if(!data || data.user.isAdmin!=true){
 			throw new UserException('No posee permisos administrativos');			
 		}
