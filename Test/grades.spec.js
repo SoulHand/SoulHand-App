@@ -82,6 +82,24 @@ describe("Test route grade",function(){
 			done();
 		});	
 	});
+	it("PUT /v1/grades/:id",function(done){
+		find=new  db.schema.Grades({
+			name:faker.name.findName()
+		});
+		find.save().then(function(){
+			return utils.runApp("PUT","/v1/grades/"+find._id+"?PublicKeyId="+data.publicKeyId+"&PrivateKeyId="+data.privateKeyId,{
+			form:{
+				name:"hola"
+			}
+		});
+		}).then(function(response){
+			expect(response.name).toBe("HOLA");
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
+		});	
+	});
 	it("DELETE /v1/grades/:id",function(done){
 		find=new  db.schema.Grades({
 			name:faker.name.findName()
