@@ -561,6 +561,23 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* @api {get} / Obtener todas las categorias cognitivas
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	cognitions.get("/:domain/objetives/:type/:id",function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.domain) || !Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		app.container.database.Schema.LearningObjetive.findOne({domain:request.params.domain,"type.name":request.params.type, _id:request.params.id }).then(function(rows){
+			response.send(rows);			
+		}).catch(function(error){
+			next(error);
+		});
+	});
 
 	app.use("/v1/knowedge",cognitions);
 

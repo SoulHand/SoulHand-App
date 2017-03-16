@@ -95,7 +95,8 @@ describe("Test route knowedge cognitions",function(){
 			done();
 		});
 	});
-	it("GET /v1/knowedge/:domain/cognitions/:name",function(done){
+	it("GET /v1/knowedge/:domain/objetives/:type/:id",function(done){
+		var find2,find3;
 		find=new  db.schema.domainsLearning({
 			name:faker.name.findName(),
 			cognitions:[db.schema.Cognitions({
@@ -103,9 +104,22 @@ describe("Test route knowedge cognitions",function(){
 			})]
 		});
 		find.save().then(function(){
-			return utils.runApp("GET","/v1/knowedge/"+find.name+"/cognitions/"+find.cognitions[0].name.toLowerCase());
+			return new db.schema.typeLearning({
+				name:faker.name.findName()				
+			}).save();
+		}).then(function(data){
+			find2=data;
+			find3=new db.schema.LearningObjetive({
+				name:faker.name.findName(),
+				description:"hola",
+				type:find2,
+				domain:find._id
+			});
+			return find3.save();
+		}).then(function(){
+			return utils.runApp("GET","/v1/knowedge/"+find._id+"/objetives/"+find2.name+"/"+find3._id);
 		}).then(function(response){
-			expect(response.name).toBe(find.cognitions[0].name);
+			expect(response.name).toBe(find3.name);
 			done();
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();
