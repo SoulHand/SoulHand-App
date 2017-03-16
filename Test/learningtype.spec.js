@@ -1,7 +1,7 @@
 var utils=require("./utils.js");
 var faker = require('faker');
 
-describe("Test route learning",function(){
+describe("Test route learning type",function(){
 	var db,data;
 	afterEach(function(done){
 		db.db.dropDatabase(function(){

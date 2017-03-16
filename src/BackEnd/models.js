@@ -70,14 +70,12 @@ structDb.User=mongoose.Schema({
    	people:structDb.Peoples,
    	isAdmin:{type:Boolean, default:false}
 });
-structDb.Learning=mongoose.Schema({
-	name:{type:String, required:true, trim:true, uppercase:true}
-});
 structDb.LearningObjetive=mongoose.Schema({
 	name:{type:String, trim:true, required: true, uppercase: true},
 	description:{type:String, trim:true, required: false, uppercase: true},
 	cognitions:[structDb.Cognitions],
-	type:structDb.typeLearning
+	type:structDb.typeLearning,
+	domain:{ type: mongoose.Schema.ObjectId, ref: "domainsLearning" }
 });
 structDb.ConflictCognitions=mongoose.Schema({
 	name:{type:String, trim:true, uppercase: true},
@@ -117,7 +115,18 @@ structDb.domainsLearning=mongoose.Schema({
 	name:{type:String, required:true, trim:true, uppercase: true},
 	cognitions:[structDb.Cognitions]
 });
-/*var structDb={
+
+/*
+structDb.Learning=mongoose.Schema({
+	name:{type:String, required:true, trim:true, uppercase:true}
+});
+
+
+
+
+
+
+var structDb={
 		Peoples:mongoose.Schema({
 			dni:{type:String, trim: true, index:true, required: true, unique:true, uppercase: true},
 			name:{type:String, trim:true, required: true, uppercase: true},

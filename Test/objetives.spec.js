@@ -39,56 +39,38 @@ describe("Test route knowedge cognitions",function(){
 				done();				
 			});
 	})
-	it("GET /v1/knowedge/:domain/objetives/:type",function(done){
-		var find2,find3;
+	it("GET /v1/knowedge/:domain/cognitions",function(done){
 		find=new  db.schema.domainsLearning({
 			name:faker.name.findName(),
 			cognitions:[db.schema.Cognitions({
 				name:faker.name.findName()
 			})]
 		});
-		find.save().then(function(){
-			return new db.schema.typeLearning({
-				name:faker.name.findName()				
-			}).save();
-		}).then(function(data){
-			find2=data;
-			find3=new db.schema.LearningObjetive({
-				name:faker.name.findName(),
-				description:"hola",
-				type:find2,
-				domain:find._id
-			});
-			return find3.save();
-		}).then(function(){
-			return utils.runApp("GET","/v1/knowedge/"+find._id+"/objetives/"+find2.name);
+		find.save().then(function(){			
+			return utils.runApp("GET","/v1/knowedge/"+find.name+"/cognitions/");
 		}).then(function(response){
-			expect(response[0].name).toBe(find3.name);
+			expect(response.length).toBe(1);
+			expect(response[0].name).toBe(find.cognitions[0].name);
 			done();
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();
 			done();
 		});
 	});
-	it("POST /v1/knowedge/:domain/objetives/:type",function(done){
+	it("POST /v1/knowedge/:domain/cognitions",function(done){
 		find=new  db.schema.domainsLearning({
 			name:faker.name.findName()			
 		});
 		var name=faker.name.findName().toUpperCase();
-		find.save().then(function(){
-			return new db.schema.typeLearning({
-				name:faker.name.findName()				
-			}).save();
-		}).then(function(vb){
-			find2=vb;			
-			return utils.runApp("POST","/v1/knowedge/"+find.name+"/objetives/"+find2.name+"?PublicKeyId="+data.publicKeyId+"&PrivateKeyId="+data.privateKeyId,{
+		find.save().then(function(){			
+			return utils.runApp("POST","/v1/knowedge/"+find.name+"/cognitions/?PublicKeyId="+data.publicKeyId+"&PrivateKeyId="+data.privateKeyId,{
 				form:{
-					name:name,
-					description:"hola"
+					name:name
 				}
 			});
 		}).then(function(response){
-			expect(response.name).toBe(name);
+			expect(response.name).toBe(find.name);
+			expect(response.cognitions[0].name).toBe(name);
 			done();
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();
