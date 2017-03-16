@@ -113,7 +113,7 @@ structDb.Sessions=mongoose.Schema({
    	dateLastConnect:Date,
    	user:{ type: mongoose.Schema.ObjectId, ref: "User" }
 });
-structDb.CategoryCognitions=mongoose.Schema({
+structDb.domainsLearning=mongoose.Schema({
 	name:{type:String, required:true, trim:true, uppercase: true},
 	cognitions:[structDb.Cognitions]
 });

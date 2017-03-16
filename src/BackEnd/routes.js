@@ -218,7 +218,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var course<Course>	objeto CRUD
 	*/
-	learningURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	learningURI.post("/type",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var course=new Course(app.container.database.Schema.typeLearning);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("El nombre solo debe contener letras");
@@ -236,7 +236,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var course<Course>	objeto CRUD
 	*/
-	learningURI.get("/",function(request, response,next) {
+	learningURI.get("/type",function(request, response,next) {
 		var course=new Course(app.container.database.Schema.typeLearning);		
 		course.get().then(function(data){
 			response.send(data);
@@ -251,7 +251,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var course<Course>	objeto CRUD
 	*/
-	learningURI.get("/:name",function(request, response,next) {		
+	learningURI.get("/type/:name",function(request, response,next) {		
 		var course=new Course(app.container.database.Schema.typeLearning);			
 		course.find({name:request.params.name.toUpperCase()}).then(function(data){
 			response.send(data);
@@ -266,7 +266,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var course<Course>	objeto CRUD
 	*/
-	learningURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	learningURI.put("/type/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var course=new Course(app.container.database.Schema.typeLearning);
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
@@ -290,7 +290,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var course<Course>	objeto CRUD
 	*/
-	learningURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	learningURI.delete("/type/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
@@ -301,11 +301,97 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+
+	/*
+	* Ruta /v1/learning/domain
+
+	* @api {post} / Crear dominio del aprendizaje
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions> objeto CRUD
+	*/
+	learningURI.post("/domain/",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("Solo se aceptan textos categoricos");
+		}
+		category.add(request.body.name.toUpperCase()).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todas los dominios del aprendizaje
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	learningURI.get("/domain/",function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
+		category.get().then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} /:name Obtener un dominio del aprendizaje
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	learningURI.get("/domain/:name",function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);			
+		category.find({name:request.params.name.toUpperCase()}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {put} /:id Editar categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	learningURI.put("/domain/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("Solo se aceptan textos categoricos");
+		}
+		category.update({_id:request.params.id.toUpperCase()},function(obj){
+			obj.name=request.body.name;
+			return obj;
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {delete} /:id Eliminar una categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	learningURI.delete("/domain/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
+		category.remove({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
 	app.use("/v1/learning",learningURI);
 
 
-
-
+/*
 
 
 
@@ -315,7 +401,7 @@ module.exports=function(app,express,server,__DIR__){
 	/*
 	* Ruta /v1/habilities
 	* @var HabilitiesURI object enrutador para agrupar metodos
-	*/
+	*\/
 	var HabilitiesURI = express.Router();
 	/*
 	* @api {post} / Crear habilidad
@@ -323,7 +409,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var hability<Habilities>	objeto CRUD
-	*/
+	*\/
 	HabilitiesURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var hability=new Habilities(app.container.database.Schema.Habilities);
 		if(Validator.isNull()(request.body.name)){
@@ -345,7 +431,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var hability<Habilities>	objeto CRUD
-	*/
+	*\/
 	HabilitiesURI.get("/",function(request, response,next) {
 		var hability=new Habilities(app.container.database.Schema.Habilities);		
 		hability.get().then(function(data){
@@ -360,7 +446,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var hability<Habilities>	objeto CRUD
-	*/
+	*\/
 	HabilitiesURI.get("/:id",function(request, response,next) {
 		var hability=new Habilities(app.container.database.Schema.Habilities);			
 		hability.find({_id:request.params.id}).then(function(data){
@@ -375,7 +461,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var hability<Habilities>	objeto CRUD
-	*/
+	*\/
 	HabilitiesURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var hability=new Habilities(app.container.database.Schema.Habilities);
 		if(Validator.isNull()(request.body.name)){
@@ -396,7 +482,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var hability<Habilities>	objeto CRUD
-	*/
+	*\/
 	HabilitiesURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var grade=new Habilities(app.container.database.Schema.Habilities);
 		grade.remove({_id:request.params.id}).then(function(data){
@@ -409,7 +495,7 @@ module.exports=function(app,express,server,__DIR__){
 	/*
 	* Ruta /v1/activities
 	* @var ActivitiesURI object enrutador para agrupar metodos
-	*/
+	*\/
 	var ActivitiesURI = express.Router();
 	/*
 	* @api {post} / Crear Actividad
@@ -419,7 +505,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var grade<Activities>	objeto CRUD
 	* @var people<SubPeople>	objeto CRUD
 	* @var course<Course>	objeto CRUD
-	*/
+	*\/
 	ActivitiesURI.post("/",function(request, response,next) {
 		var grade= new Activities(app.container.database.Schema.Activities);
 		var people= new SubPeople(app.container.database.Schema.Teachers);
@@ -470,7 +556,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var activity<Activities>	objeto CRUD
-	*/
+	*\/
 	ActivitiesURI.get("/",function(request, response,next) {
 		var activity=new Activities(app.container.database.Schema.Activities);
 		activity.get().then(function(data){
@@ -485,7 +571,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var activity<Activities>	objeto CRUD
-	*/
+	*\/
 	ActivitiesURI.get("/:id",function(request, response,next) {
 		var activity= new Activities(app.container.database.Schema.Activities);			
 		activity.find({_id:request.params.id}).then(function(data){
@@ -502,7 +588,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var activity<Activities>	objeto CRUD
 	* @var people<SubPeople>	objeto CRUD
 	* @var course<Course>	objeto CRUD
-	*/
+	*\/
 	ActivitiesURI.put("/:id",function(request, response,next) {
 		var activity= new Activities(app.container.database.Schema.Activities);
 		var people= new SubPeople(app.container.database.Schema.Teachers);
@@ -598,7 +684,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var activity<Activities>	objeto CRUD
-	*/
+	*\/
 	ActivitiesURI.delete("/:id",function(request, response,next) {
 		var activity=new Activities(app.container.database.Schema.Activities);
 		activity.remove({_id:request.params.id}).then(function(data){
@@ -611,7 +697,7 @@ module.exports=function(app,express,server,__DIR__){
 	/*
 	* Ruta /v1/conflicts
 	* @var ConflictCognitionsURI object enrutador para agrupar metodos
-	*/
+	*\/
 	var ConflictCognitionsURI = express.Router();
 	/*
 	* @api {post} / Crear Conflicto Cognitivo
@@ -619,7 +705,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var conflict<Habilities>	objeto CRUD
-	*/
+	*\/
 	ConflictCognitionsURI.post("/",function(request, response,next) {
 		var conflict=new Habilities(app.container.database.Schema.ConflictCognitions);
 		if(Validator.isNull()(request.body.name)){
@@ -641,7 +727,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var conflict<Habilities>	objeto CRUD
-	*/
+	*\/
 	ConflictCognitionsURI.get("/",function(request, response,next) {
 		var conflict=new Habilities(app.container.database.Schema.ConflictCognitions);		
 		conflict.get().then(function(data){
@@ -656,7 +742,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var conflict<Habilities>	objeto CRUD
-	*/
+	*\/
 	ConflictCognitionsURI.get("/:id",function(request, response,next) {
 		var conflict=new Habilities(app.container.database.Schema.ConflictCognitions);			
 		conflict.find({_id:request.params.id}).then(function(data){
@@ -671,7 +757,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var conflict<Habilities>	objeto CRUD
-	*/
+	*\/
 	ConflictCognitionsURI.put("/:id",function(request, response,next) {
 		var conflict=new Habilities(app.container.database.Schema.ConflictCognitions);
 		if(Validator.isNull()(request.body.name)){
@@ -692,7 +778,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var activity<Activities>	objeto CRUD
-	*/
+	*\/
 	ConflictCognitionsURI.delete("/:id",function(request, response,next) {
 		var conflict=new Habilities(app.container.database.Schema.ConflictCognitions);
 		conflict.remove({_id:request.params.id}).then(function(data){
@@ -705,7 +791,7 @@ module.exports=function(app,express,server,__DIR__){
 	/*
 	* Ruta /v1/periods
 	* @var periodURI object enrutador para agrupar metodos
-	*/
+	*\/
 	var periodURI = express.Router();
 	/*
 	* @api {post} / Crear periodo escolar
@@ -713,7 +799,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var period<Period>	objeto CRUD
-	*/
+	*\/
 	periodURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var period=new Period(app.container.database.Schema.PeriodSchools);
 		if(!Validator.matches(/[0-9]{4}\-[0-9]{4}/i)(request.body.name)){
@@ -731,7 +817,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var period<Period>	objeto CRUD
-	*/
+	*\/
 	periodURI.get("/",function(request, response,next) {
 		var period=new Period(app.container.database.Schema.PeriodSchools);		
 		period.get().then(function(data){
@@ -746,7 +832,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var period<Period>	objeto CRUD
-	*/
+	*\/
 	periodURI.get("/:id",function(request, response,next) {
 		var period=new Period(app.container.database.Schema.PeriodSchools);			
 		period.find({_id:request.params.id}).then(function(data){
@@ -761,7 +847,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var period<Period>	objeto CRUD
-	*/
+	*\/
 	periodURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var period=new Period(app.container.database.Schema.PeriodSchools);
 		if(!Validator.matches(/[0-9]{4}\-[0-9]{4}/i)(request.body.name)){
@@ -782,7 +868,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var period<Period>	objeto CRUD
-	*/
+	*\/
 	periodURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var period=new Period(app.container.database.Schema.PeriodSchools);
 		period.remove({_id:request.params.id}).then(function(data){
@@ -795,7 +881,7 @@ module.exports=function(app,express,server,__DIR__){
 	/*
 	* Ruta /v1/cognitions
 	* @var categoryCognitionURI object enrutador para agrupar metodos
-	*/
+	*\/
 	var categoryCognitionURI = express.Router();
 	/*
 	* @api {post} / Crear Categoria cognitiva
@@ -803,7 +889,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions> objeto CRUD
-	*/
+	*\/
 	categoryCognitionURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
 		if(Validator.isNull()(request.body.name)){
@@ -821,7 +907,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
+	*\/
 	categoryCognitionURI.get("/",function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);		
 		category.get().then(function(data){
@@ -836,7 +922,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
+	*\/
 	categoryCognitionURI.get("/:name",function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);			
 		category.find({name:request.params.name.toUpperCase()}).then(function(data){
@@ -851,7 +937,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
+	*\/
 	categoryCognitionURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
 		if(Validator.isNull()(request.body.name)){
@@ -872,7 +958,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
+	*\/
 	categoryCognitionURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
 		category.remove({_id:request.params.id}).then(function(data){
@@ -888,7 +974,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions> objeto CRUD
 	* @var cognition<Cognitions> objeto CRUD
-	*/
+	*\/
 	categoryCognitionURI.post("/:name",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
 		if(Validator.isNull()(request.body.name)){
@@ -921,7 +1007,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var cognition<Cognitions>	objeto CRUD
 	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
+	*\/
 	categoryCognitionURI.put("/:name/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
 		if(Validator.isNull()(request.body.name)){
@@ -950,7 +1036,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var cognition<Cognitions>	objeto CRUD
-	*/
+	*\/
 	categoryCognitionURI.delete("/:name/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
 		if(Validator.isNull()(request.body.name)){
@@ -977,7 +1063,7 @@ module.exports=function(app,express,server,__DIR__){
 	/*
 	* Ruta /v1/teachers
 	* @var PeopleURI object enrutador para agrupar metodos
-	*/
+	*\/
 	var PeopleURI = express.Router();
 	/*
 	* @api {post} / Crear profesor
@@ -986,7 +1072,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var people<SubPeople> objeto CRUD
 	* @var people2<People> objeto CRUD
-	*/
+	*\/
 	PeopleURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Teachers);
 		var people2=new People(app.container.database.Schema.Peoples);
@@ -1023,7 +1109,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var people<People>	objeto CRUD
-	*/
+	*\/
 	PeopleURI.get("/",function(request, response,next) {
 		var people=new People(app.container.database.Schema.Teachers);		
 		people.get().then(function(data){
@@ -1038,7 +1124,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var people<People>	objeto CRUD
-	*/
+	*\/
 	PeopleURI.get("/:id",function(request, response,next) {
 		var people=new People(app.container.database.Schema.Teachers);			
 		people.find({_id:request.params.id}).then(function(data){
@@ -1054,7 +1140,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var people<SubPeople>	objeto CRUD
 	* @var people2<People>	objeto CRUD
-	*/
+	*\/
 	PeopleURI.put("/:id",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Teachers);
 		var people2=new People(app.container.database.Schema.Peoples);
@@ -1100,7 +1186,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var people<SubPeople>	objeto CRUD
 	* @var people2<People>	objeto CRUD
-	*/
+	*\/
 	PeopleURI.delete("/:id",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Teachers);
 		var people2=new People(app.container.database.Schema.Peoples);
@@ -1115,7 +1201,7 @@ module.exports=function(app,express,server,__DIR__){
 	/*
 	* Ruta /v1/students
 	* @var StudentsURI object enrutador para agrupar metodos
-	*/
+	*\/
 	var StudentsURI = express.Router();
 	/*
 	* @api {post} / Crear alumno
@@ -1124,7 +1210,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var people<SubPeople> objeto CRUD
 	* @var people2<People> objeto CRUD
-	*/
+	*\/
 	StudentsURI.post("/",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		var people2=new People(app.container.database.Schema.Peoples);
@@ -1168,7 +1254,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var people<People>	objeto CRUD
-	*/
+	*\/
 	StudentsURI.get("/",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		people.get().then(function(data){
@@ -1183,7 +1269,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var people<SubPeople>	objeto CRUD
-	*/
+	*\/
 	StudentsURI.get("/:id",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		people.find({_id:request.params.id}).then(function(data){
@@ -1199,7 +1285,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var people<SubPeople>	objeto CRUD
 	* @var people2<People>	objeto CRUD
-	*/
+	*\/
 	StudentsURI.put("/:id",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		var people2=new People(app.container.database.Schema.Peoples);
@@ -1262,7 +1348,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var people<SubPeople>	objeto CRUD
 	* @var people2<People>	objeto CRUD
-	*/
+	*\/
 	StudentsURI.delete("/:id",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		var people2=new People(app.container.database.Schema.Peoples);
@@ -1280,7 +1366,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var people<SubPeople> objeto CRUD
 	* @var people2<People> objeto CRUD
-	*/
+	*\/
 	StudentsURI.post("/:dni/test/:test",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		var test=new CRUD(app.container.database.Schema.TestInteligence);
@@ -1328,7 +1414,7 @@ module.exports=function(app,express,server,__DIR__){
 	/*
 	* Ruta /v1/representives		
 	* @var ReferencesToURI object enrutador para agrupar metodos
-	*/
+	*\/
 	var ReferencesToURI = express.Router();
 	/*
 	* @api {post} / Crear representante
@@ -1338,7 +1424,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var people<SubPeople> objeto CRUD
 	* @var people3<SubPeople> objeto CRUD
 	* @var people2<People> objeto CRUD
-	*/
+	*\/
 	ReferencesToURI.post("/",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Representatives);
 		var people3=new SubPeople(app.container.database.Schema.Students);
@@ -1379,7 +1465,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var people<SubPeople>	objeto CRUD
-	*/
+	*\/
 	ReferencesToURI.get("/",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		people.get().then(function(data){
@@ -1394,7 +1480,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var people<SubPeople>	objeto CRUD
-	*/
+	*\/
 	ReferencesToURI.get("/:id",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		people.find({_id:request.params.id}).then(function(data){
@@ -1411,7 +1497,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var people<SubPeople>	objeto CRUD
 	* @var people2<People>	objeto CRUD
 	* @var grade<Grade>	objeto CRUD
-	*/
+	*\/
 	ReferencesToURI.put("/:id",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		var people2=new People(app.container.database.Schema.Peoples);
@@ -1474,7 +1560,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var people<SubPeople>	objeto CRUD
 	* @var people2<People>	objeto CRUD
-	*/
+	*\/
 	ReferencesToURI.delete("/:id",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		var people2=new People(app.container.database.Schema.Peoples);
@@ -1489,7 +1575,7 @@ module.exports=function(app,express,server,__DIR__){
 	/*
 	* Ruta /v1/users		
 	* @var UsersURI object enrutador para agrupar metodos
-	*/
+	*\/
 	var UsersURI = express.Router();
 	/*
 	* @api {post} / Crear representante
@@ -1498,7 +1584,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var user<User>	objeto CRUD
 	* @var people<SubPeople> objeto CRUD
-	*/
+	*\/
 	UsersURI.post("/",function(request, response,next) {
 		var user=new User(app.container.database.Schema.User);
 		var people=new People(app.container.database.Schema.Peoples);
@@ -1539,7 +1625,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var user<User>	objeto CRUD
-	*/
+	*\/
 	UsersURI.get("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var user=new User(app.container.database.Schema.User);
 		user.get().then(function(data){
@@ -1554,7 +1640,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var user<User>	objeto CRUD
-	*/
+	*\/
 	UsersURI.get("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var user=new User(app.container.database.Schema.User);
 		user.find({_id:request.params.id}).then(function(data){
@@ -1569,7 +1655,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var user<User>	objeto CRUD
-	*/
+	*\/
 	UsersURI.put("/:id",Auth.isUser.bind(app.container),function(request, response,next) {
 		if(request.body.isAdmin){
 			throw new ValidatorException("no puede realizar un cambio de administración");
@@ -1613,7 +1699,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var user<User>	objeto CRUD
-	*/
+	*\/
 	UsersURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var user=new User(app.container.database.Schema.User);
 		user.remove({_id:request.params.id}).then(function(data){
@@ -1630,7 +1716,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var user<User>	objeto CRUD
 	* Authorization: Basic base64(username:pass)
-	*/
+	*\/
 	app.get('/v1/auth',basicAuth(function(username, pass,next){
 		const base64=require('base-64');
 		var user=new User(app.container.database.Schema.User);
@@ -1656,7 +1742,7 @@ module.exports=function(app,express,server,__DIR__){
 	/*
 	* Ruta /v1/test		
 	* @var testParent object enrutador para agrupar metodos
-	*/
+	*\/
 	var testParent = express.Router();
 	/*
 	* @api {post} / Crear un test
@@ -1664,7 +1750,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var test<CRUD> objeto CRUD
-	*/
+	*\/
 	testParent.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var test=new CRUD(app.container.database.Schema.TestInteligence);		
 		if(Validator.isNull()(request.body.name)){
@@ -1689,7 +1775,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var test<CRUD>	objeto CRUD
-	*/
+	*\/
 	testParent.get("/",Auth.isTeacherOrNot.bind(app.container),function(request, response,next) {
 		var test=new CRUD(app.container.database.Schema.TestInteligence);		
 		test.get().then(function(data){
@@ -1704,7 +1790,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var test<CRUD>	objeto CRUD
-	*/
+	*\/
 	testParent.get("/:id",Auth.isTeacherOrNot.bind(app.container),function(request, response,next) {
 		var test=new CRUD(app.container.database.Schema.TestInteligence);
 		test.find({_id:request.params.id}).then(function(data){
@@ -1719,7 +1805,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var test<CRUD>	objeto CRUD
-	*/
+	*\/
 	testParent.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		if(!Validator.isJSON(request.body.range)){
 			throw new ValidatorException("Los datos de rangos no son validos");
@@ -1740,7 +1826,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var test<CRUD>	objeto CRUD
-	*/
+	*\/
 	testParent.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var test=new CRUD(app.container.database.Schema.TestInteligence);
 		test.remove({_id:request.params.id}).then(function(data){
@@ -1755,7 +1841,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var test<CRUD> objeto CRUD
-	*/
+	*\/
 	testParent.post("/:name",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var min=parseInt(request.body.minDate);
 		var max=parseInt(request.body.maxDate);
@@ -1798,7 +1884,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var test<CRUD>	objeto CRUD
-	*/
+	*\/
 	testParent.delete("/:name/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var test=new CRUD(app.container.database.Schema.TestInteligence);				
 		test.update({name:request.params.name.toUpperCase()},function(data){
@@ -1821,7 +1907,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var test<CRUD> objeto CRUD
-	*/
+	*\/
 	testParent.post("/:name/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var test=new CRUD(app.container.database.Schema.TestInteligence);		
 		if(Validator.isNull()(request.params.name)){
@@ -1857,7 +1943,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var test<CRUD>	objeto CRUD
-	*/
+	*\/
 	testParent.delete("/:name/:id/:item",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var test=new CRUD(app.container.database.Schema.TestInteligence);				
 		test.update({name:request.params.name.toUpperCase()},function(data){
@@ -1884,7 +1970,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var test<CRUD> objeto CRUD
-	*/
+	*\/
 	testParent.post("/inteligence/range",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var user=new CRUD(app.container.database.Schema.groupsInteligence);		
 		var min=parseInt(request.body.min);
@@ -1923,7 +2009,7 @@ module.exports=function(app,express,server,__DIR__){
 	/*
 	* Ruta /v1/inteligence
 	* @var inteligenceURI object enrutador para agrupar metodos
-	*/
+	*\/
 	var inteligenceURI = express.Router();	
 	/*
 	* @api {post} /range añadir un rango de inteligencia
@@ -1931,7 +2017,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var test<CRUD> objeto CRUD
-	*/
+	*\/
 	inteligenceURI.post("/range",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var user=new CRUD(app.container.database.Schema.groupsInteligence);		
 		var min=parseInt(request.body.min);
@@ -1969,7 +2055,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var test<CRUD>	objeto CRUD
-	*/
+	*\/
 	inteligenceURI.get("/range",Auth.isTeacherOrNot.bind(app.container),function(request, response,next) {
 		var user=new CRUD(app.container.database.Schema.groupsInteligence);		
 		user.get().then(function(data){
@@ -1984,7 +2070,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var test<CRUD>	objeto CRUD
-	*/
+	*\/
 	inteligenceURI.get("/range/:id",Auth.isTeacherOrNot.bind(app.container),function(request, response,next) {
 		var user=new CRUD(app.container.database.Schema.groupsInteligence);		
 		user.find({_id:request.params.id}).then(function(data){
@@ -1999,7 +2085,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var user<User>	objeto CRUD
-	*/
+	*\/
 	inteligenceURI.delete("/range/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var user=new CRUD(app.container.database.Schema.groupsInteligence);		
 		user.remove({_id:request.params.id}).then(function(data){
@@ -2008,5 +2094,5 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});		
 	});
-	app.use("/v1/inteligence",inteligenceURI);
+	app.use("/v1/inteligence",inteligenceURI);*/
 }

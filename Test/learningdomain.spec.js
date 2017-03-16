@@ -1,7 +1,7 @@
 var utils=require("./utils.js");
 var faker = require('faker');
 
-describe("Test route learning",function(){
+describe("Test route learning domain",function(){
 	var db,data;
 	afterEach(function(done){
 		db.db.dropDatabase(function(){
@@ -39,12 +39,12 @@ describe("Test route learning",function(){
 				done();				
 			});
 	})
-	it("GET /v1/learning/type/",function(done){
-		find=new  db.schema.typeLearning({
+	it("GET /v1/learning/domain/",function(done){
+		find=new  db.schema.domainsLearning({
 			name:faker.name.findName()
 		});
-		find.save().then(function(){
-			return utils.runApp("GET","/v1/learning/type/");			
+		find.save().then(function(){			
+			return utils.runApp("GET","/v1/learning/domain/");
 		}).then(function(response){
 			expect(response.length).toBe(1);
 			expect(response[0].name).toBe(find.name);
@@ -54,9 +54,9 @@ describe("Test route learning",function(){
 			done();
 		});
 	});
-	it("POST /v1/learning/",function(done){
+	it("POST /v1/learning/domain/",function(done){
 		var name=faker.name.findName().toUpperCase();
-		utils.runApp("POST","/v1/learning/type/?PublicKeyId="+data.publicKeyId+"&PrivateKeyId="+data.privateKeyId,{
+		utils.runApp("POST","/v1/learning/domain/?PublicKeyId="+data.publicKeyId+"&PrivateKeyId="+data.privateKeyId,{
 			form:{
 				name:name
 			}
@@ -68,12 +68,12 @@ describe("Test route learning",function(){
 			done();
 		});
 	});
-	it("GET /v1/learning/type/:name",function(done){
-		find=new  db.schema.typeLearning({
+	it("GET /v1/learning/domain/:name",function(done){
+		find=new  db.schema.domainsLearning({
 			name:faker.name.findName()
 		});
 		find.save().then(function(){
-			return utils.runApp("GET","/v1/learning/type/"+find.name.toLowerCase());
+			return utils.runApp("GET","/v1/learning/domain/"+find.name.toLowerCase());
 		}).then(function(response){
 			expect(response.name).toBe(find.name);
 			done();
@@ -82,12 +82,12 @@ describe("Test route learning",function(){
 			done();
 		});	
 	});
-	it("PUT /v1/learning/type/:id",function(done){
-		find=new  db.schema.typeLearning({
+	it("PUT /v1/learning/domain/:id",function(done){
+		find=new  db.schema.domainsLearning({
 			name:faker.name.findName()
 		});
 		find.save().then(function(){
-			return utils.runApp("PUT","/v1/learning/type/"+find._id+"?PublicKeyId="+data.publicKeyId+"&PrivateKeyId="+data.privateKeyId,{
+			return utils.runApp("PUT","/v1/learning/domain/"+find._id+"?PublicKeyId="+data.publicKeyId+"&PrivateKeyId="+data.privateKeyId,{
 			form:{
 				name:"hola"
 			}
@@ -100,12 +100,12 @@ describe("Test route learning",function(){
 			done();
 		});	
 	});
-	it("DELETE /v1/learning/type/:id",function(done){
-		find=new  db.schema.typeLearning({
+	it("DELETE /v1/learning/domain/:id",function(done){
+		find=new  db.schema.domainsLearning({
 			name:faker.name.findName()
 		});
 		find.save().then(function(){
-			return utils.runApp("DEL","/v1/learning/type/"+find._id+"?PublicKeyId="+data.publicKeyId+"&PrivateKeyId="+data.privateKeyId);
+			return utils.runApp("DEL","/v1/learning/domain/"+find._id+"?PublicKeyId="+data.publicKeyId+"&PrivateKeyId="+data.privateKeyId);
 		}).then(function(response){
 			expect(response.name).toBe(find.name);
 			done();
