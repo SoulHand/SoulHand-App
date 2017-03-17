@@ -127,6 +127,7 @@ describe("Test route knowedge cognitions",function(){
 		});	
 	});
 	it("PUT /v1/knowedge/:domain/cognitions/:id",function(done){
+		var find2,find3;
 		find=new  db.schema.domainsLearning({
 			name:faker.name.findName(),
 			cognitions:[db.schema.Cognitions({
@@ -134,13 +135,26 @@ describe("Test route knowedge cognitions",function(){
 			})]
 		});
 		find.save().then(function(){
-			return utils.runApp("PUT","/v1/knowedge/"+find.name+"/cognitions/"+find.cognitions[0]._id+"?PublicKeyId="+data.publicKeyId+"&PrivateKeyId="+data.privateKeyId,{
+			return new db.schema.typeLearning({
+				name:faker.name.findName()				
+			}).save();
+		}).then(function(data){
+			find2=data;
+			find3=new db.schema.LearningObjetive({
+				name:faker.name.findName(),
+				description:"hola",
+				type:find2,
+				domain:find._id
+			});
+			return find3.save();
+		}).then(function(){
+			return utils.runApp("PUT","/v1/knowedge/"+find._id+"/objetives/"+find2.name+"/"+find3._id+"?PublicKeyId="+data.publicKeyId+"&PrivateKeyId="+data.privateKeyId,{
 			form:{
 				name:"hola"
 			}
 		});
 		}).then(function(response){
-			expect(response.cognitions[0].name).toBe("HOLA");
+			expect(response.name).toBe("HOLA");
 			done();
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();
@@ -148,6 +162,7 @@ describe("Test route knowedge cognitions",function(){
 		});	
 	});
 	it("DELETE /v1/knowedge/:domain/cognitions/:id",function(done){
+		var find2,find3;
 		find=new  db.schema.domainsLearning({
 			name:faker.name.findName(),
 			cognitions:[db.schema.Cognitions({
@@ -155,7 +170,20 @@ describe("Test route knowedge cognitions",function(){
 			})]
 		});
 		find.save().then(function(){
-			return utils.runApp("DEL","/v1/knowedge/"+find.name+"/cognitions/"+find.cognitions[0]._id+"?PublicKeyId="+data.publicKeyId+"&PrivateKeyId="+data.privateKeyId);
+			return new db.schema.typeLearning({
+				name:faker.name.findName()				
+			}).save();
+		}).then(function(data){
+			find2=data;
+			find3=new db.schema.LearningObjetive({
+				name:faker.name.findName(),
+				description:"hola",
+				type:find2,
+				domain:find._id
+			});
+			return find3.save();
+		}).then(function(){
+			return utils.runApp("DEL","/v1/knowedge/"+find._id+"/objetives/"+find2.name+"/"+find3._id+"?PublicKeyId="+data.publicKeyId+"&PrivateKeyId="+data.privateKeyId);
 		}).then(function(response){
 			expect(response.cognitions.length).toBe(0);
 			done();

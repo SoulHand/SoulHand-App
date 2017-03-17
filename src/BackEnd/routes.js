@@ -579,6 +579,49 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 
+	/*
+	* @api {put} /:id Editar categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	cognitions.put("/:domain/objetives/:type/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.domain) || !Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("Solo se aceptan textos categoricos");
+		}
+		app.container.database.Schema.LearningObjetive.findOne({domain:request.params.domain,"type.name":request.params.type, _id:request.params.id }).then(function(obj){		
+			obj.name=request.body.name;				
+			return obj.save();			
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+
+	/*
+	* @api {delete} /:id Eliminar una categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	cognitions.delete("/:domain/objetives/:type/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.domain) || !Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		app.container.database.Schema.LearningObjetive.findOne({domain:request.params.domain,"type.name":request.params.type, _id:request.params.id }).then(function(obj){		
+			return obj.remove();	
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
 	app.use("/v1/knowedge",cognitions);
 
 /*
