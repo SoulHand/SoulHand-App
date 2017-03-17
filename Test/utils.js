@@ -14,6 +14,51 @@ module.exports.getDatabase=function(){
 		schema:Schema
 	};
 }
+module.exports.dropDatabase=function(done){
+	var db=this.db;
+	db.db.dropDatabase(function(){
+		db.db.close(function(){
+			done();				
+		});
+	});
+}
+
+
+
+function insertUser(db){
+	var p1=db.schema.User({
+			username:"root",
+			password:'123',
+			isAdmin:true,
+			people:{
+				dni:'1234',
+				name:"ROOT USER",
+				birthdate:"1970-01-01",
+				mode:"TEACHER"
+			}
+		});
+	return p1.save();
+}
+module.exports.insertUser=insertUser
+
+function insertSession(db){
+	var p1=insertUser(db).then(function(user){
+		const uuidV4 = require('uuid/v4');
+				const base64=require('base-64');
+				return db.schema.Sessions({
+					privateKeyId:uuidV4(),
+					publicKeyId:base64.encode(user._id),
+					ip:'::ffff:127.0.0.1',
+					navigator:undefined,
+					dateCreated:Date.now(),
+					dateLastConnect:Date.now(),
+					user:user._id
+				}).save();
+	});
+	return p1;
+}
+module.exports.insertSession=insertSession;
+
 
 module.exports.runApp=function(method,uri,args){
 	var express = require('express');  
@@ -55,6 +100,7 @@ module.exports.runApp=function(method,uri,args){
 	}).then(function(port){
 		var p2=new Promise(function(complete,reject){
 			request[method.toLowerCase()]("http://0.0.0.0:"+port+uri,args,function(error,request,response){
+				if(error){ reject(error)}
 				app.container.database.db.close(function(){
 					server.close(function(){
 						complete(JSON.parse(response));

@@ -87,6 +87,7 @@ structDb.Activities=mongoose.Schema({
 	name:{type:String, trim:true, required: true, uppercase: true},
 	description:{type:String, trim:true, required: true, uppercase: true},
 	course:structDb.Courses,
+	domain:{ type: mongoose.Schema.ObjectId, ref: "domainsLearning" },
 	dateCreated:{ type: Date, default: Date.now },
 	objetives:[structDb.LearningObjetive]
 });

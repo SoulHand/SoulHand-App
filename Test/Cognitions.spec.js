@@ -7,23 +7,22 @@ var faker = require('faker');
 describe("CRUD clase Table Cognitions",function(){
 	var cognition, find, category;
 	var Cognition=require("../src/BackEnd/SoulHand/Cognitions.js");
-	afterEach(function(done){
-		db.db.dropDatabase(function(){
-			db.db.close(function(){
-				done();				
-			});
-		});
-	})
+	var self=this,user;
+	afterEach(utils.dropDatabase.bind(self));
 	beforeEach(function(done){
-		db=utils.getDatabase();
-		cognition=new Cognition(db.schema.Cognitions);
-		find=new  db.schema.Cognitions({
-			name:faker.name.findName(),
+		self.db=utils.getDatabase();
+		var p1=utils.insertSession(self.db)
+		cognition=new Cognition(self.db.schema.Cognitions);
+		find=new  self.db.schema.Cognitions({
+			name:faker.name.findName()
 		});
-		find.save().then(function(){
-			done();			
+		Promise.all([p1,find.save()]).then(function(data){
+			user=data[1];
+			done();
+		}).catch(function(error){
+			done();
 		})
-	})
+	})	
 	it("Create Element cognition",function(done){
 		var input={
 			name:faker.name.findName(),

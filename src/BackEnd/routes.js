@@ -622,6 +622,127 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* @api {post} /:domain/activities/:type Crear Categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions> objeto CRUD
+	*/
+	cognitions.post("/:domain/activities/:course",Auth.isAdmin.bind(app.container),function(request, response,next) {		
+		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
+		var dm;
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("Es requerido un nombre");
+		}
+		if(Validator.isNull()(request.body.description)){
+			throw new ValidatorException("Es necesaria una description");
+		}
+		domain.find({name:request.params.domain.toUpperCase()}).then(function(row){
+			dm=row;
+			return app.container.database.Schema.Courses.findOne({name:request.params.course.toUpperCase()});
+		}).then(function(data){
+			var p1=new app.container.database.Schema.Activities({
+				name:request.body.name,
+				description:request.body.description,
+				course:data,
+				domain:dm._id
+			});
+			return p1.save();
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todas las categorias cognitivas
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	cognitions.get("/:domain/activities/:course",function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.domain)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		app.container.database.Schema.Activities.find({domain:request.params.domain,"course.name":request.params.course}).then(function(rows){
+			response.send(rows);
+			
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todas las categorias cognitivas
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	cognitions.get("/:domain/activities/:course/:id",function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.domain) || !Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		app.container.database.Schema.Activities.findOne({domain:request.params.domain,"course.name":request.params.course, _id:request.params.id }).then(function(rows){
+			if(!rows){
+				throw new ValidatorException("No existe el registro");
+			}
+			response.send(rows);			
+		}).catch(function(error){
+			next(error);
+		});
+	});
+
+	/*
+	* @api {put} /:id Editar categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	cognitions.put("/:domain/activities/:course/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.domain) || !Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("Solo se aceptan textos categoricos");
+		}
+		app.container.database.Schema.Activities.findOne({domain:request.params.domain,"course.name":request.params.course, _id:request.params.id }).then(function(obj){		
+			if(!obj){
+				throw new ValidatorException("No existe el registro");
+			}
+			obj.name=request.body.name;				
+			return obj.save();			
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+
+	/*
+	* @api {delete} /:id Eliminar una categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	cognitions.delete("/:domain/activities/:course/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.domain) || !Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		app.container.database.Schema.Activities.findOne({domain:request.params.domain,"course.name":request.params.course, _id:request.params.id }).then(function(obj){		
+			if(!obj){
+				throw new ValidatorException("No existe el registro");
+			}
+			return obj.remove();	
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
 	app.use("/v1/knowedge",cognitions);
 
 /*

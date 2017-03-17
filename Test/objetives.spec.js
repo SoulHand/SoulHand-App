@@ -2,47 +2,22 @@ var utils=require("./utils.js");
 var faker = require('faker');
 
 describe("Test route knowedge cognitions",function(){
-	var db,data;
-	afterEach(function(done){
-		db.db.dropDatabase(function(){
-			db.db.close(function(){
-				done();				
-			});
-		});
-	});
+	var self=this,user;
+	afterEach(utils.dropDatabase.bind(self));
 	beforeEach(function(done){
-		db=utils.getDatabase();
-		db.schema.User({
-				username:"root",
-				password:'123',
-				isAdmin:true,
-				people:{
-					dni:'1234',
-					name:"ROOT USER",
-					birthdate:"1970-01-01",
-					mode:"TEACHER"
-				}
-			}).save().then(function(user){
-				const uuidV4 = require('uuid/v4');
-				const base64=require('base-64');
-				return db.schema.Sessions({
-					privateKeyId:uuidV4(),
-					publicKeyId:base64.encode(user._id),
-					ip:'::ffff:127.0.0.1',
-					navigator:undefined,
-					dateCreated:Date.now(),
-					dateLastConnect:Date.now(),
-					user:user._id
-				}).save();
-			}).then(function(val){
-				data=val;
-				done();				
-			});
+		self.db=utils.getDatabase();
+		utils.insertSession(self.db).then(function(data){
+			user=data
+			done();
+		}).catch(function(error){
+			done();
+		})
 	})
+
 	it("GET /v1/knowedge/:domain/cognitions",function(done){
-		find=new  db.schema.domainsLearning({
+		find=new  self.db.schema.domainsLearning({
 			name:faker.name.findName(),
-			cognitions:[db.schema.Cognitions({
+			cognitions:[self.db.schema.Cognitions({
 				name:faker.name.findName()
 			})]
 		});
@@ -58,12 +33,12 @@ describe("Test route knowedge cognitions",function(){
 		});
 	});
 	it("POST /v1/knowedge/:domain/cognitions",function(done){
-		find=new  db.schema.domainsLearning({
+		find=new  self.db.schema.domainsLearning({
 			name:faker.name.findName()			
 		});
 		var name=faker.name.findName().toUpperCase();
 		find.save().then(function(){			
-			return utils.runApp("POST","/v1/knowedge/"+find.name+"/cognitions/?PublicKeyId="+data.publicKeyId+"&PrivateKeyId="+data.privateKeyId,{
+			return utils.runApp("POST","/v1/knowedge/"+find.name+"/cognitions/?PublicKeyId="+user.publicKeyId+"&PrivateKeyId="+user.privateKeyId,{
 				form:{
 					name:name
 				}
@@ -78,9 +53,9 @@ describe("Test route knowedge cognitions",function(){
 		});
 	});
 	it("GET /v1/knowedge/:domain/cognitions/:name",function(done){
-		find=new  db.schema.domainsLearning({
+		find=new  self.db.schema.domainsLearning({
 			name:faker.name.findName(),
-			cognitions:[db.schema.Cognitions({
+			cognitions:[self.db.schema.Cognitions({
 				name:faker.name.findName()
 			})]
 		});
@@ -95,14 +70,14 @@ describe("Test route knowedge cognitions",function(){
 		});	
 	});
 	it("PUT /v1/knowedge/:domain/cognitions/:id",function(done){
-		find=new  db.schema.domainsLearning({
+		find=new  self.db.schema.domainsLearning({
 			name:faker.name.findName(),
-			cognitions:[db.schema.Cognitions({
+			cognitions:[self.db.schema.Cognitions({
 				name:faker.name.findName()
 			})]
 		});
 		find.save().then(function(){
-			return utils.runApp("PUT","/v1/knowedge/"+find.name+"/cognitions/"+find.cognitions[0]._id+"?PublicKeyId="+data.publicKeyId+"&PrivateKeyId="+data.privateKeyId,{
+			return utils.runApp("PUT","/v1/knowedge/"+find.name+"/cognitions/"+find.cognitions[0]._id+"?PublicKeyId="+user.publicKeyId+"&PrivateKeyId="+user.privateKeyId,{
 			form:{
 				name:"hola"
 			}
@@ -116,14 +91,14 @@ describe("Test route knowedge cognitions",function(){
 		});	
 	});
 	it("DELETE /v1/knowedge/:domain/cognitions/:id",function(done){
-		find=new  db.schema.domainsLearning({
+		find=new  self.db.schema.domainsLearning({
 			name:faker.name.findName(),
-			cognitions:[db.schema.Cognitions({
+			cognitions:[self.db.schema.Cognitions({
 				name:faker.name.findName()
 			})]
 		});
 		find.save().then(function(){
-			return utils.runApp("DEL","/v1/knowedge/"+find.name+"/cognitions/"+find.cognitions[0]._id+"?PublicKeyId="+data.publicKeyId+"&PrivateKeyId="+data.privateKeyId);
+			return utils.runApp("DEL","/v1/knowedge/"+find.name+"/cognitions/"+find.cognitions[0]._id+"?PublicKeyId="+user.publicKeyId+"&PrivateKeyId="+user.privateKeyId);
 		}).then(function(response){
 			expect(response.cognitions.length).toBe(0);
 			done();

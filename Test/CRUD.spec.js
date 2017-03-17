@@ -6,27 +6,26 @@ var faker = require('faker');
 jasmine.DEFAULT_TIMEOUT_INTERVAL=1000;
 // Test CRUD from Table Grades
 describe("CRUD clase Table Grades",function(){
-	var db,grade, find;
+	var grade, find;
 	var Grade=require("../src/BackEnd/SoulHand/CRUD.js");
-	afterEach(function(done){
-		db.db.dropDatabase(function(){
-			db.db.close(function(){
-				done();				
-			});
-		});
-	})
+
+	var self=this,user;
+	afterEach(utils.dropDatabase.bind(self));
 	beforeEach(function(done){
-		db=utils.getDatabase();
-		grade=new Grade(db.schema.Grades);
-		find=new  db.schema.Grades({
+		self.db=utils.getDatabase();
+		var p1=utils.insertSession(self.db)
+		grade=new Grade(self.db.schema.Grades);
+		find=new  self.db.schema.Grades({
 			name:faker.name.findName()
 		});
-		find.save().then(function(){
-			done();			
+		find.save().then(function(data){
+			user=data[1];
+			done();
 		}).catch(function(error){
-			throw error;
-		});
+			done();
+		})
 	})
+
 	it("Create Element Grade",function(done){
 		var input={
 			name:faker.name.findName()
