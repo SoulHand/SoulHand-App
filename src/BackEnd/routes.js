@@ -745,6 +745,235 @@ module.exports=function(app,express,server,__DIR__){
 	});
 	app.use("/v1/knowedge",cognitions);
 
+	var weightURI = express.Router();
+	/*
+	* Ruta /v1/physic/static/weight
+
+	* @api {post} / Crear dominio del aprendizaje
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions> objeto CRUD
+	*/
+	weightURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CRUD(app.container.database.Schema.weights);
+		if(!Validator.isInt()(request.body.age) || !Validator.isInt(request.body.min) || !Validator.isInt(request.body.max)){
+			throw new ValidatorException("Solo se aceptan numeros");
+		}
+		if((request.body.max-request.body.min)<=0 || request.body.min==0 || request.body.max==0){
+			throw new ValidatorException("El rango de pesos es invalido");
+		}
+		category.add({age:request.body.age},{
+			age:request.body.age,
+			min:request.body.min,
+			max:request.body.max,
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todas los dominios del aprendizaje
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	weightURI.get("/",function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.weights);
+		category.get().then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} /:name Obtener un dominio del aprendizaje
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	weightURI.get("/:id",function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.weights);			
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("EL id no es valido");
+		}
+		category.find({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {put} /:id Editar categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	weightURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.weights);
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("EL id no es valido");
+		}
+		if((request.body.max-request.body.min)<=0 || request.body.min==0 || request.body.max==0){
+			throw new ValidatorException("El rango de pesos es invalido");
+		}
+		category.update({_id:request.params.id},function(obj){
+			obj.age=request.body.age;
+			obj.min=request.body.min;
+			obj.max=request.body.max;
+			return obj;
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {delete} /:id Eliminar una categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	weightURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.weights);
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("EL id no es valido");
+		}
+		category.remove({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	app.use("/v1/physic/static/weight",weightURI);
+
+	var heightURI = express.Router();
+	/*
+	* Ruta /v1/physic/static/height
+
+	* @api {post} / Crear dominio del aprendizaje
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions> objeto CRUD
+	*/
+	heightURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CRUD(app.container.database.Schema.heights);
+		if(!Validator.isInt()(request.body.age) || !Validator.isInt(request.body.min) || !Validator.isInt(request.body.max)){
+			throw new ValidatorException("Solo se aceptan numeros");
+		}
+		if((request.body.max-request.body.min)<=0 || request.body.min==0 || request.body.max==0){
+			throw new ValidatorException("El rango de pesos es invalido");
+		}
+		category.add({age:request.body.age},{
+			age:request.body.age,
+			min:request.body.min,
+			max:request.body.max,
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todas los dominios del aprendizaje
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	heightURI.get("/",function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.heights);
+		category.get().then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} /:name Obtener un dominio del aprendizaje
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	heightURI.get("/:id",function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.heights);			
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("EL id no es valido");
+		}
+		category.find({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {put} /:id Editar categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	heightURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.heights);
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("EL id no es valido");
+		}
+		if((request.body.max-request.body.min)<=0 || request.body.min==0 || request.body.max==0){
+			throw new ValidatorException("El rango de pesos es invalido");
+		}
+		category.update({_id:request.params.id},function(obj){
+			obj.age=request.body.age;
+			obj.min=request.body.min;
+			obj.max=request.body.max;
+			return obj;
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {delete} /:id Eliminar una categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	heightURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.heights);
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("EL id no es valido");
+		}
+		category.remove({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	app.use("/v1/physic/static/height",heightURI);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
 
 
