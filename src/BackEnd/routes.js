@@ -13,6 +13,7 @@ var User=require("./SoulHand/User.js");
 var Token=require("./SoulHand/Token.js");
 var Validator=require('string-validator');
 var ValidatorException=require('./SoulHand/Exceptions/ValidatorException.js');
+var VoidException=require('./SoulHand/Exceptions/VoidException.js');
 var UserException=require('./SoulHand/Exceptions/UserException.js');
 var basicAuth = require('basic-auth-connect');
 var Auth = require('./SoulHand/Auth.js');
@@ -1126,6 +1127,522 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 
+	/*
+	* Ruta /v1/teachers
+	* @var PeopleURI object enrutador para agrupar metodos
+	*/
+	var PeopleURI = express.Router();
+	/*
+	* @api {post} / Crear profesor
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*/
+	PeopleURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Teachers);
+		var people2=new People(app.container.database.Schema.Peoples);
+		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
+			throw new ValidatorException("Solo se aceptan documentos de identidad");
+		}
+		if(Validator.matches(/[0-9]/)(request.body.name)){
+			throw new ValidatorException("Solo se aceptan nombres validos");
+		}
+		if(!Validator.isDate()(request.body.birthdate)){
+			throw new ValidatorException("La fecha de nacimiento no es valida");
+		}
+		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
+			throw new ValidatorException("El telefono no tiene un formato valido");
+		}
+		var fields={
+			data:JSON.parse(JSON.stringify(request.body)),
+			interprete:(request.body.interprete!=undefined)
+		};
+		fields.data.mode="TEACHER";
+		delete(fields.data.interprete);
+		people2.add(fields.data).then(function(data){
+			fields.data=data;
+			return people.add(fields);
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todos los docentes
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<People>	objeto CRUD
+	*/
+	PeopleURI.get("/",function(request, response,next) {
+		var people=new People(app.container.database.Schema.Teachers);		
+		people.get().then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} /:id Obtener un profesor
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<People>	objeto CRUD
+	*/
+	PeopleURI.get("/:id",function(request, response,next) {
+		var people=new People(app.container.database.Schema.Teachers);			
+		people.find({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {put} /:id Editar profesor
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	*/
+	PeopleURI.put("/:id",function(request, response,next) {
+		if(request.body.dni && !Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
+			throw new ValidatorException("Solo se aceptan documentos de identidad");
+		}
+		if(request.body.name && Validator.matches(/[0-9]/)(request.body.name)){
+			throw new ValidatorException("Solo se aceptan nombres validos");
+		}
+		if(request.body.birthdate && !Validator.isDate()(request.body.birthdate)){
+			throw new ValidatorException("La fecha de nacimiento no es valida");
+		}
+		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
+			throw new ValidatorException("El telefono no tiene un formato valido");
+		}
+		var people,teacher;
+		app.container.database.Schema.Teachers.findOne({_id:request.params.id}).then(function(data){
+			teacher=data;
+			if(!data){
+				throw new VoidException("No existe un registro de este tipo");
+			}
+		}).then(function(data){
+			people=data;
+			if(!data){
+				throw new VoidException("No existe un registro de este tipo");
+			}
+			for (i in people){
+				if(request.body[i] && i!="dni"){
+					people[i]=request.body[i];
+				}
+			}
+			teacher.people=people;
+			if(request.body.interprete){
+				teacher.interprete=request.body.interprete;				
+			}
+			return Promise.all(people.save(),teacher.save());
+		}).then(function(data){
+			response.send(data[1]);
+		}).catch(function(error){
+			console.log(error)
+			next(error);
+		});
+	});
+	/*
+	* @api {delete} /:id Eliminar un profesor
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	*/
+	PeopleURI.delete("/:id",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Teachers);
+		var people2=new People(app.container.database.Schema.Peoples);
+		people.remove({_id:request.params.id}).then(function(data){
+			response.send(data);
+			return people2.remove(data.data._id);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	app.use("/v1/people/teachers",PeopleURI);
+	/*
+	* Ruta /v1/students
+	* @var StudentsURI object enrutador para agrupar metodos
+	*/
+	var StudentsURI = express.Router();
+	/*
+	* @api {post} / Crear alumno
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*/
+	StudentsURI.post("/",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Students);
+		var people2=new People(app.container.database.Schema.Peoples);
+		var grade=new Grade(app.container.database.Schema.Grades);
+		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
+			throw new ValidatorException("Solo se aceptan documentos de identidad");
+		}
+		if(Validator.matches(/[0-9]/)(request.body.name)){
+			throw new ValidatorException("Solo se aceptan nombres validos");
+		}
+		if(!Validator.isDate()(request.body.birthdate)){
+			throw new ValidatorException("La fecha de nacimiento no es valida");
+		}
+		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
+			throw new ValidatorException("El telefono no tiene un formato valido");
+		}
+		var fields={
+			data:JSON.parse(JSON.stringify(request.body)),
+			grade:request.body.grade,
+			activities:[],
+			conflicts:[],
+			habilitys:[]
+		};
+		fields.data.mode="STUDENT";		
+		delete(fields.data.grade);
+		grade.find({name:request.body.grade.toUpperCase()}).then(function(data){
+			fields.grade=data;
+			return people2.add(fields.data);
+		}).then(function(data){
+			fields.data=data;
+			return people.add(fields);
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todos los alumnos
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<People>	objeto CRUD
+	*/
+	StudentsURI.get("/",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Students);
+		people.get().then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} /:id Obtener un alumno
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	*/
+	StudentsURI.get("/:id",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Students);
+		people.find({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {put} /:id Editar alumno
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	*/
+	StudentsURI.put("/:id",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Students);
+		var people2=new People(app.container.database.Schema.Peoples);
+		var grade=new Grade(app.container.database.Schema.Grades);
+		if(request.body.dni && !Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
+			throw new ValidatorException("Solo se aceptan documentos de identidad");
+		}
+		if(request.body.name && Validator.matches(/[0-9]/)(request.body.name)){
+			throw new ValidatorException("Solo se aceptan nombres validos");
+		}
+		if(request.body.birthdate && !Validator.isDate()(request.body.birthdate)){
+			throw new ValidatorException("La fecha de nacimiento no es valida");
+		}
+		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
+			throw new ValidatorException("El telefono no tiene un formato valido");
+		}
+		var promise1;
+		if(request.body.grade){
+			promise1=grade.find({name:request.body.grade}).then(function(data){
+				request.body.grade=data;
+				return people.update({_id:request.params.id},function(obj){
+					for (i in obj.data){
+						if(request.body[i] && i!="dni"){
+							obj.data[i]=request.body[i];
+						}
+					}
+					obj.grade=request.body.grade;
+					return obj;
+				})
+			});
+		}else{
+			promise1=people.update({_id:request.params.id},function(obj){
+				for (i in obj.data){
+					if(request.body[i] && i!="dni"){
+						obj.data[i]=request.body[i];
+					}
+				}
+				return obj;
+			});
+		}
+		promise1.then(function(data){
+			return people2.find({_id:data.data._id});
+		}).then(function(data){
+			for (i in data){
+				if(request.body[i] && i!="dni"){
+					data[i]=request.body[i];
+				}
+			}			
+			return data.save();
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {delete} /:id Eliminar un alumno
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	*/
+	StudentsURI.delete("/:id",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Students);
+		var people2=new People(app.container.database.Schema.Peoples);
+		people.remove({_id:request.params.id}).then(function(data){
+			response.send(data);
+			return people2.remove(data.data._id);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {post} /:dni/test/:test Crear test alumno
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*/
+	StudentsURI.post("/:dni/test/:test",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Students);
+		var test=new CRUD(app.container.database.Schema.TestInteligence);
+		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.params.dni)){
+			throw new ValidatorException("Solo se aceptan documentos de identidad");
+		}		
+		var input=JSON.parse(request.body.test);
+		if(!Validator.isInt()(input.time,{min:5000})){
+			throw new ValidatorException("El tiempo de prueba registrado no cumple las expectativas!");
+		}		
+		test.find({name:request.params.test.toUpperCase()}).then(function(inteligence){
+			return people.update({"data.dni":request.params.dni},function(data){
+				var time=new Date(data.data.birthdate);
+				var age=Math.floor((Date.now()-time.getTime())/(86400000*364));
+				console.log(age);
+				var value=0,percentil=0;
+				inteligence.serie.forEach(function(serie){
+					if(input.serie[serie.name] && !(serie.age.min>=age && serie.age.max<=age)){
+						throw new ValidatorException("No tiene la edad suficiente para realizar una serie de este tipo");
+					}
+					for (i in input.serie[serie.name]){
+						if(serie.items[i]){
+							value+=input.serie[serie.name][i]==serie.items[i].value;
+						}
+					}
+				});
+				var test=new app.container.database.Schema.testIntStudent({
+					name:inteligence.name,
+					value:value,
+					percentil:0,
+					time:input.time,
+					serie:input.serie
+				});
+				// Es necesario validar campos y valores
+				data.test.push(test);			
+				return data;
+			})
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	app.use("/v1/people/students",StudentsURI);
+	/*
+	* Ruta /v1/representives		
+	* @var ReferencesToURI object enrutador para agrupar metodos
+	*/
+	var ReferencesToURI = express.Router();
+	/*
+	* @api {post} / Crear representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people3<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*/
+	ReferencesToURI.post("/",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Representatives);
+		var people3=new SubPeople(app.container.database.Schema.Students);
+		var people2=new People(app.container.database.Schema.Peoples);
+		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
+			throw new ValidatorException("Solo se aceptan documentos de identidad");
+		}
+		if(Validator.matches(/[0-9]/)(request.body.name)){
+			throw new ValidatorException("Solo se aceptan nombres validos");
+		}
+		if(!Validator.isDate()(request.body.birthdate)){
+			throw new ValidatorException("La fecha de nacimiento no es valida");
+		}
+		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
+			throw new ValidatorException("El telefono no tiene un formato valido");
+		}
+		var fields={
+			data:JSON.parse(JSON.stringify(request.body)),
+			idStudent:request.body.idStudent			
+		};
+		fields.data.mode="PARENT";
+		delete(fields.data.idStudent);
+		people3.find({"data.dni":request.body.idStudent}).then(function(data){
+			fields.idStudent=data._id;
+			return people2.add(fields.data);
+		}).then(function(data){
+			fields.data=data;
+			return people.add(fields);
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todos los representantes
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	*/
+	ReferencesToURI.get("/",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Students);
+		people.get().then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} /:id Obtener un representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	*/
+	ReferencesToURI.get("/:id",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Students);
+		people.find({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {put} /:id Editar representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	* @var grade<Grade>	objeto CRUD
+	*/
+	ReferencesToURI.put("/:id",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Students);
+		var people2=new People(app.container.database.Schema.Peoples);
+		var grade=new Grade(app.container.database.Schema.Grades);
+		if(request.body.dni && !Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
+			throw new ValidatorException("Solo se aceptan documentos de identidad");
+		}
+		if(request.body.name && Validator.matches(/[0-9]/)(request.body.name)){
+			throw new ValidatorException("Solo se aceptan nombres validos");
+		}
+		if(request.body.birthdate && !Validator.isDate()(request.body.birthdate)){
+			throw new ValidatorException("La fecha de nacimiento no es valida");
+		}
+		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
+			throw new ValidatorException("El telefono no tiene un formato valido");
+		}
+		var promise1;
+		if(request.body.grade){
+			promise1=grade.find({name:request.body.grade}).then(function(data){
+				request.body.grade=data;
+				return people.update({_id:request.params.id},function(obj){
+					for (i in obj.data){
+						if(request.body[i] && i!="dni"){
+							obj.data[i]=request.body[i];
+						}
+					}
+					obj.grade=request.body.grade;
+					return obj;
+				})
+			});
+		}else{
+			promise1=people.update({_id:request.params.id},function(obj){
+				for (i in obj.data){
+					if(request.body[i] && i!="dni"){
+						obj.data[i]=request.body[i];
+					}
+				}
+				return obj;
+			});
+		}
+		promise1.then(function(data){
+			return people2.find({_id:data.data._id});
+		}).then(function(data){
+			for (i in data){
+				if(request.body[i] && i!="dni"){
+					data[i]=request.body[i];
+				}
+			}
+			return data.save();
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {delete} /:id Eliminar un representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	*/
+	ReferencesToURI.delete("/:id",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Students);
+		var people2=new People(app.container.database.Schema.Peoples);
+		people.remove({_id:request.params.id}).then(function(data){
+			response.send(data);
+			return people2.remove(data.data._id);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	app.use("/v1/people/parent",ReferencesToURI);/*
+
 
 
 
@@ -1807,519 +2324,7 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	app.use("/v1/cognitions",categoryCognitionURI);
-	/*
-	* Ruta /v1/teachers
-	* @var PeopleURI object enrutador para agrupar metodos
-	*\/
-	var PeopleURI = express.Router();
-	/*
-	* @api {post} / Crear profesor
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople> objeto CRUD
-	* @var people2<People> objeto CRUD
-	*\/
-	PeopleURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Teachers);
-		var people2=new People(app.container.database.Schema.Peoples);
-		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
-			throw new ValidatorException("Solo se aceptan documentos de identidad");
-		}
-		if(Validator.matches(/[0-9]/)(request.body.name)){
-			throw new ValidatorException("Solo se aceptan nombres validos");
-		}
-		if(!Validator.isDate()(request.body.birthdate)){
-			throw new ValidatorException("La fecha de nacimiento no es valida");
-		}
-		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
-			throw new ValidatorException("El telefono no tiene un formato valido");
-		}
-		var fields={
-			data:JSON.parse(JSON.stringify(request.body)),
-			interprete:(request.body.interprete!=undefined)
-		};
-		fields.data.mode="TEACHER";
-		delete(fields.data.interprete);
-		people2.add(fields.data).then(function(data){
-			fields.data=data;
-			return people.add(fields);
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} / Obtener todos los docentes
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<People>	objeto CRUD
-	*\/
-	PeopleURI.get("/",function(request, response,next) {
-		var people=new People(app.container.database.Schema.Teachers);		
-		people.get().then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} /:id Obtener un profesor
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<People>	objeto CRUD
-	*\/
-	PeopleURI.get("/:id",function(request, response,next) {
-		var people=new People(app.container.database.Schema.Teachers);			
-		people.find({_id:request.params.id}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {put} /:id Editar profesor
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople>	objeto CRUD
-	* @var people2<People>	objeto CRUD
-	*\/
-	PeopleURI.put("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Teachers);
-		var people2=new People(app.container.database.Schema.Peoples);
-		if(request.body.dni && !Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
-			throw new ValidatorException("Solo se aceptan documentos de identidad");
-		}
-		if(request.body.name && Validator.matches(/[0-9]/)(request.body.name)){
-			throw new ValidatorException("Solo se aceptan nombres validos");
-		}
-		if(request.body.birthdate && !Validator.isDate()(request.body.birthdate)){
-			throw new ValidatorException("La fecha de nacimiento no es valida");
-		}
-		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
-			throw new ValidatorException("El telefono no tiene un formato valido");
-		}
-		people.update({_id:request.params.id},function(obj){
-			for (i in obj.data){
-				if(request.body[i] && i!="dni"){
-					obj.data[i]=request.body[i];
-				}
-			}
-			obj.interprete=(request.body.interprete!=undefined);
-			return obj;
-		}).then(function(data){
-			return people2.find({_id:data.data._id});
-		}).then(function(data){
-			for (i in data){
-				if(request.body[i] && i!="dni"){
-					data[i]=request.body[i];
-				}
-			}			
-			return data.save();
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {delete} /:id Eliminar un profesor
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople>	objeto CRUD
-	* @var people2<People>	objeto CRUD
-	*\/
-	PeopleURI.delete("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Teachers);
-		var people2=new People(app.container.database.Schema.Peoples);
-		people.remove({_id:request.params.id}).then(function(data){
-			response.send(data);
-			return people2.remove(data.data._id);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	app.use("/v1/teachers",PeopleURI);
-	/*
-	* Ruta /v1/students
-	* @var StudentsURI object enrutador para agrupar metodos
-	*\/
-	var StudentsURI = express.Router();
-	/*
-	* @api {post} / Crear alumno
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople> objeto CRUD
-	* @var people2<People> objeto CRUD
-	*\/
-	StudentsURI.post("/",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		var people2=new People(app.container.database.Schema.Peoples);
-		var grade=new Grade(app.container.database.Schema.Grades);
-		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
-			throw new ValidatorException("Solo se aceptan documentos de identidad");
-		}
-		if(Validator.matches(/[0-9]/)(request.body.name)){
-			throw new ValidatorException("Solo se aceptan nombres validos");
-		}
-		if(!Validator.isDate()(request.body.birthdate)){
-			throw new ValidatorException("La fecha de nacimiento no es valida");
-		}
-		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
-			throw new ValidatorException("El telefono no tiene un formato valido");
-		}
-		var fields={
-			data:JSON.parse(JSON.stringify(request.body)),
-			grade:request.body.grade,
-			activities:[],
-			conflicts:[],
-			habilitys:[]
-		};
-		fields.data.mode="STUDENT";		
-		delete(fields.data.grade);
-		grade.find({name:request.body.grade.toUpperCase()}).then(function(data){
-			fields.grade=data;
-			return people2.add(fields.data);
-		}).then(function(data){
-			fields.data=data;
-			return people.add(fields);
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} / Obtener todos los alumnos
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<People>	objeto CRUD
-	*\/
-	StudentsURI.get("/",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		people.get().then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} /:id Obtener un alumno
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople>	objeto CRUD
-	*\/
-	StudentsURI.get("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		people.find({_id:request.params.id}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {put} /:id Editar alumno
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople>	objeto CRUD
-	* @var people2<People>	objeto CRUD
-	*\/
-	StudentsURI.put("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		var people2=new People(app.container.database.Schema.Peoples);
-		var grade=new Grade(app.container.database.Schema.Grades);
-		if(request.body.dni && !Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
-			throw new ValidatorException("Solo se aceptan documentos de identidad");
-		}
-		if(request.body.name && Validator.matches(/[0-9]/)(request.body.name)){
-			throw new ValidatorException("Solo se aceptan nombres validos");
-		}
-		if(request.body.birthdate && !Validator.isDate()(request.body.birthdate)){
-			throw new ValidatorException("La fecha de nacimiento no es valida");
-		}
-		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
-			throw new ValidatorException("El telefono no tiene un formato valido");
-		}
-		var promise1;
-		if(request.body.grade){
-			promise1=grade.find({name:request.body.grade}).then(function(data){
-				request.body.grade=data;
-				return people.update({_id:request.params.id},function(obj){
-					for (i in obj.data){
-						if(request.body[i] && i!="dni"){
-							obj.data[i]=request.body[i];
-						}
-					}
-					obj.grade=request.body.grade;
-					return obj;
-				})
-			});
-		}else{
-			promise1=people.update({_id:request.params.id},function(obj){
-				for (i in obj.data){
-					if(request.body[i] && i!="dni"){
-						obj.data[i]=request.body[i];
-					}
-				}
-				return obj;
-			});
-		}
-		promise1.then(function(data){
-			return people2.find({_id:data.data._id});
-		}).then(function(data){
-			for (i in data){
-				if(request.body[i] && i!="dni"){
-					data[i]=request.body[i];
-				}
-			}			
-			return data.save();
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {delete} /:id Eliminar un alumno
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople>	objeto CRUD
-	* @var people2<People>	objeto CRUD
-	*\/
-	StudentsURI.delete("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		var people2=new People(app.container.database.Schema.Peoples);
-		people.remove({_id:request.params.id}).then(function(data){
-			response.send(data);
-			return people2.remove(data.data._id);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {post} /:dni/test/:test Crear test alumno
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople> objeto CRUD
-	* @var people2<People> objeto CRUD
-	*\/
-	StudentsURI.post("/:dni/test/:test",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		var test=new CRUD(app.container.database.Schema.TestInteligence);
-		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.params.dni)){
-			throw new ValidatorException("Solo se aceptan documentos de identidad");
-		}		
-		var input=JSON.parse(request.body.test);
-		if(!Validator.isInt()(input.time,{min:5000})){
-			throw new ValidatorException("El tiempo de prueba registrado no cumple las expectativas!");
-		}		
-		test.find({name:request.params.test.toUpperCase()}).then(function(inteligence){
-			return people.update({"data.dni":request.params.dni},function(data){
-				var time=new Date(data.data.birthdate);
-				var age=Math.floor((Date.now()-time.getTime())/(86400000*364));
-				console.log(age);
-				var value=0,percentil=0;
-				inteligence.serie.forEach(function(serie){
-					if(input.serie[serie.name] && !(serie.age.min>=age && serie.age.max<=age)){
-						throw new ValidatorException("No tiene la edad suficiente para realizar una serie de este tipo");
-					}
-					for (i in input.serie[serie.name]){
-						if(serie.items[i]){
-							value+=input.serie[serie.name][i]==serie.items[i].value;
-						}
-					}
-				});
-				var test=new app.container.database.Schema.testIntStudent({
-					name:inteligence.name,
-					value:value,
-					percentil:0,
-					time:input.time,
-					serie:input.serie
-				});
-				// Es necesario validar campos y valores
-				data.test.push(test);			
-				return data;
-			})
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	app.use("/v1/students",StudentsURI);
-	/*
-	* Ruta /v1/representives		
-	* @var ReferencesToURI object enrutador para agrupar metodos
-	*\/
-	var ReferencesToURI = express.Router();
-	/*
-	* @api {post} / Crear representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople> objeto CRUD
-	* @var people3<SubPeople> objeto CRUD
-	* @var people2<People> objeto CRUD
-	*\/
-	ReferencesToURI.post("/",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Representatives);
-		var people3=new SubPeople(app.container.database.Schema.Students);
-		var people2=new People(app.container.database.Schema.Peoples);
-		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
-			throw new ValidatorException("Solo se aceptan documentos de identidad");
-		}
-		if(Validator.matches(/[0-9]/)(request.body.name)){
-			throw new ValidatorException("Solo se aceptan nombres validos");
-		}
-		if(!Validator.isDate()(request.body.birthdate)){
-			throw new ValidatorException("La fecha de nacimiento no es valida");
-		}
-		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
-			throw new ValidatorException("El telefono no tiene un formato valido");
-		}
-		var fields={
-			data:JSON.parse(JSON.stringify(request.body)),
-			idStudent:request.body.idStudent			
-		};
-		fields.data.mode="PARENT";
-		delete(fields.data.idStudent);
-		people3.find({"data.dni":request.body.idStudent}).then(function(data){
-			fields.idStudent=data._id;
-			return people2.add(fields.data);
-		}).then(function(data){
-			fields.data=data;
-			return people.add(fields);
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} / Obtener todos los representantes
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople>	objeto CRUD
-	*\/
-	ReferencesToURI.get("/",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		people.get().then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} /:id Obtener un representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople>	objeto CRUD
-	*\/
-	ReferencesToURI.get("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		people.find({_id:request.params.id}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {put} /:id Editar representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople>	objeto CRUD
-	* @var people2<People>	objeto CRUD
-	* @var grade<Grade>	objeto CRUD
-	*\/
-	ReferencesToURI.put("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		var people2=new People(app.container.database.Schema.Peoples);
-		var grade=new Grade(app.container.database.Schema.Grades);
-		if(request.body.dni && !Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
-			throw new ValidatorException("Solo se aceptan documentos de identidad");
-		}
-		if(request.body.name && Validator.matches(/[0-9]/)(request.body.name)){
-			throw new ValidatorException("Solo se aceptan nombres validos");
-		}
-		if(request.body.birthdate && !Validator.isDate()(request.body.birthdate)){
-			throw new ValidatorException("La fecha de nacimiento no es valida");
-		}
-		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
-			throw new ValidatorException("El telefono no tiene un formato valido");
-		}
-		var promise1;
-		if(request.body.grade){
-			promise1=grade.find({name:request.body.grade}).then(function(data){
-				request.body.grade=data;
-				return people.update({_id:request.params.id},function(obj){
-					for (i in obj.data){
-						if(request.body[i] && i!="dni"){
-							obj.data[i]=request.body[i];
-						}
-					}
-					obj.grade=request.body.grade;
-					return obj;
-				})
-			});
-		}else{
-			promise1=people.update({_id:request.params.id},function(obj){
-				for (i in obj.data){
-					if(request.body[i] && i!="dni"){
-						obj.data[i]=request.body[i];
-					}
-				}
-				return obj;
-			});
-		}
-		promise1.then(function(data){
-			return people2.find({_id:data.data._id});
-		}).then(function(data){
-			for (i in data){
-				if(request.body[i] && i!="dni"){
-					data[i]=request.body[i];
-				}
-			}
-			return data.save();
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {delete} /:id Eliminar un representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople>	objeto CRUD
-	* @var people2<People>	objeto CRUD
-	*\/
-	ReferencesToURI.delete("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		var people2=new People(app.container.database.Schema.Peoples);
-		people.remove({_id:request.params.id}).then(function(data){
-			response.send(data);
-			return people2.remove(data.data._id);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	app.use("/v1/representives",ReferencesToURI);/*
-	
+		
 	
 
 	/*

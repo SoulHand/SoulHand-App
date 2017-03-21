@@ -32,7 +32,6 @@ describe("Test route static height",function(){
 		    'pass': '123'
 		  }
 		}).then(function(response){
-			console.log(response)
 			expect(response.user.username).toBe('root');
 			done();
 		}).catch(function(error){
