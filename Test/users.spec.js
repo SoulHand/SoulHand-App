@@ -24,6 +24,22 @@ describe("Test route static height",function(){
 			done();
 		});
 	});
+
+	it("GET /v1/auth/",function(done){
+		utils.runApp("GET","/v1/auth/",{
+		  'auth': {
+		    'user': 'root',
+		    'pass': '123'
+		  }
+		}).then(function(response){
+			console.log(response)
+			expect(response.user.username).toBe('root');
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
+		});
+	});
 	it("POST /v1/users",function(done){
 		var p1=self.db.schema.Peoples({
 			dni:'V12345679',
