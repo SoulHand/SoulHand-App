@@ -1376,50 +1376,29 @@ module.exports=function(app,express,server,__DIR__){
 		}
 		var people, student;
 		app.container.database.Schema.Students.findOne({_id:request.params.id}).then(function(data){
+			student=data;
+			return app.container.database.Schema.Peoples.findOne({_id:student.data._id});
+		}).then(function(data){
 			people=data;
-			return app.container.Schema.Peoples()
-			console.log(data);
-		});
-
-		/*
-		var promise1;
-		if(request.body.grade){
-			promise1=grade.find({name:request.body.grade}).then(function(data){
-				request.body.grade=data;
-				return people.update({_id:request.params.id},function(obj){
-					for (i in obj.data){
-						if(request.body[i] && i!="dni"){
-							obj.data[i]=request.body[i];
-						}
-					}
-					obj.grade=request.body.grade;
-					return obj;
-				})
-			});
-		}else{
-			promise1=people.update({_id:request.params.id},function(obj){
-				for (i in obj.data){
-					if(request.body[i] && i!="dni"){
-						obj.data[i]=request.body[i];
-					}
-				}
-				return obj;
-			});
-		}
-		promise1.then(function(data){
-			return people2.find({_id:data.data._id});
-		}).then(function(data){
-			for (i in data){
+			var fields=people.toJSON();
+			for (i in fields){
 				if(request.body[i] && i!="dni"){
-					data[i]=request.body[i];
+					people[i]=request.body[i];
 				}
-			}			
-			return data.save();
+			}
+			student.data=people;			
+			var fields=student.toJSON();
+			for (i in fields){
+				if(request.body[i] && i!="dni"){
+					student[i]=request.body[i];
+				}
+			}
+			return Promise.all([people.save(),student.save()]);
 		}).then(function(data){
-			response.send(data);
+			response.send(data[1]);
 		}).catch(function(error){
 			next(error);
-		});*/
+		});		
 	});
 	/*
 	* @api {delete} /:id Eliminar un alumno

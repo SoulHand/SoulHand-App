@@ -65,7 +65,7 @@ describe("Test route students",function(){
 			done();
 		});	
 	});
-	/*it("PUT /v1/people/students/:id",function(done){
+	it("PUT /v1/people/students/:id",function(done){
 		utils.runApp("PUT","/v1/people/students/"+self.teacher._id+"?PublicKeyId="+user.publicKeyId+"&PrivateKeyId="+user.privateKeyId,{
 			form:{
 				name:"coco"
@@ -78,7 +78,7 @@ describe("Test route students",function(){
 			expect(error.toString()).toBeNull();
 			done();
 		});	
-	});*/
+	});
 	it("DELETE /v1/people/students/:id",function(done){
 		utils.runApp("DEL","/v1/people/students/"+self.teacher._id+"?PublicKeyId="+user.publicKeyId+"&PrivateKeyId="+user.privateKeyId).then(function(response){
 			expect(String(response.data.dni)).toBe(String('V12345679'));
