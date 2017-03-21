@@ -959,8 +959,172 @@ module.exports=function(app,express,server,__DIR__){
 	});
 	app.use("/v1/physic/static/height",heightURI);
 
-
-
+	/*
+	* Ruta /v1/users		
+	* @var UsersURI object enrutador para agrupar metodos
+	*/
+	var UsersURI = express.Router();
+	/*
+	* @api {post} / Crear representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var user<User>	objeto CRUD
+	* @var people<SubPeople> objeto CRUD
+	*/
+	UsersURI.post("/",function(request, response,next) {
+		var user=new User(app.container.database.Schema.User);
+		var people=new People(app.container.database.Schema.Peoples);
+		if(!Validator.matches(/^[VE][0-9]{6,9}$/)(request.body.dni)){
+			throw new ValidatorException("Solo se aceptan documentos de identidad");			
+		}
+		if(!Validator.isAlphanumeric()(request.body.username)){
+			throw new ValidatorException("Es necesario un nombre de usuario valido");			
+		}
+		if(!Validator.isEmail()(request.body.email)){
+			throw new ValidatorException("Es necesario un email valido");			
+		}
+		if(!Validator.isLength(5,14)(request.body.password)){
+			throw new ValidatorException("Es necesario una contraseña de por lo menos 5 caracteres");			
+		}
+		const base64=require('base-64');
+		var fields={
+			username:request.body.username,
+			email:request.body.email,
+			password:base64.encode(request.body.password),
+			people:null
+		};
+		people.find({dni:request.body.dni}).then(function(data){
+			fields.people=data;
+			return user.add(fields);
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			if(error.code=="100"){
+				error.setMessage("No existe en el registro del personal");
+			}
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todos los representantes
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var user<User>	objeto CRUD
+	*/
+	UsersURI.get("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var user=new User(app.container.database.Schema.User);
+		user.get().then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} /:id Obtener un representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var user<User>	objeto CRUD
+	*/
+	UsersURI.get("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var user=new User(app.container.database.Schema.User);
+		user.find({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {put} /:id Editar representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var user<User>	objeto CRUD
+	*/
+	UsersURI.put("/:id",Auth.isUser.bind(app.container),function(request, response,next) {
+		if(request.body.isAdmin){
+			throw new ValidatorException("no puede realizar un cambio de administración");
+		}
+		if(request.body.dni){
+			throw new ValidatorException("No puede alterar un documento de identidad");			
+		}
+		if(request.body.username && !Validator.isAlphanumeric()(request.body.username)){
+			throw new ValidatorException("Es necesario un nombre de usuario valido");			
+		}
+		if(request.body.email && !Validator.isEmail()(request.body.email)){
+			throw new ValidatorException("Es necesario un email valido");			
+		}
+		if(request.body.password && !Validator.isLength(5,14)(request.body.password)){
+			throw new ValidatorException("Es necesario una contraseña de por lo menos 5 caracteres");			
+		}
+		if(request.body.password){
+			const base64=require('base-64');
+			request.body.password=base64.encode(request.body.password);
+		}
+		var user=new User(app.container.database.Schema.User);
+		user.update({_id:request.params.id},function(data){
+		if(request.user.isAdmin!=true && data._id!=request.user._id){
+			throw new ValidatorException("No tiene permisos para editar este registro");
+		}
+			for (i in data){
+				if(request.body[i] && i!='people'){
+					data[i]=request.body[i];
+				}
+			}
+			return data;
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {delete} /:id Eliminar un representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var user<User>	objeto CRUD
+	*/
+	UsersURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var user=new User(app.container.database.Schema.User);
+		user.remove({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});		
+	});
+	app.use("/v1/users",UsersURI);
+	/*
+	* @api {get} /v1/auth/ Obtener todos los representantes
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var user<User>	objeto CRUD
+	* Authorization: Basic base64(username:pass)
+	*/
+	app.get('/v1/auth',basicAuth(function(username, pass,next){
+		const base64=require('base-64');
+		var user=new User(app.container.database.Schema.User);
+		user.find({$and:[{$or:[{username:username},{email:username}]},{password:base64.encode(pass)}]}).then(function(data){
+			if(!data){
+				throw new UserException("no existe el usuario!");
+			}
+			next(null,data);
+		}).catch(function(error){
+			next(error);
+		});		
+	}),function(request,response,next){
+		var user=new Token(app.container.database.Schema.Sessions);
+		var address=request.connection.address() || request.socket.address();
+		var navigator=request.headers['user-agent'];
+		user.add(request.user,address.address,navigator).then(function(token){			
+			response.send(token);
+		}).catch(function(error){
+			next(error);
+		});
+	});
 
 
 
@@ -2155,172 +2319,8 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	app.use("/v1/representives",ReferencesToURI);/*
-	/*
-	* Ruta /v1/users		
-	* @var UsersURI object enrutador para agrupar metodos
-	*\/
-	var UsersURI = express.Router();
-	/*
-	* @api {post} / Crear representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var user<User>	objeto CRUD
-	* @var people<SubPeople> objeto CRUD
-	*\/
-	UsersURI.post("/",function(request, response,next) {
-		var user=new User(app.container.database.Schema.User);
-		var people=new People(app.container.database.Schema.Peoples);
-		if(!Validator.matches(/^[VE][0-9]{6,9}$/)(request.body.dni)){
-			throw new ValidatorException("Solo se aceptan documentos de identidad");			
-		}
-		if(!Validator.isAlphanumeric()(request.body.username)){
-			throw new ValidatorException("Es necesario un nombre de usuario valido");			
-		}
-		if(!Validator.isEmail()(request.body.email)){
-			throw new ValidatorException("Es necesario un email valido");			
-		}
-		if(!Validator.isLength(5,14)(request.body.password)){
-			throw new ValidatorException("Es necesario una contraseña de por lo menos 5 caracteres");			
-		}
-		const base64=require('base-64');
-		var fields={
-			username:request.body.username,
-			email:request.body.email,
-			password:base64.encode(request.body.password),
-			people:null
-		};
-		people.find({dni:request.body.dni}).then(function(data){
-			fields.people=data;
-			return user.add(fields);
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			if(error.code=="100"){
-				error.setMessage("No existe en el registro del personal");
-			}
-			next(error);
-		});
-	});
-	/*
-	* @api {get} / Obtener todos los representantes
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var user<User>	objeto CRUD
-	*\/
-	UsersURI.get("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var user=new User(app.container.database.Schema.User);
-		user.get().then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} /:id Obtener un representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var user<User>	objeto CRUD
-	*\/
-	UsersURI.get("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var user=new User(app.container.database.Schema.User);
-		user.find({_id:request.params.id}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {put} /:id Editar representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var user<User>	objeto CRUD
-	*\/
-	UsersURI.put("/:id",Auth.isUser.bind(app.container),function(request, response,next) {
-		if(request.body.isAdmin){
-			throw new ValidatorException("no puede realizar un cambio de administración");
-		}
-		if(request.body.dni){
-			throw new ValidatorException("No puede alterar un documento de identidad");			
-		}
-		if(request.body.username && !Validator.isAlphanumeric()(request.body.username)){
-			throw new ValidatorException("Es necesario un nombre de usuario valido");			
-		}
-		if(request.body.email && !Validator.isEmail()(request.body.email)){
-			throw new ValidatorException("Es necesario un email valido");			
-		}
-		if(request.body.password && !Validator.isLength(5,14)(request.body.password)){
-			throw new ValidatorException("Es necesario una contraseña de por lo menos 5 caracteres");			
-		}
-		if(request.body.password){
-			const base64=require('base-64');
-			request.body.password=base64.encode(request.body.password);
-		}
-		var user=new User(app.container.database.Schema.User);
-		user.update({_id:request.params.id},function(data){
-		if(request.user.isAdmin!=true && data._id!=request.user._id){
-			throw new ValidatorException("No tiene permisos para editar este registro");
-		}
-			for (i in data){
-				if(request.body[i] && i!='people'){
-					data[i]=request.body[i];
-				}
-			}
-			return data;
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {delete} /:id Eliminar un representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var user<User>	objeto CRUD
-	*\/
-	UsersURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var user=new User(app.container.database.Schema.User);
-		user.remove({_id:request.params.id}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});		
-	});
-	app.use("/v1/users",UsersURI);
-	/*
-	* @api {get} /v1/auth/ Obtener todos los representantes
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var user<User>	objeto CRUD
-	* Authorization: Basic base64(username:pass)
-	*\/
-	app.get('/v1/auth',basicAuth(function(username, pass,next){
-		const base64=require('base-64');
-		var user=new User(app.container.database.Schema.User);
-		user.find({$and:[{$or:[{username:username},{email:username}]},{password:base64.encode(pass)}]}).then(function(data){
-			if(!data){
-				throw new UserException("no existe el usuario!");
-			}
-			next(null,data);
-		}).catch(function(error){
-			next(error);
-		});		
-	}),function(request,response,next){
-		var user=new Token(app.container.database.Schema.Sessions);
-		var address=request.connection.address() || request.socket.address();
-		var navigator=request.headers['user-agent'];
-		user.add(request.user,address.address,navigator).then(function(token){			
-			response.send(token);
-		}).catch(function(error){
-			next(error);
-		});
-	});
+	
+	
 
 	/*
 	* Ruta /v1/test		

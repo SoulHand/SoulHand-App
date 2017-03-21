@@ -26,23 +26,26 @@ module.exports.dropDatabase=function(done){
 
 
 function insertUser(db){
-	var p1=db.schema.User({
+	const base64=require('base-64');
+	var p1=db.schema.Peoples({
+		dni:'V12345678',
+		name:"ROOT USER",
+		birthdate:"1970-01-01",
+		mode:"TEACHER"
+	});
+	var p2=db.schema.User({
 			username:"root",
-			password:'123',
+			password:base64.encode('123'),
 			isAdmin:true,
-			people:{
-				dni:'1234',
-				name:"ROOT USER",
-				birthdate:"1970-01-01",
-				mode:"TEACHER"
-			}
+			people:p1
 		});
-	return p1.save();
+	return Promise.all([p1.save(),p2.save()]);
 }
 module.exports.insertUser=insertUser
 
 function insertSession(db){
-	var p1=insertUser(db).then(function(user){
+	var p1=insertUser(db).then(function(data){
+		var user=data[1];
 		const uuidV4 = require('uuid/v4');
 				const base64=require('base-64');
 				return db.schema.Sessions({
