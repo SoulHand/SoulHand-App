@@ -1,7 +1,7 @@
 var utils=require("./utils.js");
 var faker = require('faker');
 
-describe("Test route teachers",function(){
+describe("Test route students",function(){
 	var self=this,user;
 	afterEach(utils.dropDatabase.bind(self));
 	beforeEach(function(done){
@@ -13,11 +13,15 @@ describe("Test route teachers",function(){
 			birthdate:"1992-03-15",
 			mode:"TEACHER"
 		});
-		self.teacher=self.db.schema.Teachers({
+		self.grade=self.db.schema.Grades({
+			name:"1ro"
+		});
+		self.teacher=self.db.schema.Students({
 			data:self.people,
-			interprete:false
+			grade:self.grade,
+			discapacityLevel:0
 		})
-		Promise.all([p1,self.people.save(),self.teacher.save()]).then(function(data){
+		Promise.all([self.grade.save(),p1,self.people.save(),self.teacher.save()]).then(function(data){
 			user=data[0];
 			done();
 		}).catch(function(error){
@@ -25,8 +29,8 @@ describe("Test route teachers",function(){
 		})
 	})
 
-	it("GET /v1/people/teachers/",function(done){
-		utils.runApp("GET","/v1/people/teachers/?PublicKeyId="+user.publicKeyId+"&PrivateKeyId="+user.privateKeyId).then(function(response){
+	it("GET /v1/people/students/",function(done){
+		utils.runApp("GET","/v1/people/students/?PublicKeyId="+user.publicKeyId+"&PrivateKeyId="+user.privateKeyId).then(function(response){
 			expect(response.length).toBe(1);
 			expect(response[0].data.dni).toBe("V12345679");
 			done();
@@ -36,12 +40,13 @@ describe("Test route teachers",function(){
 		});
 	});
 
-	it("POST /v1/people/teachers/",function(done){
-		utils.runApp("POST","/v1/people/teachers/?PublicKeyId="+user.publicKeyId+"&PrivateKeyId="+user.privateKeyId,{
+	it("POST /v1/people/students/",function(done){
+		utils.runApp("POST","/v1/people/students/?PublicKeyId="+user.publicKeyId+"&PrivateKeyId="+user.privateKeyId,{
 			form:{
 				dni:"V12345675",
 				name:"people",
-				birthdate:"1992-03-15"
+				birthdate:"1992-03-15",
+				grade:self.grade.name
 			}
 		}).then(function(response){
 			expect(response.data.dni).toBe("V12345675");
@@ -51,8 +56,8 @@ describe("Test route teachers",function(){
 			done();
 		});
 	});
-	it("GET /v1/people/teachers/:id",function(done){
-		utils.runApp("GET","/v1/people/teachers/"+self.teacher._id+"?PublicKeyId="+user.publicKeyId+"&PrivateKeyId="+user.privateKeyId).then(function(response){
+	it("GET /v1/people/students/:id",function(done){
+		utils.runApp("GET","/v1/people/students/"+self.teacher._id+"?PublicKeyId="+user.publicKeyId+"&PrivateKeyId="+user.privateKeyId).then(function(response){
 			expect(response.data.dni).toBe('V12345679');
 			done();
 		}).catch(function(error){
@@ -60,21 +65,22 @@ describe("Test route teachers",function(){
 			done();
 		});	
 	});
-	it("PUT /v1/people/teachers/:id",function(done){
-		utils.runApp("PUT","/v1/people/teachers/"+self.teacher._id+"?PublicKeyId="+user.publicKeyId+"&PrivateKeyId="+user.privateKeyId,{
+	/*it("PUT /v1/people/students/:id",function(done){
+		utils.runApp("PUT","/v1/people/students/"+self.teacher._id+"?PublicKeyId="+user.publicKeyId+"&PrivateKeyId="+user.privateKeyId,{
 			form:{
 				name:"coco"
 			}
 		}).then(function(response){
+			console.log(response)
 			expect(response.data.name).toBe("COCO");
 			done();
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();
 			done();
 		});	
-	});
-	it("DELETE /v1/people/teachers/:id",function(done){
-		utils.runApp("DEL","/v1/people/teachers/"+self.teacher._id+"?PublicKeyId="+user.publicKeyId+"&PrivateKeyId="+user.privateKeyId).then(function(response){
+	});*/
+	it("DELETE /v1/people/students/:id",function(done){
+		utils.runApp("DEL","/v1/people/students/"+self.teacher._id+"?PublicKeyId="+user.publicKeyId+"&PrivateKeyId="+user.privateKeyId).then(function(response){
 			expect(String(response.data.dni)).toBe(String('V12345679'));
 			done();
 		}).catch(function(error){

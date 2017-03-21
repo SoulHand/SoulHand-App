@@ -1374,6 +1374,14 @@ module.exports=function(app,express,server,__DIR__){
 		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
 			throw new ValidatorException("El telefono no tiene un formato valido");
 		}
+		var people, student;
+		app.container.database.Schema.Students.findOne({_id:request.params.id}).then(function(data){
+			people=data;
+			return app.container.Schema.Peoples()
+			console.log(data);
+		});
+
+		/*
 		var promise1;
 		if(request.body.grade){
 			promise1=grade.find({name:request.body.grade}).then(function(data){
@@ -1411,7 +1419,7 @@ module.exports=function(app,express,server,__DIR__){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
-		});
+		});*/
 	});
 	/*
 	* @api {delete} /:id Eliminar un alumno
