@@ -1227,21 +1227,23 @@ module.exports=function(app,express,server,__DIR__){
 			if(!data){
 				throw new VoidException("No existe un registro de este tipo");
 			}
+			return app.container.database.Schema.Peoples.findOne({_id:teacher.data._id})
 		}).then(function(data){
 			people=data;
 			if(!data){
 				throw new VoidException("No existe un registro de este tipo");
 			}
-			for (i in people){
+			var fields=people.toJSON();
+			for (i in fields){
 				if(request.body[i] && i!="dni"){
 					people[i]=request.body[i];
 				}
 			}
-			teacher.people=people;
+			teacher.data=people;
 			if(request.body.interprete){
 				teacher.interprete=request.body.interprete;				
 			}
-			return Promise.all(people.save(),teacher.save());
+			return Promise.all([people.save(),teacher.save()]);
 		}).then(function(data){
 			response.send(data[1]);
 		}).catch(function(error){

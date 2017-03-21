@@ -67,8 +67,7 @@ describe("Test route static height",function(){
 				name:"coco"
 			}
 		}).then(function(response){
-			console.log(response)
-			expect(response.data.name).toBe("coco");
+			expect(response.data.name).toBe("COCO");
 			done();
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();
@@ -76,14 +75,7 @@ describe("Test route static height",function(){
 		});	
 	});
 	it("DELETE /v1/people/teachers/:id",function(done){
-		find=new  self.db.schema.heights({
-			age:Math.round(Math.random()*90)+1,
-			min:Math.round(Math.random()*90)+1,
-			max:Math.round(Math.random()*90)+1			
-		});
-		find.save().then(function(){
-			return utils.runApp("DEL","/v1/users/"+self.teacher._id+"?PublicKeyId="+user.publicKeyId+"&PrivateKeyId="+user.privateKeyId);
-		}).then(function(response){
+		utils.runApp("DEL","/v1/people/teachers/"+self.teacher._id+"?PublicKeyId="+user.publicKeyId+"&PrivateKeyId="+user.privateKeyId).then(function(response){
 			expect(String(response.data.dni)).toBe(String('V12345679'));
 			done();
 		}).catch(function(error){
