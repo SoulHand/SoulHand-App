@@ -1419,6 +1419,35 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	/*
+	* @api {post} / añadir desarrollo fisico
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*/
+	StudentsURI.post("/:id/physic",function(request, response,next) {
+		if(!Validator.isFloat()(request.body.weight) || !Validator.isFloat()(request.body.height)){
+			throw new ValidatorException("El peso y estatura son medidas en centimetros!");
+		}
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		app.container.database.Schema.Students.findOne({_id:request.params.id}).then(function(data){
+			var element=app.container.database.Schema.physic({
+				weight:request.body.weight,
+				height:request.body.height
+			});
+			data.physics.push(element);
+			return data.save();
+		}).then(function(data){
+			response.send(data);			
+		}).catch(function(error){
+			next(error);
+		});
+	});
+
+	/*
 	* @api {post} /:dni/test/:test Crear test alumno
 	* @params request peticiones del cliente
 	* @params response respuesta del servidor

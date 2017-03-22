@@ -56,6 +56,24 @@ describe("Test route students",function(){
 			done();
 		});
 	});
+
+	it("POST /v1/people/students/",function(done){
+		utils.runApp("POST","/v1/people/students/"+self.teacher._id+"/physic/?PublicKeyId="+user.publicKeyId+"&PrivateKeyId="+user.privateKeyId,{
+			form:{
+				weight:50.32,
+				height:100
+			}
+		}).then(function(response){
+			expect(response.data.dni).toBe("V12345679");
+			expect(response.physics.length).toBe(1);
+			expect(response.physics[0].weight).toBe(50.32);
+			expect(response.physics[0].height).toBe(100);
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
+		});
+	});
 	it("GET /v1/people/students/:id",function(done){
 		utils.runApp("GET","/v1/people/students/"+self.teacher._id+"?PublicKeyId="+user.publicKeyId+"&PrivateKeyId="+user.privateKeyId).then(function(response){
 			expect(response.data.dni).toBe('V12345679');
