@@ -1425,7 +1425,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var people<SubPeople> objeto CRUD
 	* @var people2<People> objeto CRUD
-	*/
+	*\/
 	StudentsURI.post("/:dni/test/:test",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		var test=new CRUD(app.container.database.Schema.TestInteligence);
@@ -1468,7 +1468,7 @@ module.exports=function(app,express,server,__DIR__){
 		}).catch(function(error){
 			next(error);
 		});
-	});
+	}); */
 	app.use("/v1/people/students",StudentsURI);
 	/*
 	* Ruta /v1/representives		
@@ -1526,7 +1526,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var people<SubPeople>	objeto CRUD
 	*/
 	ReferencesToURI.get("/",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
+		var people=new SubPeople(app.container.database.Schema.Representatives);
 		people.get().then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -1541,7 +1541,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var people<SubPeople>	objeto CRUD
 	*/
 	ReferencesToURI.get("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
+		var people=new SubPeople(app.container.database.Schema.Representatives);
 		people.find({_id:request.params.id}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -1558,7 +1558,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var grade<Grade>	objeto CRUD
 	*/
 	ReferencesToURI.put("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
+		var people=new SubPeople(app.container.database.Schema.Representatives);
 		var people2=new People(app.container.database.Schema.Peoples);
 		var grade=new Grade(app.container.database.Schema.Grades);
 		if(request.body.dni && !Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
@@ -1573,44 +1573,32 @@ module.exports=function(app,express,server,__DIR__){
 		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
 			throw new ValidatorException("El telefono no tiene un formato valido");
 		}
-		var promise1;
-		if(request.body.grade){
-			promise1=grade.find({name:request.body.grade}).then(function(data){
-				request.body.grade=data;
-				return people.update({_id:request.params.id},function(obj){
-					for (i in obj.data){
-						if(request.body[i] && i!="dni"){
-							obj.data[i]=request.body[i];
-						}
-					}
-					obj.grade=request.body.grade;
-					return obj;
-				})
-			});
-		}else{
-			promise1=people.update({_id:request.params.id},function(obj){
-				for (i in obj.data){
-					if(request.body[i] && i!="dni"){
-						obj.data[i]=request.body[i];
-					}
-				}
-				return obj;
-			});
-		}
-		promise1.then(function(data){
-			return people2.find({_id:data.data._id});
+
+		var people, represent;
+		app.container.database.Schema.Representatives.findOne({_id:request.params.id}).then(function(data){
+			represent=data;
+			return app.container.database.Schema.Peoples.findOne({_id:represent.data._id});
 		}).then(function(data){
-			for (i in data){
+			people=data;
+			var fields=people.toJSON();
+			for (i in fields){
 				if(request.body[i] && i!="dni"){
-					data[i]=request.body[i];
+					people[i]=request.body[i];
 				}
 			}
-			return data.save();
+			represent.data=people;			
+			var fields=represent.toJSON();
+			for (i in fields){
+				if(request.body[i] && i!="dni"){
+					represent[i]=request.body[i];
+				}
+			}
+			return Promise.all([people.save(),represent.save()]);
 		}).then(function(data){
-			response.send(data);
+			response.send(data[1]);
 		}).catch(function(error){
 			next(error);
-		});
+		});		
 	});
 	/*
 	* @api {delete} /:id Eliminar un representante
@@ -1621,7 +1609,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var people2<People>	objeto CRUD
 	*/
 	ReferencesToURI.delete("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
+		var people=new SubPeople(app.container.database.Schema.Representatives);
 		var people2=new People(app.container.database.Schema.Peoples);
 		people.remove({_id:request.params.id}).then(function(data){
 			response.send(data);
