@@ -8,7 +8,6 @@ module.exports=function(app,express,server,__DIR__){
 			const uuidV4 = require('uuid/v4');
 			const base64=require('base-64');
 			var password=uuidV4();
-			console.log(password)
 			admin.add({
 				username:"root",
 				password:base64.encode(password),
