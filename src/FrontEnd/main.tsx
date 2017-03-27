@@ -15,9 +15,46 @@ import {NavBar} from './templates/NavBar';
 	    </Route>  	
 	  </Router>
 	  */
-window.addEventListener("load",()=>{
+window.addEventListener("load",())=>{
 	render((
 	 <NavBar/>
-	  ), document.body
+	  ), document.body)}
+
+onsubmit.addEventListener("submit",())=>{
+	render((
+	 <form/>
+	  ), document.body)}
+
+onreset.addEventListener("reset",())=>{
+	render((
+	 <form/>
+	  ), document.body)}
+
+onselect.addEventListener("select",())=>{
+	render((
+	 <body/>
+	  ), document.body)}
+
+onblur.addEventListener("reset",())=>{
+	render((
+	 <button/>
+	 <input/> 
+	 <label/> 
+	 <select/> 
+	 <textarea/> 
+	 <body/>
+	  ), document.body)}
+
+onfocus.addEventListener("reset",())=>{
+	render((
+	 <button/>
+	 <input/> 
+	 <label/> 
+	 <select/> 
+	 <textarea/> 
+	 <body/>
+	  ), document.body)}
+
+
 	);
 });
