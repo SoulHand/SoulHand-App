@@ -4,57 +4,28 @@ import {render} from 'react-dom';
 import 'jquery';
 import 'tether';
 import 'bootstrap';
+import './scss/pingendo.scss';
 import './scss/main.scss';
-import {NavBar} from './templates/NavBar';
+import {App} from './App';
+import {PageIndex} from './templates/PageIndex';
+import {Login} from './templates/Login';
+import {PageTeacher} from './templates/PageTeacher';
+import {PageTeacherCreate} from './templates/PageTeacherCreate';
 
-
-			//<IndexRoute component={Desktop}/>
-/*
- <Router history={hashHistory}>
-	    <Route path="/" component={NavBar}>
-	    </Route>  	
-	  </Router>
-	  */
-window.addEventListener("load",())=>{
+window.addEventListener("load",()=>{
 	render((
-	 <NavBar/>
-	  ), document.body)}
-
-onsubmit.addEventListener("submit",())=>{
-	render((
-	 <form/>
-	  ), document.body)}
-
-onreset.addEventListener("reset",())=>{
-	render((
-	 <form/>
-	  ), document.body)}
-
-onselect.addEventListener("select",())=>{
-	render((
-	 <body/>
-	  ), document.body)}
-
-onblur.addEventListener("reset",())=>{
-	render((
-	 <button/>
-	 <input/> 
-	 <label/> 
-	 <select/> 
-	 <textarea/> 
-	 <body/>
-	  ), document.body)}
-
-onfocus.addEventListener("reset",())=>{
-	render((
-	 <button/>
-	 <input/> 
-	 <label/> 
-	 <select/> 
-	 <textarea/> 
-	 <body/>
-	  ), document.body)}
-
-
+	 	<Router history={hashHistory}>
+		    <Route path="/" component={App}>
+		    	<IndexRoute component={PageIndex}/>
+		    </Route>
+		    <Route path="/auth" component={App}>
+		    	<IndexRoute component={Login}/>
+		    </Route>
+		    <Route path="/teacher" component={App}>
+		    	<IndexRoute component={PageTeacher}/>
+		    	<Route path="create" component={PageTeacherCreate}/>
+		    </Route>
+	  	</Router>
+	  ), document.body
 	);
 });

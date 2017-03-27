@@ -1,39 +1,28 @@
 var InsertException=require("../src/BackEnd/SoulHand/Exceptions/InsertException.js");
 var VoidException=require("../src/BackEnd/SoulHand/Exceptions/VoidException.js");
-var db=require("./prepare.js");
+var utils=require("./utils.js");
 var faker = require('faker');
 
 // Test CRUD from Table Cognitions
 describe("CRUD clase Table Cognitions",function(){
+	var cognition, find, category;
 	var Cognition=require("../src/BackEnd/SoulHand/Cognitions.js");
-	var cognition=new Cognition(db.Cognitions),find,category;
-	afterEach(function(done){
-		db.Cognitions.find().then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
-			return db.CategoryCognitions.find();
-		}).then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
+	var self=this,user;
+	afterEach(utils.dropDatabase.bind(self));
+	beforeEach(function(done){
+		self.db=utils.getDatabase();
+		var p1=utils.insertSession(self.db)
+		cognition=new Cognition(self.db.schema.Cognitions);
+		find=new  self.db.schema.Cognitions({
+			name:faker.name.findName()
+		});
+		Promise.all([p1,find.save()]).then(function(data){
+			user=data[1];
+			done();
+		}).catch(function(error){
 			done();
 		})
-	})
-	beforeEach(function(done){
-		category=new db.CategoryCognitions({
-			name:faker.name.findName()			
-		});
-		category.save().then(function(data){
-			find=new  db.Cognitions({
-				name:faker.name.findName(),
-				category:data
-			});
-			return find.save(); 
-		}).then(function(){
-			done();			
-		})
-	})
+	})	
 	it("Create Element cognition",function(done){
 		var input={
 			name:faker.name.findName(),
@@ -73,9 +62,8 @@ describe("CRUD clase Table Cognitions",function(){
 		cognition.remove({_id:find._id}).then(function(data){
 			done();
 		}).catch(function(error){
-			console.log(error.toString());
-			//throw error;
-			//fail(error.toString());
+			expect(error.toString()).toBeNull();
+			done();
 		});
 	});
 	it("Delete not exist Element cognition",function(done){
@@ -102,7 +90,6 @@ describe("CRUD clase Table Cognitions",function(){
 			info.name=update;
 			return info;
 		}).catch(function(error){
-			console.log(error.toString())
 			expect(error instanceof VoidException).toEqual(true);					
 			done();
 		});

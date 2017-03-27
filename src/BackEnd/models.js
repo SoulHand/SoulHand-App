@@ -1,5 +1,133 @@
 var mongoose= require('mongoose');
 var structDb={
+	Cognitions:mongoose.Schema({
+		name:{type:String, required:true, trim:true, uppercase: true}
+	}),
+	Grades:mongoose.Schema({
+		name:{type:String, required:true, trim:true, uppercase: true}
+	}),
+	Courses:mongoose.Schema({
+		name:{type:String, required:true, trim:true, uppercase: true}
+	}),
+	PeriodSchools:mongoose.Schema({
+		name:{type:String, required:true, trim:true, uppercase: true}
+	}),
+	physic:mongoose.Schema({
+		date:{type:Date, default:Date.now},
+		weight:{type:Number, required:true, min:0},
+		height:{type:Number, required:true, min:0}
+	}),
+	inferences:mongoose.Schema({
+		rule:{type:String, trim:true, uppercase: true},
+		result:{type:String, trim:true, uppercase: true},
+		conditional:{type:String, trim:true, uppercase: true}
+	}),
+	weights:mongoose.Schema({
+		age:{type:Number, min:0},
+		min:{type:Number, min:0},
+		max:{type:Number, min:0},
+		genero:{type:String, trim:true, uppercase:true}
+	}),
+	heights:mongoose.Schema({
+		age:{type:Number, min:0},
+		min:{type:Number, min:0},
+		max:{type:Number, min:0},
+		genero:{type:String, trim:true, uppercase:true}
+	}),
+	Peoples:mongoose.Schema({
+		dni:{type:String, trim: true, index:true, required: true, unique:true, uppercase: true},
+		name:{type:String, trim:true, required: true, uppercase: true},
+		birthdate:{type:String, required: true},
+		createDate:{type:Date, default:Date.now},
+		tel:{type:String, required: false},
+		image:{type:String, required:false},
+		mode:{type:String, required:true}
+	}),
+	typeLearning:mongoose.Schema({
+		name:{type:String, trim:true, required: true, uppercase: true}
+	})
+};
+structDb.Teachers=mongoose.Schema({
+	data: structDb.Peoples,
+	interprete:{type:Boolean, required:true}
+});
+structDb.Representatives=mongoose.Schema({
+	data: structDb.Peoples,
+	idStudent:{ type: mongoose.Schema.ObjectId, ref: "Students" }
+});
+structDb.Students=mongoose.Schema({
+	data: structDb.Peoples,
+	grade:structDb.Grades,
+	discapacityLevel:{type:Number, required:true, default:0},
+	physics:[structDb.physic]
+});
+structDb.User=mongoose.Schema({
+	username:{ type : String, trim : true, index : true , unique:true},
+   	password : { type : String },
+   	email:{ type : String, trim : true, unique:true},
+   	dateCreated:{ type: Date, default: Date.now },
+   	dateConfirmed:Date,
+   	people:structDb.Peoples,
+   	isAdmin:{type:Boolean, default:false}
+});
+structDb.LearningObjetive=mongoose.Schema({
+	name:{type:String, trim:true, required: true, uppercase: true},
+	description:{type:String, trim:true, required: false, uppercase: true},
+	cognitions:[structDb.Cognitions],
+	type:structDb.typeLearning,
+	domain:{ type: mongoose.Schema.ObjectId, ref: "domainsLearning" }
+});
+structDb.ConflictCognitions=mongoose.Schema({
+	name:{type:String, trim:true, uppercase: true},
+	createDate:{type:Date, default:Date.now},
+	cognitions:[structDb.Cognitions],
+	level:{type:Number,min:0,max:100,default:0}
+});
+structDb.Activities=mongoose.Schema({
+	name:{type:String, trim:true, required: true, uppercase: true},
+	description:{type:String, trim:true, required: true, uppercase: true},
+	course:structDb.Courses,
+	domain:{ type: mongoose.Schema.ObjectId, ref: "domainsLearning" },
+	dateCreated:{ type: Date, default: Date.now },
+	objetives:[structDb.LearningObjetive]
+});
+structDb.ActivitiesMaked=mongoose.Schema({
+	data:structDb.Activities,
+	dateCreated:{ type: Date, default: Date.now },
+	teacher: { type: mongoose.Schema.ObjectId, ref: "Teachers" },
+	student: { type: mongoose.Schema.ObjectId, ref: "Students" },
+	grade:structDb.Grades,
+	description:{type:String, trim:true, required:true, uppercase:true},
+	video:Buffer,
+	isCompleted:{type:Boolean, default:false},
+	objetives:[structDb.LearningObjetive]
+});
+structDb.Sessions=mongoose.Schema({
+	privateKeyId:{ type : String, trim : true, index : true , unique:true},
+	publicKeyId:{ type : String, trim : true},
+   	ip : { type : String, trim : false },
+   	navigator : { type : String, trim : false },
+   	dateCreated:{ type: Date, default: Date.now },
+   	dateDeleted:Date,
+   	dateLastConnect:Date,
+   	user:{ type: mongoose.Schema.ObjectId, ref: "User" }
+});
+structDb.domainsLearning=mongoose.Schema({
+	name:{type:String, required:true, trim:true, uppercase: true},
+	cognitions:[structDb.Cognitions]
+});
+
+/*
+structDb.Learning=mongoose.Schema({
+	name:{type:String, required:true, trim:true, uppercase:true}
+});
+
+
+
+
+
+
+var structDb={
 		Peoples:mongoose.Schema({
 			dni:{type:String, trim: true, index:true, required: true, unique:true, uppercase: true},
 			name:{type:String, trim:true, required: true, uppercase: true},
@@ -21,11 +149,7 @@ var structDb={
 		Cognitions:mongoose.Schema({
 			name:{type:String, trim:true, uppercase: true}
 		})		
-	};
-	structDb.CategoryCognitions=mongoose.Schema({
-		name:{type:String, required:true, trim:true, uppercase: true},
-		cognitions:[structDb.Cognitions]
-	});
+	};	
 	structDb.Teachers=mongoose.Schema({
 		data: structDb.Peoples,
 		interprete:{type:Boolean, required:true}
@@ -229,5 +353,5 @@ var structDb={
 		habilitys:[structDb.Habilities],
 		test:[structDb.testIntStudent],
 	   	group:structDb.groupsInteligence
-	});
+	});*/
 module.exports=structDb;

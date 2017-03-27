@@ -1,33 +1,31 @@
 var InsertException=require("../src/BackEnd/SoulHand/Exceptions/InsertException.js");
 var VoidException=require("../src/BackEnd/SoulHand/Exceptions/VoidException.js");
-var db=require("./prepare.js");
+var utils=require("./utils.js");
 var faker = require('faker');
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL=1000;
 // Test CRUD from Table Grades
 describe("CRUD clase Table Grades",function(){
+	var grade, find;
 	var Grade=require("../src/BackEnd/SoulHand/CRUD.js");
-	var grade=new Grade(db.Grades),find;
-	afterEach(function(done){
-		db.Grades.find().then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
-			done();
-		}).catch(function(error){
-			throw error;
-		})
-	})
+
+	var self=this,user;
+	afterEach(utils.dropDatabase.bind(self));
 	beforeEach(function(done){
-		find=new  db.Grades({
+		self.db=utils.getDatabase();
+		var p1=utils.insertSession(self.db)
+		grade=new Grade(self.db.schema.Grades);
+		find=new  self.db.schema.Grades({
 			name:faker.name.findName()
 		});
-		find.save().then(function(){
-			done();			
+		find.save().then(function(data){
+			user=data[1];
+			done();
 		}).catch(function(error){
-			throw error;
-		});
+			done();
+		})
 	})
+
 	it("Create Element Grade",function(done){
 		var input={
 			name:faker.name.findName()
@@ -114,18 +112,19 @@ describe("CRUD clase Table Grades",function(){
 
 // Test CRUD from Table Course
 describe("CRUD clase Table Courses",function(){
+	var db, course,find;
 	var Course=require("../src/BackEnd/SoulHand/CRUD.js");
-	var course=new Course(db.Courses),find;
 	afterEach(function(done){
-		db.Courses.find().then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
-			done();
-		})
+		db.db.dropDatabase(function(){
+			db.db.close(function(){
+				done();				
+			});
+		});
 	})
 	beforeEach(function(done){
-		find=new  db.Courses({
+		db=utils.getDatabase();
+		course=new Course(db.schema.Courses);
+		find=new  db.schema.Courses({
 			name:faker.name.findName()
 		});
 		find.save().then(function(){
@@ -221,18 +220,19 @@ describe("CRUD clase Table Courses",function(){
 
 // Test CRUD from Table PeriodSchools
 describe("CRUD clase Table PeriodSchools",function(){
+	var db, periodSchool,find;
 	var PeriodSchool=require("../src/BackEnd/SoulHand/CRUD.js");
-	var periodSchool=new PeriodSchool(db.PeriodSchools),find;
 	afterEach(function(done){
-		db.PeriodSchools.find().then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
-			done();
-		})
+		db.db.dropDatabase(function(){
+			db.db.close(function(){
+				done();				
+			});
+		});
 	})
 	beforeEach(function(done){
-		find=new  db.PeriodSchools({
+		db=utils.getDatabase();
+		periodSchool=new PeriodSchool(db.schema.PeriodSchools);
+		find=new  db.schema.PeriodSchools({
 			name:faker.name.findName()
 		});
 		find.save().then(function(){
@@ -326,124 +326,21 @@ describe("CRUD clase Table PeriodSchools",function(){
 	});
 });
 
-// Test CRUD from Table CategoryCognitions
-describe("CRUD clase Table CategoryCognitions",function(){
-	var CategoryCognition=require("../src/BackEnd/SoulHand/CRUD.js");
-	var categoryCognition=new CategoryCognition(db.CategoryCognitions),find;
-	afterEach(function(done){
-		db.CategoryCognitions.find().then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
-			done();
-		})
-	})
-	beforeEach(function(done){
-		find=new  db.CategoryCognitions({
-			name:faker.name.findName()
-		});
-		find.save().then(function(){
-			done();			
-		})
-	})
-	it("Create Element categoryCognition",function(done){
-		var input={
-			name:faker.name.findName()
-		};
-		categoryCognition.add(input,input).then(function(data){
-			expect(input.name.toUpperCase()).toBe(data.name);
-			done();
-		}).catch(function(error){
-			expect(error.toString()).toBeNull();
-			done();
-		});
-	});
-	it("Create duplicated Element categoryCognition",function(done){
-		var input={
-			name:find.name
-		};
-		categoryCognition.add(input,input).catch(function(error){
-			expect(error instanceof InsertException).toEqual(true);
-			done();
-		}).then(function(error){
-			expect(error).toBeNull();
-			done();
-		});
-	});
-	it("Delete Element categoryCognition",function(done){
-		categoryCognition.remove({_id:find._id}).then(function(data){
-			done();
-		}).catch(function(error){
-			expect(error.toString()).toBeNull();
-			done();
-		});
-	});
-	it("Delete not exist Element categoryCognition",function(done){
-		var id="58a1c1a27093140970ad3751";
-		categoryCognition.remove({_id:id}).catch(function(error){
-			expect(error instanceof VoidException).toEqual(true);					
-			done();
-		}).then(function(error){
-			expect(error).toBeNull();
-			done();
-		});
-	});
-	it("Update Element categoryCognition",function(done){
-		var update=faker.name.findName();
-		categoryCognition.update({_id:find._id},function(info){
-			info.name=update;
-			return info;
-		}).then(function(data){
-			expect(update.toUpperCase()).toBe(data.name);
-			done();
-		});
-	});
-	it("Update not exist Element categoryCognition",function(done){
-		var id="58a1c1a27093140970ad3751";
-		var update=faker.name.findName();
-		categoryCognition.update({_id:id},function(info){
-			info.name=update;
-			return info;
-		}).catch(function(error){
-			expect(error instanceof VoidException).toEqual(true);					
-			done();
-		});
-	});
-	it("find Element categoryCognition",function(done){		
-		categoryCognition.find({_id:find._id}).then(function(data){
-			expect(find.name).toBe(data.name);
-			done();
-		}).catch(function(error){
-			expect(error.toString()).toBeNull();
-			done();
-		});
-	});
-	it("find not exist Element categoryCognition",function(done){
-		var id="58a1c1a27093140970ad3751";		
-		categoryCognition.find({_id:id}).catch(function(error){
-			expect(error instanceof VoidException).toEqual(true);					
-			done();
-		}).then(function(error){
-			expect(error).toBeNull();
-			done();
-		});
-	});
-});
-
 // Test CRUD from Table Peoples
 describe("CRUD clase Table Peoples",function(){
+	var db, categoryCognition, find;
 	var CategoryCognition=require("../src/BackEnd/SoulHand/CRUD.js");
-	var categoryCognition=new CategoryCognition(db.Peoples),find;
 	afterEach(function(done){
-		db.Peoples.find().then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
-			done();
-		})
+		db.db.dropDatabase(function(){
+			db.db.close(function(){
+				done();				
+			});
+		});
 	})
 	beforeEach(function(done){
-		find=new  db.Peoples({
+		db=utils.getDatabase();
+		categoryCognition=new CategoryCognition(db.schema.Peoples);
+		find=new  db.schema.Peoples({
 			dni:"V12345678",
 			name:faker.name.findName(),
 			birthDate:faker.date.past(),
@@ -560,18 +457,19 @@ describe("CRUD clase Table Peoples",function(){
 
 // Test CRUD from Table Teachers
 describe("CRUD clase Table Teachers",function(){
+	var db, teacher, find;
 	var Teacher=require("../src/BackEnd/SoulHand/CRUD.js");
-	var teacher=new Teacher(db.Teachers),find;
 	afterEach(function(done){
-		db.Teachers.find().then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
-			done();
-		})
+		db.db.dropDatabase(function(){
+			db.db.close(function(){
+				done();				
+			});
+		});
 	})
 	beforeEach(function(done){
-		var people=new  db.Peoples({
+		db=utils.getDatabase();
+		teacher=new Teacher(db.schema.Teachers);
+		var people=new  db.schema.Peoples({
 			dni:"V"+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9),
 			name:faker.name.findName(),
 			birthDate:faker.date.past(),
@@ -580,7 +478,7 @@ describe("CRUD clase Table Teachers",function(){
 			mode:"TEACHER",
 			birthdate:faker.date.past()
 		});
-		find=new db.Teachers({
+		find=new db.schema.Teachers({
 			data:people,
 			interprete:false
 		});
@@ -695,18 +593,19 @@ describe("CRUD clase Table Teachers",function(){
 
 // Test CRUD from Table Students
 describe("CRUD clase Table Students",function(){
+	var db, student, find;
 	var Student=require("../src/BackEnd/SoulHand/CRUD.js");
-	var student=new Student(db.Students),find;
 	afterEach(function(done){
-		db.Students.find().then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
-			done();
-		})
+		db.db.dropDatabase(function(){
+			db.db.close(function(){
+				done();				
+			});
+		});
 	})
 	beforeEach(function(done){
-		var people=new  db.Peoples({
+		db=utils.getDatabase();
+		student=new Student(db.schema.Students);
+		var people=new  db.schema.Peoples({
 			dni:"V"+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9),
 			name:faker.name.findName(),
 			birthDate:faker.date.past(),
@@ -715,9 +614,9 @@ describe("CRUD clase Table Students",function(){
 			mode:"STUDENT",
 			birthdate:faker.date.past()
 		});
-		find=new db.Students({
+		find=new db.schema.Students({
 			data:people,
-			grade:new  db.Grades({
+			grade:new  db.schema.Grades({
 				name:faker.name.findName()
 			}),
 			activities:[],
@@ -741,7 +640,7 @@ describe("CRUD clase Table Students",function(){
 				mode:"STUDENT",
 				birthdate:faker.date.past()
 			},
-			grade:new  db.Grades({
+			grade:new  db.schema.Grades({
 				name:faker.name.findName()
 			}),
 			activities:[],
@@ -767,7 +666,7 @@ describe("CRUD clase Table Students",function(){
 				mode:"STUDENT",
 				birthdate:faker.date.past()
 			},
-			grade:new  db.Grades({
+			grade:new  db.schema.Grades({
 				name:faker.name.findName()
 			}),
 			activities:[],
@@ -847,23 +746,19 @@ describe("CRUD clase Table Students",function(){
 
 // Test CRUD from Table Representatives
 describe("CRUD clase Table Representatives",function(){
+	var db, find, people, student;
 	var Student=require("../src/BackEnd/SoulHand/CRUD.js");
-	var student=new Student(db.Representatives),find,people;
 	afterEach(function(done){
-		db.Representatives.find().then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
-			return db.Peoples.find();
-		}).then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
-			done();
+		db.db.dropDatabase(function(){
+			db.db.close(function(){
+				done();				
+			});
 		});
 	})
 	beforeEach(function(done){
-		people=new  db.Peoples({
+		db=utils.getDatabase();
+		student=new Student(db.schema.Representatives);
+		people=new  db.schema.Peoples({
 			dni:"V"+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9),
 			name:faker.name.findName(),
 			birthDate:faker.date.past(),
@@ -873,8 +768,8 @@ describe("CRUD clase Table Representatives",function(){
 			birthdate:faker.date.past()
 		});
 		people.save().then(function(){
-			find=new db.Representatives({
-				data:new  db.Peoples({
+			find=new db.schema.Representatives({
+				data:new  db.schema.Peoples({
 					dni:"V"+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9)+Math.round(Math.random()*9),
 					name:faker.name.findName(),
 					birthDate:faker.date.past(),
@@ -998,32 +893,22 @@ describe("CRUD clase Table Representatives",function(){
 
 // Test CRUD from Table Cognitions
 describe("CRUD clase Table Cognitions",function(){
+	var db, cognition, find, category;
 	var Cognition=require("../src/BackEnd/SoulHand/CRUD.js");
-	var cognition=new Cognition(db.Cognitions),find,category;
 	afterEach(function(done){
-		db.Cognitions.find().then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
-			return db.CategoryCognitions.find();
-		}).then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
-			done();
-		})
+		db.db.dropDatabase(function(){
+			db.db.close(function(){
+				done();				
+			});
+		});
 	})
 	beforeEach(function(done){
-		category=new db.CategoryCognitions({
-			name:faker.name.findName()			
+		db=utils.getDatabase();
+		cognition=new Cognition(db.schema.Cognitions);
+		find=new  db.schema.Cognitions({
+			name:faker.name.findName()
 		});
-		category.save().then(function(data){
-			find=new  db.Cognitions({
-				name:faker.name.findName(),
-				category:data
-			});
-			return find.save(); 
-		}).then(function(){
+		find.save().then(function(){
 			done();			
 		})
 	})
@@ -1129,35 +1014,32 @@ describe("CRUD clase Table Cognitions",function(){
 	});
 });
 
+/*
 // Test CRUD from Table Habilities
 describe("CRUD clase Table Habilities",function(){
+	var db, find, category, cognition, hability;
 	var Hability=require("../src/BackEnd/SoulHand/CRUD.js");
-	var hability=new Hability(db.Habilities),find,category,cognition;
 	afterEach(function(done){
-		db.Habilities.find().then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
-			return db.CategoryCognitions.find();
-		}).then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
-			done();
-		})
+		db.db.dropDatabase(function(){
+			db.db.close(function(){
+				done();				
+			});
+		});
 	})
 	beforeEach(function(done){
-		category=new db.CategoryCognitions({
+		db=utils.getDatabase();
+		hability=new Hability(db.schema.Habilities);
+		category=new db.schema.CategoryCognitions({
 			name:faker.name.findName()			
 		});
 		category.save().then(function(data){
-			cognition=new  db.Cognitions({
+			cognition=new  db.schema.Cognitions({
 				name:faker.name.findName(),
 				category:data
 			});
 			return cognition.save(); 
 		}).then(function(){
-			find=new db.Habilities({
+			find=new db.schema.Habilities({
 				name:faker.name.findName(),
 				Cognitions:[cognition]
 			});
@@ -1245,36 +1127,26 @@ describe("CRUD clase Table Habilities",function(){
 		})
 	});
 });
-
-// Test CRUD from Table Habilities
+*/
+// Test CRUD from Table ConflictCognitions
 describe("CRUD clase Table ConflictCognitions",function(){
+	var db, hability, find, category, cognition;
 	var Hability=require("../src/BackEnd/SoulHand/CRUD.js");
-	var hability=new Hability(db.ConflictCognitions),find,category,cognition;
 	afterEach(function(done){
-		db.Habilities.find().then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
-			return db.CategoryCognitions.find();
-		}).then(function(data){
-			for (i in data){
-				data[i].remove();
-			}
-			done();
-		})
+		db.db.dropDatabase(function(){
+			db.db.close(function(){
+				done();				
+			});
+		});
 	})
 	beforeEach(function(done){
-		category=new db.CategoryCognitions({
-			name:faker.name.findName()			
-		});
-		category.save().then(function(data){
-			cognition=new  db.Cognitions({
+		db=utils.getDatabase();
+		hability=new Hability(db.schema.ConflictCognitions);
+		cognition=new  db.schema.Cognitions({
 				name:faker.name.findName(),
-				category:data
-			});
-			return cognition.save(); 
-		}).then(function(){
-			find=new db.ConflictCognitions({
+		});
+		cognition.save().then(function(){
+			find=new db.schema.ConflictCognitions({
 				name:faker.name.findName(),
 				Cognitions:[cognition]
 			});
