@@ -13,15 +13,15 @@ export class NavBar extends React.Component<{}, {}> {
               <span className="icon-bar"></span>
               <span className="icon-bar"></span>
             </button>
-            <a className="navbar-brand titulo" id="home"><span><b>SOULHAND</b></span></a>
+            <Link to="/" className="navbar-brand titulo" id="home"><span><b>SOULHAND</b></span></Link>
           </div>
           <div className="collapse navbar-collapse" id="navbar-ex-collapse">
             <ul className="nav navbar-left navbar-nav">
-              <li className="dropdown menu" id="persona">
+              <li className="dropdown menu" id="persona">             
                 <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span>Persona</span> <i className="fa fa-caret-down text-muted"></i></a>
                 <ul className="dropdown-menu" role="menu">
                   <li>
-                    <a href="#">Docente</a>
+                    <Link to="/teacher">Docente</Link>
                   </li>
                   <li className="divider"></li>
                   <li>

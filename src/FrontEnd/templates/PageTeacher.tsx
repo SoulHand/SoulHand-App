@@ -5,11 +5,20 @@ import {getJSON} from 'jquery'
 export class PageTeacher extends React.Component<{}, {}> {
 	public PrivateKeyId="1dec3409-dbc9-4314-8bb4-a38ef808c702";
 	public PublicKeyId="NThjODg5ZWIxMjA3OTIwYTcwY2E2NDkz"
-	public teachers:any=[];
+	constructor(props:any) {
+		super(props);
+		this.state = {teachers:[],search:""};
+	}	
+	getFields(event:any){
+		this.setState({
+	      search : event.target.value
+	    });
+	}
 	componentDidMount(){
-		getJSON(`//0.0.0:8080/v1/teachers/?PublicKeyId=${this.PublicKeyId}&PrivateKeyId=${this.PrivateKeyId}`,(data)=>{
-			this.teachers=data;
-			console.log(data)
+		getJSON(`//0.0.0:8080/v1/people/teachers/?PublicKeyId=${this.PublicKeyId}&PrivateKeyId=${this.PrivateKeyId}`,(data)=>{
+			this.setState({
+		      teachers : data
+		    });
 		})
 	}
 	render () {
@@ -17,8 +26,9 @@ export class PageTeacher extends React.Component<{}, {}> {
 		<div className="container card">
 			<form className="navbar-form navbar-right">
 				<div className="right">
-					<input type="text" className="form-control" placeholder="Buscar"/>
+					<input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.getFields(e)}}/>
 				</div>
+				<span>{this.state.search}</span>
 			</form>
 			<h3>Docente</h3>
 			<table className="table table-striped">
@@ -32,7 +42,7 @@ export class PageTeacher extends React.Component<{}, {}> {
 				</thead>
 				<tbody>
 				{
-					this.teachers.forEach((row:any)=>{
+					this.state.teachers.forEach((row:any)=>{
 						<tr>
 							<td>{row.data.name}</td>
 							<td>{row.data.email}</td>
