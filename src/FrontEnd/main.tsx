@@ -26,6 +26,9 @@ window.addEventListener("load",()=>{
 		    	<IndexRoute component={PageTeacher}/>
 		    	<Route path="create" component={PageTeacherCreate}/>
 		    </Route>
+		    <Route path="/student" component={App}>
+		    	<IndexRoute component={PageStudent}/>
+		    </Route>
 	  	</Router>
 	  ), document.body
 	);
