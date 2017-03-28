@@ -36,7 +36,7 @@ module.exports=function(app,express,server,__DIR__){
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("El nombre solo debe contener letras");
 		}
-		grade.add(request.body.name).then(function(data){
+		grade.add(request.body.name.toString()).then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -345,9 +345,9 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	learningURI.get("/domain/:name",function(request, response,next) {
+	learningURI.get("/domain/:id",function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);			
-		category.find({name:request.params.name.toUpperCase()}).then(function(data){
+		category.find({_id:request.params.id.toUpperCase()}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -408,12 +408,16 @@ module.exports=function(app,express,server,__DIR__){
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Solo se aceptan textos categoricos");
 		}
+		if(Validator.isNull()(request.body.description)){
+			throw new ValidatorException("Es necesario una breve descripción");
+		}
 		if(Validator.isNull()(request.params.domain)){
 			throw new ValidatorException("Solo se aceptan dominios validos");
 		}
 		domain.find({name:request.params.domain.toUpperCase()}).then(function(row){
 			row.cognitions.push(app.container.database.Schema.Cognitions({
-				name:request.body.name.toUpperCase()
+				name:request.body.name.toUpperCase(),
+				description:request.body.description.toUpperCase()
 			}));
 			return row.save();
 		}).then(function(data){
@@ -758,16 +762,21 @@ module.exports=function(app,express,server,__DIR__){
 	*/
 	weightURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var category=new CRUD(app.container.database.Schema.weights);
-		if(!Validator.isInt()(request.body.age) || !Validator.isInt(request.body.min) || !Validator.isInt(request.body.max)){
+		if(!Validator.isFloat()(request.body.height) || !Validator.isFloat()(request.body.min) || !Validator.isFloat()(request.body.max)){
 			throw new ValidatorException("Solo se aceptan numeros");
 		}
 		if((request.body.max-request.body.min)<=0 || request.body.min==0 || request.body.max==0){
 			throw new ValidatorException("El rango de pesos es invalido");
 		}
-		category.add({age:request.body.age},{
-			age:request.body.age,
+		if(request.body.genero && request.body.genero.toUpperCase()!="MASCULINO" && request.body.genero.toUpperCase()!="FEMENINO" ){
+			throw new ValidatorException("El genero es invalido");
+		}
+		var genero=request.body.genero.toUpperCase();
+		category.add({height:request.body.height,genero:genero},{
+			height:request.body.height,
 			min:request.body.min,
 			max:request.body.max,
+			genero:genero
 		}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -865,16 +874,21 @@ module.exports=function(app,express,server,__DIR__){
 	*/
 	heightURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var category=new CRUD(app.container.database.Schema.heights);
-		if(!Validator.isInt()(request.body.age) || !Validator.isInt(request.body.min) || !Validator.isInt(request.body.max)){
+		if(!Validator.isFloat()(request.body.age) || !Validator.isFloat()(request.body.min) || !Validator.isFloat()(request.body.max)){
 			throw new ValidatorException("Solo se aceptan numeros");
 		}
 		if((request.body.max-request.body.min)<=0 || request.body.min==0 || request.body.max==0){
 			throw new ValidatorException("El rango de pesos es invalido");
 		}
-		category.add({age:request.body.age},{
+		if(request.body.genero && request.body.genero.toUpperCase()!="MASCULINO" && request.body.genero.toUpperCase()!="FEMENINO" ){
+			throw new ValidatorException("El genero es invalido");
+		}
+		var genero=request.body.genero.toUpperCase();
+		category.add({age:request.body.age,genero:genero},{
 			age:request.body.age,
 			min:request.body.min,
 			max:request.body.max,
+			genero:genero
 		}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -1227,21 +1241,23 @@ module.exports=function(app,express,server,__DIR__){
 			if(!data){
 				throw new VoidException("No existe un registro de este tipo");
 			}
+			return app.container.database.Schema.Peoples.findOne({_id:teacher.data._id})
 		}).then(function(data){
 			people=data;
 			if(!data){
 				throw new VoidException("No existe un registro de este tipo");
 			}
-			for (i in people){
+			var fields=people.toJSON();
+			for (i in fields){
 				if(request.body[i] && i!="dni"){
 					people[i]=request.body[i];
 				}
 			}
-			teacher.people=people;
+			teacher.data=people;
 			if(request.body.interprete){
 				teacher.interprete=request.body.interprete;				
 			}
-			return Promise.all(people.save(),teacher.save());
+			return Promise.all([people.save(),teacher.save()]);
 		}).then(function(data){
 			response.send(data[1]);
 		}).catch(function(error){
@@ -1294,9 +1310,7 @@ module.exports=function(app,express,server,__DIR__){
 		if(!Validator.isDate()(request.body.birthdate)){
 			throw new ValidatorException("La fecha de nacimiento no es valida");
 		}
-		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
-			throw new ValidatorException("El telefono no tiene un formato valido");
-		}
+		
 		var fields={
 			data:JSON.parse(JSON.stringify(request.body)),
 			grade:request.body.grade,
@@ -1372,44 +1386,31 @@ module.exports=function(app,express,server,__DIR__){
 		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
 			throw new ValidatorException("El telefono no tiene un formato valido");
 		}
-		var promise1;
-		if(request.body.grade){
-			promise1=grade.find({name:request.body.grade}).then(function(data){
-				request.body.grade=data;
-				return people.update({_id:request.params.id},function(obj){
-					for (i in obj.data){
-						if(request.body[i] && i!="dni"){
-							obj.data[i]=request.body[i];
-						}
-					}
-					obj.grade=request.body.grade;
-					return obj;
-				})
-			});
-		}else{
-			promise1=people.update({_id:request.params.id},function(obj){
-				for (i in obj.data){
-					if(request.body[i] && i!="dni"){
-						obj.data[i]=request.body[i];
-					}
-				}
-				return obj;
-			});
-		}
-		promise1.then(function(data){
-			return people2.find({_id:data.data._id});
+		var people, student;
+		app.container.database.Schema.Students.findOne({_id:request.params.id}).then(function(data){
+			student=data;
+			return app.container.database.Schema.Peoples.findOne({_id:student.data._id});
 		}).then(function(data){
-			for (i in data){
+			people=data;
+			var fields=people.toJSON();
+			for (i in fields){
 				if(request.body[i] && i!="dni"){
-					data[i]=request.body[i];
+					people[i]=request.body[i];
 				}
-			}			
-			return data.save();
+			}
+			student.data=people;			
+			var fields=student.toJSON();
+			for (i in fields){
+				if(request.body[i] && i!="dni"){
+					student[i]=request.body[i];
+				}
+			}
+			return Promise.all([people.save(),student.save()]);
 		}).then(function(data){
-			response.send(data);
+			response.send(data[1]);
 		}).catch(function(error){
 			next(error);
-		});
+		});		
 	});
 	/*
 	* @api {delete} /:id Eliminar un alumno
@@ -1430,13 +1431,42 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	/*
-	* @api {post} /:dni/test/:test Crear test alumno
+	* @api {post} / añadir desarrollo fisico
 	* @params request peticiones del cliente
 	* @params response respuesta del servidor
 	* @params next middleware dispara la proxima funcion	
 	* @var people<SubPeople> objeto CRUD
 	* @var people2<People> objeto CRUD
 	*/
+	StudentsURI.post("/:id/physic",function(request, response,next) {
+		if(!Validator.isFloat()(request.body.weight) || !Validator.isFloat()(request.body.height)){
+			throw new ValidatorException("El peso y estatura son medidas en centimetros!");
+		}
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		app.container.database.Schema.Students.findOne({_id:request.params.id}).then(function(data){
+			var element=app.container.database.Schema.physic({
+				weight:request.body.weight,
+				height:request.body.height
+			});
+			data.physics.push(element);
+			return data.save();
+		}).then(function(data){
+			response.send(data);			
+		}).catch(function(error){
+			next(error);
+		});
+	});
+
+	/*
+	* @api {post} /:dni/test/:test Crear test alumno
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*\/
 	StudentsURI.post("/:dni/test/:test",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		var test=new CRUD(app.container.database.Schema.TestInteligence);
@@ -1479,7 +1509,7 @@ module.exports=function(app,express,server,__DIR__){
 		}).catch(function(error){
 			next(error);
 		});
-	});
+	}); */
 	app.use("/v1/people/students",StudentsURI);
 	/*
 	* Ruta /v1/representives		
@@ -1537,7 +1567,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var people<SubPeople>	objeto CRUD
 	*/
 	ReferencesToURI.get("/",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
+		var people=new SubPeople(app.container.database.Schema.Representatives);
 		people.get().then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -1552,7 +1582,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var people<SubPeople>	objeto CRUD
 	*/
 	ReferencesToURI.get("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
+		var people=new SubPeople(app.container.database.Schema.Representatives);
 		people.find({_id:request.params.id}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -1569,7 +1599,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var grade<Grade>	objeto CRUD
 	*/
 	ReferencesToURI.put("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
+		var people=new SubPeople(app.container.database.Schema.Representatives);
 		var people2=new People(app.container.database.Schema.Peoples);
 		var grade=new Grade(app.container.database.Schema.Grades);
 		if(request.body.dni && !Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
@@ -1584,44 +1614,32 @@ module.exports=function(app,express,server,__DIR__){
 		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
 			throw new ValidatorException("El telefono no tiene un formato valido");
 		}
-		var promise1;
-		if(request.body.grade){
-			promise1=grade.find({name:request.body.grade}).then(function(data){
-				request.body.grade=data;
-				return people.update({_id:request.params.id},function(obj){
-					for (i in obj.data){
-						if(request.body[i] && i!="dni"){
-							obj.data[i]=request.body[i];
-						}
-					}
-					obj.grade=request.body.grade;
-					return obj;
-				})
-			});
-		}else{
-			promise1=people.update({_id:request.params.id},function(obj){
-				for (i in obj.data){
-					if(request.body[i] && i!="dni"){
-						obj.data[i]=request.body[i];
-					}
-				}
-				return obj;
-			});
-		}
-		promise1.then(function(data){
-			return people2.find({_id:data.data._id});
+
+		var people, represent;
+		app.container.database.Schema.Representatives.findOne({_id:request.params.id}).then(function(data){
+			represent=data;
+			return app.container.database.Schema.Peoples.findOne({_id:represent.data._id});
 		}).then(function(data){
-			for (i in data){
+			people=data;
+			var fields=people.toJSON();
+			for (i in fields){
 				if(request.body[i] && i!="dni"){
-					data[i]=request.body[i];
+					people[i]=request.body[i];
 				}
 			}
-			return data.save();
+			represent.data=people;			
+			var fields=represent.toJSON();
+			for (i in fields){
+				if(request.body[i] && i!="dni"){
+					represent[i]=request.body[i];
+				}
+			}
+			return Promise.all([people.save(),represent.save()]);
 		}).then(function(data){
-			response.send(data);
+			response.send(data[1]);
 		}).catch(function(error){
 			next(error);
-		});
+		});		
 	});
 	/*
 	* @api {delete} /:id Eliminar un representante
@@ -1632,7 +1650,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var people2<People>	objeto CRUD
 	*/
 	ReferencesToURI.delete("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
+		var people=new SubPeople(app.container.database.Schema.Representatives);
 		var people2=new People(app.container.database.Schema.Peoples);
 		people.remove({_id:request.params.id}).then(function(data){
 			response.send(data);
@@ -1642,6 +1660,236 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	app.use("/v1/people/parent",ReferencesToURI);/*
+
+	/*
+	* Ruta /v1/words/morphema		
+	* @var ReferencesToURI object enrutador para agrupar metodos
+	*/
+	var morphema = express.Router();
+	/*
+	* @api {post} / Crear representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people3<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*/
+	morphema.post("/",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Representatives);
+		var people3=new SubPeople(app.container.database.Schema.Students);
+		var people2=new People(app.container.database.Schema.Peoples);
+		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
+			throw new ValidatorException("Solo se aceptan documentos de identidad");
+		}
+		if(Validator.matches(/[0-9]/)(request.body.name)){
+			throw new ValidatorException("Solo se aceptan nombres validos");
+		}
+		if(!Validator.isDate()(request.body.birthdate)){
+			throw new ValidatorException("La fecha de nacimiento no es valida");
+		}
+		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
+			throw new ValidatorException("El telefono no tiene un formato valido");
+		}
+		var fields={
+			data:JSON.parse(JSON.stringify(request.body)),
+			idStudent:request.body.idStudent			
+		};
+		fields.data.mode="PARENT";
+		delete(fields.data.idStudent);
+		people3.find({"data.dni":request.body.idStudent}).then(function(data){
+			fields.idStudent=data._id;
+			return people2.add(fields.data);
+		}).then(function(data){
+			fields.data=data;
+			return people.add(fields);
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {post} /type Crear representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people3<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*/
+	morphema.post("/type",function(request, response,next) {
+		var morphem=new CRUD(app.container.database.Schema.morphem_type);
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("El nombre solo debe contener letras");
+		}
+		var input={
+			name:request.body.name.toString()
+		};
+		morphem.add(input,input).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {post} /type Crear representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people3<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*/
+	morphema.get("/type",function(request, response,next) {
+		var morphem=new CRUD(app.container.database.Schema.morphem_type);
+		morphem.get().then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {post} /type Crear representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people3<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*/
+	morphema.get("/type/:id",function(request, response,next) {
+		var morphem=new CRUD(app.container.database.Schema.morphem_type);
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		morphem.find({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {post} /type Crear representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people3<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*/
+	morphema.delete("/type/:id",function(request, response,next) {
+		var morphem=new CRUD(app.container.database.Schema.morphem_type);
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		morphem.remove({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todos los representantes
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	*/
+	morphema.get("/",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Representatives);
+		people.get().then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} /:id Obtener un representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	*/
+	morphema.get("/:id",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Representatives);
+		people.find({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {put} /:id Editar representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	* @var grade<Grade>	objeto CRUD
+	*/
+	morphema.put("/:id",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Representatives);
+		var people2=new People(app.container.database.Schema.Peoples);
+		var grade=new Grade(app.container.database.Schema.Grades);
+		if(request.body.dni && !Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
+			throw new ValidatorException("Solo se aceptan documentos de identidad");
+		}
+		if(request.body.name && Validator.matches(/[0-9]/)(request.body.name)){
+			throw new ValidatorException("Solo se aceptan nombres validos");
+		}
+		if(request.body.birthdate && !Validator.isDate()(request.body.birthdate)){
+			throw new ValidatorException("La fecha de nacimiento no es valida");
+		}
+		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
+			throw new ValidatorException("El telefono no tiene un formato valido");
+		}
+
+		var people, represent;
+		app.container.database.Schema.Representatives.findOne({_id:request.params.id}).then(function(data){
+			represent=data;
+			return app.container.database.Schema.Peoples.findOne({_id:represent.data._id});
+		}).then(function(data){
+			people=data;
+			var fields=people.toJSON();
+			for (i in fields){
+				if(request.body[i] && i!="dni"){
+					people[i]=request.body[i];
+				}
+			}
+			represent.data=people;			
+			var fields=represent.toJSON();
+			for (i in fields){
+				if(request.body[i] && i!="dni"){
+					represent[i]=request.body[i];
+				}
+			}
+			return Promise.all([people.save(),represent.save()]);
+		}).then(function(data){
+			response.send(data[1]);
+		}).catch(function(error){
+			next(error);
+		});		
+	});
+	/*
+	* @api {delete} /:id Eliminar un representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	*/
+	morphema.delete("/:id",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Representatives);
+		var people2=new People(app.container.database.Schema.Peoples);
+		people.remove({_id:request.params.id}).then(function(data){
+			response.send(data);
+			return people2.remove(data.data._id);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	app.use("/v1/words/morphema",morphema);/*
 
 
 

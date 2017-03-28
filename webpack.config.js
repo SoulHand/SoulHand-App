@@ -31,7 +31,7 @@ module.exports = {
        React: "react",
        ReactDOM: "react-dom",
        ReactRouter: "react-router"
-    })/*,
+    }),
     // new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js'),
     new webpack.optimize.UglifyJsPlugin({
         compress: {
@@ -48,5 +48,5 @@ module.exports = {
       excludes:           [],
       searchResolveModulesDirectories: true
     })*/   
-  ],
+  ]
 }
