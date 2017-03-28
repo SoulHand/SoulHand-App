@@ -16,6 +16,7 @@ import {PageStudent} from './templates/PageStudent';
 import {PageStudentCreate} from './templates/PageStudentCreate';
 import {PageRepresentative} from './templates/PageRepresentative';
 import {PageRepresentativeCreate} from './templates/PageRepresentativeCreate';
+import {PageUserCreate} from './templates/PageUserCreate';
 
 
 window.addEventListener("load",()=>{
@@ -38,6 +39,8 @@ window.addEventListener("load",()=>{
 		    <Route path="/representative" component={App}>
 		    	<IndexRoute component={PageRepresentative}/>
 		    	<Route path="create" component={PageRepresentativeCreate}/>
+		    <Route path="/user" component={App}>
+		    	<Route path="create" component={PageuserCreate}/>
 		    </Route>
 	  	</Router>
 	  ), document.body
