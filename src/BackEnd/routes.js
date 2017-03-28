@@ -1119,18 +1119,22 @@ module.exports=function(app,express,server,__DIR__){
 	* @var user<User>	objeto CRUD
 	* Authorization: Basic base64(username:pass)
 	*/
-	app.get('/v1/auth',basicAuth(function(username, pass,next){
+	app.post('/v1/auth',function(request,response,next){
+		var username=request.body.username;
+		var pass=request.body.password;
 		const base64=require('base-64');
 		var user=new User(app.container.database.Schema.User);
 		user.find({$and:[{$or:[{username:username},{email:username}]},{password:base64.encode(pass)}]}).then(function(data){
 			if(!data){
 				throw new UserException("no existe el usuario!");
 			}
-			next(null,data);
+			request.user = request.remoteUser = data;
+			next();
 		}).catch(function(error){
 			next(error);
 		});		
-	}),function(request,response,next){
+		
+	},function(request,response,next){
 		var user=new Token(app.container.database.Schema.Sessions);
 		var address=request.connection.address() || request.socket.address();
 		var navigator=request.headers['user-agent'];

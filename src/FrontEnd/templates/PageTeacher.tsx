@@ -5,6 +5,7 @@ import {getJSON} from 'jquery'
 export class PageTeacher extends React.Component<{}, {}> {
 	public PrivateKeyId="1dec3409-dbc9-4314-8bb4-a38ef808c702";
 	public PublicKeyId="NThjODg5ZWIxMjA3OTIwYTcwY2E2NDkz"
+	public state:any
 	constructor(props:any) {
 		super(props);
 		this.state = {teachers:[],search:""};
@@ -21,35 +22,10 @@ export class PageTeacher extends React.Component<{}, {}> {
 		    });
 		})
 	}
-	render () {
-		var rows=(teachers:any):any=>{
-			return (
-				<tr>
-					<td colSpan={4}>
-						<span className="align-center">No se encuentran resultados</span>
-					</td>
-				</tr>
-			);
-		};
-		if(this.state.teachers.length>0){
-			rows= (teachers:any):any=>{
-				return (
-					<tbody>
-						{
-							teachers.forEach((row:any)=>{
-								<tr>
-									<td>{row.data.name}</td>
-									<td>{row.data.email}</td>
-									<td>{(row.interprete==true) ? 'Sí' : 'No'}</td>
-									<td><button type="button" className="btn btn-warning">Editar</button>
-									<button type="button" className="btn btn-danger">Eliminar</button></td>
-								</tr>
-							})
-						}
-					</tbody>
-				);
-			};
-		}
+	render () {		
+    	this.state.teachers.forEach((row:any)=>{
+    		console.log(row);
+    	});
     return (
 		<div className="container card">
 			<form className="navbar-form navbar-right">
@@ -69,7 +45,24 @@ export class PageTeacher extends React.Component<{}, {}> {
 					</tr>
 				</thead>
 				<tbody>
-				{rows(this.state.teachers)}
+					{
+						(!this.state.teachers) ?
+							<tr>
+								<td colSpan={4}>
+									<span className="align-center">No se encuentran resultados</span>
+								</td>
+							</tr>
+						:
+							this.state.teachers.forEach((row:any)=>{
+								<tr>
+									<td>{row.data.name}</td>
+									<td>{row.data.email}</td>
+									<td>{(row.interprete==true) ? 'Sí' : 'No'}</td>
+									<td><button type="button" className="btn btn-warning">Editar</button>
+									<button type="button" className="btn btn-danger">Eliminar</button></td>
+								</tr>
+							})
+					}
 				</tbody>
 			</table>
 		</div>

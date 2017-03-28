@@ -12,6 +12,7 @@ import {PageIndex} from './templates/PageIndex';
 import {Login} from './templates/Login';
 import {PageTeacher} from './templates/PageTeacher';
 import {PageTeacherCreate} from './templates/PageTeacherCreate';
+import {Auth} from './Auth';
 
 window.addEventListener("load",()=>{
 	render((
@@ -22,7 +23,7 @@ window.addEventListener("load",()=>{
 		    <Route path="/auth" component={App}>
 		    	<IndexRoute component={Login}/>
 		    </Route>
-		    <Route path="/teacher" component={App}>
+		    <Route path="/teacher" component={App} onEnter={Auth}>
 		    	<IndexRoute component={PageTeacher}/>
 		    	<Route path="create" component={PageTeacherCreate}/>
 		    </Route>
