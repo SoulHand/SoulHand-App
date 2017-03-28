@@ -16,7 +16,6 @@ export class Login extends React.Component<{}, {}> {
 		console.log(this.user)
 	}
 	auth(event:any){
-		console.log(this.user);
 		ajax({
 			method:"POST",
 	        url: '//0.0.0:8080/v1/auth',
