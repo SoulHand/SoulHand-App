@@ -345,9 +345,9 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	learningURI.get("/domain/:name",function(request, response,next) {
+	learningURI.get("/domain/:id",function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);			
-		category.find({name:request.params.name.toUpperCase()}).then(function(data){
+		category.find({_id:request.params.id.toUpperCase()}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -408,12 +408,16 @@ module.exports=function(app,express,server,__DIR__){
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Solo se aceptan textos categoricos");
 		}
+		if(Validator.isNull()(request.body.description)){
+			throw new ValidatorException("Es necesario una breve descripción");
+		}
 		if(Validator.isNull()(request.params.domain)){
 			throw new ValidatorException("Solo se aceptan dominios validos");
 		}
 		domain.find({name:request.params.domain.toUpperCase()}).then(function(row){
 			row.cognitions.push(app.container.database.Schema.Cognitions({
-				name:request.body.name.toUpperCase()
+				name:request.body.name.toUpperCase(),
+				description:request.body.description.toUpperCase()
 			}));
 			return row.save();
 		}).then(function(data){

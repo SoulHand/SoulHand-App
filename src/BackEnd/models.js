@@ -1,7 +1,8 @@
 var mongoose= require('mongoose');
 var structDb={
 	Cognitions:mongoose.Schema({
-		name:{type:String, required:true, trim:true, uppercase: true}
+		name:{type:String, required:true, trim:true, uppercase: true},
+		description:{type:String, required:true, trim:true, uppercase: true}
 	}),
 	Grades:mongoose.Schema({
 		name:{type:String, required:true, trim:true, uppercase: true}
