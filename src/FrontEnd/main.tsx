@@ -5,7 +5,6 @@ import 'jquery';
 import 'tether';
 import 'bootstrap';
 import 'bootstrap/scss/bootstrap.scss';
-import './scss/pingendo.css';
 import './scss/main.scss';
 import {App} from './App';
 import {PageIndex} from './templates/PageIndex';
