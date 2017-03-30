@@ -4,8 +4,6 @@ import {render} from 'react-dom';
 import 'jquery';
 import 'tether';
 import 'bootstrap';
-import 'bootstrap/scss/bootstrap.scss';
-import './scss/main.scss';
 import {App} from './App';
 import {PageIndex} from './templates/PageIndex';
 import {Login} from './templates/Login';
@@ -14,6 +12,7 @@ import {PageTeacherCreate} from './templates/PageTeacherCreate';
 import {Auth} from './Auth';
 
 window.addEventListener("load",()=>{
+	var body=document.querySelector("div[data-app=\"soulhand-services\"]");
 	render((
 	 	<Router history={hashHistory}>
 		    <Route path="/" component={App}>
@@ -27,6 +26,6 @@ window.addEventListener("load",()=>{
 		    	<Route path="create" component={PageTeacherCreate}/>
 		    </Route>
 	  	</Router>
-	  ), document.body
+	  ), body
 	);
 });

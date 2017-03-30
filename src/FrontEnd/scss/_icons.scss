@@ -1,0 +1,1581 @@
+.icons,div.profile div.capture{
+    background-image:url("/images/spriter-controls.png");
+    background-repeat: no-repeat;    
+}
+.icons{
+	flex:0 0 auto !important;
+    &.x16{
+        width: 38px !important;
+        height: 38px !important;
+        &.check{
+        	&.black{
+    			background-position: -168px -7294px;        		
+        	}
+        	&.white{
+    			background-position: -120px -7294px;        		
+        	}
+        }
+        &.add{
+        	&.black{
+    			background-position: -169px -7230px;
+        	}
+        	&.white{
+    			background-position: -120px -7230px;
+        	}
+        }
+        &.government{
+        	&.black{
+    			background-position: -176px -265px;
+        	}
+        	&.white{
+    			background-position: -170px -325px;
+        	}
+        }
+        &.book{
+        	&.black{
+    			background-position: -176px -405px;
+        	}
+        	&.white{
+    			background-position: -176px -473px;
+        	}
+        }
+        &.box{
+        	&.black{
+    			background-position: -178px -556px;
+        	}
+        	&.white{
+    			background-position: -178px -623px;
+        	}
+        }
+        &.cancel{
+          &.black{
+          background-position: -176px -697px;
+          }
+          &.white{
+          background-position: -177px -768px;
+          }
+        }
+        &.delete{
+        	&.black{
+    			background-position: -177px -1679px;
+        	}
+        	&.white{
+            background-position: -177px -1746px;
+          }
+        }
+    }
+    &.x24{
+        width: 48px !important;
+        height: 48px !important;
+        &.check{
+        	&.black{
+    			background-position: -164px -7288px;
+        	}
+        	&.white{
+    			background-position: -115px -7289px;        		
+        	}
+        }
+        &.add{
+        	&.black{
+    			background-position: -165px -7225px;
+        	}
+        	&.white{
+    			background-position: -115px -7225px;
+        	}
+        }
+        &.government{
+        	&.black{
+    			background-position: -126px -255px;
+        	}
+        	&.white{
+    			background-position: -127px -316px;
+        	}
+        }
+        &.book{
+        	&.black{
+    			background-position: -127px -396px;
+        	}
+        	&.white{
+    			background-position: -129px -614px;
+        	}
+        }
+        &.box{
+        	&.black{
+    			background-position: -128px -546px;
+        	}
+        	&.white{
+    			background-position: -129px -614px;
+        	}
+        }
+        &.cancel{
+          &.black{
+          background-position: -128px -687px;
+          }
+          &.white{
+          background-position: -128px -758px;
+          }
+        }
+        &.delete{
+        	&.black{
+    			background-position: -127px -1670px;
+        	}
+        	&.white{
+    			background-position: -128px -1737px;
+        	}
+        }
+    }
+    &.x32{
+        width: 54px !important;
+        height: 54px !important;
+        &.check{
+        	&.black{
+    			background-position: -160px -7286px;
+        	}
+        	&.white{
+    			background-position: -112px -7286px;
+        	}
+        }
+        &.add{
+        	&.black{
+    			background-position: -161px -7220px;
+        	}
+        	&.white{
+    			background-position: -111px -7221px;
+        	}
+        }
+        &.government{
+        	&.black{
+    			background-position: -67px -249px;
+        	}
+        	&.white{
+    			background-position: -68px -308px;
+        	}
+        }
+        &.book{
+        	&.black{
+    			background-position: -68px -388px;
+        	}
+        	&.white{
+    			background-position: -69px -456px;
+        	}
+        }
+        &.box{
+        	&.black{
+    			background-position: -69px -538px;
+        	}
+        	&.white{
+    			background-position: -69px -606px;
+        	}
+        }
+        &.cancel{
+          &.black{
+          background-position: -68px -679px;
+          }
+          &.white{
+          background-position: -69px -751px;
+          }
+        }
+        &.delete{
+        	&.black{
+    			background-position: -69px -1663px;
+        	}
+        	&.white{
+    			background-position: -69px -1729px;
+        	}
+        }
+    }
+    &.x48{
+        width: 64px !important;
+        height: 64px !important;
+        &.check{
+        	&.black{
+    			background-position: -155px -7280px;
+        	}
+        	&.white{
+    			background-position: -107px -7280px;
+        	}
+        }
+        &.add{
+        	&.black{
+    			background-position: -156px -7216px;
+        	}
+        	&.white{
+    			background-position: -107px -7216px;
+        	}
+        }
+        &.government{
+        	&.black{
+    			background-position: -5px -236px;
+        	}
+        	&.white{
+    			background-position: -5px -297px;
+        	}
+        }
+        &.book{
+        	&.black{
+    			background-position: -64px -383px;
+        	}
+        	&.white{
+    			background-position: -64px -453px;
+        	}
+        }
+        &.box{
+        	&.black{
+    			background-position: -65px -532px;
+        	}
+        	&.white{
+    			background-position: -65px -601px;
+        	}
+        }
+        &.cancel{
+          &.black{
+          background-position: -65px -676px;
+          }
+          &.white{
+          background-position: -65px -747px;
+          }
+        }
+        &.delete{
+        	&.black{
+    			background-position: -64px -1658px;
+        	}
+        	&.white{
+    			background-position: -64px -1725px;
+        	}
+        }
+    }    
+}
+/* government icons */
+
+div.profile.icons.government{
+   background-position: 10px -288px;
+}
+
+div.profile.icons.book{
+   background-position: 10px -430px;
+}
+div.profile.icons.app{
+    background-position: 9px -579px;
+}
+div.profile.icons.business{
+  background-position: 10px -879px;
+}
+/* certified Icons */
+.icons.x16.certified.white,div.mime.icons.certified{
+    background-position: -172px -1064px;
+}
+.icons.x16.certified.black{
+    background-position: -172px -992px;
+}
+.icons.x24.certified.white{
+    background-position: -123px -1055px;
+}
+.icons.x24.certified.black{
+    background-position: -123px -983px;
+}
+.icons.x32.certified.white{
+    background-position: -63px -1048px;
+}
+.icons.x32.certified.black{
+    background-position: -63px -974px;
+}
+.icons.x48.certified.white{
+    background-position: -2px -1034px;    
+}
+.icons.x48.certified.black{
+   background-position: -2px -962px;
+}
+div.profile.icons.certified{
+    background-position: 9px -1025px;
+}
+/* adjunt Icons */
+.icons.x16.adjunt.white{
+    background-position: -172px -1213px;
+}
+.icons.x16.adjunt.black{
+    background-position: -172px -1136px;
+}
+.icons.x24.adjunt.white{
+   background-position: -123px -1204px;
+}
+.icons.x24.adjunt.black{
+    background-position: -124px -1126px;
+}
+.icons.x32.adjunt.white{
+    background-position: -65px -1195px;
+}
+.icons.x32.adjunt.black{
+    background-position: -65px -1118px;
+}
+.icons.x48.adjunt.white{
+    background-position: -4px -1182px;
+}
+.icons.x48.adjunt.black{
+   background-position: -3px -1104px;
+}
+/* cloud Icons */
+.icons.x16.cloud.white{
+    background-position: -172px -1332px;
+}
+.icons.x16.cloud.black{
+    background-position: -172px -1279px;
+}
+.icons.x24.cloud.white{
+    background-position: -123px -1324px;
+}
+.icons.x24.cloud.black{
+    background-position: -124px -1270px;
+}
+.icons.x32.cloud.white{
+    background-position: -64px -1317px;
+}
+.icons.x32.cloud.black{
+    background-position: -65px -1262px;
+}
+.icons.x48.cloud.white{
+    background-position: -4px -1306px;
+}
+.icons.x48.cloud.black{
+   background-position: -3px -1252px;
+}
+/* coffe Icons */
+.icons.x16.coffe.white,div.mime.icons.coffe{
+   background-position: -172px -1463px;
+}
+.icons.x16.coffe.black{
+    background-position: -171px -1400px;
+}
+.icons.x24.coffe.white{
+    background-position: -123px -1453px;
+}
+.icons.x24.coffe.black{
+    background-position: -122px -1391px;
+}
+.icons.x32.coffe.white{
+    background-position: -62px -1446px;
+}
+.icons.x32.coffe.black{
+    background-position: -62px -1383px;
+}
+.icons.x48.coffe.white{
+    background-position: -1px -1434px;
+}
+.icons.x48.coffe.black{
+   background-position: -1px -1371px;
+}
+div.profile.icons.coffe{
+    background-position: 9px -1428px;
+}
+/* compass Icons */
+.icons.x16.compass.white{
+  background-position: -173px -1603px;
+}
+.icons.x16.compass.black{
+   background-position: -173px -1534px;
+}
+.icons.x24.compass.white{
+   background-position: -124px -1594px;
+}
+.icons.x24.compass.black{
+   background-position: -124px -1525px;
+}
+.icons.x32.compass.white{
+    background-position: -65px -1587px;
+}
+.icons.x32.compass.black{
+   background-position: -64px -1519px;
+}
+.icons.x48.compass.white{
+   background-position: -4px -1574px;
+}
+.icons.x48.compass.black{
+   background-position: -3px -1506px;
+}
+/* file Icons */
+.icons.x16.file.white{
+  background-position: -172px -1878px;
+}
+.icons.x16.file.black{
+   background-position: -171px -1817px;
+}
+.icons.x24.file.white{
+  background-position: -123px -1868px;
+}
+.icons.x24.file.black{
+  background-position: -123px -1808px;
+}
+.icons.x32.file.white{
+    background-position: -63px -1862px;
+}
+.icons.x32.file.black{
+    background-position: -62px -1801px;
+}
+.icons.x48.file.white{
+    background-position: -1px -1848px;
+}
+.icons.x48.file.black{
+   background-position: -2px -1788px;
+}
+/* download Icons */
+.icons.x16.download.white{
+  background-position: -177px -2025px;
+}
+.icons.x16.download.black{
+   background-position: -173px -1947px;
+}
+.icons.x24.download.white{
+  background-position: -129px -2015px;
+}
+.icons.x24.download.black{
+  background-position: -124px -1938px;
+}
+.icons.x32.download.white{
+    background-position: -69px -2007px;
+}
+.icons.x32.download.black{
+    background-position: -65px -1931px;
+}
+.icons.x48.download.white{
+    background-position: -8px -1994px;
+}
+.icons.x48.download.black{
+   background-position: -3px -1919px;
+}
+/* emoticons1 Icons */
+.icons.x16.emoticons1.white{
+  background-position: -171px -2154px;
+}
+.icons.x16.emoticons1.black{
+  background-position: -171px -2094px;
+}
+.icons.x24.emoticons1.white{
+  background-position: -124px -2143px;
+}
+.icons.x24.emoticons1.black{
+  background-position: -123px -2083px;
+}
+.icons.x32.emoticons1.white{
+    background-position: -64px -2135px;
+}
+.icons.x32.emoticons1.black{
+    background-position: -64px -2076px;
+}
+.icons.x48.emoticons1.white{
+    background-position: -2px -2121px;
+}
+.icons.x48.emoticons1.black{
+   background-position: -3px -2061px;
+}
+/* emoticons2 Icons */
+.icons.x16.emoticons2.white{
+  background-position: -172px -2286px;
+}
+.icons.x16.emoticons2.black{
+  background-position: -171px -2218px;
+}
+.icons.x24.emoticons2.white{
+  background-position: -123px -2276px;
+}
+.icons.x24.emoticons2.black{
+  background-position: -123px -2209px;
+}
+.icons.x32.emoticons2.white{
+    background-position: -64px -2268px;
+}
+.icons.x32.emoticons2.black{
+   background-position: -64px -2202px;
+}
+.icons.x48.emoticons2.white{
+    background-position: -2px -2256px;
+}
+.icons.x48.emoticons2.black{
+  background-position: -3px -2191px;
+}
+/* external Icons */
+.icons.x16.external.white{
+  background-position: -171px -2428px;
+}
+.icons.x16.external.black{
+  background-position: -171px -2360px;
+}
+.icons.x24.external.white{
+  background-position: -121px -2419px;
+}
+.icons.x24.external.black{
+  background-position: -121px -2352px;
+}
+.icons.x32.external.white{
+   background-position: -61px -2411px;
+}
+.icons.x32.external.black{
+   background-position: -64px -2341px;
+}
+.icons.x48.external.white{
+    background-position: -2px -2397px;
+}
+.icons.x48.external.black{
+  background-position: -3px -2331px;
+}
+/* visible Icons */
+.icons.x16.visible.white{
+  background-position: -171px -2551px;
+}
+.icons.x16.visible.black{
+  background-position: -171px -2497px;
+}
+.icons.x24.visible.white{
+  background-position: -123px -2542px;
+}
+.icons.x24.visible.black{
+  background-position: -124px -2488px;
+}
+.icons.x32.visible.white{
+   background-position: -63px -2533px;
+}
+.icons.x32.visible.black{
+  background-position: -64px -2479px;
+}
+.icons.x48.visible.white{
+    background-position: -2px -2519px;
+}
+.icons.x48.visible.black{
+  background-position: -3px -2465px;
+}
+/* global Icons */
+.icons.x16.global.white{
+  background-position: -172px -2701px;
+}
+.icons.x16.global.black{
+  background-position: -172px -2629px;
+}
+.icons.x24.global.white{
+  background-position: -123px -2691px;
+}
+.icons.x24.global.black{
+  background-position: -122px -2620px;
+}
+.icons.x32.global.white{
+  background-position: -63px -2684px;
+}
+.icons.x32.global.black{
+  background-position: -63px -2611px;
+}
+.icons.x48.global.white{
+   background-position: -2px -2670px;
+}
+.icons.x48.global.black{
+  background-position: -3px -2599px;
+}
+/* gamepad Icons */
+.icons.x16.gamepad.white,div.mime.icons.gamepad{
+  background-position: -172px -2826px;
+}
+.icons.x16.gamepad.black{
+  background-position: -172px -2768px;
+}
+.icons.x24.gamepad.white{
+ background-position: -123px -2815px;
+}
+.icons.x24.gamepad.black{
+ background-position: -123px -2758px;
+}
+.icons.x32.gamepad.white{
+  background-position: -63px -2809px;
+}
+.icons.x32.gamepad.black{
+  background-position: -63px -2752px;
+}
+.icons.x48.gamepad.white{
+   background-position: -3px -2796px;
+}
+.icons.x48.gamepad.black{
+  background-position: -2px -2739px;
+}
+div.profile.icons.gamepad{
+    background-position: 9px -2786px;
+}
+/* heart Icons */
+.icons.x16.heart.white{
+  background-position: -172px -2982px;
+}
+.icons.x16.heart.black{
+  background-position: -172px -2903px;
+}
+.icons.x24.heart.white{
+ background-position: -123px -2970px;
+}
+.icons.x24.heart.black{
+ background-position: -123px -2891px;
+}
+.icons.x32.heart.white{
+  background-position: -63px -2963px;
+}
+.icons.x32.heart.black{
+  background-position: -64px -2886px;
+}
+.icons.x48.heart.white{
+   background-position: -2px -2948px;
+}
+.icons.x48.heart.black{
+  background-position: -2px -2872px;
+}
+/* home Icons */
+.icons.x16.home.white{
+  background-position: -172px -3108px;
+}
+.icons.x16.home.black{
+  background-position: -172px -3051px;
+}
+.icons.x24.home.white{
+    background-position: -123px -3099px;
+}
+.icons.x24.home.black{
+    background-position: -123px -3042px;
+}
+.icons.x32.home.white{
+  background-position: -63px -3092px;
+}
+.icons.x32.home.black{
+  background-position: -64px -3035px;
+}
+.icons.x48.home.white{
+   background-position: -2px -3080px;
+}
+.icons.x48.home.black{
+    background-position: -2px -3022px;
+}
+/* info Icons */
+.icons.x16.info.white{
+  background-position: -172px -3251px;
+}
+.icons.x16.info.black{
+  background-position: -172px -3185px;
+}
+.icons.x24.info.white{
+    background-position: -123px -3240px;
+}
+.icons.x24.info.black{
+    background-position: -123px -3176px;
+}
+.icons.x32.info.white{
+  background-position: -64px -3232px;
+}
+.icons.x32.info.black{
+  background-position: -64px -3168px;
+}
+.icons.x48.info.white{
+   background-position: -3px -3220px;
+}
+.icons.x48.info.black{
+    background-position: -2px -3155px;
+}
+/* invisible Icons */
+.icons.x16.invisible.white{
+  background-position: -172px -3363px;
+}
+.icons.x16.invisible.black{
+  background-position: -172px -3309px;
+}
+.icons.x24.invisible.white{
+   background-position: -123px -3353px;
+}
+.icons.x24.invisible.black{
+    background-position: -123px -3300px;
+}
+.icons.x32.invisible.white{
+  background-position: -64px -3346px;
+}
+.icons.x32.invisible.black{
+  background-position: -64px -3293px;
+}
+.icons.x48.invisible.white{
+   background-position: -3px -3331px;
+}
+.icons.x48.invisible.black{
+    background-position: -2px -3278px;
+}
+/* link Icons */
+.icons.x16.link.white{
+    background-position: -172px -3514px;
+}
+.icons.x16.link.black{
+  background-position: -172px -3446px;
+}
+.icons.x24.link.white{
+    background-position: -123px -3505px;
+}
+.icons.x24.link.black{
+   background-position: -123px -3435px;
+}
+.icons.x32.link.white{
+  background-position: -64px -3499px;
+}
+.icons.x32.link.black{
+  background-position: -64px -3429px;
+}
+.icons.x48.link.white{
+  background-position: -3px -3484px;
+}
+.icons.x48.link.black{
+   background-position: -2px -3415px;
+}
+/* mail Icons */
+.icons.x16.mail.white{
+    background-position: -172px -3637px;
+}
+.icons.x16.mail.black{
+  background-position: -172px -3580px;
+}
+.icons.x24.mail.white{
+   background-position: -123px -3628px;
+}
+.icons.x24.mail.black{
+   background-position: -123px -3569px;
+}
+.icons.x32.mail.white{
+    background-position: -64px -3622px;
+}
+.icons.x32.mail.black{
+    background-position: -64px -3562px;
+}
+.icons.x48.mail.white{
+  background-position: -3px -3606px;
+}
+.icons.x48.mail.black{
+   background-position: -2px -3548px;
+}
+/* mic Icons */
+.icons.x16.mic.white{
+    background-position: -172px -3772px;
+}
+.icons.x16.mic.black{
+  background-position: -172px -3712px;
+}
+.icons.x24.mic.white{
+   background-position: -123px -3762px;
+}
+.icons.x24.mic.black{
+  background-position: -123px -3701px;
+}
+.icons.x32.mic.white{
+    background-position: -63px -3755px;
+}
+.icons.x32.mic.black{
+    background-position: -64px -3692px;
+}
+.icons.x48.mic.white{
+  background-position: -2px -3742px;
+}
+.icons.x48.mic.black{
+   background-position: -2px -3680px;
+}
+/* movie Icons */
+.icons.x16.movie.white, div.mime.icons.movie{
+    background-position: -172px -3912px;
+}
+.icons.x16.movie.black{
+  background-position: -173px -3849px;
+}
+.icons.x24.movie.white{
+   background-position: -123px -3901px;
+}
+.icons.x24.movie.black{
+  background-position: -123px -3839px;
+}
+.icons.x32.movie.white{
+   background-position: -63px -3895px;
+}
+.icons.x32.movie.black{
+    background-position: -64px -3832px;
+}
+.icons.x48.movie.white{
+  background-position: -2px -3882px;
+}
+.icons.x48.movie.black{
+  background-position: -2px -3821px;
+}
+div.profile.icons.movie{
+    background-position: 10px -3876px;
+}
+/* music Icons */
+.icons.x16.music.white, div.mime.icons.music{
+    background-position: -173px -4048px;
+}
+.icons.x16.music.black{
+  background-position: -173px -3990px;
+}
+.icons.x24.music.white{
+  background-position: -124px -4039px;
+}
+.icons.x24.music.black{
+  background-position: -125px -3979px;
+}
+.icons.x32.music.white{
+   background-position: -66px -4030px;
+}
+.icons.x32.music.black{
+    background-position: -67px -3972px;
+}
+.icons.x48.music.white{
+  background-position: -5px -4019px;
+}
+.icons.x48.music.black{
+  background-position: -5px -3959px;
+}
+div.profile.icons.music{
+    background-position: 5px -4014px;
+}
+/* music Icons */
+.icons.x16.music.white{
+    background-position: -173px -4048px;
+}
+.icons.x16.music.black{
+  background-position: -173px -3990px;
+}
+.icons.x24.music.white{
+  background-position: -124px -4039px;
+}
+.icons.x24.music.black{
+  background-position: -125px -3979px;
+}
+.icons.x32.music.white{
+   background-position: -66px -4030px;
+}
+.icons.x32.music.black{
+    background-position: -67px -3972px;
+}
+.icons.x48.music.white{
+  background-position: -5px -4019px;
+}
+.icons.x48.music.black{
+  background-position: -5px -3959px;
+}
+/* shared Icons */
+.icons.x16.shared.white{
+    background-position: -178px -4186px;
+}
+.icons.x16.shared.black{
+    background-position: -173px -4120px;
+}
+.icons.x24.shared.white{
+  background-position: -130px -4175px;
+}
+.icons.x24.shared.black{
+  background-position: -125px -4110px;
+}
+.icons.x32.shared.white{
+   background-position: -71px -4168px;
+}
+.icons.x32.shared.black{
+   background-position: -67px -4101px;
+}
+.icons.x48.shared.white{
+  background-position: -11px -4153px;
+}
+.icons.x48.shared.black{
+  background-position: -5px -4086px;
+}
+/* tel Icons */
+.icons.x16.tel.white{
+    background-position: -172px -4297px;
+}
+.icons.x16.tel.black{
+    background-position: -172px -4244px;
+}
+.icons.x24.tel.white{
+  background-position: -122px -4288px;
+}
+.icons.x24.tel.black{
+  background-position: -123px -4234px;
+}
+.icons.x32.tel.white{
+   background-position: -63px -4281px;
+}
+.icons.x32.tel.black{
+   background-position: -63px -4226px;
+}
+.icons.x48.tel.white{
+  background-position: -3px -4268px;
+}
+.icons.x48.tel.black{
+  background-position: -3px -4213px;
+}
+/* phone Icons */
+.icons.x16.phone.white{
+    background-position: -172px -4437px;
+}
+.icons.x16.phone.black{
+    background-position: -173px -4370px;
+}
+.icons.x24.phone.white{
+  background-position: -124px -4428px;
+}
+.icons.x24.phone.black{
+  background-position: -123px -4361px;
+}
+.icons.x32.phone.white{
+  background-position: -64px -4420px;
+}
+.icons.x32.phone.black{
+   background-position: -65px -4351px;
+}
+.icons.x48.phone.white{
+  background-position: -3px -4407px;
+}
+.icons.x48.phone.black{
+  background-position: -3px -4339px;
+}
+/* camera Icons */
+.icons.x16.camera.white{
+    background-position: -172px -4575px;
+}
+.icons.x16.camera.black{
+    background-position: -172px -4511px;
+}
+.icons.x24.camera.white{
+  background-position: -123px -4565px;
+}
+.icons.x24.camera.black{
+  background-position: -122px -4502px;
+}
+.icons.x32.camera.white{
+  background-position: -64px -4558px;
+}
+.icons.x32.camera.black{
+   background-position: -65px -4494px;
+}
+.icons.x48.camera.white{
+  background-position: -3px -4546px;
+}
+.icons.x48.camera.black{
+  background-position: -3px -4483px;
+}
+/* location Icons */
+.icons.x16.location.white{
+    background-position: -171px -4718px;
+}
+.icons.x16.location.black{
+    background-position: -172px -4648px;
+}
+.icons.x24.location.white{
+  background-position: -123px -4709px;
+}
+.icons.x24.location.black{
+  background-position: -122px -4638px;
+}
+.icons.x32.location.white{
+  background-position: -67px -4701px;
+}
+.icons.x32.location.black{
+   background-position: -67px -4631px;
+}
+.icons.x48.location.white{
+  background-position: 0px -4686px;
+}
+.icons.x48.location.black{
+  background-position: -1px -4616px;
+}
+/* podcast Icons */
+.icons.x16.podcast.white{
+   background-position: -171px -4863px;
+}
+.icons.x16.podcast.black{
+    background-position: -171px -4791px;
+}
+.icons.x24.podcast.white{
+    background-position: -122px -4854px;
+}
+.icons.x24.podcast.black{
+  background-position: -123px -4783px;
+}
+.icons.x32.podcast.white{
+  background-position: -67px -4845px;
+}
+.icons.x32.podcast.black{
+   background-position: -67px -4774px;
+}
+.icons.x48.podcast.white{
+    background-position: 0px -4833px;
+}
+.icons.x48.podcast.black{
+  background-position: -1px -4760px;
+}
+/* push Icons */
+.icons.x16.push.white{
+   background-position: -171px -4996px;
+}
+.icons.x16.push.black{
+    background-position: -171px -4932px;
+}
+.icons.x24.push.white{
+    background-position: -122px -4987px;
+}
+.icons.x24.push.black{
+  background-position: -123px -4922px;
+}
+.icons.x32.push.white{
+  background-position: -69px -4979px;
+}
+.icons.x32.push.black{
+   background-position: -67px -4914px;
+}
+.icons.x48.push.white{
+    background-position: -5px -4969px;
+}
+.icons.x48.push.black{
+  background-position: -1px -4906px;
+}
+/* refresh Icons */
+.icons.x16.refresh.white{
+   background-position: -172px -5131px;
+}
+.icons.x16.refresh.black{
+    background-position: -173px -5062px;
+}
+.icons.x24.refresh.white{
+    background-position: -123px -5121px;
+}
+.icons.x24.refresh.black{
+  background-position: -124px -5051px;
+}
+.icons.x32.refresh.white{
+    background-position: -67px -5114px;
+}
+.icons.x32.refresh.black{
+    background-position: -69px -5045px;
+}
+.icons.x48.refresh.white{
+    background-position: -8px -5107px;
+}
+.icons.x48.refresh.black{
+  background-position: -1px -5031px;
+}
+/* reload Icons */
+.icons.x16.reload.white{
+   background-position: -172px -5270px;
+}
+.icons.x16.reload.black{
+    background-position: -173px -5207px;
+}
+.icons.x24.reload.white{
+    background-position: -123px -5261px;
+}
+.icons.x24.reload.black{
+    background-position: -124px -5199px;
+}
+.icons.x32.reload.white{
+    background-position: -69px -5252px;
+}
+.icons.x32.reload.black{
+    background-position: -69px -5189px;
+}
+.icons.x48.reload.white{
+    background-position: -8px -5245px;
+}
+.icons.x48.reload.black{
+  background-position: -3px -5176px;
+}
+/* rss Icons */
+.icons.x16.rss.white{
+    background-position: -173px -5406px;
+}
+.icons.x16.rss.black{
+    background-position: -173px -5340px;
+}
+.icons.x24.rss.white{
+    background-position: -124px -5396px;
+}
+.icons.x24.rss.black{
+    background-position: -124px -5329px;
+}
+.icons.x32.rss.white{
+    background-position: -69px -5389px;
+}
+.icons.x32.rss.black{
+    background-position: -70px -5322px;
+}
+.icons.x48.rss.white{
+   background-position: -3px -5374px;
+}
+.icons.x48.rss.black{
+  background-position: -3px -5308px;
+}
+/* car_shop Icons */
+.icons.x16.car_shop.white{
+    background-position: -173px -5537px;
+}
+.icons.x16.car_shop.black{
+    background-position: -172px -5477px;
+}
+.icons.x24.car_shop.white{
+   background-position: -124px -5526px;
+}
+.icons.x24.car_shop.black{
+    background-position: -124px -5468px;
+}
+.icons.x32.car_shop.white{
+    background-position: -69px -5518px;
+}
+.icons.x32.car_shop.black{
+    background-position: -70px -5458px;
+}
+.icons.x48.car_shop.white{
+   background-position: -3px -5508px;
+}
+.icons.x48.car_shop.black{
+  background-position: -3px -5446px;
+}
+/* shopping Icons */
+.icons.x16.shopping.white,div.mime.icons.shopping{
+    background-position: -172px -5679px;
+}
+.icons.x16.shopping.black{
+    background-position: -172px -5609px;
+}
+.icons.x24.shopping.white{
+   background-position: -124px -5669px;
+}
+.icons.x24.shopping.black{
+    background-position: -123px -5599px;
+}
+.icons.x32.shopping.white{
+   background-position: -67px -5664px;
+}
+.icons.x32.shopping.black{
+    background-position: -68px -5593px;
+}
+.icons.x48.shopping.white{
+   background-position: -1px -5649px;
+}
+.icons.x48.shopping.black{
+  background-position: -1px -5579px;
+}
+div.profile.icons.shopping{
+  background-position: 9px -5641px;
+}
+/* messages Icons */
+.icons.x16.messages.white{
+   background-position: -171px -5824px;
+}
+.icons.x16.messages.black{
+    background-position: -172px -5752px;
+}
+.icons.x24.messages.white{
+   background-position: -123px -5814px;
+}
+.icons.x24.messages.black{
+   background-position: -122px -5742px;
+}
+.icons.x32.messages.white{
+   background-position: -67px -5809px;
+}
+.icons.x32.messages.black{
+    background-position: -68px -5734px;
+}
+.icons.x48.messages.white{
+   background-position: -1px -5796px;
+}
+.icons.x48.messages.black{
+  background-position: -1px -5726px;
+}
+/* message Icons */
+.icons.x16.message.white{
+   background-position: -172px -5951px;
+}
+.icons.x16.message.black{
+    background-position: -172px -5887px;
+}
+.icons.x24.message.white{
+   background-position: -124px -5942px;
+}
+.icons.x24.message.black{
+   background-position: -123px -5878px;
+}
+.icons.x32.message.white{
+   background-position: -69px -5935px;
+}
+.icons.x32.message.black{
+    background-position: -69px -5871px;
+}
+.icons.x48.message.white{
+  background-position: -3px -5921px;
+}
+.icons.x48.message.black{
+  background-position: -2px -5859px;
+}
+/* comment Icons */
+.icons.x16.comment.white{
+   background-position: -172px -6081px;
+}
+.icons.x16.comment.black{
+   background-position: -172px -6017px;
+}
+.icons.x24.comment.white{
+   background-position: -123px -6071px;
+}
+.icons.x24.comment.black{
+   background-position: -123px -6007px;
+}
+.icons.x32.comment.white{
+   background-position: -68px -6064px;
+}
+.icons.x32.comment.black{
+   background-position: -69px -6000px;
+}
+.icons.x48.comment.white{
+  background-position: -3px -6048px;
+}
+.icons.x48.comment.black{
+  background-position: -2px -5984px;
+}
+/* star_empty Icons */
+.icons.x16.star_empty.white{
+   background-position: -172px -6205px;
+}
+.icons.x16.star_empty.black{
+   background-position: -172px -6147px;
+}
+.icons.x24.star_empty.white{
+   background-position: -123px -6195px;
+}
+.icons.x24.star_empty.black{
+   background-position: -123px -6137px;
+}
+.icons.x32.star_empty.white{
+  background-position: -68px -6188px;
+}
+.icons.x32.star_empty.black{
+  background-position: -68px -6129px;
+}
+.icons.x48.star_empty.white{
+  background-position: -3px -6175px;
+}
+.icons.x48.star_empty.black{
+  background-position: -2px -6116px;
+}
+/* star Icons */
+.icons.x16.star.white{
+   background-position: -171px -6331px;
+}
+.icons.x16.star.black{
+   background-position: -172px -6273px;
+}
+.icons.x24.star.white{
+   background-position: -123px -6320px;
+}
+.icons.x24.star.black{
+  background-position: -123px -6263px;
+}
+.icons.x32.star.white{
+  background-position: -68px -6313px;
+}
+.icons.x32.star.black{
+  background-position: -68px -6255px;
+}
+.icons.x48.star.white{
+  background-position: -2px -6300px;
+}
+.icons.x48.star.black{
+  background-position: -2px -6244px;
+}
+/* tag Icons */
+.icons.x16.tag.white{
+   background-position: -171px -6475px;
+}
+.icons.x16.tag.black{
+   background-position: -172px -6407px;
+}
+.icons.x24.tag.white{
+   background-position: -123px -6465px;
+}
+.icons.x24.tag.black{
+  background-position: -123px -6397px;
+}
+.icons.x32.tag.white{
+  background-position: -67px -6457px;
+}
+.icons.x32.tag.black{
+  background-position: -68px -6389px;
+}
+.icons.x48.tag.white{
+    background-position: -2px -6444px;
+}
+.icons.x48.tag.black{
+  background-position: -2px -6375px;
+}
+/* undo Icons */
+.icons.x16.undo.white{
+   background-position: -177px -6608px;
+}
+.icons.x16.undo.black{
+   background-position: -172px -6544px;
+}
+.icons.x24.undo.white{
+   background-position: -127px -6600px;
+}
+.icons.x24.undo.black{
+  background-position: -123px -6535px;
+}
+.icons.x32.undo.white{
+   background-position: -73px -6593px;
+}
+.icons.x32.undo.black{
+    background-position: -68px -6528px;
+}
+.icons.x48.undo.white{
+    background-position: -9px -6582px;
+}
+.icons.x48.undo.black{
+  background-position: -3px -6518px;
+}
+/* trash Icons */
+.icons.x16.trash.white{
+   background-position: -171px -6743px;
+}
+.icons.x16.trash.black{
+   background-position: -172px -6680px;
+}
+.icons.x24.trash.white{
+  background-position: -123px -6733px;
+}
+.icons.x24.trash.black{
+  background-position: -123px -6671px;
+}
+.icons.x32.trash.white{
+    background-position: -69px -6726px;
+}
+.icons.x32.trash.black{
+    background-position: -68px -6664px;
+}
+.icons.x48.trash.white{
+    background-position: -2px -6711px;
+}
+.icons.x48.trash.black{
+  background-position: -3px -6651px;
+}
+/* user Icons */
+.icons.x16.user.white,div.mime.icons.user{
+   background-position: -171px -6890px;
+}
+.icons.x16.user.black{
+   background-position: -172px -6823px;
+}
+.icons.x24.user.white{
+  background-position: -123px -6880px;
+}
+.icons.x24.user.black{
+  background-position: -123px -6813px;
+}
+.icons.x32.user.white{
+    background-position: -68px -6875px;
+}
+.icons.x32.user.black{
+    background-position: -68px -6807px;
+}
+.icons.x48.user.white{
+    background-position: -2px -6862px;
+}
+.icons.x48.user.black{
+  background-position: -3px -6794px;
+}
+div.profile.icons.user{
+    background-position: 8px -65px;
+}
+/* groups Icons */
+.icons.x16.groups.white,div.mime.icons.groups{
+  background-position: -171px -7028px;
+}
+.icons.x16.groups.black{
+   background-position: -172px -6968px;
+}
+.icons.x24.groups.white{
+  background-position: -123px -7017px;
+}
+.icons.x24.groups.black{
+  background-position: -123px -6958px;
+}
+.icons.x32.groups.white{
+    background-position: -68px -7013px;
+}
+.icons.x32.groups.black{
+    background-position: -68px -6950px;
+}
+.icons.x48.groups.white{
+   background-position: -2px -7001px;
+}
+.icons.x48.groups.black{
+  background-position: -3px -6940px;
+}
+div.profile.icons.groups{
+    background-position: 9px -146px;
+}
+/* search Icons */
+.icons.x16.search.white{
+  background-position: -171px -7168px;
+}
+.icons.x16.search.black{
+   background-position: -173px -7102px;
+}
+.icons.x24.search.white{
+  background-position: -124px -7158px;
+}
+.icons.x24.search.black{
+  background-position: -124px -7093px;
+}
+.icons.x32.search.white{
+    background-position: -68px -7152px;
+}
+.icons.x32.search.black{
+    background-position: -69px -7086px;
+}
+.icons.x48.search.white{
+   background-position: -2px -7140px;
+}
+.icons.x48.search.black{
+  background-position: -3px -7072px;
+}
+.icons.x24.rec.white{
+  background-position: 17px -7217px;
+}
+.icons.x32.rec.white{
+  background-position: 20px -7215px;
+}
+.icons.x16.rec.black{
+   background-position: -53px -7224px;
+}
+.icons.x16.rec.white{
+    background-position: 12px -7223px;
+}
+.icons.x24.rec.black{
+    background-position: -49px -7217px;
+}
+.icons.x32.rec.black{
+  background-position: -46px -7214px;
+}
+div.profile div.capture{
+   background-position: 13px -7337px;
+}
+.icons.x24.capture.white{
+    background-position: 16px -7333px;
+}
+.icons.x32.capture.white{
+   background-position: 19px -7330px;
+}
+.icons.x16.capture.black{
+    background-position: -54px -7340px;
+}
+.icons.x16.capture.white{
+    background-position: 11px -7339px;
+}
+.icons.x24.capture.black{
+    background-position: -50px -7334.6px;
+}
+.icons.x32.capture.black{
+   background-position: -47px -7330.6px;
+}
+
+.icons.x24.bar.white{
+   background-position: 16px -7390px;
+}
+.icons.x32.bar.white{
+   background-position: 19px -7388px;
+}
+.icons.x16.bar.black{
+    background-position: -55px -7394px;
+}
+.icons.x16.bar.white{
+    background-position: 11px -7395px;
+}
+.icons.x24.bar.black{
+   background-position: -50px -7389px;
+}
+.icons.x32.bar.black{
+   background-position: -47px -7386px;
+}
+.icons.x24.calendar.white{
+   background-position: -111px -7332px;
+}
+.icons.x32.calendar.white{
+   background-position: -108px -7329px;
+}
+.icons.x16.calendar.black{
+    background-position: -165px -7338px;
+}
+.icons.x16.calendar.white{
+   background-position: -115px -7338px;
+}
+.icons.x24.calendar.black{
+   background-position: -158px -7332px;
+}
+.icons.x32.calendar.black{
+   background-position: -155px -7329px;
+}
+.icons.x16.send-arrow.black{
+    background-position: -165px -7488px;
+}
+.icons.x24.send-arrow.black{
+   background-position: -115px -7478px;
+}
+.icons.x32.send-arrow.black{
+   background-position: -57px -7469px;
+}
+.icons.x16.message-top.black{
+   background-position: -165px -7569px;
+}
+.icons.x24.message-top.black{
+   background-position: -116px -7559px;
+}
+.icons.x32.message-top.black{
+  background-position: -58px -7551px;
+}
+.icons.x48.message-top.black{
+   background-position: 6px -7538px;
+}
+.icons.x16.message-minimal.black{
+   background-position: -165px -7637px;
+}
+.icons.x24.message-minimal.black{
+   background-position: -116px -7626px;
+}
+.icons.x32.message-minimal.black{
+  background-position: -55px -7623px;
+}
+
+.icons.x16.back.black{
+   background-position: -67px -7686px;
+}
+.icons.x24.back.black{
+   background-position: -62px -7681px;
+}
+.icons.x32.back.black{
+  background-position: -58px -7677px;
+}
+
+.icons.x16.back.white{
+   background-position: -10px -7687px;
+}
+.icons.x24.back.white{
+   background-position: -6px -7680px;
+}
+.icons.x32.back.white{
+   background-position: -3px -7678px;
+}
+
+.icons.x16.edit.white{
+   background-position: -169px -7687px;
+}
+.icons.x24.edit.white{
+   background-position: -164px -7681px;
+}
+.icons.x32.edit.white{
+  background-position: -161px -7678px;
+}
+.icons.x16.edit.black{
+   background-position: -127px -7685px;
+}
+.icons.x24.edit.black{
+   background-position: -121px -7681px;
+}
+.icons.x32.edit.black{
+  background-position: -119px -7677px;
+}
