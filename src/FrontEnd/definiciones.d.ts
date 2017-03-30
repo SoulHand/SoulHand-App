@@ -1,4 +1,4 @@
-declare namespace users{
+declare namespace peoples{
 	interface people{
 		_id:string
 		dni:string
@@ -7,13 +7,21 @@ declare namespace users{
 		mode:string
 		createDate:string
 	}
+	interface teachers{
+		_id:string
+		data:peoples.people,
+		interprete:boolean
+		_v:number
+	}
+}
+declare namespace users{	
 	interface profile{
 		_id:string
 		username:string
 		_v:number
 		isAdmin:boolean
 		dateCreated:string
-		people:people
+		people:peoples.people
 	}
 	interface sessions{
 		_id:string

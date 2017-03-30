@@ -16,7 +16,7 @@ export class Menu extends React.Component<{}, {}> {
 					<Link to="/" activeClassName="active">Inicio</Link>
 				</li>
 				<li>
-					<Link to="/teacher" activeClassName="active">Crear Docente</Link>
+					<Link to="/teacher/create" activeClassName="active">Crear Docente</Link>
 				</li>
 			</ul>
 		</div>);

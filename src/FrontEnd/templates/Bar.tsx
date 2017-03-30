@@ -4,7 +4,7 @@ import {render} from 'react-dom';
 
 export class Bar extends React.Component<{}, {}> {
 	public title:string="Home";
-	public parent:HTMLDivElement;
+	public parent:Element;
 	componentDidMount(){
 		this.parent=document.querySelector("div[data-app=\"soulhand-services\"]");
 	}

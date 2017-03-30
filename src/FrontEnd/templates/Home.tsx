@@ -12,9 +12,7 @@ export class Home extends React.Component<{}, {}> {
 						<section className="page">
 							<Bar/>
 							<div className="container-body">
-								<div className="container">
-									{this.props.children}
-								</div>
+								{this.props.children}
 							</div>
 						</section>
 				</div>
