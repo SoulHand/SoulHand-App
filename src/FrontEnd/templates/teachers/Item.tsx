@@ -7,7 +7,7 @@ import 'jquery';
 import 'tether';
 import 'bootstrap';
 
-export class Item extends React.Component<peoples.teachers, {}> {
+export class Item extends React.Component<props.teacherItem, {}> {
 	deleteField(event: any){
 		ajax({
 			method:"DELETE",

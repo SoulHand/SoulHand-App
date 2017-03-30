@@ -35,3 +35,11 @@ declare namespace users{
 		users:profile
 	}	
 }
+
+declare namespace props{
+	interface teacherItem{
+		people:peoples.teachers
+		delete:Function
+		session:users.sessions
+	}
+}
