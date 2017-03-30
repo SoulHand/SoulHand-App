@@ -12,7 +12,7 @@ export class TeacherView extends React.Component<{}, {}> {
 		this.state = {teachers:[],search:""};
     	session=JSON.parse(session);
 		this.session=session;
-		this.state = {};
+		this.state = {teacher:null};
 	}
 	componentDidMount(){
 		ajax({
@@ -31,20 +31,22 @@ export class TeacherView extends React.Component<{}, {}> {
 	
 	render () {
     return (
-    	<div className="container">    				
-    		<div className="row">
-	          <div className="col-md-2">
-	            <img src="/images/user-login-icon-14.png" className="imagen img-circle img-responsive"/>
-	          </div>
-	          <div className="col-md-10 parrafo">
-	            <h3>
-	              <b>{(this.state.teacher.data.mode=="TEACHER") ? "Docente": "Alumno"}</b>
-	            </h3>
-	            <p>
-	              <b>Nombre y Apellido:</b>{this.state.teacher.data.name}
-	            </p>
-	          </div>
-	        </div>
+    	<div className="container">
+    		{this.state.teacher && (
+	    		<div className="row">
+		          <div className="col-md-2">
+		            <img src="/images/user-login-icon-14.png" className="imagen img-circle img-responsive"/>
+		          </div>
+		          <div className="col-md-10 parrafo">
+		            <h3>
+		              <b>{(this.state.teacher.data.mode=="TEACHER") ? "Docente": "Alumno"}</b>
+		            </h3>
+		            <p>
+		              <b>Nombre y Apellido:</b>{this.state.teacher.data.name}
+		            </p>
+		          </div>
+		        </div>		    	
+		    )}		
 	        <h2>Actividades:</h2>
 	        <div className="fieldset" data-align="justify">
 	        	<span className="text-align center">No posee actividades</span>
