@@ -40,7 +40,7 @@ window.addEventListener("load",()=>{
 		    	<IndexRoute component={PageRepresentative}/>
 		    	<Route path="create" component={PageRepresentativeCreate}/>
 		    <Route path="/user" component={App}>
-		    	<Route path="create" component={PageuserCreate}/>
+		    	<Route path="create" component={PageUserCreate}/>
 		    </Route>
 	  	</Router>
 	  ), document.body

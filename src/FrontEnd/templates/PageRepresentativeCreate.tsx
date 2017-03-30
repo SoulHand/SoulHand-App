@@ -1,4 +1,6 @@
- import * as React from 'react';
+import * as React from 'react';
+import * as $ from 'jquery';
+import {Link} from 'react-router';
 
 export class PageRepresentativeCreate extends React.Component<{}, {}> {
   render () {
