@@ -8,6 +8,7 @@ import {App} from './App';
 
 import {Home} from './templates/Home';
 import {Teachers} from './templates/Teachers';
+import {Student} from './templates/Student';
 import {PageIndex} from './templates/PageIndex';
 import {Login} from './templates/Login';
 import {ListTeachers} from './templates/teachers/ListTeachers';
@@ -32,7 +33,7 @@ window.addEventListener("load",()=>{
 		    	<Route path="create" component={TeacherCreate}/>
 		    	<Route path=":id" component={TeacherView}/>
 		    </Route>
-		    <Route path="/student" component={App}>
+		    <Route path="/students" component={Student} onEnter={Auth}>
 		    	<IndexRoute component={PageStudent}/>
 		    	<Route path="create" component={PageStudentCreate}/>
 		    </Route>

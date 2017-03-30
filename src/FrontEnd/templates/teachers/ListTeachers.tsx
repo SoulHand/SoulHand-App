@@ -23,7 +23,6 @@ export class ListTeachers extends React.Component<{}, {}> {
 			}
 			return true;
     	});
-    	console.log(this);
     	this.setState({
 	      	teachers : this.data
 	    });
