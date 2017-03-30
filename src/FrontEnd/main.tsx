@@ -17,7 +17,6 @@ import {PageUserCreate} from './templates/PageUserCreate';
 import {Auth} from './Auth';
 
 window.addEventListener("load",()=>{
-	var body=document.querySelector("div[data-app=\"soulhand-services\"]");
 	render((
 	 	<Router history={hashHistory}>
 		    <Route path="/" component={App}>
@@ -42,6 +41,6 @@ window.addEventListener("load",()=>{
 		    	<Route path="create" component={PageUserCreate}/>
 		    </Route>
 	  	</Router>
-	  ), body
+	  ), document.body
 	);
 });
