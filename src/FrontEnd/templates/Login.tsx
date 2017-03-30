@@ -8,9 +8,6 @@ export class Login extends React.Component<{}, {}> {
 		username:null,
 		password:null
 	}
-	componentDidMount(){
-		console.log(this);
-	}
 	getFields(event:any){
 		this.user[event.target.id]=event.target.value;
 		console.log(this.user)

@@ -4,8 +4,8 @@ import {Item} from "./Item"
 //import * as settings from "../settings"
 
 export class ListTeachers extends React.Component<{}, {}> {
-	public PrivateKeyId="1dec3409-dbc9-4314-8bb4-a38ef808c702";
-	public PublicKeyId="NThjODg5ZWIxMjA3OTIwYTcwY2E2NDkz";
+	public PrivateKeyId:string;
+	public PublicKeyId:string;
 	public session:users.sessions;
 	public data:any=[];
 	public state:any
