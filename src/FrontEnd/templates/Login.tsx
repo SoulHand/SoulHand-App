@@ -60,10 +60,10 @@ export class Login extends React.Component<{}, {}> {
 	                </div>
 	              </div>
 		          <div className="form-group">
-		            <button type="submit" className="boton-e btn btn-lg btn-success" data-toggle="modal" id="entrar" contentEditable={true}>
+		            <button type="submit" className="boton-e btn btn-lg btn-success" data-toggle="modal" id="entrar">
 		              <b>Entrar</b>
 		            </button>
-		            <button type="submit" className="boton-e btn btn-lg btn-primary" data-toggle="modal" id="entrar" contentEditable={true}>
+		            <button type="submit" className="boton-e btn btn-lg btn-primary" data-toggle="modal" id="entrar">
 		              <b>Registro</b>
 		            </button>
 		          </div>

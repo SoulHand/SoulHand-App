@@ -5,9 +5,12 @@ import 'jquery';
 import 'tether';
 import 'bootstrap';
 import {App} from './App';
+
+import {Home} from './templates/Home';
+import {Teachers} from './templates/Teachers';
 import {PageIndex} from './templates/PageIndex';
 import {Login} from './templates/Login';
-import {PageTeacher} from './templates/PageTeacher';
+import {ListTeachers} from './templates/teachers/ListTeachers';
 import {PageTeacherCreate} from './templates/PageTeacherCreate';
 import {PageStudent} from './templates/PageStudent';
 import {PageStudentCreate} from './templates/PageStudentCreate';
@@ -19,14 +22,12 @@ import {Auth} from './Auth';
 window.addEventListener("load",()=>{
 	render((
 	 	<Router history={hashHistory}>
-		    <Route path="/" component={App}>
+		    <Route path="/" component={Home}>
 		    	<IndexRoute component={PageIndex}/>
 		    </Route>
-		    <Route path="/auth" component={App}>
-		    	<IndexRoute component={Login}/>
-		    </Route>
-		    <Route path="/teacher" component={App} onEnter={Auth}>
-		    	<IndexRoute component={PageTeacher}/>
+		    <Route path="/auth" component={Login}/>
+		    <Route path="/teacher" component={Teachers} onEnter={Auth}>
+		    	<IndexRoute component={ListTeachers}/>
 		    	<Route path="create" component={PageTeacherCreate}/>
 		    </Route>
 		    <Route path="/student" component={App}>

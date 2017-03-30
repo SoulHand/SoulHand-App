@@ -2,7 +2,7 @@ import * as React from 'react';
 import {getJSON,ajax} from 'jquery'
 //import * as settings from "../settings"
 
-export class PageTeacher extends React.Component<{}, {}> {
+export class ListTeachers extends React.Component<{}, {}> {
 	public PrivateKeyId="1dec3409-dbc9-4314-8bb4-a38ef808c702";
 	public PublicKeyId="NThjODg5ZWIxMjA3OTIwYTcwY2E2NDkz";
 	public session:users.session;

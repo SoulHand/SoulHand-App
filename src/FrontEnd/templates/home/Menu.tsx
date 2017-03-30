@@ -13,13 +13,16 @@ export class Menu extends React.Component<{}, {}> {
 		return(<div className="menu">
 			<ul>
 				<li>
-					<Link to="/" activeClassName="active">Docente</Link>
+					<Link to="/" activeClassName="active">Inicio</Link>
 				</li>
 				<li>
-					<Link to="/" activeClassName="active">Alumnos</Link>
+					<Link to="/teacher" activeClassName="active">Docentes</Link>
 				</li>
 				<li>
-					<Link to="/" activeClassName="active">Iniciar sesión</Link>
+					<Link to="/student" activeClassName="active">Alumnos</Link>
+				</li>
+				<li>
+					<Link to="/" activeClassName="active">cerrar sesión</Link>
 				</li>
 			</ul>
 		</div>);
