@@ -1,10 +1,13 @@
 var webpack = require('webpack');
 
 module.exports = {  
-  entry: './src/FrontEnd/main.tsx',
+  entry: {
+    app:'./src/FrontEnd/main.tsx',
+    style:'./src/FrontEnd/scss/soulhand.scss'
+  },
   output: {
-    path: './public/js/',
-    filename: 'build.js'
+    path: __dirname + '/public/js/',
+    filename: '[name].js'
   },
   resolve: {
     extensions: ['', '.webpack.js', '.web.js', '.ts', '.tsx', '.js'],
@@ -31,7 +34,7 @@ module.exports = {
        React: "react",
        ReactDOM: "react-dom",
        ReactRouter: "react-router"
-    })/*,
+    }),
     // new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js'),
     new webpack.optimize.UglifyJsPlugin({
         compress: {
@@ -48,5 +51,5 @@ module.exports = {
       excludes:           [],
       searchResolveModulesDirectories: true
     })*/   
-  ],
+  ]
 }

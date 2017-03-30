@@ -1,7 +1,8 @@
 var mongoose= require('mongoose');
 var structDb={
 	Cognitions:mongoose.Schema({
-		name:{type:String, required:true, trim:true, uppercase: true}
+		name:{type:String, required:true, trim:true, uppercase: true},
+		description:{type:String, required:true, trim:true, uppercase: true}
 	}),
 	Grades:mongoose.Schema({
 		name:{type:String, required:true, trim:true, uppercase: true}
@@ -23,7 +24,7 @@ var structDb={
 		conditional:{type:String, trim:true, uppercase: true}
 	}),
 	weights:mongoose.Schema({
-		age:{type:Number, min:0},
+		height:{type:Number, min:0},
 		min:{type:Number, min:0},
 		max:{type:Number, min:0},
 		genero:{type:String, trim:true, uppercase:true}
@@ -33,6 +34,14 @@ var structDb={
 		min:{type:Number, min:0},
 		max:{type:Number, min:0},
 		genero:{type:String, trim:true, uppercase:true}
+	}),
+	morphem_type:mongoose.Schema({
+		name:{type:String, trim:true, uppercase:true}
+	}),
+	morphemas:mongoose.Schema({
+		word:{type:String, trim:true, uppercase:true},
+		type:{ type: mongoose.Schema.ObjectId, ref: "morphem_type" },
+		description:{type:String, trim:true, uppercase:true}
 	}),
 	Peoples:mongoose.Schema({
 		dni:{type:String, trim: true, index:true, required: true, unique:true, uppercase: true},
@@ -55,12 +64,7 @@ structDb.Representatives=mongoose.Schema({
 	data: structDb.Peoples,
 	idStudent:{ type: mongoose.Schema.ObjectId, ref: "Students" }
 });
-structDb.Students=mongoose.Schema({
-	data: structDb.Peoples,
-	grade:structDb.Grades,
-	discapacityLevel:{type:Number, required:true, default:0},
-	physics:[structDb.physic]
-});
+
 structDb.User=mongoose.Schema({
 	username:{ type : String, trim : true, index : true , unique:true},
    	password : { type : String },
@@ -115,6 +119,21 @@ structDb.Sessions=mongoose.Schema({
 structDb.domainsLearning=mongoose.Schema({
 	name:{type:String, required:true, trim:true, uppercase: true},
 	cognitions:[structDb.Cognitions]
+});
+
+structDb.Students=mongoose.Schema({
+	data: structDb.Peoples,
+	grade:structDb.Grades,
+	discapacityLevel:{type:Number, required:true, default:0},
+	physics:[structDb.physic],
+	activities:[structDb.ActivitiesMaked]
+});
+
+structDb.monema=mongoose.Schema({
+	lexema:{type:String, trim:true, uppercase:true},
+	morphema:[structDb.morphemas],
+	increment:[{type:String, trim:true, uppercase:true}],
+	concept:{type:String, required:true, trim:true, uppercase: true}
 });
 
 /*

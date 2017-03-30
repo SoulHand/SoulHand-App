@@ -1,0 +1,645 @@
+/* colors minimal
+Goldfish
+Icn star white
+*/
+.Goldfish{
+	&.blue{
+		background-color:#69D2E7;
+		&.gradient{
+			&-linear{
+				background-image: linear-gradient(to bottom,#69D2E7,#A7DAE4);				
+			}
+			&-radial{
+				background-image: radial-gradient(#A7DAE4 36%, #69D2E7 100%);
+			}
+		}
+	}
+	&.green{
+		background-color:#A7DBD8;
+		.gradient{
+			&-linear{
+				background-image: linear-gradient(to bottom,#A7DBD8,#71D5CF);				
+			}
+			&-radial{
+				background-image: radial-gradient(#A7DBD8 36%,#71D5CF 100%);
+			}
+		}
+	}
+	&.brown{
+		background-color:#E0E4CC;
+		&.gradient{
+			&-linear{
+				background-image: linear-gradient(to bottom,#E0E4CC,#DAE4A5);				
+			}
+			&-radial{
+				background-image: radial-gradient(#DAE4A5 36%,#E0E4CC 100%);
+			}
+		}
+	}
+	&.yellow{
+		background-color:#F38630;
+		&.gradient{
+			&-linear{
+				background-image: linear-gradient(to bottom, #F38630, #E3A675);
+			}
+			&-radial{
+				background-image: radial-gradient(#E3A675 36%,#F38630 100%);
+			}
+		}
+	}	
+	&.orange{
+		background-color:#FA6900;
+		&.gradient{
+			&-linear{
+				background-image: linear-gradient(to bottom, #FA6900, #F69956);
+			}
+			&-radial{
+				background-image: radial-gradient(#F69956 36%,#FA6900 100%);
+			}
+		}
+	}	
+}
+/*eyes
+Icn star white
+*/
+
+.eyes{
+	&.futzia{
+		background-color:#FE4365;
+		&.gradient{
+			&-linear{
+				background-image: linear-gradient(to bottom, #FE4365, #F9788F);
+			}
+			&-radial{
+				background-image: radial-gradient(#F9788F 36%,#FE4365 100%);
+			}
+		}
+	}	
+	&.pink{
+		background-color:#FC9D9A;
+		&.gradient{
+			&-linear{
+				background-image: linear-gradient(to bottom, #FC9D9A, #F9736E);
+			}
+			&-radial{
+				background-image: radial-gradient(#FC9D9A 36%,#F9736E 100%);
+			}
+		}
+	}	
+	&.dames{
+		background-color:#F9CDAD;
+		&.gradient{
+			&-linear{
+				background-image: linear-gradient(to bottom, #F9CDAD, #F8D8C1);
+			}
+			&-radial{
+				background-image: radial-gradient(#F8D8C1 36%,#F9CDAD 100%);
+			}
+		}
+	}	
+	&.brown{
+		background-color:#C8C8A9;
+		&.gradient{
+			&-linear{
+				background-image: linear-gradient(to bottom, #C8C8A9, #A8A886);
+			}
+			&-radial{
+				background-image: radial-gradient(#C8C8A9 36%,#A8A886 100%);
+			}
+		}
+	}	
+	&.green{
+		background-color:#83AF9B;
+		&.gradient{
+			&-linear{
+				background-image: linear-gradient(to bottom, #83AF9B, #7EA191);
+			}
+			&-radial{
+				background-image: radial-gradient(#83AF9B 36%,#7EA191 100%);
+			}
+		}
+	}	
+}
+/*Thought Provoking
+Icn star white
+*/
+.thought{
+	&.yellow{
+		background-color:#ECD078;
+		&.gradient{
+			&-linear{
+				background-image: linear-gradient(to bottom, #ECD078, #F5D05D);
+			}
+			&-radial{
+				background-image: radial-gradient(#ECD078 36%,#F5D05D 100%);
+			}
+		}
+	}	
+	&.orange{
+		background-color:#D95B43;
+		&.gradient{
+			&-linear{
+				background-image: linear-gradient(to bottom, #D95B43, #B61F02);
+			}
+			&-radial{
+				background-image: radial-gradient(#D95B43 36%,#B61F02 100%);
+			}
+		}
+	}	
+	&.futzia{
+		background-color:#C02942;
+		&.gradient{
+			&-linear{
+				background-image: linear-gradient(to bottom, #C02942, #BA5C6B);
+			}
+			&-radial{
+				background-image: radial-gradient(#BA5C6B 36%,#C02942 100%);
+			}
+		}
+	}
+	&.purple{
+		background-color:#542437;
+		&.gradient{
+			&-linear{
+				background-image: linear-gradient(to bottom, #542437, #754D5D);
+			}
+			&-radial{
+				background-image: radial-gradient(#754D5D 36%,#542437 100%);
+			}
+		}
+	}	
+	&.blue{
+		background-color:#53777A;
+		&.gradient{
+			&-linear{
+				background-image: linear-gradient(to bottom, #53777A, #365254);
+			}
+			&-radial{
+				background-image: radial-gradient(#53777A 36%,#365254 100%);
+			}
+		}
+	}		
+}
+
+
+
+.Goldfish,.eyes,.thought,.cheer,.let,.Compatible,.Ocean,.Good,.dream,.Headache,.metro,.down,.stream,.basic{
+	color:#5A5A5A;
+}
+.Goldfish.yellow,.Goldfish.orange,.stream.blue,.basic:not(.white),.down.black,.down.orange,.Ocean.blue,.metro.blue,.metro.black,.Headache.orange,.Headache.green,.dream,.Headache.brown,.Good.blue,.Good.papirus,.cheer.pink,.Ocean.brown,.Ocean.red,.Ocean.orange,.let.dames,.Compatible.futzia,.let.brown,.cheer.blue,.eyes.futzia,.thought.blue,.thought.purple,.eyes.green,.thought.orange,.thought.futzia,.Compatible.blue,.Compatible.green{
+	color:white;
+
+}
+
+
+/*cheer up emo kid
+Icn star white
+*/
+.cheer.blue{
+	background-color:#556270;
+}
+.cheer.blue.gradient.linear{
+	background-image: linear-gradient(to bottom, #556270, #76889C);
+}
+.cheer.blue.gradient.radial{
+	background-image: radial-gradient(#76889C 36%,#556270 100%);
+}
+.cheer.aqua{
+	background-color:#4ECDC4;
+}
+.cheer.aqua.gradient.linear{
+	background-image: linear-gradient(to bottom, #4ECDC4, #55AAA3);
+}
+.cheer.aqua.gradient.radial{
+	background-image: radial-gradient(#4ECDC4 36%,#55AAA3 100%);
+}
+.cheer.green{
+	background-color:#C7F464;
+}
+.cheer.green.gradient.linear{
+	background-image: linear-gradient(to bottom, #C7F464, #90A85C);
+}
+.cheer.green.gradient.radial{
+	background-image: radial-gradient(#C7F464 36%,#90A85C 100%);
+}
+.cheer.pink{
+	background-color:#FF6B6B;
+}
+.cheer.pink.gradient.linear{
+	background-image: linear-gradient(to bottom, #FF6B6B, #B93E3E);
+}
+.cheer.pink.gradient.radial{
+	background-image: radial-gradient(#FF6B6B 36%,#B93E3E 100%);
+}
+.cheer.red{
+	background-color:#C44D58;
+}
+.cheer.red.gradient.linear{
+	background-image: linear-gradient(to bottom, #C44D58, #9C333C);
+}
+.cheer.red.gradient.radial{
+	background-image: radial-gradient(#C44D58 36%,#9C333C 100%);
+}
+/*let them eat cake
+Icn star white
+*/
+.let.brown{
+	background-color:#774F38;
+}
+.let.brown.gradient.linear{
+	background-image: linear-gradient(to bottom, #774F38, #A26D4F);
+}
+.let.brown.gradient.radial{
+	background-image: radial-gradient(#A26D4F 36%,#774F38 100%);
+}
+.let.dames{
+	background-color:#E08E79;
+}
+.let.dames.gradient.linear{
+	background-image: linear-gradient(to bottom, #E08E79, #986558);
+}
+.let.dames.gradient.radial{
+	background-image: radial-gradient(#E08E79 36%,#986558 100%);
+}
+.let.paper{
+	background-color:#F1D4AF;
+}
+.let.paper.gradient.linear{
+	background-image: linear-gradient(to bottom, #F1D4AF, #D29F5E);
+}
+.let.paper.gradient.radial{
+	background-image: radial-gradient(#F1D4AF 36%,#D29F5E 100%);
+}
+.let.green{
+	background-color:#ECE5CE;
+}
+.let.green.gradient.linear{
+	background-image: linear-gradient(to bottom, #ECE5CE, #D2C18A);
+}
+.let.green.gradient.radial{
+	background-image: radial-gradient(#ECE5CE 36%,#D2C18A 100%);
+}
+.let.blue{
+	background-color:#C5E0DC;
+}
+.let.blue.gradient.linear{
+	background-image: linear-gradient(to bottom, #C5E0DC, #6AC0B3);
+}
+.let.blue.gradient.radial{
+	background-image: radial-gradient(#C5E0DC 36%,#6AC0B3 100%);
+}
+/*Compatible
+Icn star white
+*/
+.Compatible.blue{
+	background-color:#3FB8AF;
+}
+.Compatible.blue.gradient.linear{
+	background-image: linear-gradient(to bottom, #3FB8AF, #599E98);
+}
+.Compatible.blue.gradient.radial{
+	background-image: radial-gradient(#3FB8AF 36%,#599E98 100%);
+}
+.Compatible.green{
+	background-color:#7FC7AF;
+}
+.Compatible.green.gradient.linear{
+	background-image: linear-gradient(to bottom, #7FC7AF, #1BAD7C);
+}
+.Compatible.green.gradient.radial{
+	background-image: radial-gradient(#7FC7AF 36%,#1BAD7C 100%);
+}
+.Compatible.brown{
+	background-color:#DAD8A7;
+}
+.Compatible.brown.gradient.linear{
+	background-image: linear-gradient(to bottom, #DAD8A7, #A8A20C);
+}
+.Compatible.brown.gradient.radial{
+	background-image: radial-gradient(#DAD8A7 36%,#A8A20C 100%);
+}
+.Compatible.pink{
+	background-color:#FF9E9D;
+}
+.Compatible.pink.gradient.linear{
+	background-image: linear-gradient(to bottom, #FF9E9D, #A54746);
+}
+.Compatible.pink.gradient.radial{
+	background-image: radial-gradient(#FF9E9D 36%,#A54746 100%);
+}
+.Compatible.futzia{
+	background-color:#FF3D7F;
+}
+.Compatible.futzia.gradient.linear{
+	background-image: linear-gradient(to bottom, #FF3D7F, #C81A55);
+}
+.Compatible.futzia.gradient.radial{
+	background-image: radial-gradient(#FF3D7F 36%,#C81A55 100%);
+}
+/*Ocean Five
+Icn star white
+*/
+.Ocean.blue{
+	background-color:#00A0B0;
+}
+.Ocean.blue.gradient.linear{
+	background-image: linear-gradient(to bottom, #00A0B0, #075159);
+}
+.Ocean.blue.gradient.radial{
+	background-image: radial-gradient(#00A0B0 36%,#075159 100%);
+}
+.Ocean.brown{
+	background-color:#6A4A3C;
+}
+.Ocean.brown.gradient.linear{
+	background-image: linear-gradient(to bottom, #6A4A3C, #BC562A);
+}
+.Ocean.brown.gradient.radial{
+	background-image: radial-gradient(#BC562A 36%,#6A4A3C 100%);
+}
+.Ocean.red{
+	background-color:#CC333F;
+}
+.Ocean.red.gradient.linear{
+	background-image: linear-gradient(to bottom, #CC333F, #F32C3C);
+}
+.Ocean.red.gradient.radial{
+	background-image: radial-gradient(#F32C3C 36%,#CC333F 100%);
+}
+.Ocean.orange{
+	background-color:#EB6841;
+}
+.Ocean.orange.gradient.linear{
+	background-image: linear-gradient(to bottom, #EB6841, #B72E05);
+}
+.Ocean.orange.gradient.radial{
+	background-image: radial-gradient(#EB6841 36%,#B72E05 100%);
+}
+.Ocean.yellow{
+	background-color:#EDC951;
+}
+.Ocean.yellow.gradient.linear{
+	background-image: linear-gradient(to bottom, #EDC951, #AE8600);
+}
+.Ocean.yellow.gradient.radial{
+	background-image: radial-gradient(#EDC951 36%,#AE8600 100%);
+}
+/*Good Friends
+Icn star white
+*/
+.Good.paper{
+	background-color:#D9CEB2;
+}
+.Good.paper.gradient.linear{
+	background-image: linear-gradient(to bottom, #D9CEB2, #7D6324);
+}
+.Good.paper.gradient.radial{
+	background-image: radial-gradient(#D9CEB2 36%,#7D6324 100%);
+}
+.Good.papirus{
+	background-color:#948C75;
+}
+.Good.papirus.gradient.linear{
+	background-image: linear-gradient(to bottom, #948C75, #59523F);
+}
+.Good.papirus.gradient.radial{
+	background-image: radial-gradient(#948C75 36%,#59523F 100%);
+}
+.Good.gray{
+	background-color:#D5DED9;
+}
+.Good.gray.gradient.linear{
+	background-image: linear-gradient(to bottom, #D5DED9, #76877E);
+}
+.Good.gray.gradient.radial{
+	background-image: radial-gradient(#D5DED9 36%,#76877E 100%);
+}
+.Good.papirus-blacken{
+	background-color:#7A6A53;
+}
+.Good.papirus-blacken.gradient.linear{
+	background-image: linear-gradient(to bottom, #7A6A53, #E1B16B);
+}
+.Good.papirus-blacken.gradient.radial{
+	background-image: radial-gradient(#E1B16B 36%,#7A6A53 100%);
+}
+.Good.blue{
+	background-color:#99B2B7;
+}
+.Good.blue.gradient.linear{
+	background-image: linear-gradient(to bottom, #99B2B7, #428693);
+}
+.Good.blue.gradient.radial{
+	background-image: radial-gradient(#99B2B7 36%,#428693 100%);
+}
+/*dream magnet
+Icn star white
+*/
+.dream.black{
+	background-color:#343838;
+}
+.dream.black.gradient.linear{
+	background-image: linear-gradient(to bottom, #343838, #081515);
+}
+.dream.black.gradient.radial{
+	background-image: radial-gradient(#343838 36%,#081515 100%);
+}
+.dream.green{
+	background-color:#005F6B;
+}
+.dream.green.gradient.linear{
+	background-image: linear-gradient(to bottom, #005F6B, #090A0B);
+}
+.dream.green.gradient.radial{
+	background-image: radial-gradient(#005F6B 36%,#090A0B 100%);
+}
+.dream.blue{
+	background-color:#008C9E;
+}
+.dream.blue.gradient.linear{
+	background-image: linear-gradient(to bottom, #008C9E, #1D2121);
+}
+.dream.blue.gradient.radial{
+	background-image: radial-gradient(#008C9E 36%,#1D2121 100%);
+}
+/*Headache
+Icn star white
+*/
+.Headache.brown{
+	background-color:#655643;
+}
+.Headache.brown.gradient.linear{
+	background-image: linear-gradient(to bottom, #655643, #A15D07);
+}
+.Headache.brown.gradient.radial{
+	background-image: radial-gradient(#A15D07 36%,#655643 100%);
+}
+.Headache.green{
+	background-color:#80BCA3;
+}
+.Headache.green.gradient.linear{
+	background-image: linear-gradient(to bottom, #80BCA3, #0D774B);
+}
+.Headache.green.gradient.radial{
+	background-image: radial-gradient(#80BCA3 36%,#0D774B 100%);
+}
+.Headache.yellow{
+	background-color:#F6F7BD;
+}
+.Headache.yellow.gradient.linear{
+	background-image: linear-gradient(to bottom, #F6F7BD, #CB9D00);
+}
+.Headache.yellow.gradient.radial{
+	background-image: radial-gradient(#CB9D00 36%,#F6F7BD 100%);
+}
+.Headache.yellow-blacken{
+	background-color:#E6AC27;
+}
+.Headache.yellow-blacken.gradient.linear{
+	background-image: linear-gradient(to bottom, #E6AC27, #FFB200);
+}
+.Headache.yellow-blacken.gradient.radial{
+	background-image: radial-gradient(#FFB200 36%,#E6AC27 100%);
+}
+.Headache.orange{
+	background-color:#BF4D28;
+}
+.Headache.orange.gradient.linear{
+	background-image: linear-gradient(to bottom, #BF4D28, #FF3E00);
+}
+.Headache.orange.gradient.radial{
+	background-image: radial-gradient(#FF3E00 36%,#BF4D28 100%);
+}
+/*metro
+Icn star white
+*/
+.metro.black{
+	background-color:#515151;
+}
+.metro.black.gradient.linear{
+	background-image: linear-gradient(to bottom, #515151, #000);
+}
+.metro.black.gradient.radial{
+	background-image: radial-gradient(#515151 36%,#000 100%);
+}
+.metro.blue{
+	background-color:#00B4FF;
+}
+.metro.blue.gradient.linear{
+	background-image: linear-gradient(to bottom, #00B4FF, #2C97C3);
+}
+.metro.blue.gradient.radial{
+	background-image: radial-gradient(#00B4FF 36%,#2C97C3 100%);
+}
+.metro.gray{
+	background-color:#EEEEEE;
+}
+.metro.gray.gradient.linear{
+	background-image: linear-gradient(to bottom, #EEE, #8F8F8F);
+}
+.metro.gray.gradient.radial{
+	background-image: radial-gradient(#EEEEEE 36%,#8F8F8F 100%);
+}
+/*don't you go down
+Icn star white
+*/
+.down.black{
+	background-color:#403B33;
+}
+.down.black.gradient.linear{
+	background-image: linear-gradient(to bottom, #403B33, #0E0B06);
+}
+.down.black.gradient.radial{
+	background-image: radial-gradient(#403B33 36%,#0E0B06 100%);
+}
+.down.orange{
+	background-color:#D3643B;
+}
+.down.orange.gradient.linear{
+	background-image: linear-gradient(to bottom, #D3643B, #631C02);
+}
+.down.orange.gradient.radial{
+	background-image: radial-gradient(#D3643B 36%,#631C02 100%);
+}
+.down.green{
+	background-color:#D6E1C7;
+}
+.down.green.gradient.linear{
+	background-image: linear-gradient(to bottom, #D6E1C7, #709242);
+}
+.down.green.gradient.radial{
+	background-image: radial-gradient(#D6E1C7 36%,#709242 100%);
+}
+.down.blue{
+	background-color:#94C7B6;
+}
+.down.blue.gradient.linear{
+	background-image: linear-gradient(to bottom, #94C7B6, #026B48);
+}
+.down.blue.gradient.radial{
+	background-image: radial-gradient(#94C7B6 36%,#026B48 100%);
+}
+.down.gray{
+	background-color:#EDEBE6;
+}
+.down.gray.gradient.linear{
+	background-image: linear-gradient(to bottom, #EDEBE6, #848332);
+}
+.down.gray.gradient.radial{
+	background-image: radial-gradient(#EDEBE6 36%,#848332 100%);
+}
+.stream.blue{
+	background-color:#6D8BA8;
+}
+.stream.blue.gradient.linear{
+	background-image: linear-gradient(to bottom, #6D8BA8, #0C4074);
+}
+.stream.blue.gradient.radial{
+	background-image: radial-gradient(#6D8BA8 36%,#0C4074 100%);
+}
+/* Basic Colors */
+.basic.white{
+	background-color:white;
+}
+.basic.red{
+	background-color:#EC6A6A;
+}
+.basic.red-pastel{
+	background-color:#EC6A6A;
+}
+.basic.blue-marine{
+	background-color:#3E8AAE;
+}
+.basic.blue-blacken{
+	background-color:#096280;
+}
+.basic.green{
+	background-color:#57A46D;
+}
+.basic.green-pastel{
+	background-color:#5C927B;
+}
+.basic.blue-sky{
+	background-color:#2EA9D6;
+}
+.basic.blue-pastel{
+	background-color:#6F94AB;
+}
+.basic.orange{
+	background-color:#ECAA6A;
+}
+
+
+/* transparent Color */
+.alpha.black{
+	color: white;
+}
+.alpha.black{
+	background-color: rgba(0, 0, 0, 0.57);	
+}
+.alpha.black.gradient.linear{
+	background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.57), rgba(0, 0, 0, 0));
+}
+.alpha.black.gradient.radial{
+	background-image: radial-gradient(rgba(0, 0, 0, 0) 36%,rgba(0, 0, 0, 0.57) 100%);
+}

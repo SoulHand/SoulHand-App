@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {ajax} from 'jquery'
+import {withRouter} from 'react-router';
 
+@withRouter
 export class Login extends React.Component<{}, {}> {
 	public user:any={
 		username:null,
@@ -13,20 +15,20 @@ export class Login extends React.Component<{}, {}> {
 		this.user[event.target.id]=event.target.value;
 		console.log(this.user)
 	}
-	auth(event:any){		
+	auth(event:any){
 		ajax({
-			method:"get",
+			method:"POST",
 	        url: '//0.0.0:8080/v1/auth',
 	        dataType: "json",
-	        data:null,
-	        beforeSend: (xhr:any)=>{
-	        	xhr.setRequestHeader ("Authorization", "Basic " + btoa(this.user.username + ":" + this.user.password));
-	        },
+	        data:{
+	        	username:this.user.username,
+	        	password:this.user.password
+	        },	        
 	        success:(data:any)=>{
-	        	console.log(data)
 	        	let user=JSON.stringify(data);
 	        	this.setState({user:user})
-	        	localStorage.setItem("session",user);          
+	        	localStorage.setItem("session",user);
+	        	this.props.router.replace(this.props.location.query.url || '/');
 	        }
 		});
 	}
@@ -51,21 +53,21 @@ export class Login extends React.Component<{}, {}> {
 	              </div>
 	              <div className="form-group" id="password">
 	                <div className="col-sm-2">
-	                  <label htmlFor="Password" className="control-label">Contrasena</label>
+	                  <label htmlFor="password" className="control-label">Contrasena</label>
 	                </div>
 	                <div className="col-sm-10 cuadro">
-	                  <input type="password" className="form-control cuadro" id="Password" onChange={(e)=>{this.getFields(e)}} placeholder="Contraseña"/>
+	                  <input type="password" className="form-control cuadro" id="password" onChange={(e)=>{this.getFields(e)}} placeholder="Contraseña"/>
 	                </div>
 	              </div>
+		          <div className="form-group">
+		            <button type="submit" className="boton-e btn btn-lg btn-success" data-toggle="modal" id="entrar" contentEditable={true}>
+		              <b>Entrar</b>
+		            </button>
+		            <button type="submit" className="boton-e btn btn-lg btn-primary" data-toggle="modal" id="entrar" contentEditable={true}>
+		              <b>Registro</b>
+		            </button>
+		          </div>
 	            </form>
-	          </div>
-	          <div className="form-group">
-	            <button type="submit" className="boton-e btn btn-lg btn-success" data-toggle="modal" id="entrar" contentEditable={true}>
-	              <b>Entrar</b>
-	            </button>
-	            <button type="submit" className="boton-e btn btn-lg btn-primary" data-toggle="modal" id="entrar" contentEditable={true}>
-	              <b>Registro</b>
-	            </button>
 	          </div>
 	        </div>
 	      </div>

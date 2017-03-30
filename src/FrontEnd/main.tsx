@@ -4,9 +4,6 @@ import {render} from 'react-dom';
 import 'jquery';
 import 'tether';
 import 'bootstrap';
-import 'bootstrap/scss/bootstrap.scss';
-import './scss/main.scss';
-import './scss/pingendo.css';
 import {App} from './App';
 import {PageIndex} from './templates/PageIndex';
 import {Login} from './templates/Login';
@@ -17,9 +14,10 @@ import {PageStudentCreate} from './templates/PageStudentCreate';
 import {PageRepresentative} from './templates/PageRepresentative';
 import {PageRepresentativeCreate} from './templates/PageRepresentativeCreate';
 import {PageUserCreate} from './templates/PageUserCreate';
-
+import {Auth} from './Auth';
 
 window.addEventListener("load",()=>{
+	var body=document.querySelector("div[data-app=\"soulhand-services\"]");
 	render((
 	 	<Router history={hashHistory}>
 		    <Route path="/" component={App}>
@@ -28,7 +26,7 @@ window.addEventListener("load",()=>{
 		    <Route path="/auth" component={App}>
 		    	<IndexRoute component={Login}/>
 		    </Route>
-		    <Route path="/teacher" component={App}>
+		    <Route path="/teacher" component={App} onEnter={Auth}>
 		    	<IndexRoute component={PageTeacher}/>
 		    	<Route path="create" component={PageTeacherCreate}/>
 		    </Route>
@@ -39,10 +37,11 @@ window.addEventListener("load",()=>{
 		    <Route path="/representative" component={App}>
 		    	<IndexRoute component={PageRepresentative}/>
 		    	<Route path="create" component={PageRepresentativeCreate}/>
+		    </Route>
 		    <Route path="/user" component={App}>
 		    	<Route path="create" component={PageUserCreate}/>
 		    </Route>
 	  	</Router>
-	  ), document.body
+	  ), body
 	);
 });

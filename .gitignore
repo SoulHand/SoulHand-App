@@ -1,6 +1,7 @@
 *.[oa]
 *~
 public/components/
+public/js/
 vendor/
 typings/
 node_modules/
