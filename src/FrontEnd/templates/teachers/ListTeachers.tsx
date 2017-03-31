@@ -8,11 +8,13 @@ export class ListTeachers extends React.Component<{}, {}> {
 	public PublicKeyId:string;
 	public session:users.sessions;
 	public data:any=[];
-	public state:any
+	state={
+		teachers:[],
+		search:""
+	};
 	constructor(props:any) {
 		super(props);
     	let session=localStorage.getItem("session");
-		this.state = {teachers:[],search:""};
     	session=JSON.parse(session);
 		this.session=session;
 	}
@@ -26,7 +28,7 @@ export class ListTeachers extends React.Component<{}, {}> {
     	this.setState({
 	      	teachers : this.data
 	    });
-		/*ajax({
+		ajax({
 			method:"DELETE",
 	        url: `//localhost:8080/v1/people/teachers/${event.target.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
@@ -40,7 +42,7 @@ export class ListTeachers extends React.Component<{}, {}> {
 					return true;
 	        	})
 	        }
-		});*/
+		});
 	}
 	getFields(event:any){
 		this.setState({

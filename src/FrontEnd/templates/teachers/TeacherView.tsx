@@ -2,17 +2,19 @@ import * as React from 'react';
 import * as validator from 'string-validator';
 import {ajax} from 'jquery'
 
-export class TeacherView extends React.Component<{}, {}> {
+export class TeacherView extends React.Component<props.teacherItem, {}> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
-	public PublicKeyId:string;	
+	public PublicKeyId:string;
+	public teachers:peoples.teachers;
+	state={
+		teacher:null
+	};
 	constructor(props:any) {
 		super(props);
-    	let session=localStorage.getItem("session");
-		this.state = {teachers:[],search:""};
-    	session=JSON.parse(session);
+    	let str=localStorage.getItem("session");
+    	var session=JSON.parse(str);
 		this.session=session;
-		this.state = {teacher:null};
 	}
 	componentDidMount(){
 		ajax({
@@ -20,8 +22,8 @@ export class TeacherView extends React.Component<{}, {}> {
 	        url: `//0.0.0:8080/v1/people/teachers/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,	        
-	        success:(data:any)=>{
-	        	this.data=data;
+	        success:(data:peoples.teachers)=>{
+	        	this.teachers=data;
 				this.setState({
 			      teacher : data
 			    });

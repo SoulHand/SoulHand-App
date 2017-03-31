@@ -37,9 +37,14 @@ declare namespace users{
 }
 
 declare namespace props{
+	interface teachersParams{
+		id:string
+	}
 	interface teacherItem{
-		people:peoples.teachers
-		delete:Function
-		session:users.sessions
+		people?:peoples.teachers
+		delete?:Function
+		session?:users.sessions
+    	routeParams ?: teachersParams
+
 	}
 }
