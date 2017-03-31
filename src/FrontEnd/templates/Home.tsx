@@ -1,13 +1,10 @@
 import * as React from 'react';
 import {hashHistory} from 'react-router';
-import {Bar} from './templates/Bar';
-import {Menu} from './templates/Menu';
+import {Bar} from './Bar';
+import {Menu} from './home/Menu';
 //import {NavBar} from './templates/NavBar';
 
-export class App extends React.Component<{}, {}> {
-	public temp="hola";
-	componentDidMount(){
-	}
+export class Home extends React.Component<{}, {}> {
 	render () {
 		return (
 			<div className="content" data-app="soulhand-services" data-align="left">

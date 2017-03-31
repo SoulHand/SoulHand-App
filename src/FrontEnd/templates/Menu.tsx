@@ -8,13 +8,19 @@ import 'bootstrap';
 
 
 
-export class menu extends React.Component<{}, {}> {
+export class Menu extends React.Component<{}, {}> {
 	render (){
 		return(<div className="menu">
 			<ul>
-				<li><Link to="/">{item 1}</Link></li>
-				<li><Link to="/">{item 2}</Link></li>
-				<li><Link to="/">{item 3}</Link></li>
+				<li>
+					<Link to="/" activeClassName="active">Docente</Link>
+				</li>
+				<li>
+					<Link to="/" activeClassName="active">Alumnos</Link>
+				</li>
+				<li>
+					<Link to="/" activeClassName="active">Iniciar sesión</Link>
+				</li>
 			</ul>
 		</div>);
 	}

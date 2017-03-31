@@ -4,7 +4,7 @@ export class PageStudentCreate extends React.Component<{}, {}> {
 	render () {
     return (
      <div className="container card">
-        <h3>Registrar Representante</h3>
+        <h3>Registrar Estudiante</h3>
       <form method="POST" className="formulario">
         <label htmlFor="ci"><b>Cedula</b></label>
             <input type="texto" className="form-control" id="ci" aria-describedby="ci_representante" maxLength={12} placeholder="V123456789" required autoFocus/>
