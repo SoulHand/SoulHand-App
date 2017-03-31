@@ -70,7 +70,7 @@ export class Login extends React.Component<props.teacherItem, props.teacherState
 							              </div>
 								            {this.state.error && (
 										    	<div className="alert alert-danger" role="alert">
-										    		{this.state.error.message}
+										    		{this.state.error}
 												</div>
 										    )}
 								          <div className="form-group">
