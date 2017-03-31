@@ -3,13 +3,13 @@ import {getJSON,ajax} from 'jquery'
 import {Item} from "./Item"
 //import * as settings from "../settings"
 
-export class ListTeachers extends React.Component<{}, {}> {
+export class ListParent extends React.Component<{}, {}> {
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
 	public session:users.sessions;
-	public teachers:any=[];
+	public data:any=[];
 	state={
-		teachers:[],
+		parents:[],
 		search:""
 	};
 	constructor(props:any) {
@@ -18,24 +18,29 @@ export class ListTeachers extends React.Component<{}, {}> {
     	let session=JSON.parse(str);
 		this.session=session;		
 	}
-	deleteField(data: any){
-		var element:EventTarget=event.target;		
+	deleteField(data: Array<peoples.parents>){
+		this.data=this.data.filter(function(row:peoples.parents){
+			if(row._id==data._id){
+				return false;
+			}
+			return true;
+    	});
+    	this.setState({
+	      	teachers : this.data
+	    });
 		ajax({
 			method:"DELETE",
-	        url: `//localhost:8080/v1/people/teachers/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `//localhost:8080/v1/people/teachers/${event.target.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
-	        success:(data:peoples.teachers)=>{
-	        	this.teachers=this.teachers.filter(function(row:peoples.teachers){
+	        success:(data:peoples.parents)=>{
+	        	this.data=this.data.filter(function(row:peoples.parents){
 					if(row._id==data._id){
 						return false;
 					}
 					return true;
-		    	});
-		    	this.setState({
-			      	teachers : this.teachers
-			    });
+	        	})
 	        }
 		});
 	}
@@ -50,8 +55,8 @@ export class ListTeachers extends React.Component<{}, {}> {
 	        url: `//0.0.0:8080/v1/people/teachers/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,	        
-	        success:(data:peoples.teachers)=>{
-	        	this.teachers=data;
+	        success:(data:any)=>{
+	        	this.data=data;
 				this.setState({
 			      teachers : data
 			    });
@@ -59,7 +64,7 @@ export class ListTeachers extends React.Component<{}, {}> {
 		});
 	}
 	render(){
-		let teachers = this.state.teachers.map((row:peoples.teachers) => {
+		let teachers = this.state.teachers.map((row:peoples.parents) => {
 	      return (
 	        <Item people={row} key={row._id} session={this.session} delete={this.deleteField.bind(this)}/>
 	      );

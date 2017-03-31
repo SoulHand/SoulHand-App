@@ -4,7 +4,7 @@ import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
 
 @withRouter
-export class TeacherCreate extends React.Component<{}, {}> {
+export class TeacherCreate extends React.Component<props.teacherItem, {}> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
@@ -15,14 +15,14 @@ export class TeacherCreate extends React.Component<{}, {}> {
 			required:true
 		},
 		name:{
-			match:(fn)=>{
+			match:(fn:string)=>{
 				return !validator.isNull()(fn);
 			},
 			value:null,
 			required:true
 		},
 		phone:{
-			match:(fn)=>{
+			match:(fn:string)=>{
 				return /^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/.test(fn);
 			},
 			value:null
@@ -41,7 +41,7 @@ export class TeacherCreate extends React.Component<{}, {}> {
 			value:null
 		}
 	};
-	state={
+	state:props.fieldsTeachers={
 		error:{
 			dni:false,
 			name:false,
@@ -54,8 +54,8 @@ export class TeacherCreate extends React.Component<{}, {}> {
 	}
 	constructor(props:any) {
 		super(props);
-    	let session=localStorage.getItem("session");
-    	session=JSON.parse(session);
+    	let str=localStorage.getItem("session");
+    	let session=JSON.parse(str);
 		this.session=session;		
 	}
 	public getFields(event:any){
@@ -69,8 +69,14 @@ export class TeacherCreate extends React.Component<{}, {}> {
 	}
 	public validate(){
 		var value=true;
-		var state=this.state.error;
-		var data={};
+		var state:props.errorState=this.state.error;
+		var data:props.dataTeachers={
+			dni:null,
+			name:null,
+			phone:null,
+			email:null,
+			birthdate:null
+		};
 		for (var i in this.fields){
 			if( (this.fields[i].require && !this.fields[i].value) || (this.fields[i].match && !this.fields[i].match(this.fields[i].value))){
 				value=false;

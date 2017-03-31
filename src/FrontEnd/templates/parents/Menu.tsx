@@ -4,6 +4,7 @@ import {render} from 'react-dom';
 import {Link} from 'react-router';
 import {ProfileBox} from "../ProfileBox"
 
+
 export class Menu extends React.Component<{}, {}> {
 	public parent:Element;
 	public session:users.sessions;
@@ -37,13 +38,13 @@ export class Menu extends React.Component<{}, {}> {
 				}
 				<ul>
 					<li>
-						<Link to="/" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Inicio</Link>
+						<Link to="/" activeClassName="active">Inicio</Link>
 					</li>
 					<li>
-						<Link to="/students/create" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Crear alumno</Link>
+						<Link to="/parents/create" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Crear Representante</Link>
 					</li>
 					<li>
-						<Link to="/students" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Ver alumnos</Link>
+						<Link to="/parents" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Ver representantes</Link>
 					</li>
 				</ul>
 			</div>

@@ -2,30 +2,30 @@ import * as React from 'react';
 import * as validator from 'string-validator';
 import {ajax} from 'jquery'
 
-export class TeacherView extends React.Component<props.teacherItem, props.teacherState> {
+export class ParentView extends React.Component<{}, {}> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
-	public teachers:peoples.teachers;
 	state={
-		teacher:null
+		parents:[],
+		search:""
 	};
 	constructor(props:any) {
 		super(props);
-    	let str=localStorage.getItem("session");
-    	var session=JSON.parse(str);
+    	let session=localStorage.getItem("session");
+    	session=JSON.parse(session);
 		this.session=session;
 	}
 	componentDidMount(){
 		ajax({
 			method:"GET",
-	        url: `//0.0.0:8080/v1/people/teachers/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `//0.0.0:8080/v1/people/parents/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,	        
-	        success:(data:peoples.teachers)=>{
-	        	this.teachers=data;
+	        success:(data:any)=>{
+	        	this.data=data;
 				this.setState({
-			      teacher : data
+			      parents : data
 			    });
 	        }
 		});
@@ -34,25 +34,21 @@ export class TeacherView extends React.Component<props.teacherItem, props.teache
 	render () {
     return (
     	<div className="container">
-    		{this.state.teacher && (
+    		{this.state.parents && (
 	    		<div className="row">
 		          <div className="col-md-2">
 		            <img src="/images/user-login-icon-14.png" className="imagen img-circle img-responsive"/>
 		          </div>
 		          <div className="col-md-10 parrafo">
 		            <h3>
-		              <b>{(this.state.teacher.data.mode=="TEACHER") ? "Docente": "Alumno"}</b>
+		              <b>{(this.state.parents.data.mode=="TEACHER") ? "Docente": "Alumno"}</b>
 		            </h3>
 		            <p>
-		              <b>Nombre y Apellido:</b>{this.state.teacher.data.name}
+		              <b>Nombre y Apellido:</b>{this.state.parents.data.name}
 		            </p>
 		          </div>
 		        </div>		    	
-		    )}		
-	        <h2>Actividades:</h2>
-	        <div className="fieldset" data-align="justify">
-	        	<span className="text-align center">No posee actividades</span>
-	        </div>
+		    )}	        
     	</div>		
     );
   }
