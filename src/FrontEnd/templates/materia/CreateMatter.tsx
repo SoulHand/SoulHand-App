@@ -73,7 +73,7 @@ export class MatterCreate extends React.Component<props.parentsItem, {}> {
 		}
 		ajax({
 			method:"POST",
-	        url: `//0.0.0:8080/v1/people/teachers/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `//0.0.0:8080/v1/courses/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:data,	        
 	        success:(data:any)=>{

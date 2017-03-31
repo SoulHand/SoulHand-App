@@ -15,7 +15,7 @@ export class ListMatter extends React.Component<{}, {}> {
 	    });
 	}
 	componentDidMount(){//direccion
-		getJSON(`//0.0.0:8080/v1/people/student/?PublicKeyId=${this.PublicKeyId}&PrivateKeyId=${this.PrivateKeyId}`,(data)=>{
+		getJSON(`//0.0.0:8080/v1/courses/?PublicKeyId=${this.PublicKeyId}&PrivateKeyId=${this.PrivateKeyId}`,(data)=>{
 			this.setState({
 		      student : data
 		    });
@@ -30,15 +30,12 @@ export class ListMatter extends React.Component<{}, {}> {
 				</div>
 				<span>{this.state.search}</span>
 			</form>
-			<h3>Estudiante</h3>
+			<h3>Materia</h3>
 			<table className="table table-striped">
 				<thead>
 					<tr>
 						<th>Nombre</th>
-                 		<th>Apellido</th>
-                  		<th>Represetante</th>
-                 		<th>Fecha de Nacimieto</th>
-                  		<th>Acción</th>
+                   		<th>Acción</th>
 					</tr>
 				</thead>
 				<tbody>
