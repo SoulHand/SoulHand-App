@@ -1,5 +1,5 @@
 var CRUD=require('./CRUD.js');
-var VoidException=require("./Exceptions/VoidException.js");
+var UserException=require("./Exceptions/UserException.js");
 
 function User(db){
 	var self=this;

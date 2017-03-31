@@ -11,8 +11,9 @@ import {Teachers} from './templates/Teachers';
 import {Student} from './templates/Student';
 import {Parents} from './templates/Parents';
 import {ListParent} from './templates/parents/ListParent';
-
 import {Login} from './templates/Login';
+import {UserCreate} from './templates/users/UserCreate';
+
 import {ListTeachers} from './templates/teachers/ListTeachers';
 import {TeacherCreate} from './templates/teachers/TeacherCreate';
 import {TeacherView} from './templates/teachers/TeacherView';
@@ -27,7 +28,7 @@ import {Auth} from './Auth';
 window.addEventListener("load",()=>{
 	render((
 	 	<Router history={hashHistory}>
-		    <Route path="/" component={Home} onEnter={Auth}>
+		    <Route path="/" component={Home}>
 		    	<IndexRoute component={Index}/>
 		    </Route>
 		    <Route path="/auth" component={Login}/>
@@ -40,12 +41,16 @@ window.addEventListener("load",()=>{
 		    	<IndexRoute component={ListStudent}/>
 		    	<Route path="create" component={StudentCreate}/>
 		    </Route>
+		    <Route path="/users" component={Home}>
+		    	<Route path="create" component={UserCreate}/>
+		    </Route>
 	  	</Router>
 	  ), document.body
 	);
 });
 
 /*
+		    	<IndexRoute component={ListStudent}/>
 	
 		    <Route path="/parents" component={Parents}>
 		    	<IndexRoute component={ListParent}/>
