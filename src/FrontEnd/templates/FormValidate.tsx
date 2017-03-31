@@ -20,16 +20,16 @@ export class FormValidate extends React.Component<{}, {}> {
     	session=JSON.parse(session);
 		this.session=session;		
 	}
-	getFields(event:any){
+	public getFields(event:any){
 		this.fields[event.target.id].value=event.target.value;
 	}
-	getRadioButton(event:any){
+	public getRadioButton(event:any){
 		this.fields["interprete"].value= (event.target.id=="yes") ? true : undefined
 		this.setState({
 			radio:event.target.id
 		});
 	}
-	validate(){
+	public validate(){
 		var value=true;
 		var state=this.state.error;
 		var data={};

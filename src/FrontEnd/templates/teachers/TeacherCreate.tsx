@@ -41,34 +41,33 @@ export class TeacherCreate extends React.Component<{}, {}> {
 			value:null
 		}
 	};
+	state={
+		error:{
+			dni:false,
+			name:false,
+			phone:false,
+			email:false,
+			birthdate:false,
+			server:null
+		},
+		radio:"no"
+	}
 	constructor(props:any) {
 		super(props);
     	let session=localStorage.getItem("session");
-		this.state = {teachers:[],search:""};
     	session=JSON.parse(session);
-		this.session=session;
-		this.state = {
-			error:{
-				dni:false,
-				name:false,
-				phone:false,
-				email:false,
-				birthdate:false,
-				server:null
-			}
-		};
+		this.session=session;		
 	}
-	getFields(event:any){
+	public getFields(event:any){
 		this.fields[event.target.id].value=event.target.value;
 	}
-	getRadioButton(event:any){
+	public getRadioButton(event:any){
 		this.fields["interprete"].value= (event.target.id=="yes") ? true : undefined
 		this.setState({
 			radio:event.target.id
 		});
 	}
-	send(event:any){
-		event.preventDefault();
+	public validate(){
 		var value=true;
 		var state=this.state.error;
 		var data={};
@@ -86,9 +85,16 @@ export class TeacherCreate extends React.Component<{}, {}> {
 			this.setState({
 				error:state
 			});
+			return false;
+		}
+		return data;
+	}
+	send(event:any){
+		event.preventDefault();
+		var data=this.validate();
+		if(!data){
 			return;
 		}
-		console.log(data);
 		ajax({
 			method:"POST",
 	        url: `//0.0.0:8080/v1/people/teachers/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
@@ -101,13 +107,13 @@ export class TeacherCreate extends React.Component<{}, {}> {
 	        	var state=this.state.error;
 	        	state.server=data.responseJSON;
 	        	this.setState({
-					error:state,
-					radio:"no"
+					error:state
 				});
 	        }
 		});
 	}
 	render () {
+		console.log(this, this.state);
     return (
     	<div className="container">    				
     		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
@@ -140,7 +146,7 @@ export class TeacherCreate extends React.Component<{}, {}> {
 				    <input type="email" className="form-control" id="email" aria-describedby="emailHelp" placeholder="Correo Electrónico" onChange={(e)=>{this.getFields(e)}}/>
 				    {this.state.error.email && (
 				    	<div className="alert alert-danger" role="alert">
-						  <strong>Error!</strong> Debe ser un numero de telefono valido.
+						  <strong>Error!</strong> Debe ser un correo electronico.
 						</div>
 				    )}
 				  </div>
@@ -149,7 +155,7 @@ export class TeacherCreate extends React.Component<{}, {}> {
 				    <input type="date" className="form-control" id="birthdate" aria-describedby="emailHelp" placeholder="YYYY-mm-dd" onChange={(e)=>{this.getFields(e)}}/>
 				    {this.state.error.birthdate && (
 				    	<div className="alert alert-danger" role="alert">
-						  <strong>Error!</strong> Debe ser un numero de telefono valido.
+						  <strong>Error!</strong> Debe ser una fecha valida.
 						</div>
 				    )}
 				  </div>
