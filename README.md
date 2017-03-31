@@ -12,7 +12,6 @@ Puedes clonar este proyecto para usarlo con git libremente usa el siguiente coma
 Dependencias
 ```bash
 	$ npm install
-	$ bower install
 	$ typings install
 ```
 
