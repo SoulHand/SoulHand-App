@@ -9,11 +9,7 @@ export class MatterCreate extends React.Component<props.parentsItem, {}> {
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
 	public fields:any={
-		dni:{
-			match:validator.matches(/^[VE][0-9]+$/i),
-			value:null,
-			required:true
-		},
+		
 		name:{
 			match:(fn:string)=>{
 				return !validator.isNull()(fn);
@@ -81,7 +77,7 @@ export class MatterCreate extends React.Component<props.parentsItem, {}> {
 	        dataType: "json",
 	        data:data,	        
 	        success:(data:any)=>{
-	        	this.props.router.replace('/teacher');
+	        	this.props.router.replace('/materia');
 	        },
 	        error:(data:any)=>{
 	        	var state=this.state.error;
@@ -97,13 +93,7 @@ export class MatterCreate extends React.Component<props.parentsItem, {}> {
     return (
     	<div className="container">    				
     		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
-				<label htmlFor="dni"><b>Código</b></label>
-				    <input type="texto" className="form-control" id="dni" aria-describedby="cod_matter" maxLength={12} placeholder="documento de identidad" required autoFocus onChange={(e)=>{this.getFields(e)}}/>
-				    {this.state.error.dni && (
-				    	<div className="alert alert-danger" role="alert">
-						  <strong>Error!</strong> Introduzca el Código.
-						</div>
-				    )}
+			
 				  <div className="form-group">
 				    <label htmlFor="name"><b>Nombre </b></label>
 				    <input type="texto" className="form-control" id="name" aria-describedby="name" maxLength={20} placeholder="Nombre y Apellido"required autoFocus onChange={(e)=>{this.getFields(e)}}/>
