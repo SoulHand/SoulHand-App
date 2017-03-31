@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export class PageIndex extends React.Component<{}, {}> {
+export class Index extends React.Component<{}, {}> {
 	render () {
     return (
 		<div className="container">

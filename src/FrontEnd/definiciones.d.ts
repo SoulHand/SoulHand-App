@@ -1,3 +1,15 @@
+declare namespace crud{
+	interface grade{
+		_id:string
+		_v:number
+		name:string
+	}
+}
+declare namespace compat {
+  interface Map {
+    [k:string] : any
+  }
+}
 declare namespace peoples{
 	interface people{
 		_id:string
@@ -6,12 +18,28 @@ declare namespace peoples{
 		birthdate:string
 		mode:string
 		createDate:string
+		_v:number
 	}
 	interface teachers{
 		_id:string
-		data:peoples.people,
+		data:peoples.people
 		interprete:boolean
 		_v:number
+	}
+	interface students{
+		_id:string
+		_v:number		
+		data:peoples.people
+		grade: crud.grade
+		activities:any
+		physics:any
+		discapacityLevel:number
+	}
+	interface parents{
+		_id:string
+		data:peoples.people
+		_v:number
+		idStudent:string
 	}
 }
 declare namespace users{	
@@ -32,19 +60,75 @@ declare namespace users{
 		dateLastConnect:string
 		dateCreated:string
 		_v:number
-		users:profile
+		user:profile
 	}	
 }
 
 declare namespace props{
+	interface codeError{
+		code:string
+		message:string
+	}
+	interface errorState{
+		dni?:boolean
+		name?:boolean
+		phone?:boolean
+		email?:boolean
+		birthdate?:boolean
+		server?:codeError
+	}
+	interface dataTeachers{
+		dni?:boolean
+		name?:boolean
+		phone?:boolean
+		email?:boolean
+		birthdate?:boolean
+	}
 	interface teachersParams{
 		id:string
+	}
+	interface teacherState{
+		teacher?: peoples.teachers
+		teachers?: Array<peoples.teachers>
+		error?:errorState
+		user?:compat.Map
+	}
+	interface fieldsTeachers{
+		error:errorState,
+		radio?:string
 	}
 	interface teacherItem{
 		people?:peoples.teachers
 		delete?:Function
 		session?:users.sessions
     	routeParams ?: teachersParams
-
+    	router?:ReactRouter.InjectedRouter
+    	location?: any
+    	children?: any
+	}
+	interface parentItem{
+		people?:peoples.parents
+		delete?:Function
+		session?:users.sessions
+    	routeParams ?: teachersParams
+    	router?:ReactRouter.InjectedRouter
+    	location?: any
+    	children?: any
+	}
+	interface studentsItem{
+		people?:peoples.parents
+		delete?:Function
+		session?:users.sessions
+    	routeParams ?: teachersParams
+    	router?:ReactRouter.InjectedRouter
+    	location?: any
+    	children?: any
+	}
+	interface basic{		
+		session?:users.sessions
+    	routeParams ?: teachersParams
+    	router?:ReactRouter.InjectedRouter
+    	location?: any
+    	children?: any
 	}
 }

@@ -3,18 +3,15 @@ import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
 
 @withRouter
-export class Login extends React.Component<{}, {}> {
+export class Login extends React.Component<props.teacherItem, props.teacherState> {
 	public user:any={
 		username:null,
 		password:null
 	}
-	constructor(props:any) {
-		super(props);    	
-		this.state = {
-			error:null,
-			user:null
-		};
-	}
+	state = {
+		error:null,
+		user:null
+	};
 	getFields(event:any){
 		this.user[event.target.id]=event.target.value;
 		console.log(this.user)
