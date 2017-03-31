@@ -39,38 +39,29 @@ export class Login extends React.Component<props.teacherItem, props.teacherState
 	}
 	render () {
     return (
-    	<div className="content" data-app="soulhand-services" data-align="left">
-			<div className="body">
-					<section className="page">
-						<div className="container-body">
-							<div className="container">
-						        <div className="card card-container">
-						            <img id="profile-img" className="profile-img-card" src="/images/user-login-icon-14.png" />
-						            <p id="profile-name" className="profile-name-card"></p>
-						            <form className="form-signin" onSubmit={(e)=>{this.auth(e)}}>
-						                <span id="reauth-email" className="reauth-email"></span>
-						                <input type="text" id="username" className="form-control" placeholder="Email address" required autoFocus onChange={(e)=>{this.getFields(e)}}/>
-						                <input type="password" id="password" className="form-control" placeholder="Password" required onChange={(e)=>{this.getFields(e)}}/>
-						                {this.state.error && (
-									    	<div className="alert alert-danger" role="alert">
-									    		{this.state.error}
-											</div>
-									    )}
-						                <button className="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button>
-						            </form>
-						            <a href="#" className="forgot-password">
-						                ¿Olvidó su contraseña?
-						            </a>
-						            <Link to="/users/create" className="forgot-password">
-						                Registrarse
-						            </Link>
-						        </div>
-						    </div>
+		<div className="container">
+	        <div className="card card-container" style={{"margin-top":"5px"}}>
+	            <img id="profile-img" className="profile-img-card" src="/images/user-login-icon-14.png" />
+	            <p id="profile-name" className="profile-name-card"></p>
+	            <form className="form-signin" onSubmit={(e)=>{this.auth(e)}}>
+	                <span id="reauth-email" className="reauth-email"></span>
+	                <input type="text" id="username" className="form-control" placeholder="Email address" required autoFocus onChange={(e)=>{this.getFields(e)}}/>
+	                <input type="password" id="password" className="form-control" placeholder="Password" required onChange={(e)=>{this.getFields(e)}}/>
+	                {this.state.error && (
+				    	<div className="alert alert-danger" role="alert">
+				    		{this.state.error}
 						</div>
-					</section>
-			</div>
-		</div>
-
+				    )}
+	                <button className="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button>
+	            </form>
+	            <a href="#" className="forgot-password text-align center">
+	                ¿Olvidó su contraseña?
+	            </a>
+	            <Link to="/users/create" className="forgot-password  text-align center">
+	                Registrarse
+	            </Link>
+	        </div>
+	    </div>
     );
   }
 }

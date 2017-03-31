@@ -64,7 +64,7 @@ export class Menu extends React.Component<props.basic, props.basic> {
 						<Link to="/parents" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Representantes</Link>
 					</li>
 					)}
-					{this.state.session && this.state.session.user.mode="TEACHER" && (
+					{this.state.session && this.state.session.user.mode=="TEACHER" && (
 					<li>
 						<Link to="/students" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Alumnos</Link>
 					</li>
