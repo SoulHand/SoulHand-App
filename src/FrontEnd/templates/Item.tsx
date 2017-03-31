@@ -6,7 +6,7 @@ import 'jquery';
 import 'tether';
 import 'bootstrap';
 
-export class Item extends React.Component<{}, {}> {
+export class Item extends React.Component<spec.IPostProps, spec.IPostState> {
 	render (){
 		return(<div className="item">
 					<div className="container-element text-align center">

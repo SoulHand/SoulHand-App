@@ -20,13 +20,13 @@ export class Menu extends React.Component<{}, {}> {
 		return(<div className="menu">
 			<ul>
 				<li>
-					<Link to="/" activeClassName="active">Inicio</Link>
+					<Link to="/" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Inicio</Link>
 				</li>
 				<li>
-					<Link to="/teacher/create" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Crear Docente</Link>
+					<Link to="/students/create" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Crear alumno</Link>
 				</li>
 				<li>
-					<Link to="/teacher" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Ver docentes</Link>
+					<Link to="/students" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Ver alumnos</Link>
 				</li>
 			</ul>
 		</div>);

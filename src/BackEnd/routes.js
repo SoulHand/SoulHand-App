@@ -1173,6 +1173,7 @@ module.exports=function(app,express,server,__DIR__){
 		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
 			throw new ValidatorException("El telefono no tiene un formato valido");
 		}
+		request.body.dni=request.body.dni.toUpperCase();
 		var fields={
 			data:JSON.parse(JSON.stringify(request.body)),
 			interprete:(request.body.interprete!=undefined)

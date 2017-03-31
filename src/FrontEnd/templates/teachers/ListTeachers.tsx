@@ -1,11 +1,12 @@
 import * as React from 'react';
 import {getJSON,ajax} from 'jquery'
+import {Item} from "./Item"
 //import * as settings from "../settings"
 
 export class ListTeachers extends React.Component<{}, {}> {
-	public PrivateKeyId="1dec3409-dbc9-4314-8bb4-a38ef808c702";
-	public PublicKeyId="NThjODg5ZWIxMjA3OTIwYTcwY2E2NDkz";
-	public session:users.session;
+	public PrivateKeyId:string;
+	public PublicKeyId:string;
+	public session:users.sessions;
 	public data:any=[];
 	public state:any
 	constructor(props:any) {
@@ -15,8 +16,17 @@ export class ListTeachers extends React.Component<{}, {}> {
     	session=JSON.parse(session);
 		this.session=session;
 	}
-	deleteField(event: any){
-		ajax({
+	deleteField(data: any){
+		this.data=this.data.filter(function(row:peoples.teachers){
+			if(row._id==data._id){
+				return false;
+			}
+			return true;
+    	});
+    	this.setState({
+	      	teachers : this.data
+	    });
+		/*ajax({
 			method:"DELETE",
 	        url: `//localhost:8080/v1/people/teachers/${event.target.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
@@ -30,7 +40,7 @@ export class ListTeachers extends React.Component<{}, {}> {
 					return true;
 	        	})
 	        }
-		});
+		});*/
 	}
 	getFields(event:any){
 		this.setState({
@@ -51,7 +61,26 @@ export class ListTeachers extends React.Component<{}, {}> {
 	        }
 		});
 	}
-	render () {
+	render(){
+		let teachers = this.state.teachers.map((row:peoples.teachers) => {
+	      return (
+	        <Item people={row} key={row._id} session={this.session} delete={this.deleteField.bind(this)}/>
+	      );
+	    });
+		return (
+			<div className="container">
+				<div className="fieldset" data-align="justify">
+					{
+						(this.state.teachers.length>0) ?
+							teachers
+						:
+							<span className="text-align center">No existen resultados</span>
+					}
+				</div>
+			</div>
+		);
+	}
+	/*render () {
 		let teachers = this.state.teachers.map((row:any) => {
 	      return (
 	        <tr key={row._id}>
@@ -96,5 +125,5 @@ export class ListTeachers extends React.Component<{}, {}> {
 			</table>
 		</div>
     );
-  }
+  }*/
 }

@@ -8,10 +8,12 @@ import {App} from './App';
 
 import {Home} from './templates/Home';
 import {Teachers} from './templates/Teachers';
+import {Student} from './templates/Student';
 import {PageIndex} from './templates/PageIndex';
 import {Login} from './templates/Login';
 import {ListTeachers} from './templates/teachers/ListTeachers';
-import {PageTeacherCreate} from './templates/PageTeacherCreate';
+import {TeacherCreate} from './templates/teachers/TeacherCreate';
+import {TeacherView} from './templates/teachers/TeacherView';
 import {PageStudent} from './templates/PageStudent';
 import {PageStudentCreate} from './templates/PageStudentCreate';
 import {PageRepresentative} from './templates/PageRepresentative';
@@ -28,9 +30,10 @@ window.addEventListener("load",()=>{
 		    <Route path="/auth" component={Login}/>
 		    <Route path="/teacher" component={Teachers} onEnter={Auth}>
 		    	<IndexRoute component={ListTeachers}/>
-		    	<Route path="create" component={PageTeacherCreate}/>
+		    	<Route path="create" component={TeacherCreate}/>
+		    	<Route path=":id" component={TeacherView}/>
 		    </Route>
-		    <Route path="/student" component={App}>
+		    <Route path="/students" component={Student} onEnter={Auth}>
 		    	<IndexRoute component={PageStudent}/>
 		    	<Route path="create" component={PageStudentCreate}/>
 		    </Route>
