@@ -4,7 +4,7 @@ import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
 
 @withRouter
-export class MatterCreate extends React.Component<props.parentsItem, {}> {
+export class MatterCreate extends React.Component<, {}> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
@@ -23,9 +23,7 @@ export class MatterCreate extends React.Component<props.parentsItem, {}> {
 	};
 	state:props.fieldsTeachers={
 		error:{
-			dni:false,
-			name:false,
-			server:null
+			
 		},
 
 	}
@@ -43,7 +41,7 @@ export class MatterCreate extends React.Component<props.parentsItem, {}> {
 		var value=true;
 		var state:props.errorState=this.state.error;
 		var data:props.dataTeachers={
-			dni:null,
+		
 			name:null,
 			
 		};
@@ -77,7 +75,7 @@ export class MatterCreate extends React.Component<props.parentsItem, {}> {
 	        dataType: "json",
 	        data:data,	        
 	        success:(data:any)=>{
-	        	this.props.router.replace('/materia');
+	        	this.props.router.replace('/matter');
 	        },
 	        error:(data:any)=>{
 	        	var state=this.state.error;
