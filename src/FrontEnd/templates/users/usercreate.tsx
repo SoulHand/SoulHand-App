@@ -99,7 +99,7 @@ export class UserCreate extends React.Component<props.teacherItem, {}> {
 		console.log(data);
 		ajax({
 			method:"POST",
-	        url: `//0.0.0:8080/v1/users/`,
+	        url: `${window.settings.uri}/v1/users/`,
 	        dataType: "json",
 	        data:data,	        
 	        success:(data:any)=>{
