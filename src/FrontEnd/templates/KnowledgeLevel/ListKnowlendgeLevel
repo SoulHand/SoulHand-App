@@ -64,7 +64,8 @@ componentDidMount(){
                 <thead>
                     <tr>
                         <th>Nombre</th>
-                        <th>Edad</th>
+                        <th>Edad Minima</th>
+                        <th>Edad Maxima</th>
                          <th>Acción</th>
                     </tr>
                 </thead>
@@ -74,6 +75,8 @@ componentDidMount(){
                         return (
                             <tr key={row._id}>
                                 <td>{row.name}</td>
+                                <td>{row.age min}</td>
+                                <td>{row.age max}</td>
                                 <td><button type="button" className="btn btn-warning">Editar</button>
                                 <button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
                             </tr>
