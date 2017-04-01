@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {hashHistory} from 'react-router';
-import {Bar} from './Bar';
-import {Menu} from './grades/Menu';
+import {Bar} from './bar';
+import {Menu} from './parents/menu';
 //import {NavBar} from './templates/NavBar';
 
-export class Grades extends React.Component<{}, {}> {
+export class Parents extends React.Component<{}, {}> {
 	render () {
 		return (
 			<div className="content" data-app="soulhand-services" data-align="left">

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {hashHistory} from 'react-router';
-import {Bar} from './Bar';
-import {Menu} from './users/Menu';
+import {Bar} from './bar';
+import {Menu} from './users/menu';
 //import {NavBar} from './templates/NavBar';
 
 export class Users extends React.Component<{}, {}> {

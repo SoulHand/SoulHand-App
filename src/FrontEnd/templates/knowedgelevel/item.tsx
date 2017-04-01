@@ -4,11 +4,11 @@ import {render} from 'react-dom';
 import {ajax} from 'jquery'
 import {Link} from 'react-router';
 
-export class Item extends React.Component<props.knowledgelevelitem, {}> {
+export class Item extends React.Component<props.matterItem, {}> {
 	deleteField(event: any){
 		ajax({
 			method:"DELETE",
-	        url: `//localhost:8080/v1//${this.props.knowledgelevel._id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
+	        url: `//localhost:8080/v1/courses/${this.props.matter._id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
@@ -22,11 +22,11 @@ export class Item extends React.Component<props.knowledgelevelitem, {}> {
 			<div className="item">
 				<img src="/images/user-login-icon-14.png" alt="Perfil de usuario" className="rounded-circle" width="84" height="84"/>
 	  			<div className="container-element text-align center">
-	  				<Link to={`/knowledgelevel/${this.props.knowledgelevel._id}`} className="title">{this.props.knowledgelevel.data.name}</Link>
+	  				<Link to={`/matter/${this.props.matter._id}`} className="title">{this.props.matter.data.name}</Link>
 	  				
 	  			</div>
 				<div className="toolbox">
-					<button className="button circle icons x16 delete white" data-id={this.props.knowledgelevel._id} onClick={(e)=>{this.deleteField(e)}}></button>
+					<button className="button circle icons x16 delete white" data-id={this.props.matter._id} onClick={(e)=>{this.deleteField(e)}}></button>
 				</div>
 			</div>
 		);

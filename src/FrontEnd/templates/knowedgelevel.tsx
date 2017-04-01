@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {hashHistory} from 'react-router';
-import {Bar} from './Bar';
-import {Menu} from './knowedgelevel/Menu';
+import {Bar} from './bar';
+import {Menu} from './knowedgelevel/menu';
 //import {NavBar} from './templates/NavBar';
 
 export class KnowedgeLevel extends React.Component<{}, {}> {

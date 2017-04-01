@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {hashHistory} from 'react-router';
-import {Bar} from './Bar';
-import {Menu} from './domain/Menu';
+import {Bar} from './bar';
+import {Menu} from './domain/menu';
 //import {NavBar} from './templates/NavBar';
 
 export class Domain extends React.Component<{}, {}> {

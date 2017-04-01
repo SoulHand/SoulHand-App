@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {hashHistory} from 'react-router';
-import {Bar} from './Bar';
-import {Menu} from './periodschools/Menu';
+import {Bar} from './bar';
+import {Menu} from './periodschools/menu';
 //import {NavBar} from './templates/NavBar';
 
 export class PeriodSchools extends React.Component<{}, {}> {

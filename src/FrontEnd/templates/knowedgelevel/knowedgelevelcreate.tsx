@@ -4,7 +4,7 @@ import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
 
 @withRouter
-export class KnowledgeLevelCreate extends React.Component<, {}> {
+export class KnowedgeLevelCreate extends React.Component<, {}> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;

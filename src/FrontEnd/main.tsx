@@ -23,34 +23,45 @@ import {ListStudent} from './templates/students/liststudents';
 import {StudentCreate} from './templates/students/studentcreate';
 import {StudentView} from './templates/students/studentview';
 
-import {ListPeriodSchools} from './templates/periodschools/listperiodschools';
-
-
 import {PeriodSchools} from './templates/periodschools';
-import {KnowedgeLevel} from './templates/knowedgelevel';
-import {Parents} from './templates/Parents';
-import {Grades} from './templates/Grades';
-import {Users} from './templates/Users';
-import {Domain} from './templates/Domain';
-import {Type} from './templates/Type';
-import {ListParent} from './templates/parents/ListParent';
-import {Login} from './templates/Login';
-import {UserCreate} from './templates/users/UserCreate';
-import {ListUsers} from './templates/users/ListUsers';
-
+import {ListPeriodSchools} from './templates/periodschools/listperiodschools';
 import {PeriodSchoolsCreate} from './templates/periodschools/periodschoolscreate';
-import {ListKnowledgeLevel} from './templates/knowedgelevel/listknowedgelevel';
-import {KnowledgeLevelCreate} from './templates/knowedgelevel/knowedgelevelcreate';
-import {GradeCreate} from './templates/grades/GradeCreate';
-import {ListGrade} from './templates/grades/ListGrade';
-import {DomainCreate} from './templates/domain/DomainCreate';
-import {ListDomain} from './templates/domain/ListDomain';
-import {TypeCreate} from './templates/type/TypeCreate';
-import {ListType} from './templates/type/ListType';
+import {PeriodSchoolView} from './templates/periodschools/periodschoolsview';
+
+import {KnowedgeLevel} from './templates/knowedgelevel';
+import {ListKnowedgeLevel} from './templates/knowedgelevel/listknowedgelevel';
+import {KnowedgeLevelCreate} from './templates/knowedgelevel/knowedgelevelcreate';
+
+import {Parents} from './templates/parents';
+import {ListParent} from './templates/parents/listparent';
+import {ParentsCreate} from './templates/parents/parentscreate';
+import {ParentView} from './templates/parents/parentview';
+
+import {Grades} from './templates/grades';
+import {GradeCreate} from './templates/grades/gradecreate';
+import {ListGrade} from './templates/grades/listgrade';
+import {GradeView} from './templates/grades/gradeview';
+
+import {Users} from './templates/users';
+import {UserCreate} from './templates/users/usercreate';
+import {ListUsers} from './templates/users/listuser';
+import {UserView} from './templates/users/userview';
+
+import {Domain} from './templates/domain';
+import {DomainCreate} from './templates/domain/domaincreate';
+import {ListDomain} from './templates/domain/listdomain';
+import {DomainView} from './templates/domain/domainview';
+
+import {Type} from './templates/type';
+import {ListType} from './templates/type/listype';
+import {TypeCreate} from './templates/type/typecreate';
+
+import {Login} from './templates/login';
+
 /*import {PageRepresentative} from './templates/PageRepresentative';
 import {PageRepresentativeCreate} from './templates/PageRepresentativeCreate';
 import {PageUserCreate} from './templates/PageUserCreate';*/
-import {Auth} from './Auth';
+import {Auth} from './auth';
 
 window.addEventListener("load",()=>{
 	render((
@@ -78,13 +89,12 @@ window.addEventListener("load",()=>{
 		    	<IndexRoute component={ListDomain}/>
 		    	<Route path="create" component={DomainCreate}/>
 		    </Route>
-		    <Route path="/users" component={Users}>
-		    	<IndexRoute component={ListUsers} onEnter={Auth}/>
 		    <Route path="/type" component={Type} onEnter={Auth}>
 		    	<IndexRoute component={ListType}/>
 		    	<Route path="create" component={TypeCreate}/>
 		    </Route>
 		    <Route path="/users" component={Home}>
+		    	<IndexRoute component={ListUsers} onEnter={Auth}/>
 		    	<Route path="create" component={UserCreate}/>
 		    </Route>
 		    <Route path="/matter" component={Matter} onEnter={Auth}>
@@ -96,9 +106,9 @@ window.addEventListener("load",()=>{
 		    	<IndexRoute component={ListPeriodSchools}/>
 		    	<Route path="create" component={PeriodSchoolsCreate}/>
 		    </Route>
-		     <Route path="/knowledgelevel" component={KnowedgeLevel} onEnter={Auth}>
-		    	<IndexRoute component={ListKnowledgeLevel}/>
-		    	<Route path="create" component={KnowledgeLevelCreate}/>
+		     <Route path="/knowedge" component={KnowedgeLevel} onEnter={Auth}>
+		    	<IndexRoute component={ListKnowedgeLevel}/>
+		    	<Route path="create" component={KnowedgeLevelCreate}/>
 		    </Route>
 	  	</Router>
 	  ), document.body

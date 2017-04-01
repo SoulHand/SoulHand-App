@@ -2,8 +2,7 @@ import * as React from 'react';
 import {Router, Route, hashHistory, IndexRoute} from 'react-router';
 import {render} from 'react-dom';
 import {Link} from 'react-router';
-import {ProfileBox} from "../ProfileBox"
-
+import {ProfileBox} from "../profilebox"
 
 export class Menu extends React.Component<{}, {}> {
 	public parent:Element;
@@ -38,13 +37,13 @@ export class Menu extends React.Component<{}, {}> {
 				}
 				<ul>
 					<li>
-						<Link to="/" activeClassName="active">Inicio</Link>
+						<Link to="/" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Inicio</Link>
 					</li>
 					<li>
-						<Link to="/parents/create" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Crear Representante</Link>
+						<Link to="/domain/create" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Crear dominio</Link>
 					</li>
 					<li>
-						<Link to="/parents" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Ver representantes</Link>
+						<Link to="/domain" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Ver dominio</Link>
 					</li>
 				</ul>
 			</div>

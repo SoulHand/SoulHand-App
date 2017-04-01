@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as validator from 'string-validator';
 import {ajax} from 'jquery'
 
-export class periodschoolsview extends React.Component<{}, {}> {
+export class PeriodSchoolView extends React.Component<{}, {}> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;	

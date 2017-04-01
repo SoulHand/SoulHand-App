@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Router, Route, hashHistory, IndexRoute} from 'react-router';
 import {render} from 'react-dom';
 import {Link} from 'react-router';
-import {ProfileBox} from "../ProfileBox"
+import {ProfileBox} from "../profilebox"
 
 
 export class Menu extends React.Component<{}, {}> {
@@ -27,12 +27,6 @@ export class Menu extends React.Component<{}, {}> {
 				session:session
 			});
     	}
-	}	
-	destroy(){
-		this.session=null;
-		this.setState({
-			session:this.session
-		});
 	}
 	toogle(event:any){
 		this.parent.classList.toggle("slider");
@@ -40,17 +34,17 @@ export class Menu extends React.Component<{}, {}> {
 	render (){
 		return(
 			<div className="menu">
-				{this.state.session && (<ProfileBox session={this.state.session} callback={(e)=>{this.destroy()}}/>)
+				{this.state.session && (<ProfileBox session={this.state.session}/>)
 				}
 				<ul>
 					<li>
 						<Link to="/" activeClassName="active">Inicio</Link>
 					</li>
 					<li>
-						<Link to="/users/create" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Crear Docente</Link>
+						<Link to="/knowedge/create" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Crear Periodo Escolar</Link>
 					</li>
 					<li>
-						<Link to="/users" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Ver docentes</Link>
+						<Link to="/knowedge" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Ver Periodo Escolar</Link>
 					</li>
 				</ul>
 			</div>
