@@ -990,6 +990,7 @@ module.exports=function(app,express,server,__DIR__){
 	UsersURI.post("/",function(request, response,next) {
 		var user=new User(app.container.database.Schema.User);
 		var people=new People(app.container.database.Schema.Peoples);
+		request.body.dni=request.body.dni.toUpperCase();
 		if(!Validator.matches(/^[VE][0-9]{6,9}$/)(request.body.dni)){
 			throw new ValidatorException("Solo se aceptan documentos de identidad");			
 		}
@@ -1002,7 +1003,6 @@ module.exports=function(app,express,server,__DIR__){
 		if(!Validator.isLength(5,14)(request.body.password)){
 			throw new ValidatorException("Es necesario una contraseña de por lo menos 5 caracteres");			
 		}
-		request.body.dni=request.body.dni.toUpperCase();
 		const base64=require('base-64');
 		var fields={
 			username:request.body.username,
@@ -1321,17 +1321,13 @@ module.exports=function(app,express,server,__DIR__){
 		
 		var fields={
 			data:JSON.parse(JSON.stringify(request.body)),
-			grade:request.body.grade,
 			activities:[],
 			conflicts:[],
 			habilitys:[]
 		};
 		fields.data.mode="STUDENT";		
 		delete(fields.data.grade);
-		grade.find({name:request.body.grade.toUpperCase()}).then(function(data){
-			fields.grade=data;
-			return people2.add(fields.data);
-		}).then(function(data){
+		people2.add(fields.data).then(function(data){
 			fields.data=data;
 			return people.add(fields);
 		}).then(function(data){
