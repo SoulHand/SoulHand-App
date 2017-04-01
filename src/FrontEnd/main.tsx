@@ -5,6 +5,7 @@ import 'jquery';
 import 'tether';
 import 'bootstrap';
 
+import './settings';
 import {Home} from './templates/home';
 import {Index} from './templates/home/index';
 
@@ -55,6 +56,7 @@ import {DomainView} from './templates/domain/domainview';
 import {Type} from './templates/type';
 import {ListType} from './templates/type/listype';
 import {TypeCreate} from './templates/type/typecreate';
+import {TypeView} from './templates/type/typeview';
 
 import {Login} from './templates/login';
 

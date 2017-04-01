@@ -1,3 +1,5 @@
-let API_DOMAIN = "//0.0.0:8080/";
-
-export default API_DOMAIN;
+((Global:Window)=>{
+	Global.settings={
+		uri:"//localhost:8080/"
+	};
+})(window)

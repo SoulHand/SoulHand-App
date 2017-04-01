@@ -1,3 +1,6 @@
+interface Window{
+	settings:any
+}
 declare namespace crud{
 	interface grade{
 		_id:string

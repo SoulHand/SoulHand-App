@@ -8,7 +8,7 @@ export class Item extends React.Component<props.gradeItem, {}> {
 	deleteField(event: any){
 		ajax({
 			method:"DELETE",
-	        url: `//localhost:8080/v1/grades/${this.props.grade._id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/grades/${this.props.grade._id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,

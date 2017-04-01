@@ -21,7 +21,7 @@ export class ListGrade extends React.Component<{}, {}> {
 		var element:EventTarget=event.target;		
 		ajax({
 			method:"DELETE",
-	        url: `//localhost:8080/v1/grades/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/grades/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,

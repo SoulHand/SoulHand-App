@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Router, Route, hashHistory, IndexRoute} from 'react-router';
 import {render} from 'react-dom';
 import {Link} from 'react-router';
-import {ProfileBox} from "../ProfileBox"
+import {ProfileBox} from "../profilebox"
 
 export class Menu extends React.Component<{}, {}> {
 	public parent:Element;
@@ -40,10 +40,10 @@ export class Menu extends React.Component<{}, {}> {
 						<Link to="/" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Inicio</Link>
 					</li>
 					<li>
-						<Link to="/grades/create" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Crear grados</Link>
+						<Link to="/type/create" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Crear tipo de aprendizaje</Link>
 					</li>
 					<li>
-						<Link to="/grades" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Ver grados</Link>
+						<Link to="/type" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Ver tipo de aprendizaje</Link>
 					</li>
 				</ul>
 			</div>

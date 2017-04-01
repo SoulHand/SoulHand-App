@@ -19,7 +19,7 @@ export class ParentView extends React.Component<{}, {}> {
 	componentDidMount(){
 		ajax({
 			method:"GET",
-	        url: `//0.0.0:8080/v1/people/parents/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/people/parents/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,	        
 	        success:(data:any)=>{
