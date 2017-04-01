@@ -4,7 +4,7 @@ import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
 
 @withRouter
-export class MatterCreate extends React.Component<, {}> {
+export class PeriodSchoolsCreate extends React.Component<, {}> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
@@ -71,11 +71,11 @@ export class MatterCreate extends React.Component<, {}> {
 		}
 		ajax({
 			method:"POST",
-	        url: `//0.0.0:8080/v1/courses/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `//0.0.0:8080/v1/periods/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:data,	        
 	        success:(data:any)=>{
-	        	this.props.router.replace('/matter');
+	        	this.props.router.replace('/PeriodSchools');
 	        },
 	        error:(data:any)=>{
 	        	var state=this.state.error;
@@ -113,3 +113,4 @@ export class MatterCreate extends React.Component<, {}> {
     );
   }
 }
+
