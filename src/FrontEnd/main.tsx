@@ -10,6 +10,7 @@ import {Home} from './templates/Home';
 import {Teachers} from './templates/Teachers';
 import {Matter} from './templates/Matter';
 import {Student} from './templates/Student';
+import {PeriodSchools} from './templates/PeriodSchools';
 import {Parents} from './templates/Parents';
 import {ListParent} from './templates/parents/ListParent';
 
@@ -17,6 +18,7 @@ import {Login} from './templates/Login';
 import {ListTeachers} from './templates/teachers/ListTeachers';
 import {TeacherCreate} from './templates/teachers/TeacherCreate';
 import {MatterCreate} from './templates/matter/MatterCreate';
+import {PeriodSchoolsCreate} from './templates/PeriodSchools/PeriodSchoolsCreate';
 import {TeacherView} from './templates/teachers/TeacherView';
 import {Index} from './templates/home/Index';
 import {ListStudent} from './templates/students/ListStudent';
@@ -45,6 +47,10 @@ window.addEventListener("load",()=>{
 		    <Route path="/matter" component={Matter} onEnter={Auth}>
 		    	<IndexRoute component={ListMatter}/>
 		    	<Route path="create" component={MatterCreate}/>
+		    </Route>
+		     <Route path="/matter" component={PeriodSchools} onEnter={Auth}>
+		    	<IndexRoute component={ListMatter}/>
+		    	<Route path="create" component={PeriodSchoolsCreate}/>
 		    </Route>
 	  	</Router>
 	  ), document.body
