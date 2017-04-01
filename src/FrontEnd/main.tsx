@@ -4,11 +4,30 @@ import {render} from 'react-dom';
 import 'jquery';
 import 'tether';
 import 'bootstrap';
-import {App} from './App';
 
-import {Home} from './templates/Home';
-import {Teachers} from './templates/Teachers';
-import {Student} from './templates/Student';
+import {Home} from './templates/home';
+import {Index} from './templates/home/index';
+
+import {Teachers} from './templates/teachers';
+import {ListTeachers} from './templates/teachers/listteachers';
+import {TeacherCreate} from './templates/teachers/teachercreate';
+import {TeacherView} from './templates/teachers/teacherview';
+
+import {Matter} from './templates/matter';
+import {MatterCreate} from './templates/matter/mattercreate';
+import {ListMatter} from './templates/matter/listmatter';
+import {MatterView} from './templates/matter/matterview';
+
+import {Student} from './templates/students';
+import {ListStudent} from './templates/students/liststudents';
+import {StudentCreate} from './templates/students/studentcreate';
+import {StudentView} from './templates/students/studentview';
+
+
+
+import {ListPeriodSchools} from './templates/periodschools/listperiodschools';
+import {PeriodSchools} from './templates/periodschools';
+import {KnowedgeLevel} from './templates/knowedgelevel';
 import {Parents} from './templates/Parents';
 import {Grades} from './templates/Grades';
 import {Users} from './templates/Users';
@@ -19,14 +38,11 @@ import {Login} from './templates/Login';
 import {UserCreate} from './templates/users/UserCreate';
 import {ListUsers} from './templates/users/ListUsers';
 
-import {ListTeachers} from './templates/teachers/ListTeachers';
-import {TeacherCreate} from './templates/teachers/TeacherCreate';
-import {TeacherView} from './templates/teachers/TeacherView';
-import {Index} from './templates/home/Index';
+import {PeriodSchoolsCreate} from './templates/periodschools/periodschoolscreate';
+import {ListKnowledgeLevel} from './templates/knowedgelevel/listknowedgelevel';
+import {KnowledgeLevelCreate} from './templates/knowedgelevel/knowedgelevelcreate';
 import {GradeCreate} from './templates/grades/GradeCreate';
 import {ListGrade} from './templates/grades/ListGrade';
-import {StudentCreate} from './templates/students/StudentCreate';
-import {ListStudent} from './templates/students/ListStudent';
 import {DomainCreate} from './templates/domain/DomainCreate';
 import {ListDomain} from './templates/domain/ListDomain';
 import {TypeCreate} from './templates/type/TypeCreate';
@@ -62,17 +78,27 @@ window.addEventListener("load",()=>{
 		    	<IndexRoute component={ListDomain}/>
 		    	<Route path="create" component={DomainCreate}/>
 		    </Route>
-<<<<<<< HEAD
 		    <Route path="/users" component={Users}>
 		    	<IndexRoute component={ListUsers} onEnter={Auth}/>
-=======
 		    <Route path="/type" component={Type} onEnter={Auth}>
 		    	<IndexRoute component={ListType}/>
 		    	<Route path="create" component={TypeCreate}/>
 		    </Route>
 		    <Route path="/users" component={Home}>
->>>>>>> ef7c4f06af975bace570b2d0215134e665208260
 		    	<Route path="create" component={UserCreate}/>
+		    </Route>
+		    <Route path="/matter" component={Matter} onEnter={Auth}>
+		    	<IndexRoute component={ListMatter}/>
+		    	<Route path=":id" component={MatterView}/>
+		    	<Route path="create" component={MatterCreate}/>
+		    </Route>
+		     <Route path="/periodschools" component={PeriodSchools} onEnter={Auth}>
+		    	<IndexRoute component={ListPeriodSchools}/>
+		    	<Route path="create" component={PeriodSchoolsCreate}/>
+		    </Route>
+		     <Route path="/knowledgelevel" component={KnowedgeLevel} onEnter={Auth}>
+		    	<IndexRoute component={ListKnowledgeLevel}/>
+		    	<Route path="create" component={KnowledgeLevelCreate}/>
 		    </Route>
 	  	</Router>
 	  ), document.body

@@ -6,7 +6,7 @@ import 'jquery';
 import 'tether';
 import 'bootstrap';
 import {withRouter} from 'react-router';
-import {ProfileBox} from "../ProfileBox"
+import {ProfileBox} from "../profilebox"
 
 @withRouter
 export class Menu extends React.Component<props.basic, props.basic> {
