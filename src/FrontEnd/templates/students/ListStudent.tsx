@@ -74,11 +74,14 @@ export class ListStudent extends React.Component<{}, {}> {
 				<tbody>
 				{
 					this.state.students.map((row:any)=>{
-						<tr>
-							<td>{row.data.name}</td>
-							<td><button type="button" className="btn btn-warning">Editar</button>
-							<button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
-						</tr>	})
+						return (
+							<tr key={row._id}>
+								<td>{row.data.name}</td>
+								<td><button type="button" className="btn btn-warning">Editar</button>
+								<button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
+							</tr>
+						);
+					})
 				}
 				</tbody>
 			</table>
