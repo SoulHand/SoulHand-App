@@ -107,7 +107,7 @@ export class UserCreate extends React.Component<props.teacherItem, {}> {
 	        },
 	        error:(data:any)=>{
 	        	var state=this.state.error;
-	        	state.server=data.responseJSON;
+	        	state.server=data.responseJSON.message;
 	        	this.setState({
 					error:state
 				});
@@ -202,9 +202,9 @@ export class UserCreate extends React.Component<props.teacherItem, {}> {
 							    )}
 							</div>
 						</div>
-						{this.state.server && (
+						{this.state.error.server && (
 					    	<div className="alert alert-danger" role="alert">
-							  {this.state.server}
+							  {this.state.error.server}
 							</div>
 					    )}
 						<div className="form-group ">
