@@ -10,14 +10,12 @@ export class UserCreate extends React.Component<props.teacherItem, {}> {
 	public PublicKeyId:string;
 	public fields:any={
 		dni:{
-			match:validator.matches(/^[VE][0-9]+$/i),
+			match:validator.matches(/^[VE][0-9]{6,9}$/i),
 			value:null,
 			required:true
 		},
 		username:{
-			match:(fn:string)=>{
-				return !validator.isNull()(fn);
-			},
+			match:validator.isAlphanumeric(),
 			value:null,
 			required:true
 		},
@@ -204,7 +202,11 @@ export class UserCreate extends React.Component<props.teacherItem, {}> {
 							    )}
 							</div>
 						</div>
-
+						{this.state.server && (
+					    	<div className="alert alert-danger" role="alert">
+							  {this.state.server}
+							</div>
+					    )}
 						<div className="form-group ">
 							<button type="submit" className="button btn btn-primary btn-lg btn-block login-button">Register</button>
 						</div>						
