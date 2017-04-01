@@ -7,9 +7,9 @@ export class ListKnowledgeLevel extends React.Component<{}, {}> {
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
 	public session:users.sessions;
-	public KnowledgeLevel:any=[];
+	public knowledgelevel:any=[];
 	state={
-		KnowledgeLevel:[],
+		knowledgelevel:[],
 		search:""
 	};
 	
@@ -28,14 +28,14 @@ export class ListKnowledgeLevel extends React.Component<{}, {}> {
 	        data:null,
 	        crossDomain:true,
 	        success:(data:peoples.teachers)=>{
-	        	this.teachers=this.KnowledgeLevel.filter(function(row:peoples.teachers){
+	        	this.teachers=this.knowledgelevel.filter(function(row:peoples.teachers){
 					if(row._id==data._id){
 						return false;
 					}
 					return true;
 		    	});
 		    	this.setState({
-			      	KnowledgeLevel : this.KnowledgeLevel
+			      	knowledgelevel : this.knowledgelevel
 			    });
 	        }
 		});
@@ -44,9 +44,9 @@ export class ListKnowledgeLevel extends React.Component<{}, {}> {
 	Xiu, [31.03.17 20:44]
 componentDidMount(){
         getJSON(`//0.0.0:8080/v1//?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,(data)=>{
-            this.KnowledgeLevel= data;
+            this.knowledgelevel= data;
             this.setState({
-              KnowledgeLevel: data
+              knowledgelevel: data
             });
         })
     }
@@ -71,7 +71,7 @@ componentDidMount(){
                 </thead>
                 <tbody>
                 {
-                    this.state.KnowledgeLevel.map((row:any)=>{
+                    this.state.knowledgelevel.map((row:any)=>{
                         return (
                             <tr key={row._id}>
                                 <td>{row.name}</td>

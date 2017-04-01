@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {hashHistory} from 'react-router';
 import {Bar} from './Bar';
-import {Menu} from './KnowledgeLevel/Menu';
+import {Menu} from './knowledgelevel/Menu';
 //import {NavBar} from './templates/NavBar';
 
 export class KnowledgeLevel extends React.Component<{}, {}> {

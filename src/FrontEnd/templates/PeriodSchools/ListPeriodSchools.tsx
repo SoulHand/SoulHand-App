@@ -3,13 +3,13 @@ import {getJSON,ajax} from 'jquery'
 import {Item} from "./Item"
 //import * as settings from "../settings"
 
-export class ListPeriodSchools extends React.Component<{}, {}> {
+export class listperiodschools extends React.Component<{}, {}> {
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
 	public session:users.sessions;
-	public PeriodSchools:any=[];
+	public periodschools:any=[];
 	state={
-		PeriodSchools:[],
+		periodschools:[],
 		search:""
 	};
 	
@@ -28,14 +28,14 @@ export class ListPeriodSchools extends React.Component<{}, {}> {
 	        data:null,
 	        crossDomain:true,
 	        success:(data:peoples.teachers)=>{
-	        	this.teachers=this.PeriodSchools.filter(function(row:peoples.teachers){
+	        	this.teachers=this.periodschools.filter(function(row:peoples.teachers){
 					if(row._id==data._id){
 						return false;
 					}
 					return true;
 		    	});
 		    	this.setState({
-			      	PeriodSchools : this.PeriodSchools
+			      	periodschools : this.periodschools
 			    });
 	        }
 		});
@@ -44,9 +44,9 @@ export class ListPeriodSchools extends React.Component<{}, {}> {
 	Xiu, [31.03.17 20:44]
 componentDidMount(){
         getJSON(`//0.0.0:8080/v1/periods/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,(data)=>{
-            this.PeriodSchools= data;
+            this.periodschools= data;
             this.setState({
-              PeriodSchools: data
+              periodschools: data
             });
         })
     }
@@ -69,7 +69,7 @@ componentDidMount(){
                 </thead>
                 <tbody>
                 {
-                    this.state.PeriodSchools.map((row:any)=>{
+                    this.state.periodschools.map((row:any)=>{
                         return (
                             <tr key={row._id}>
                                 <td>{row.name}</td>

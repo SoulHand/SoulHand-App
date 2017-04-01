@@ -8,19 +8,19 @@ import {App} from './App';
 
 import {Home} from './templates/Home';
 import {Teachers} from './templates/Teachers';
-import {Matter} from './templates/Matter';
+import {matter} from './templates/matter';
 import {Student} from './templates/Student';
-import {PeriodSchools} from './templates/PeriodSchools';
-import {KnowledgeLevel} from './templates/KnowledgeLevel';
+import {periodschools} from './templates/periodschools';
+import {knowledgelevel} from './templates/knowledgelevel';
 import {Parents} from './templates/Parents';
 import {ListParent} from './templates/parents/ListParent';
 
 import {Login} from './templates/Login';
 import {ListTeachers} from './templates/teachers/ListTeachers';
 import {TeacherCreate} from './templates/teachers/TeacherCreate';
-import {MatterCreate} from './templates/matter/MatterCreate';
-import {PeriodSchoolsCreate} from './templates/PeriodSchools/PeriodSchoolsCreate';
-import {KnowledgeLevelCreate} from './templates/KnowledgeLevel/KnowledgeLevelCreate';
+import {mattercreate} from './templates/matter/matterCreate';
+import {periodschoolscreate} from './templates/periodschools/periodschoolscreate';
+import {knowledgelevelcreate} from './templates/knowledgelevel/knowledgelevelcreate';
 import {TeacherView} from './templates/teachers/TeacherView';
 import {Index} from './templates/home/Index';
 import {ListStudent} from './templates/students/ListStudent';
@@ -46,17 +46,17 @@ window.addEventListener("load",()=>{
 		    	<IndexRoute component={ListStudent}/>
 		    	<Route path="create" component={StudentCreate}/>
 		    </Route>
-		    <Route path="/matter" component={Matter} onEnter={Auth}>
-		    	<IndexRoute component={ListMatter}/>
-		    	<Route path="create" component={MatterCreate}/>
+		    <Route path="/matter" component={matter} onEnter={Auth}>
+		    	<IndexRoute component={listmatter}/>
+		    	<Route path="create" component={mattercreate}/>
 		    </Route>
-		     <Route path="/matter" component={PeriodSchools} onEnter={Auth}>
-		    	<IndexRoute component={ListMatter}/>
-		    	<Route path="create" component={PeriodSchoolsCreate}/>
+		     <Route path="/periodschools" component={periodschools} onEnter={Auth}>
+		    	<IndexRoute component={listperiodschools}/>
+		    	<Route path="create" component={periodschoolscreate}/>
 		    </Route>
-		     <Route path="/matter" component={KnowledgeLevel} onEnter={Auth}>
-		    	<IndexRoute component={ListMatter}/>
-		    	<Route path="create" component={KnowledgeLevelCreate}/>
+		     <Route path="/knowledgelevel" component={knowledgelevel} onEnter={Auth}>
+		    	<IndexRoute component={listknowledgelevel}/>
+		    	<Route path="create" component={knowledgelevelcreate}/>
 		    </Route>
 	  	</Router>
 	  ), document.body
