@@ -23,9 +23,9 @@ import {ListStudent} from './templates/students/liststudents';
 import {StudentCreate} from './templates/students/studentcreate';
 import {StudentView} from './templates/students/studentview';
 
-
-
 import {ListPeriodSchools} from './templates/periodschools/listperiodschools';
+
+
 import {PeriodSchools} from './templates/periodschools';
 import {KnowedgeLevel} from './templates/knowedgelevel';
 import {Parents} from './templates/Parents';

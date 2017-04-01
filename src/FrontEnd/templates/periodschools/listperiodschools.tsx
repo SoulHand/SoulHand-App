@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {getJSON,ajax} from 'jquery'
-import {Item} from "./Item"
+import {Item} from "./item"
 //import * as settings from "../settings"
 
 export class ListPeriodSchools extends React.Component<{}, {}> {

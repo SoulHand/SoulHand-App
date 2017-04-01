@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Router, Route, hashHistory, IndexRoute} from 'react-router';
 import {render} from 'react-dom';
 import {Link} from 'react-router';
-import {ProfileBox} from "../ProfileBox"
+import {ProfileBox} from "../profilebox"
 
 
 export class Menu extends React.Component<{}, {}> {
