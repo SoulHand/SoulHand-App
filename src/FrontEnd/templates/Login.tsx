@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {ajax} from 'jquery'
-import {withRouter} from 'react-router';
+import {withRouter, Link} from 'react-router';
 
 @withRouter
 export class Login extends React.Component<props.teacherItem, props.teacherState> {
@@ -33,63 +33,35 @@ export class Login extends React.Component<props.teacherItem, props.teacherState
 	        	this.props.router.replace(this.props.location.query.url || '/');
 	        },
 	        error:(data:any)=>{
-	        	console.log(data.responseJSON);
-	        	this.setState({error:data.responseJSON.message});
+	        	this.setState({error:"Nombre de usuario o contraseña incorrecta!"});
 	        }
 		});
 	}
 	render () {
     return (
-    	<div className="content" data-app="soulhand-services" data-align="left">
-				<div className="body">
-						<section className="page">
-							<div className="container-body">
-								<div className="container">
-							        <div className="row">
-							          <div className="col-md-12 from text-center">
-							            <img src="/images/user-login-icon-14.png" className="center-block img-responsive"/>
-							            <form className="form-horizontal from text-center" role="form" onSubmit={(e)=>{this.auth(e)}}>
-							              <div className="form-group has-feedback" id="usuario">
-							                <div className="col-sm-2">
-							                  <label htmlFor="usuario" className="control-label">Usuario</label>
-							                </div>
-							                <div className="col-sm-10" id="usuario">
-							                  <input type="text" className="form-control cuadro" id="username" placeholder="Usuario" onChange={(e)=>{this.getFields(e)}}/>
-							                </div>
-							                <div className="col-sm-offset-2 col-sm-10">
-							                  <p className="help-block t-left"></p>
-							                </div>
-							              </div>
-							              <div className="form-group" id="password">
-							                <div className="col-sm-2">
-							                  <label htmlFor="password" className="control-label">Contrasena</label>
-							                </div>
-							                <div className="col-sm-10 cuadro">
-							                  <input type="password" className="form-control cuadro" id="password" onChange={(e)=>{this.getFields(e)}} placeholder="Contraseña"/>
-							                </div>
-							              </div>
-								            {this.state.error && (
-										    	<div className="alert alert-danger" role="alert">
-										    		{this.state.error}
-												</div>
-										    )}
-								          <div className="form-group">
-								            <button type="submit" className="boton-e btn btn-lg btn-success" data-toggle="modal" id="entrar">
-								              <b>Entrar</b>
-								            </button>
-								            <button type="submit" className="boton-e btn btn-lg btn-primary" data-toggle="modal" id="entrar">
-								              <b>Registro</b>
-								            </button>
-								          </div>
-							            </form>
-							          </div>
-							        </div>
-							      </div>
-							    </div>
-						</section>
-				</div>
-			</div>
-
+		<div className="container">
+	        <div className="card card-container" style={{marginTop:"5px"}}>
+	            <img id="profile-img" className="profile-img-card" src="/images/user-login-icon-14.png" />
+	            <p id="profile-name" className="profile-name-card"></p>
+	            <form className="form-signin" onSubmit={(e)=>{this.auth(e)}}>
+	                <span id="reauth-email" className="reauth-email"></span>
+	                <input type="text" id="username" className="form-control" placeholder="Email address" required autoFocus onChange={(e)=>{this.getFields(e)}}/>
+	                <input type="password" id="password" className="form-control" placeholder="Password" required onChange={(e)=>{this.getFields(e)}}/>
+	                {this.state.error && (
+				    	<div className="alert alert-danger" role="alert">
+				    		{this.state.error}
+						</div>
+				    )}
+	                <button className="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button>
+	            </form>
+	            <a href="#" className="forgot-password text-align center">
+	                ¿Olvidó su contraseña?
+	            </a>
+	            <Link to="/users/create" className="forgot-password  text-align center">
+	                Registrarse
+	            </Link>
+	        </div>
+	    </div>
     );
   }
 }

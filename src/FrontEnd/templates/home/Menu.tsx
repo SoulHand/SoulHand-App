@@ -44,6 +44,16 @@ export class Menu extends React.Component<props.basic, props.basic> {
 					<li>
 						<Link to="/" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Inicio</Link>
 					</li>
+					{!this.state.session && (
+						<li>
+							<Link to="/auth" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Iniciar sesión</Link>
+						</li>						
+					)}
+					{!this.state.session && (
+						<li>
+							<Link to="/users/create" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Registrarse</Link>
+						</li>						
+					)}
 					{this.state.session && this.state.session.user.isAdmin==true && (
 						<li>
 							<Link to="/teacher" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Docentes</Link>
@@ -54,9 +64,11 @@ export class Menu extends React.Component<props.basic, props.basic> {
 						<Link to="/parents" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Representantes</Link>
 					</li>
 					)}
+					{this.state.session && this.state.session.user.people.mode=="TEACHER" && (
 					<li>
 						<Link to="/students" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Alumnos</Link>
 					</li>
+					)}
 				</ul>
 			</div>
 		);

@@ -1,4 +1,5 @@
 var InsertException=require("./Exceptions/InsertException.js");
+var Exception=require("./Exceptions/Exception.js");
 var VoidException=require("./Exceptions/VoidException.js");
 
 function CRUD(db){
@@ -15,7 +16,7 @@ function CRUD(db){
 	this.find=function(query){
 		var p1=db.findOne(query).then(function(data){
 			if(!data){
-				throw new VoidException("No existe un registro de este tipo");
+				throw new Exception("No existe un registro de este tipo");
 			}
 			return data;
 		});

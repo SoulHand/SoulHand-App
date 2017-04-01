@@ -990,6 +990,7 @@ module.exports=function(app,express,server,__DIR__){
 	UsersURI.post("/",function(request, response,next) {
 		var user=new User(app.container.database.Schema.User);
 		var people=new People(app.container.database.Schema.Peoples);
+		request.body.dni=request.body.dni.toUpperCase();
 		if(!Validator.matches(/^[VE][0-9]{6,9}$/)(request.body.dni)){
 			throw new ValidatorException("Solo se aceptan documentos de identidad");			
 		}
@@ -1123,8 +1124,7 @@ module.exports=function(app,express,server,__DIR__){
 		var username=request.body.username;
 		var pass=request.body.password;
 		const base64=require('base-64');
-		var user=new User(app.container.database.Schema.User);
-		user.find({$and:[{$or:[{username:username},{email:username}]},{password:base64.encode(pass)}]}).then(function(data){
+		app.container.database.Schema.User.findOne({$and:[{$or:[{username:username},{email:username}]},{password:base64.encode(pass)}]}).then(function(data){
 			if(!data){
 				throw new UserException("no existe el usuario!");
 			}
@@ -1321,17 +1321,13 @@ module.exports=function(app,express,server,__DIR__){
 		
 		var fields={
 			data:JSON.parse(JSON.stringify(request.body)),
-			grade:request.body.grade,
 			activities:[],
 			conflicts:[],
 			habilitys:[]
 		};
 		fields.data.mode="STUDENT";		
 		delete(fields.data.grade);
-		grade.find({name:request.body.grade.toUpperCase()}).then(function(data){
-			fields.grade=data;
-			return people2.add(fields.data);
-		}).then(function(data){
+		people2.add(fields.data).then(function(data){
 			fields.data=data;
 			return people.add(fields);
 		}).then(function(data){
