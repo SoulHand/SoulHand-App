@@ -44,7 +44,7 @@ export class ListStudent extends React.Component<{}, {}> {
 		});
 	}
 	componentDidMount(){
-		getJSON(`//0.0.0:8080/v1/students/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,(data)=>{
+		getJSON(`//0.0.0:8080/v1/people/students/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,(data)=>{
 			this.students= data;
 			this.setState({
 		      students: data
