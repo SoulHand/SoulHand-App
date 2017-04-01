@@ -14,49 +14,42 @@ export class UserCreate extends React.Component<props.teacherItem, {}> {
 			value:null,
 			required:true
 		},
-		name:{
+		username:{
 			match:(fn:string)=>{
 				return !validator.isNull()(fn);
 			},
 			value:null,
 			required:true
 		},
-		phone:{
-			match:(fn:string)=>{
-				return /^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/.test(fn);
-			},
-			value:null
-		},
 		email:{
 			match:validator.isEmail(),
 			value:null,
 			required:true
 		},
-		birthdate:{
-			match:validator.isDate(),
+		password:{
+			match:(fn:string)=>{
+				return !validator.isNull()(fn) && validator.isLength(5,12)(fn);
+			},
 			value:null,
 			required:true
 		},
-		interprete:{
-			value:null
+		confirm:{
+			match:(fn:string)=>{
+				return !validator.isNull()(fn) && validator.isLength(5,12)(fn);
+			},
+			value:null,
+			required:true
 		}
 	};
 	state:props.fieldsTeachers={
 		error:{
 			dni:false,
 			name:false,
-			phone:false,
+			password:false,
 			email:false,
-			birthdate:false,
-			server:null
-		},
-		radio:"no"
-	}
-	constructor(props:any) {
-		super(props);
-    	let str=localStorage.getItem("session");
-    	let session=JSON.parse(str);
-		this.session=session;		
+			confirm:false,
+			duplicated:false
+		}
 	}
 	public getFields(event:any){
 		this.fields[event.target.id].value=event.target.value;
@@ -73,9 +66,9 @@ export class UserCreate extends React.Component<props.teacherItem, {}> {
 		var data:props.dataTeachers={
 			dni:null,
 			name:null,
-			phone:null,
+			password:null,
 			email:null,
-			birthdate:null
+			confirm:null
 		};
 		for (var i in this.fields){
 			if( (this.fields[i].require && !this.fields[i].value) || (this.fields[i].match && !this.fields[i].match(this.fields[i].value))){
@@ -85,6 +78,10 @@ export class UserCreate extends React.Component<props.teacherItem, {}> {
 			}
 				data[i]=this.fields[i].value;
 				state[i]=false;
+		}
+		if(data.password!=data.confirm){
+			value=false;
+			state.duplicated=true;
 		}
 		state.server=null;
 		if(!value){
@@ -101,13 +98,14 @@ export class UserCreate extends React.Component<props.teacherItem, {}> {
 		if(!data){
 			return;
 		}
+		console.log(data);
 		ajax({
 			method:"POST",
-	        url: `//0.0.0:8080/v1/people/teachers/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `//0.0.0:8080/v1/users/`,
 	        dataType: "json",
 	        data:data,	        
 	        success:(data:any)=>{
-	        	this.props.router.replace('/teacher');
+	        	this.props.router.replace('/auth');
 	        },
 	        error:(data:any)=>{
 	        	var state=this.state.error;
@@ -130,64 +128,86 @@ export class UserCreate extends React.Component<props.teacherItem, {}> {
 	               	</div>
 	            </div> 
 				<div className="main-login main-center">
-					<form className="form-horizontal" method="post" action="#">
+					<form className="form-horizontal" method="post" onSubmit={(e)=>{this.send(e)}}>
 						
 						<div className="form-group">
-							<label htmlFor="name" className="cols-sm-2 control-label">Your Name</label>
+							<label htmlFor="dni" className="cols-sm-2 control-label">Documento de identidad</label>
 							<div className="cols-sm-10">
 								<div className="input-group">
-									<span className="input-group-addon"><i className="fa fa-user fa" aria-hidden="true"></i></span>
-									<input type="text" className="form-control" name="name" id="name"  placeholder="Enter your Name"/>
+									<input type="text" className="form-control" name="dni" id="dni"  placeholder="Documento de identidad" onChange={(e)=>{this.getFields(e)}}/>
 								</div>
+								{this.state.error.dni && (
+							    	<div className="alert alert-danger" role="alert">
+									  <strong>Error!</strong> Introduzca un documento de identidad valido con la inicial de su nacionalidad.
+									</div>
+							    )}
 							</div>
 						</div>
 
 						<div className="form-group">
-							<label htmlFor="email" className="cols-sm-2 control-label">Your Email</label>
+							<label htmlFor="email" className="cols-sm-2 control-label">Correo electrónico</label>
 							<div className="cols-sm-10">
 								<div className="input-group">
-									<span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"></i></span>
-									<input type="text" className="form-control" name="email" id="email"  placeholder="Enter your Email"/>
+									<input type="text" className="form-control" name="email" id="email"  placeholder="ingrese correo electrónico" onChange={(e)=>{this.getFields(e)}}/>
 								</div>
+								{this.state.error.email && (
+							    	<div className="alert alert-danger" role="alert">
+									  <strong>Error!</strong> El correo es invalido
+									</div>
+							    )}
 							</div>
 						</div>
 
 						<div className="form-group">
-							<label htmlFor="username" className="cols-sm-2 control-label">Username</label>
+							<label htmlFor="username" className="cols-sm-2 control-label">Nombre de usuario</label>
 							<div className="cols-sm-10">
 								<div className="input-group">
-									<span className="input-group-addon"><i className="fa fa-users fa" aria-hidden="true"></i></span>
-									<input type="text" className="form-control" name="username" id="username"  placeholder="Enter your Username"/>
+									<input type="text" className="form-control" name="username" id="username"  placeholder="Ingrese su nombre de usuario" onChange={(e)=>{this.getFields(e)}}/>
 								</div>
+								{this.state.error.username && (
+							    	<div className="alert alert-danger" role="alert">
+									  <strong>Error!</strong> Es necesario un nombre de usuario
+									</div>
+							    )}
 							</div>
 						</div>
 
 						<div className="form-group">
-							<label htmlFor="password" className="cols-sm-2 control-label">Password</label>
+							<label htmlFor="password" className="cols-sm-2 control-label">Contraseña</label>
 							<div className="cols-sm-10">
 								<div className="input-group">
-									<span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"></i></span>
-									<input type="password" className="form-control" name="password" id="password"  placeholder="Enter your Password"/>
+									<input type="password" className="form-control" name="password" id="password"  placeholder="Ingrese su contraseña" onChange={(e)=>{this.getFields(e)}}/>
 								</div>
+								{this.state.error.dni && (
+							    	<div className="alert alert-danger" role="alert">
+									  <strong>Error!</strong> La contraseña debe contener al menos 5 caracteres.
+									</div>
+							    )}
 							</div>
 						</div>
 
 						<div className="form-group">
-							<label htmlFor="confirm" className="cols-sm-2 control-label">Confirm Password</label>
+							<label htmlFor="confirm" className="cols-sm-2 control-label">Confirme contraseña</label>
 							<div className="cols-sm-10">
 								<div className="input-group">
-									<span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"></i></span>
-									<input type="password" className="form-control" name="confirm" id="confirm"  placeholder="Confirm your Password"/>
+									<input type="password" className="form-control" name="confirm" id="confirm"  placeholder="Confirme su contraseña" onChange={(e)=>{this.getFields(e)}}/>
 								</div>
+								{this.state.error.dni && (
+							    	<div className="alert alert-danger" role="alert">
+									  <strong>Error!</strong> La contraseña debe contener al menos 5 caracteres
+									</div>
+							    )}
+							    {this.state.error.duplicated && (
+							    	<div className="alert alert-danger" role="alert">
+									  <strong>Error!</strong> Las contraseñas no coindicen!
+									</div>
+							    )}
 							</div>
 						</div>
 
 						<div className="form-group ">
-							<button type="button" className="btn btn-primary btn-lg btn-block login-button">Register</button>
-						</div>
-						<div className="login-register">
-				            <a href="index.php">Login</a>
-				         </div>
+							<button type="submit" className="button btn btn-primary btn-lg btn-block login-button">Register</button>
+						</div>						
 					</form>
 				</div>
 			</div>

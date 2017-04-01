@@ -1002,6 +1002,7 @@ module.exports=function(app,express,server,__DIR__){
 		if(!Validator.isLength(5,14)(request.body.password)){
 			throw new ValidatorException("Es necesario una contraseña de por lo menos 5 caracteres");			
 		}
+		request.body.dni=request.body.dni.toUpperCase();
 		const base64=require('base-64');
 		var fields={
 			username:request.body.username,
