@@ -1,5 +1,5 @@
 ((Global:Window)=>{
 	Global.settings={
-		uri:"//localhost:8080/"
+		uri:"//localhost:8080"
 	};
 })(window)
