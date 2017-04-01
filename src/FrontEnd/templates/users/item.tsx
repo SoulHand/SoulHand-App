@@ -21,7 +21,7 @@ export class Item extends React.Component<props.teacherItem, {}> {
 		var data={isAdmin:(this.props.people.isAdmin) ? this.props.people.isAdmin : undefined};
 		ajax({
 			method:"PUT",
-	        url: `//localhost:8080/v1/users/root/${this.props.people._id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/users/root/${this.props.people._id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
 	        dataType: "json",
 	        data:data,
 	        crossDomain:true,
@@ -33,7 +33,7 @@ export class Item extends React.Component<props.teacherItem, {}> {
 	deleteField(event: any){
 		ajax({
 			method:"DELETE",
-	        url: `//localhost:8080/v1/users/${this.props.people._id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/users/${this.props.people._id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
