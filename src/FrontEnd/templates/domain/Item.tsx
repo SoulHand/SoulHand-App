@@ -4,11 +4,11 @@ import {render} from 'react-dom';
 import {ajax} from 'jquery'
 import {Link} from 'react-router';
 
-export class Item extends React.Component<props.gradeItem, {}> {
+export class Item extends React.Component<props.domainItem, {}> {
 	deleteField(event: any){
 		ajax({
 			method:"DELETE",
-	        url: `//localhost:8080/v1/grades/${this.props.grade._id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
+	        url: `//localhost:8080/v1/lerning/domain/${this.props.domain._id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
@@ -22,11 +22,11 @@ export class Item extends React.Component<props.gradeItem, {}> {
 			<div className="item">
 				<img src="/images/user-login-icon-14.png" alt="Perfil de usuario" className="rounded-circle" width="84" height="84"/>
 	  			<div className="container-element text-align center">
-	  				<Link to={`/grades/${this.props.grade._id}`} className="title">{this.props.grade.data.name}</Link>
+	  				<Link to={`/domain/${this.props.domain._id}`} className="title">{this.props.domain.data.name}</Link>
 	  				
 	  			</div>
 				<div className="toolbox">
-					<button className="button circle icons x16 delete white" data-id={this.props.grade._id} onClick={(e)=>{this.deleteField(e)}}></button>
+					<button className="button circle icons x16 delete white" data-id={this.props.domain._id} onClick={(e)=>{this.deleteField(e)}}></button>
 				</div>
 			</div>
 		);

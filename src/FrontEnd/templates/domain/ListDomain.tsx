@@ -2,13 +2,13 @@ import * as React from 'react';
 import {getJSON, ajax} from 'jquery'
 //import * as settings from "../settings"
 
-export class ListGrade extends React.Component<{}, {}> {
+export class ListDomain extends React.Component<{}, {}> {
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
 	public session:users.sessions;
-	public grades:any=[];
+	public domain:any=[];
 	state={
-		grades:[],
+		domain:[],
 		search:""
 	};
 	constructor(props:any) {
@@ -21,28 +21,28 @@ export class ListGrade extends React.Component<{}, {}> {
 		var element:EventTarget=event.target;		
 		ajax({
 			method:"DELETE",
-	        url: `//localhost:8080/v1/grades/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `//localhost:8080/v1/learning/domain/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
 	        success:(data:peoples.teachers)=>{
-	        	this.grades=this.grades.filter(function(row:peoples.teachers){
+	        	this.domain=this.domain.filter(function(row:peoples.teachers){
 					if(row._id==data._id){
 						return false;
 					}
 					return true;
 		    	});
 		    	this.setState({
-			      	grades : this.grades
+			      	domain : this.domain
 			    });
 	        }
 		});
 	}
 	componentDidMount(){
-		getJSON(`//0.0.0:8080/v1/grades/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,(data)=>{
-			this.grades= data;
+		getJSON(`//0.0.0:8080/v1/learning/domain/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,(data)=>{
+			this.domain= data;
 			this.setState({
-		      grades: data
+		      domain: data
 		    });
 		})
 	}
@@ -55,7 +55,7 @@ export class ListGrade extends React.Component<{}, {}> {
 				</div>
 				<span>{this.state.search}</span>
 			</form>
-			<h3>Grado</h3>
+			<h3>Dominio</h3>
 			<table className="table table-striped">
 				<thead>
 					<tr>
@@ -65,7 +65,7 @@ export class ListGrade extends React.Component<{}, {}> {
 				</thead>
 				<tbody>
 				{
-					this.state.grades.map((row:any)=>{
+					this.state.domain.map((row:any)=>{
 						return (
 							<tr key={row._id}>
 								<td>{row.name}</td>

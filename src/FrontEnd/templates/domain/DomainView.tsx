@@ -2,28 +2,28 @@ import * as React from 'react';
 import * as validator from 'string-validator';
 import {ajax} from 'jquery'
 
-export class GradeView extends React.Component<{}, {}> {
+export class DomainView extends React.Component<{}, {}> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;	
 	constructor(props:any) {
 		super(props);
     	let session=localStorage.getItem("session");
-		this.state = {grades:[],search:""};
+		this.state = {domain:[],search:""};
     	session=JSON.parse(session);
 		this.session=session;
-		this.state = {grades:null};
+		this.state = {domain:null};
 	}
 	componentDidMount(){
 		ajax({
 			method:"GET",
-	        url: `//0.0.0:8080/v1/grades/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `//0.0.0:8080/v1/learning/domain/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,	        
 	        success:(data:any)=>{
 	        	this.data=data;
 				this.setState({
-			      grades : data
+			      domain : data
 			    });
 	        }
 		});
@@ -31,17 +31,17 @@ export class GradeView extends React.Component<{}, {}> {
 	render () {
     return (
     	<div className="container">
-    		{this.state.grades && (
+    		{this.state.domain && (
 	    		<div className="row">
 		          <div className="col-md-2">
 		            <img src="/images/user-login-icon-14.png" className="imagen img-circle img-responsive"/>
 		          </div>
 		          <div className="col-md-10 parrafo">
 		            <h3>
-		              <b>{(this.state.grades.data.mode=="GRADES") ? "Docente": "Alumno"}</b>
+		              <b>{(this.state.domain.data.mode=="DOMAIN") ? "Docente": "Alumno"}</b>
 		            </h3>
 		            <p>
-		              <b>Nombre:</b>{this.state.grades.data.name}
+		              <b>Nombre:</b>{this.state.domain.data.name}
 		            </p>
 		          </div>
 		        </div>		    	

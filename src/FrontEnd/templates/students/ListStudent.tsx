@@ -1,23 +1,53 @@
 import * as React from 'react';
-import {getJSON} from 'jquery'
+import {getJSON, ajax} from 'jquery'
 //import * as settings from "../settings"
 
 export class ListStudent extends React.Component<{}, {}> {
-	public PrivateKeyId="1dec3409-dbc9-4314-8bb4-a38ef808c702";
-	public PublicKeyId="NThjODg5ZWIxMjA3OTIwYTcwY2E2NDkz"
+	public PrivateKeyId:string;
+	public PublicKeyId:string;
+	public session:users.sessions;
+	public students:any=[];
+	state={
+		students:[],
+		search:""
+	};
 	constructor(props:any) {
 		super(props);
-		this.state = {student:[],search:""};
+    	let str=localStorage.getItem("session");
+    	let session=JSON.parse(str);
+		this.session=session;		
 	}	
 	getFields(event:any){
 		this.setState({
 	      search : event.target.value
 	    });
 	}
+	deleteField(event: any){
+		var element:EventTarget=event.target;		
+		ajax({
+			method:"DELETE",
+	        url: `//localhost:8080/v1/students/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        dataType: "json",
+	        data:null,
+	        crossDomain:true,
+	        success:(data:peoples.teachers)=>{
+	        	this.students=this.students.filter(function(row:peoples.teachers){
+					if(row._id==data._id){
+						return false;
+					}
+					return true;
+		    	});
+		    	this.setState({
+			      	students : this.students
+			    });
+	        }
+		});
+	}
 	componentDidMount(){
-		getJSON(`//0.0.0:8080/v1/people/student/?PublicKeyId=${this.PublicKeyId}&PrivateKeyId=${this.PrivateKeyId}`,(data)=>{
+		getJSON(`//0.0.0:8080/v1/students/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,(data)=>{
+			this.students= data;
 			this.setState({
-		      student : data
+		      students: data
 		    });
 		})
 	}
@@ -43,11 +73,11 @@ export class ListStudent extends React.Component<{}, {}> {
 				</thead>
 				<tbody>
 				{
-					this.state.student.forEach((row:any)=>{
+					this.state.students.map((row:any)=>{
 						<tr>
 							<td>{row.data.name}</td>
 							<td><button type="button" className="btn btn-warning">Editar</button>
-							<button type="button" className="btn btn-danger">Eliminar</button></td>
+							<button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
 						</tr>	})
 				}
 				</tbody>

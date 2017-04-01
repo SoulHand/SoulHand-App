@@ -76,11 +76,11 @@ export class StudentCreate extends React.Component<{}, {}> {
 		}
 		ajax({
 			method:"POST",
-	        url: `//0.0.0:8080/v1/people/teachers/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `//0.0.0:8080/v1/people/students/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:data,	        
 	        success:(data:any)=>{
-	        	this.props.router.replace('/teacher');
+	        	this.props.router.replace('/student');
 	        },
 	        error:(data:any)=>{
 	        	var state=this.state.error;
