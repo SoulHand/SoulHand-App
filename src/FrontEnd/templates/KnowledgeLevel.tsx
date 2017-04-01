@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {hashHistory} from 'react-router';
 import {Bar} from './Bar';
-import {Menu} from './PeriodSchools/Menu';
+import {Menu} from './KnowledgeLevel/Menu';
 //import {NavBar} from './templates/NavBar';
 
-export class PeriodSchools extends React.Component<{}, {}> {
+export class KnowledgeLevel extends React.Component<{}, {}> {
     render () {
         return (
             <div className="content" data-app="soulhand-services" data-align="left">
