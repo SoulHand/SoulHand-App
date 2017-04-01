@@ -1315,9 +1315,6 @@ module.exports=function(app,express,server,__DIR__){
 		if(!Validator.isDate()(request.body.birthdate)){
 			throw new ValidatorException("La fecha de nacimiento no es valida");
 		}
-		if(Validator.isNull()(request.body.grade)){
-			throw new ValidatorException("Es necesario un grado");
-		}
 		
 		var fields={
 			data:JSON.parse(JSON.stringify(request.body)),

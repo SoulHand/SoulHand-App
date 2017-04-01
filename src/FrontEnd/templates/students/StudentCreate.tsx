@@ -80,7 +80,7 @@ export class StudentCreate extends React.Component<{}, {}> {
 	        dataType: "json",
 	        data:data,	        
 	        success:(data:any)=>{
-	        	this.props.router.replace('/student');
+	        	this.props.router.replace('/students');
 	        },
 	        error:(data:any)=>{
 	        	var state=this.state.error;
