@@ -20,7 +20,7 @@ export class Login extends React.Component<props.teacherItem, props.teacherState
 	    this.setState({error:null})
 		ajax({
 			method:"POST",
-	        url: '${window.settings.uri}/v1/auth',
+	        url: `${window.settings.uri}/v1/auth`,
 	        dataType: "json",
 	        data:{
 	        	username:this.user.username,
