@@ -1059,6 +1059,18 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var user<User>	objeto CRUD
 	*/
+	UsersURI.put("/root/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var user=new User(app.container.database.Schema.User);
+		user.update({_id:request.params.id},function(data){
+			data.isAdmin=(request.body.isAdmin) ? true : false;
+			return data;
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+
 	UsersURI.put("/:id",Auth.isUser.bind(app.container),function(request, response,next) {
 		if(request.body.isAdmin){
 			throw new ValidatorException("no puede realizar un cambio de administración");

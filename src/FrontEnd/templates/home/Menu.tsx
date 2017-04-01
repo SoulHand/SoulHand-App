@@ -26,11 +26,17 @@ export class Menu extends React.Component<props.basic, props.basic> {
 		let session=localStorage.getItem("session");
 
     	if(session){
-	    	session=JSON.parse(session);
+	    	this.session=JSON.parse(session);
 	    	this.setState({
-				session:session
+				session:this.session
 			});
     	}
+	}
+	destroy(){
+		this.session=null;
+		this.setState({
+			session:this.session
+		});
 	}
 	toogle(event:any){
 		this.parent.classList.toggle("slider");
@@ -38,7 +44,7 @@ export class Menu extends React.Component<props.basic, props.basic> {
 	render (){
 		return(
 			<div className="menu">
-				{this.state.session && (<ProfileBox session={this.state.session}/>)
+				{this.state.session && (<ProfileBox session={this.state.session} callback={(e)=>{this.destroy()}}/>)
 				}
 				<ul>
 					<li>
@@ -57,6 +63,11 @@ export class Menu extends React.Component<props.basic, props.basic> {
 					{this.state.session && this.state.session.user.isAdmin==true && (
 						<li>
 							<Link to="/teacher" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Docentes</Link>
+						</li>						
+					)}
+					{this.state.session && this.state.session.user.isAdmin==true && (
+						<li>
+							<Link to="/users" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Usuarios</Link>
 						</li>						
 					)}
 					{this.state.session && this.state.session.user.isAdmin==true && (

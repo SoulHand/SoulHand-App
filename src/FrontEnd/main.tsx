@@ -11,10 +11,12 @@ import {Teachers} from './templates/Teachers';
 import {Student} from './templates/Student';
 import {Parents} from './templates/Parents';
 import {Grades} from './templates/Grades';
-import {Domain} from './templates/Domain';
+import {Domain} from'./templates/Domain';
+import {Users} from './templates/Users';
 import {ListParent} from './templates/parents/ListParent';
 import {Login} from './templates/Login';
 import {UserCreate} from './templates/users/UserCreate';
+import {ListUsers} from './templates/users/ListUsers';
 
 import {ListTeachers} from './templates/teachers/ListTeachers';
 import {TeacherCreate} from './templates/teachers/TeacherCreate';
@@ -57,7 +59,8 @@ window.addEventListener("load",()=>{
 		    	<IndexRoute component={ListDomain}/>
 		    	<Route path="create" component={DomainCreate}/>
 		    </Route>
-		    <Route path="/users" component={Home}>
+		    <Route path="/users" component={Users}>
+		    	<IndexRoute component={ListUsers} onEnter={Auth}/>
 		    	<Route path="create" component={UserCreate}/>
 		    </Route>
 	  	</Router>

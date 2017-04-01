@@ -10,6 +10,7 @@ export class ProfileBox extends React.Component<props.basic, props.basic> {
 	destroy(event:any){
 		event.preventDefault();
 		localStorage.removeItem("session");
+		this.props.callback();
 		this.props.router.replace("/auth");
 	}
 	render (){
