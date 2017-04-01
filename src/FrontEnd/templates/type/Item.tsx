@@ -8,7 +8,7 @@ export class Item extends React.Component<props.domainItem, {}> {
 	deleteField(event: any){
 		ajax({
 			method:"DELETE",
-	        url: `//localhost:8080/v1/learning/domain/${this.props.domain._id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
+	        url: `//localhost:8080/v1/learning/type/${this.props.type._id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
@@ -22,11 +22,11 @@ export class Item extends React.Component<props.domainItem, {}> {
 			<div className="item">
 				<img src="/images/user-login-icon-14.png" alt="Perfil de usuario" className="rounded-circle" width="84" height="84"/>
 	  			<div className="container-element text-align center">
-	  				<Link to={`/domain/${this.props.domain._id}`} className="title">{this.props.domain.data.name}</Link>
+	  				<Link to={`/type/${this.props.type._id}`} className="title">{this.props.type.data.name}</Link>
 	  				
 	  			</div>
 				<div className="toolbox">
-					<button className="button circle icons x16 delete white" data-id={this.props.domain._id} onClick={(e)=>{this.deleteField(e)}}></button>
+					<button className="button circle icons x16 delete white" data-id={this.props.type._id} onClick={(e)=>{this.deleteField(e)}}></button>
 				</div>
 			</div>
 		);

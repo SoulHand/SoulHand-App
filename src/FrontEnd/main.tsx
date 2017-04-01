@@ -11,8 +11,9 @@ import {Teachers} from './templates/Teachers';
 import {Student} from './templates/Student';
 import {Parents} from './templates/Parents';
 import {Grades} from './templates/Grades';
-import {Domain} from'./templates/Domain';
 import {Users} from './templates/Users';
+import {Domain} from './templates/Domain';
+import {Type} from './templates/Type';
 import {ListParent} from './templates/parents/ListParent';
 import {Login} from './templates/Login';
 import {UserCreate} from './templates/users/UserCreate';
@@ -28,6 +29,8 @@ import {StudentCreate} from './templates/students/StudentCreate';
 import {ListStudent} from './templates/students/ListStudent';
 import {DomainCreate} from './templates/domain/DomainCreate';
 import {ListDomain} from './templates/domain/ListDomain';
+import {TypeCreate} from './templates/type/TypeCreate';
+import {ListType} from './templates/type/ListType';
 /*import {PageRepresentative} from './templates/PageRepresentative';
 import {PageRepresentativeCreate} from './templates/PageRepresentativeCreate';
 import {PageUserCreate} from './templates/PageUserCreate';*/
@@ -59,8 +62,16 @@ window.addEventListener("load",()=>{
 		    	<IndexRoute component={ListDomain}/>
 		    	<Route path="create" component={DomainCreate}/>
 		    </Route>
+<<<<<<< HEAD
 		    <Route path="/users" component={Users}>
 		    	<IndexRoute component={ListUsers} onEnter={Auth}/>
+=======
+		    <Route path="/type" component={Type} onEnter={Auth}>
+		    	<IndexRoute component={ListType}/>
+		    	<Route path="create" component={TypeCreate}/>
+		    </Route>
+		    <Route path="/users" component={Home}>
+>>>>>>> ef7c4f06af975bace570b2d0215134e665208260
 		    	<Route path="create" component={UserCreate}/>
 		    </Route>
 	  	</Router>
