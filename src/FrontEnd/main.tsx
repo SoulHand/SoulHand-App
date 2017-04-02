@@ -97,6 +97,7 @@ window.addEventListener("load",()=>{
 		    </Route>
 		    <Route path="/users" component={Home}>
 		    	<IndexRoute component={ListUsers} onEnter={Auth}/>
+		    	<Route path=":id" component={UserView}/>
 		    	<Route path="create" component={UserCreate}/>
 		    </Route>
 		    <Route path="/matter" component={Matter} onEnter={Auth}>
