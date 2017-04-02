@@ -87,6 +87,9 @@ declare namespace props{
 		email?:boolean
 		birthdate?:boolean
 	}
+	interface stateUser{
+		user:users.profile
+	}
 	interface teachersParams{
 		id:string
 	}
@@ -120,6 +123,15 @@ declare namespace props{
 	}
 	interface studentsItem{
 		people?:peoples.parents
+		delete?:Function
+		session?:users.sessions
+    	routeParams ?: teachersParams
+    	router?:ReactRouter.InjectedRouter
+    	location?: any
+    	children?: any
+	}
+	interface usersItem{
+		people?:users.profile
 		delete?:Function
 		session?:users.sessions
     	routeParams ?: teachersParams
