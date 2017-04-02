@@ -25,7 +25,7 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 		var element=event.target;
 		if(event.keyCode==13){
 			event.preventDefault();
-			element.children[2].children[0].click();
+			element.parentNode.children[2].children[0].click();
 		}
 	}
 	componentDidMount(){
@@ -115,7 +115,7 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 					<div className="field">
 						<b>{row.label}:</b>									
 					</div>
-					<div className="value" onKeyUp={(e)=>{this.getFields(e)}}>
+					<div className="value" onKeyUp={(e)=>{this.getFields(e)}} onKeyDown={(e)=>{this.keycod(e)}}>
 						{row.value}
 					</div>
 					<div className="toolbox">
