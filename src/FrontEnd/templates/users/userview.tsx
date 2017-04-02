@@ -19,9 +19,14 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 	}
 	public getFields(event:any){
 		var element=event.target.parentNode;
-		console.log(element);
 		this.fields[element.id]=event.target.innerText || event.target.textContent;
-		console.log(this.fields)
+	}
+	keycod(event:any){
+		var element=event.target;
+		if(event.keyCode==13){
+			event.preventDefault();
+			element.children[2].children[0].click();
+		}
 	}
 	componentDidMount(){
 		ajax({
@@ -134,7 +139,7 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 					<div className="fieldset">
 						<div className="item" id="username">
 							<div className="field"></div>
-							<div className="value" onKeyUp={(e)=>{this.getFields(e)}}>{this.state.user.username}</div>
+							<div className="value" onKeyUp={(e)=>{this.getFields(e)}} onKeyDown={(e)=>{this.keycod(e)}}>{this.state.user.username}</div>
 							<div className="toolbox">
 								<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e)=>{this.edit(e)}}></button>
 							</div>

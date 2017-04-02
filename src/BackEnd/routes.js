@@ -1091,19 +1091,29 @@ module.exports=function(app,express,server,__DIR__){
 			const base64=require('base-64');
 			request.body.password=base64.encode(request.body.password);
 		}
+		var USER;
 		var user=new User(app.container.database.Schema.User);
-		user.update({_id:request.params.id},function(data){
-		if(request.user.isAdmin!=true && data._id!=request.user._id){
-			throw new ValidatorException("No tiene permisos para editar este registro");
-		}
+		app.container.database.Schema.User.findOne({_id:request.params.id}).then(function(data){
+			if(request.user.isAdmin!=true && data._id!=request.user._id){
+				throw new ValidatorException("No tiene permisos para editar este registro");
+			}
 			for (i in data){
 				if(request.body[i] && i!='people'){
 					data[i]=request.body[i];
 				}
 			}
-			return data;
+			USER=data;
+			return app.container.database.Schema.Peoples.findOne({dni:data.people.dni});
 		}).then(function(data){
-			response.send(data);
+			for (i in data){
+				if(request.body[i] && i!='dni'){
+					data[i]=request.body[i];
+				}
+			}
+			USER.people=data;
+			return Promise.all([data.save(),USER.save()]);
+		}).then(function(data){
+			response.send(data[1]);
 		}).catch(function(error){
 			next(error);
 		});
