@@ -64,7 +64,7 @@ export class ListParent extends React.Component<{}, {}> {
 		});
 	}
 	render(){
-		let teachers = this.state.teachers.map((row:peoples.parents) => {
+		let teachers = this.state.parents.map((row:peoples.parents) => {
 	      return (
 	        <Item people={row} key={row._id} session={this.session} delete={this.deleteField.bind(this)}/>
 	      );
@@ -73,7 +73,7 @@ export class ListParent extends React.Component<{}, {}> {
 			<div className="container">
 				<div className="fieldset" data-align="justify">
 					{
-						(this.state.teachers.length>0) ?
+						(this.state.parents.length>0) ?
 							teachers
 						:
 							<span className="text-align center">No existen resultados</span>

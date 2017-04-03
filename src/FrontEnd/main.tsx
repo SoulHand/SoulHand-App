@@ -89,6 +89,11 @@ window.addEventListener("load",()=>{
 		    	<Route path=":id" component={GradeView}/>
 		    	<Route path="create" component={GradeCreate}/>
 		    </Route>
+		    <Route path="/parents" component={Parents} onEnter={Auth}>
+		    	<IndexRoute component={ListParent}/>
+		    	<Route path="get/:id" component={ParentView}/>
+		    	<Route path="create" component={ParentsCreate}/>
+		    </Route>
 		    <Route path="/domain" component={Domain} onEnter={Auth}>
 		    	<IndexRoute component={ListDomain}/>
 		    	<Route path=":id" component={DomainView}/>
