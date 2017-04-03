@@ -1,6 +1,8 @@
 import * as React from 'react';
-import * as validator from 'string-validator';
+import * as validator from 'string-validator'
+import {Link} from 'react-router'
 import {ajax} from 'jquery'
+
 
 export class StudentView extends React.Component<props.usersItem, props.stateUser {
 	public session:users.sessions;
@@ -227,7 +229,7 @@ export class StudentView extends React.Component<props.usersItem, props.stateUse
 			</div>	
 			<h3>Desarrollo físico</h3>
 			<div className="flex row">
-				<button className="button circle icons x16 add white"></button>
+				<Link to={`/students/get/${this.props.routeParams.id}/physic/create`} className="button circle icons x16 add white"></Link>
 			</div>
 			<table className="table table-striped">
 				<thead>
@@ -244,8 +246,8 @@ export class StudentView extends React.Component<props.usersItem, props.stateUse
 						return (
 							<tr key={row._id}>
 								<td>{row.date}</td>
-								<td>{row.weight}</td>
-								<td>{row.height}</td>
+								<td>{row.weight} kg</td>
+								<td>{row.height} cm</td>
 								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
 							</tr>
 						);

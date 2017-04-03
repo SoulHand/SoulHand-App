@@ -21,6 +21,7 @@ import {MatterView} from './templates/matter/matterview';
 
 import {Student} from './templates/students';
 import {ListStudent} from './templates/students/liststudents';
+import {PhysicCreate} from './templates/physic/physiccreate';
 import {StudentCreate} from './templates/students/studentcreate';
 import {StudentView} from './templates/students/studentview';
 
@@ -82,6 +83,7 @@ window.addEventListener("load",()=>{
 		    <Route path="/students" component={Student} onEnter={Auth}>
 		    	<IndexRoute component={ListStudent}/>
 		    	<Route path="get/:id" component={StudentView}/>
+		    	<Route path="get/:id/physic/create" component={PhysicCreate}/>
 		    	<Route path="create/:id" component={StudentCreate}/>
 		    </Route>
 		    <Route path="/grades" component={Grades} onEnter={Auth}>
