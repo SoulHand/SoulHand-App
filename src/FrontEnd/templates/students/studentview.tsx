@@ -114,7 +114,7 @@ export class StudentView extends React.Component<props.usersItem, props.stateUse
 		var element:EventTarget=event.target;		
 		ajax({
 			method:"DELETE",
-	        url: `${window.settings.uri}/v1/people/students/${element.dataset.id}/physic/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/people/students/${this.props.routeParams.id}/physic/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,

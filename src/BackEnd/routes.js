@@ -1526,13 +1526,13 @@ module.exports=function(app,express,server,__DIR__){
 	});
 
 
-	StudentsURI.delete("/:id/physic/:id2",function(request, response,next) {
-		if(!Validator.isMongoId()(request.params.id) || !Validator.isMongoId()(request.params.id2)){
+	StudentsURI.delete("/:id/physic/:del",function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.id) || !Validator.isMongoId()(request.params.del)){
 			throw new ValidatorException("El id es invalido!");
 		}
 		app.container.database.Schema.Students.findOne({_id:request.params.id}).then(function(data){
 			for (i in data.physics){
-				if(data.physics[i]._id==request.params.id2){
+				if(data.physics[i]._id==request.params.del){
 					data.physics[i].remove();
 					break;
 				}
