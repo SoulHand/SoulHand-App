@@ -67,7 +67,6 @@ export class StudentCreate extends React.Component<{}, {}> {
 		}
 		return data;
 	}
-
 	send(event:any){
 		event.preventDefault();
 		var data=this.validate();

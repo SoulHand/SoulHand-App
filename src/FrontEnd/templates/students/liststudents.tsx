@@ -84,7 +84,7 @@ export class ListStudent extends React.Component<{}, {}> {
 						return (
 							<tr key={row._id}>
 								<td>{row.data.dni}</td>
-								<td><Link to={`/students/${row._id}`} className="title">{row.data.name}</Link></td>
+								<td><Link to={`/students/get/${row._id}`} className="title">{row.data.name}</Link></td>
 								<td>{(row.discapacityLevel==0) ?
 									"NO EVALUADA"
 									:  (row.discapacityLevel>25 && row.discapacityLevel<=40) ?
