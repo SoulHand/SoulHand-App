@@ -35,6 +35,18 @@ export class ListUsers extends React.Component<{}, {}> {
 	      search : event.target.value
 	    });
 	}
+	Filter(event:any){
+		var filter=this.teachers.filter((row)=>{
+			var exp=new RegExp(event.target.value,"i");
+			if(exp.test(row.username)==true || exp.test(row.email)==true){
+				return true;
+			}
+			return false;
+		});
+		this.setState({
+	      	teachers : filter
+	    });
+	}
 	componentDidMount(){
 		ajax({
 			method:"GET",
@@ -71,6 +83,9 @@ export class ListUsers extends React.Component<{}, {}> {
 					  {this.state.error}
 					</div>					
 				)}
+					<div className="right">
+						<input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
+					</div>
 				<div className="fieldset" data-align="justify">
 					{
 						(this.state.teachers.length>0) ?
@@ -82,50 +97,4 @@ export class ListUsers extends React.Component<{}, {}> {
 			</div>
 		);
 	}
-	/*render () {
-		let teachers = this.state.teachers.map((row:any) => {
-	      return (
-	        <tr key={row._id}>
-				<td>{row.data.name}</td>
-				<td>{row.data.email}</td>
-				<td>{(row.interprete==true) ? 'Sí' : 'No'}</td>
-				<td><button type="button" className="btn btn-warning">Editar</button>
-				<button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
-			</tr>
-	      );
-	    });
-    return (
-		<div className="container card">
-			<form className="navbar-form navbar-right">
-				<div className="right">
-					<input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.getFields(e)}}/>
-				</div>
-				<span>{this.state.search}</span>
-			</form>
-			<h3>Docente</h3>
-			<table className="table table-striped">
-				<thead>
-					<tr>
-						<th>Nombre y Apellido</th>
-						<th>Email</th>
-						<th>interprete</th>
-						<th>Modificar/Eliminar</th>
-					</tr>
-				</thead>
-				<tbody>
-					{
-						(!this.state.teachers) ?
-							<tr>
-								<td colSpan={4}>
-									<span className="align-center">No se encuentran resultados</span>
-								</td>
-							</tr>
-						:
-							teachers
-					}
-				</tbody>
-			</table>
-		</div>
-    );
-  }*/
 }
