@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as validator from 'string-validator';
 import {ajax} from 'jquery'
-import {Link} from 'react-router';
+import {TableStudents} from "../students/tablestudents"
 
 
 export class GradeView extends React.Component<props.usersItem, props.stateUser {
@@ -100,6 +100,17 @@ export class GradeView extends React.Component<props.usersItem, props.stateUser 
 	      	students : filter
 	    });
 	}
+	deleteField(data: any){
+		this.students=this.students.filter(function(row:peoples.teachers){
+			if(row._id==data._id){
+				return false;
+			}
+			return true;
+    	});
+    	this.setState({
+	      	students : this.students
+	    });
+	}
 	render () {
 		if(!this.state.grade){
 			return (
@@ -124,46 +135,7 @@ export class GradeView extends React.Component<props.usersItem, props.stateUser 
 			<div className="right">
 				<input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
 			</div>	
-			<table className="table table-striped">
-				<thead>
-					<tr>
-						<th>Cedula Escolar</th>
-						<th>Nombre y Apellido</th>
-                  		<th>Escala perdida de audición</th>
-                 		<th>grados</th>
-                  		<th>Acción</th>
-					</tr>
-				</thead>
-				<tbody>
-				{
-					this.state.students.map((row:any)=>{
-						console.log(row);
-						return (
-							<tr key={row._id}>
-								<td>{row.data.dni}</td>
-								<td><Link to={`/students/get/${row._id}`} className="title">{row.data.name}</Link></td>
-								<td>{(row.discapacityLevel==0) ?
-									"NO EVALUADA"
-									:  (row.discapacityLevel>25 && row.discapacityLevel<=40) ?
-										"LEVE"
-									: (row.discapacityLevel>40 && row.discapacityLevel<=70) ?
-										"MODERADA"
-									: (row.discapacityLevel>70 && row.discapacityLevel<=90) ?
-										"SEVERA"
-									: (row.discapacityLevel>90 && row.discapacityLevel<=120) ?
-										"PROFUNDA"
-									:
-										"SIN PERDIDA"
-								}</td>
-								<td>{(row.grade) ? row.grade.name : "NO ASIGNADO"}</td>
-								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
-							</tr>
-						);
-					})
-				}
-				</tbody>
-			</table>
-
+			<TableStudents students={this.state.students} session={this.session} delete={this.deleteField.bind(this)}/>	
     	</div>		
     );
   }	

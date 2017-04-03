@@ -90,11 +90,11 @@ export class ParentsCreate extends React.Component<props.parentsItem, {}> {
 		}
 		ajax({
 			method:"POST",
-	        url: `${window.settings.uri}/v1/people/teachers/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/people/parents/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:data,	        
 	        success:(data:any)=>{
-	        	this.props.router.replace('/teacher');
+	        	this.props.router.replace('/parents');
 	        },
 	        error:(data:any)=>{
 	        	var state=this.state.error;

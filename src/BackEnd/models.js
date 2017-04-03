@@ -62,7 +62,7 @@ structDb.Teachers=mongoose.Schema({
 });
 structDb.Representatives=mongoose.Schema({
 	data: structDb.Peoples,
-	idStudent:{ type: mongoose.Schema.ObjectId, ref: "Students" }
+	students:[{ type: mongoose.Schema.ObjectId, ref: "Students" }]
 });
 
 structDb.User=mongoose.Schema({

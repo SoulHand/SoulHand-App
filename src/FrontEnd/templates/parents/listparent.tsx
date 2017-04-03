@@ -27,54 +27,50 @@ export class ListParent extends React.Component<{}, {}> {
     	});
     	this.setState({
 	      	teachers : this.data
-	    });
-		ajax({
-			method:"DELETE",
-	        url: `${window.settings.uri}/v1/people/teachers/${event.target.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
-	        dataType: "json",
-	        data:null,
-	        crossDomain:true,
-	        success:(data:peoples.parents)=>{
-	        	this.data=this.data.filter(function(row:peoples.parents){
-					if(row._id==data._id){
-						return false;
-					}
-					return true;
-	        	})
-	        }
-		});
-	}
-	getFields(event:any){
-		this.setState({
-	      search : event.target.value
-	    });
+	    });		
 	}
 	componentDidMount(){
 		ajax({
 			method:"GET",
-	        url: `//0.0.0:8080/v1/people/teachers/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `//0.0.0:8080/v1/people/parents/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,	        
 	        success:(data:any)=>{
+	        	console.log(data);
 	        	this.data=data;
 				this.setState({
-			      teachers : data
+			      parents : data
 			    });
 	        }
 		});
 	}
+	Filter(event:any){
+		var filter=this.data.filter((row)=>{
+			var exp=new RegExp(event.target.value,"i");
+			if(exp.test(row.data.name)==true || exp.test(row.data.dni)==true){
+				return true;
+			}
+			return false;
+		});
+		this.setState({
+	      	parents : filter
+	    });
+	}
 	render(){
-		let teachers = this.state.parents.map((row:peoples.parents) => {
+		let Parents = this.state.parents.map((row:peoples.parents) => {
 	      return (
 	        <Item people={row} key={row._id} session={this.session} delete={this.deleteField.bind(this)}/>
 	      );
 	    });
 		return (
 			<div className="container">
+				<div className="right">
+					<input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
+				</div>
 				<div className="fieldset" data-align="justify">
 					{
 						(this.state.parents.length>0) ?
-							teachers
+							Parents
 						:
 							<span className="text-align center">No existen resultados</span>
 					}

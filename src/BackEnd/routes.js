@@ -1597,14 +1597,9 @@ module.exports=function(app,express,server,__DIR__){
 		}
 		var fields={
 			data:JSON.parse(JSON.stringify(request.body)),
-			idStudent:request.body.idStudent			
 		};
 		fields.data.mode="PARENT";
-		delete(fields.data.idStudent);
-		people3.find({"data.dni":request.body.idStudent}).then(function(data){
-			fields.idStudent=data._id;
-			return people2.add(fields.data);
-		}).then(function(data){
+		people2.add(fields.data).then(function(data){
 			fields.data=data;
 			return people.add(fields);
 		}).then(function(data){
@@ -1621,9 +1616,11 @@ module.exports=function(app,express,server,__DIR__){
 	* @var people<SubPeople>	objeto CRUD
 	*/
 	ReferencesToURI.get("/",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Representatives);
-		people.get().then(function(data){
-			response.send(data);
+		app.container.database.Schema.Representatives.find().populate('students').then(function(data){
+			if(data.length==0){
+				throw new VoidException("No existe un registro!");
+			}
+			response.send(data);			
 		}).catch(function(error){
 			next(error);
 		});
@@ -1636,8 +1633,13 @@ module.exports=function(app,express,server,__DIR__){
 	* @var people<SubPeople>	objeto CRUD
 	*/
 	ReferencesToURI.get("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Representatives);
-		people.find({_id:request.params.id}).then(function(data){
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		app.container.database.Schema.Representatives.findOne({_id:request.params.id}).populate('students').then(function(data){
+			if(!data){
+				throw new VoidException("No existe un registro!");
+			}
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -1713,7 +1715,7 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
-	app.use("/v1/people/parent",ReferencesToURI);/*
+	app.use("/v1/people/parents",ReferencesToURI);/*
 
 	/*
 	* Ruta /v1/words/morphema		

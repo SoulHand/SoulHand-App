@@ -8,7 +8,7 @@ export class Item extends React.Component<props.parentItem, {}> {
 	deleteField(event: any){
 		ajax({
 			method:"DELETE",
-	        url: `${window.settings.uri}/v1/people/teachers/${this.props.people._id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/people/parents/${this.props.people._id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
@@ -22,7 +22,7 @@ export class Item extends React.Component<props.parentItem, {}> {
 			<div className="item">
 				<img src="/images/user-login-icon-14.png" alt="Perfil de usuario" className="rounded-circle" width="84" height="84"/>
 	  			<div className="container-element text-align center">
-	  				<Link to={`/teacher/${this.props.people._id}`} className="title">{this.props.people.data.name}</Link>
+	  				<Link to={`/parents/get/${this.props.people._id}`} className="title">{this.props.people.data.name}</Link>
 	  				<small>{this.props.people.data.dni}</small>
 	  			</div>
 				<div className="toolbox">

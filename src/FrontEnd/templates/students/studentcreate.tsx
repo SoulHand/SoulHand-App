@@ -95,7 +95,7 @@ export class StudentCreate extends React.Component<{}, {}> {
 		console.log(this, this.state);
     return (<div className="container">    				
     		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
-				<label htmlFor="dni"><b>Cedula</b></label>
+				<label htmlFor="dni"><b>Documento de identidad del representante</b></label>
 				    <input type="texto" className="form-control" id="dni" aria-describedby="ci_representante" maxLength={12} placeholder="documento de identidad" required autoFocus onChange={(e)=>{this.getFields(e)}}/>
 				    {this.state.error.dni && (
 				    	<div className="alert alert-danger" role="alert">
