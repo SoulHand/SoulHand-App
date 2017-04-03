@@ -27,10 +27,8 @@ export class ParentsCreate extends React.Component<props.parentsItem, {}> {
 			},
 			value:null
 		},
-		address:{
-			match:(fn:string)=>{
-				return !validator.isNull()(fn);
-			},
+		birthdate:{
+			match:validator.isDate(),
 			value:null,
 			required:true
 		},
@@ -92,11 +90,11 @@ export class ParentsCreate extends React.Component<props.parentsItem, {}> {
 		}
 		ajax({
 			method:"POST",
-	        url: `${window.settings.uri}/v1/people/teachers/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/people/parents/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:data,	        
 	        success:(data:any)=>{
-	        	this.props.router.replace('/teacher');
+	        	this.props.router.replace('/parents');
 	        },
 	        error:(data:any)=>{
 	        	var state=this.state.error;
@@ -137,9 +135,9 @@ export class ParentsCreate extends React.Component<props.parentsItem, {}> {
 				    )}
 				  </div>				  
 				   <div className="form-group">
-				    <label htmlFor="address"><b>Dirección </b></label>
-				    <input type="texto" className="form-control" id="address" aria-describedby="Dirección" placeholder="Dirección" onChange={(e)=>{this.getFields(e)}}/>
-				    {this.state.error.address && (
+				    <label htmlFor="address"><b>Fecha de nacimiento </b></label>
+				    <input type="texto" className="form-control" id="birthdate" aria-describedby="Fecha de nacimiento" placeholder="Dirección" onChange={(e)=>{this.getFields(e)}}/>
+				    {this.state.error.birthdate && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> Debe ser la dirección.
 						</div>

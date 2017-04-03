@@ -21,6 +21,7 @@ import {MatterView} from './templates/matter/matterview';
 
 import {Student} from './templates/students';
 import {ListStudent} from './templates/students/liststudents';
+import {PhysicCreate} from './templates/physic/physiccreate';
 import {StudentCreate} from './templates/students/studentcreate';
 import {StudentView} from './templates/students/studentview';
 
@@ -81,14 +82,23 @@ window.addEventListener("load",()=>{
 		    </Route>
 		    <Route path="/students" component={Student} onEnter={Auth}>
 		    	<IndexRoute component={ListStudent}/>
-		    	<Route path="create" component={StudentCreate}/>
+		    	<Route path="get/:id" component={StudentView}/>
+		    	<Route path="get/:id/physic/create" component={PhysicCreate}/>
+		    	<Route path="create/:id" component={StudentCreate}/>
 		    </Route>
 		    <Route path="/grades" component={Grades} onEnter={Auth}>
 		    	<IndexRoute component={ListGrade}/>
+		    	<Route path=":id" component={GradeView}/>
 		    	<Route path="create" component={GradeCreate}/>
+		    </Route>
+		    <Route path="/parents" component={Parents} onEnter={Auth}>
+		    	<IndexRoute component={ListParent}/>
+		    	<Route path="get/:id" component={ParentView}/>
+		    	<Route path="create" component={ParentsCreate}/>
 		    </Route>
 		    <Route path="/domain" component={Domain} onEnter={Auth}>
 		    	<IndexRoute component={ListDomain}/>
+		    	<Route path=":id" component={DomainView}/>
 		    	<Route path="create" component={DomainCreate}/>
 		    </Route>
 		    <Route path="/type" component={Type} onEnter={Auth}>

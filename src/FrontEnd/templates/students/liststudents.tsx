@@ -1,5 +1,9 @@
 import * as React from 'react';
 import {getJSON, ajax} from 'jquery'
+import {Link} from 'react-router'
+import {TableStudents} from "./tablestudents"
+
+
 //import * as settings from "../settings"
 
 export class ListStudent extends React.Component<{}, {}> {
@@ -16,32 +20,29 @@ export class ListStudent extends React.Component<{}, {}> {
     	let str=localStorage.getItem("session");
     	let session=JSON.parse(str);
 		this.session=session;		
-	}	
-	getFields(event:any){
-		this.setState({
-	      search : event.target.value
+	}
+	deleteField(data: any){
+		this.students=this.students.filter(function(row:peoples.teachers){
+			if(row._id==data._id){
+				return false;
+			}
+			return true;
+    	});
+    	this.setState({
+	      	students : this.students
 	    });
 	}
-	deleteField(event: any){
-		var element:EventTarget=event.target;		
-		ajax({
-			method:"DELETE",
-	        url: `${window.settings.uri}/v1/people/students/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
-	        dataType: "json",
-	        data:null,
-	        crossDomain:true,
-	        success:(data:peoples.teachers)=>{
-	        	this.students=this.students.filter(function(row:peoples.teachers){
-					if(row._id==data._id){
-						return false;
-					}
-					return true;
-		    	});
-		    	this.setState({
-			      	students : this.students
-			    });
-	        }
+	Filter(event:any){
+		var filter=this.students.filter((row)=>{
+			var exp=new RegExp(event.target.value,"i");
+			if(exp.test(row.data.name)==true || exp.test(row.data.dni)==true || (row.grade && exp.test(row.grade.name)==true)){
+				return true;
+			}
+			return false;
 		});
+		this.setState({
+	      	students : filter
+	    });
 	}
 	componentDidMount(){
 		getJSON(`${window.settings.uri}/v1/people/students/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,(data)=>{
@@ -54,37 +55,11 @@ export class ListStudent extends React.Component<{}, {}> {
 	render () {
     return (
 		<div className="container card">
-			<form className="navbar-form navbar-right">
-				<div className="right">
-					<input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.getFields(e)}}/>
-				</div>
-				<span>{this.state.search}</span>
-			</form>
+			<div className="right">
+				<input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
+			</div>
 			<h3>Estudiante</h3>
-			<table className="table table-striped">
-				<thead>
-					<tr>
-						<th>Nombre</th>
-                 		<th>Apellido</th>
-                  		<th>Represetante</th>
-                 		<th>Fecha de Nacimieto</th>
-                  		<th>Acción</th>
-					</tr>
-				</thead>
-				<tbody>
-				{
-					this.state.students.map((row:any)=>{
-						return (
-							<tr key={row._id}>
-								<td>{row.data.name}</td>
-								<td><button type="button" className="btn btn-warning">Editar</button>
-								<button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
-							</tr>
-						);
-					})
-				}
-				</tbody>
-			</table>
+			<TableStudents students={this.state.students} session={this.session} delete={this.deleteField.bind(this)}/>			
 		</div>
     );
   }

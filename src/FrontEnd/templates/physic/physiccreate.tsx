@@ -4,46 +4,46 @@ import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
 
 @withRouter
-export class StudentCreate extends React.Component<props.studentItem, {}> {
+export class PhysicCreate extends React.Component<{}, {}> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
-	public fields:any={		
-		name:{
-			match:(fn)=>{
-				return !validator.isNull()(fn);
-			},
+	public fields:any={			
+		weight:{
+			match:validator.isFloat(),
 			value:null,
 			required:true
 		},
-		birthdate:{
-			match:validator.isDate(),
+		height:{
+			match:validator.isFloat(),
 			value:null,
 			required:true
 		}
 	};
-	state={
+	state:props.fieldsTeachers={
 		error:{
-			dni:false,
+			
 			name:false,
-			birthdate:false,
 			server:null
-		}
+		},
+		
 	};
 	constructor(props:any) {
 		super(props);
-    	let session=localStorage.getItem("session");
-    	session=JSON.parse(session);
+    	let str=localStorage.getItem("session");
+    	let session=JSON.parse(str);
 		this.session=session;		
 	}
 	public getFields(event:any){
 		this.fields[event.target.id].value=event.target.value;
 	}
-
 	public validate(){
 		var value=true;
-		var state=this.state.error;
-		var data={};
+		var state:props.errorState=this.state.error;
+		var data:props.dataTeachers={		
+			weight:null,
+			height:null			
+		};
 		for (var i in this.fields){
 			if( (this.fields[i].require && !this.fields[i].value) || (this.fields[i].match && !this.fields[i].match(this.fields[i].value))){
 				value=false;
@@ -68,14 +68,13 @@ export class StudentCreate extends React.Component<props.studentItem, {}> {
 		if(!data){
 			return;
 		}
-		data.parent=this.props.routeParams.id;
 		ajax({
 			method:"POST",
-	        url: `${window.settings.uri}/v1/people/students/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/people/students/${this.props.routeParams.id}/physic/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:data,
+	        data:data,	        
 	        success:(data:any)=>{
-	        	this.props.router.replace(`/parents/get/${this.props.routeParams.id}`);
+	        	this.props.router.replace(`/students/get/${this.props.routeParams.id}`);
 	        },
 	        error:(data:any)=>{
 	        	var state=this.state.error;
@@ -86,38 +85,36 @@ export class StudentCreate extends React.Component<props.studentItem, {}> {
 	        }
 		});
 	}
-
-	render () {
-	    return (<div className="container">    				
+		render () {
+		console.log(this, this.state);
+    return (
+    	<div className="container">    				
     		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
-					<div className="form-group">
-				    <label htmlFor="name"><b>Nombre y Apellido</b></label>
-				    <input type="texto" className="form-control" id="name" aria-describedby="name" maxLength={20} placeholder="Nombre y Apellido"required autoFocus onChange={(e)=>{this.getFields(e)}}/>
-					{this.state.error.name && (
+				    <div className="form-group">
+				    <label htmlFor="weight"><b>Peso</b></label>
+				    <input type="text" className="form-control" id="weight" aria-describedby="name" placeholder="kg" required autoFocus onChange={(e)=>{this.getFields(e)}}/>
+
+					{this.state.error.weight && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> El campo es obligatorio.
 						</div>
 				    )}</div>
 				    <div className="form-group">
-				    <label htmlFor="birthdate"><b>Fecha de nacimiento </b></label>
-				    <input type="date" className="form-control" id="birthdate" aria-describedby="emailHelp" placeholder="YYYY-mm-dd" onChange={(e)=>{this.getFields(e)}}/>
-				    {this.state.error.birthdate && (
+				    <label htmlFor="height"><b>Altura</b></label>
+				    <input type="text" className="form-control" id="height" aria-describedby="name" placeholder="cm" required autoFocus onChange={(e)=>{this.getFields(e)}}/>
+					{this.state.error.height && (
 				    	<div className="alert alert-danger" role="alert">
-						  <strong>Error!</strong> Debe ser una fecha valida.
+						  <strong>Error!</strong> El campo es obligatorio.
 						</div>
-				    )}
-				  </div>
-				  {this.state.error.server && (
+				    )}</div>				   			  
+				  	{this.state.error.server && (
 				    	<div className="alert alert-danger" role="alert">
 						  {this.state.error.server.message}
 						</div>
 				    )}
 				  <button type="submit" className="btn btn-primary">Guardar</button>
 				</form>
-    		</div>		
-				    );
-	}
-
-	
-
+    	</div>		
+    );
+  }
 }

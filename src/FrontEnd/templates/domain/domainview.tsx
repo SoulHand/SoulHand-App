@@ -2,17 +2,33 @@ import * as React from 'react';
 import * as validator from 'string-validator';
 import {ajax} from 'jquery'
 
-export class DomainView extends React.Component<{}, {}> {
+
+export class DomainView extends React.Component<props.usersItem, props.stateUser {
 	public session:users.sessions;
 	public PrivateKeyId:string;
-	public PublicKeyId:string;	
+	public PublicKeyId:string;
+	public fields={};
+	public domain:crud.domain;
+	state = {
+		domain:null,
+		error:null
+	};
 	constructor(props:any) {
 		super(props);
     	let session=localStorage.getItem("session");
-		this.state = {domain:[],search:""};
     	session=JSON.parse(session);
 		this.session=session;
-		this.state = {domain:null};
+	}
+	public getFields(event:any){
+		var element=event.target.parentNode;
+		this.fields[element.id]=event.target.innerText || event.target.textContent;
+	}
+	keycod(event:any){
+		var element=event.target;
+		if(event.keyCode==13){
+			event.preventDefault();
+			element.parentNode.children[2].children[0].click();
+		}
 	}
 	componentDidMount(){
 		ajax({
@@ -20,36 +36,132 @@ export class DomainView extends React.Component<{}, {}> {
 	        url: `${window.settings.uri}/v1/learning/domain/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,	        
-	        success:(data:any)=>{
-	        	this.data=data;
-				this.setState({
+	        success:(data:crud.domain)=>{
+	        	this.domain=data;
+			    this.setState({
 			      domain : data
 			    });
 	        }
 		});
 	}
+	edit(event:any){
+		var element=event.target;
+		var parent=element.parentNode.parentNode;
+		if(element.dataset.save=="false"){
+			element.className="button circle icons x16 check white";
+			parent.children[1].contentEditable=true;
+			element.setAttribute("data-save","true");
+			return;
+		}
+		var data={};
+		data[parent.id]=this.fields[parent.id];
+		ajax({
+			method:"PUT",
+	        url: `${window.settings.uri}/v1/learning/domain/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        dataType: "json",
+	        data:data,	        
+	        success:(data:users.profile)=>{
+				element.className="button circle icons x16 edit white";
+	        	parent.children[1].contentEditable=false;
+				element.setAttribute("data-save","false");
+	        	this.setState({
+					domain:data
+				});
+	        },
+	        error:(data:any)=>{
+	        	this.setState({
+					error:data.responseJSON.message
+				});
+	        }
+		});
+	}
+	deleteField(event: any){
+		var element:EventTarget=event.target;		
+		ajax({
+			method:"DELETE",
+	        url: `${window.settings.uri}/v1/learning/domain/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        dataType: "json",
+	        data:null,
+	        crossDomain:true,
+	        success:(data:peoples.teachers)=>{
+	        	this.domain.cognitions=this.domain.cognitions.filter(function(row:crud.cognition){
+					if(row._id==data._id){
+						return false;
+					}
+					return true;
+		    	});
+		    	this.setState({
+			      	domain : this.domain
+			    });
+	        }
+		});
+	}
+	Filter(event:any){
+		var filter=this.domain.cognitions.filter((row)=>{
+			var exp=new RegExp(event.target.value,"i");
+			if(exp.test(row.name)==true){
+				return true;
+			}
+			return false;
+		});
+		var data=JSON.parse(JSON.stringify(this.domain));
+		data.cognitions=filter;
+		this.setState({
+	      	domain : data
+	    });
+	}
 	render () {
+		if(!this.state.domain){
+			return (
+    			<div className="container">
+    			{this.state.error && (
+					<div className="alert alert-danger" role="alert">
+					  {this.state.error}
+					</div>
+				)}
+    				<div className="loadding"></div>
+    			</div>
+			);
+		}		
     return (
     	<div className="container">
-    		{this.state.domain && (
-	    		<div className="row">
-		          <div className="col-md-2">
-		            <img src="/images/user-login-icon-14.png" className="imagen img-circle img-responsive"/>
-		          </div>
-		          <div className="col-md-10 parrafo">
-		            <h3>
-		              <b>{(this.state.domain.data.mode=="DOMAIN") ? "Docente": "Alumno"}</b>
-		            </h3>
-		            <p>
-		              <b>Nombre:</b>{this.state.domain.data.name}
-		            </p>
-		          </div>
-		        </div>		    	
-		    )}		
-	        <h2>Actividades:</h2>
-	        <div className="fieldset" data-align="justify">
-	        	<span className="text-align center">No posee actividades</span>
-	        </div>
+			{this.state.error && (
+				<div className="alert alert-danger" role="alert">
+				  {this.state.error}
+				</div>
+			)}			
+			<div className="fieldset">
+				<div className="item" id="name">
+					<div className="field"></div>
+					<div className="value" onKeyUp={(e)=>{this.getFields(e)}} onKeyDown={(e)=>{this.keycod(e)}}>{this.state.domain.name}</div>
+					<div className="toolbox">
+						<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e)=>{this.edit(e)}}></button>
+					</div>
+				</div>						
+			</div>
+			<div className="right">
+				<input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
+			</div>
+			<table className="table table-striped">
+				<thead>
+					<tr>
+						<th>Nombre</th>
+                 		<th>Acción</th>
+					</tr>
+				</thead>
+				<tbody>
+				{
+					this.state.domain.cognitions.map((row:crud.cognition)=>{
+						return (
+							<tr key={row._id}>
+								<td><b>{row.name}</b></td>
+								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
+							</tr>
+						);
+					})
+				}
+				</tbody>
+			</table>
     	</div>		
     );
   }	

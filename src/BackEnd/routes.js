@@ -1091,19 +1091,29 @@ module.exports=function(app,express,server,__DIR__){
 			const base64=require('base-64');
 			request.body.password=base64.encode(request.body.password);
 		}
+		var USER;
 		var user=new User(app.container.database.Schema.User);
-		user.update({_id:request.params.id},function(data){
-		if(request.user.isAdmin!=true && data._id!=request.user._id){
-			throw new ValidatorException("No tiene permisos para editar este registro");
-		}
+		app.container.database.Schema.User.findOne({_id:request.params.id}).then(function(data){
+			if(request.user.isAdmin!=true && data._id!=request.user._id){
+				throw new ValidatorException("No tiene permisos para editar este registro");
+			}
 			for (i in data){
 				if(request.body[i] && i!='people'){
 					data[i]=request.body[i];
 				}
 			}
-			return data;
+			USER=data;
+			return app.container.database.Schema.Peoples.findOne({dni:data.people.dni});
 		}).then(function(data){
-			response.send(data);
+			for (i in data){
+				if(request.body[i] && i!='dni'){
+					data[i]=request.body[i];
+				}
+			}
+			USER.people=data;
+			return Promise.all([data.save(),USER.save()]);
+		}).then(function(data){
+			response.send(data[1]);
 		}).catch(function(error){
 			next(error);
 		});
@@ -1318,16 +1328,15 @@ module.exports=function(app,express,server,__DIR__){
 		var people=new SubPeople(app.container.database.Schema.Students);
 		var people2=new People(app.container.database.Schema.Peoples);
 		var grade=new Grade(app.container.database.Schema.Grades);
-		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
-			throw new ValidatorException("Solo se aceptan documentos de identidad");
+		if(!Validator.isMongoId()(request.body.parent)){
+			throw new ValidatorException("Es necesario el representante");
 		}
 		if(Validator.matches(/[0-9]/)(request.body.name)){
 			throw new ValidatorException("Solo se aceptan nombres validos");
 		}
 		if(!Validator.isDate()(request.body.birthdate)){
 			throw new ValidatorException("La fecha de nacimiento no es valida");
-		}
-		
+		}		
 		var fields={
 			data:JSON.parse(JSON.stringify(request.body)),
 			activities:[],
@@ -1336,11 +1345,24 @@ module.exports=function(app,express,server,__DIR__){
 		};
 		fields.data.mode="STUDENT";		
 		delete(fields.data.grade);
-		people2.add(fields.data).then(function(data){
-			fields.data=data;
-			return people.add(fields);
+		delete(fields.data.parent);
+		var parentData,responseData;
+		app.container.database.Schema.Representatives.findOne({_id:request.body.parent}).then(function(data){
+			if(!data){
+				throw new ValidatorException("No existe el representante");
+			}
+			parentData=data;
+			fields.data.dni=parentData.data.dni+"-"+Date.now();			
+			return people2.add(fields.data);
 		}).then(function(data){
-			response.send(data);
+			fields.data=data;
+			return people.add(fields);			
+		}).then(function(data){
+			parentData.students.push(data._id);
+			responseData=data;
+			return parentData.save();			
+		}).then(function(data){
+			response.send(responseData);
 		}).catch(function(error){
 			next(error);
 		});
@@ -1376,6 +1398,21 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	/*
+	* @api {get} /:id Obtener un alumno
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	*/
+	StudentsURI.get("/grade/:id",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Students);
+		people.get({"grade._id":request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
 	* @api {put} /:id Editar alumno
 	* @params request peticiones del cliente
 	* @params response respuesta del servidor
@@ -1396,28 +1433,44 @@ module.exports=function(app,express,server,__DIR__){
 		if(request.body.birthdate && !Validator.isDate()(request.body.birthdate)){
 			throw new ValidatorException("La fecha de nacimiento no es valida");
 		}
+		if(request.body.grade && !Validator.isMongoId()(request.body.grade)){
+			throw new ValidatorException("La fecha de nacimiento no es valida");
+		}
 		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
 			throw new ValidatorException("El telefono no tiene un formato valido");
 		}
-		var people, student;
-		app.container.database.Schema.Students.findOne({_id:request.params.id}).then(function(data){
+		var people, student,gradeData,p1;
+		if(request.body.grade){
+			p1=grade.find({_id:request.body.grade}).then(function(data){
+				gradeData=data;
+				return app.container.database.Schema.Students.findOne({_id:request.params.id});
+			});
+		}else{
+			p1=app.container.database.Schema.Students.findOne({_id:request.params.id});
+		}
+		p1=p1.then(function(data){
 			student=data;
+			if(gradeData){
+				student.grade=gradeData;
+			}
 			return app.container.database.Schema.Peoples.findOne({_id:student.data._id});
-		}).then(function(data){
+		});
+		p1.then(function(data){
 			people=data;
 			var fields=people.toJSON();
 			for (i in fields){
-				if(request.body[i] && i!="dni"){
+				if(request.body[i] && i!="dni" && i!="mode" && typeof(fields[i])!="object"){
 					people[i]=request.body[i];
 				}
-			}
+			}			
 			student.data=people;			
 			var fields=student.toJSON();
 			for (i in fields){
-				if(request.body[i] && i!="dni"){
+				if(request.body[i] && i!="dni" && typeof(fields[i])!="object"){
 					student[i]=request.body[i];
 				}
 			}
+			console.log(student,gradeData);
 			return Promise.all([people.save(),student.save()]);
 		}).then(function(data){
 			response.send(data[1]);
@@ -1464,6 +1517,26 @@ module.exports=function(app,express,server,__DIR__){
 				height:request.body.height
 			});
 			data.physics.push(element);
+			return data.save();
+		}).then(function(data){
+			response.send(data);			
+		}).catch(function(error){
+			next(error);
+		});
+	});
+
+
+	StudentsURI.delete("/:id/physic/:del",function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.id) || !Validator.isMongoId()(request.params.del)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		app.container.database.Schema.Students.findOne({_id:request.params.id}).then(function(data){
+			for (i in data.physics){
+				if(data.physics[i]._id==request.params.del){
+					data.physics[i].remove();
+					break;
+				}
+			}
 			return data.save();
 		}).then(function(data){
 			response.send(data);			
@@ -1556,14 +1629,9 @@ module.exports=function(app,express,server,__DIR__){
 		}
 		var fields={
 			data:JSON.parse(JSON.stringify(request.body)),
-			idStudent:request.body.idStudent			
 		};
 		fields.data.mode="PARENT";
-		delete(fields.data.idStudent);
-		people3.find({"data.dni":request.body.idStudent}).then(function(data){
-			fields.idStudent=data._id;
-			return people2.add(fields.data);
-		}).then(function(data){
+		people2.add(fields.data).then(function(data){
 			fields.data=data;
 			return people.add(fields);
 		}).then(function(data){
@@ -1580,9 +1648,11 @@ module.exports=function(app,express,server,__DIR__){
 	* @var people<SubPeople>	objeto CRUD
 	*/
 	ReferencesToURI.get("/",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Representatives);
-		people.get().then(function(data){
-			response.send(data);
+		app.container.database.Schema.Representatives.find().populate('students').then(function(data){
+			if(data.length==0){
+				throw new VoidException("No existe un registro!");
+			}
+			response.send(data);			
 		}).catch(function(error){
 			next(error);
 		});
@@ -1595,8 +1665,13 @@ module.exports=function(app,express,server,__DIR__){
 	* @var people<SubPeople>	objeto CRUD
 	*/
 	ReferencesToURI.get("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Representatives);
-		people.find({_id:request.params.id}).then(function(data){
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		app.container.database.Schema.Representatives.findOne({_id:request.params.id}).populate('students').then(function(data){
+			if(!data){
+				throw new VoidException("No existe un registro!");
+			}
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -1672,7 +1747,7 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
-	app.use("/v1/people/parent",ReferencesToURI);/*
+	app.use("/v1/people/parents",ReferencesToURI);/*
 
 	/*
 	* Ruta /v1/words/morphema		

@@ -9,7 +9,8 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 	public fields={};
 	state = {
 		user:null,
-		error:null
+		error:null,
+		icon:"user"
 	};
 	constructor(props:any) {
 		super(props);
@@ -19,9 +20,31 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 	}
 	public getFields(event:any){
 		var element=event.target.parentNode;
-		console.log(element);
 		this.fields[element.id]=event.target.innerText || event.target.textContent;
-		console.log(this.fields)
+	}
+	keycod(event:any){
+		var element=event.target;
+		if(event.keyCode==13){
+			event.preventDefault();
+			element.parentNode.children[2].children[0].click();
+		}
+	}
+	changeAdmin(){
+		var data={isAdmin:(!this.state.user.isAdmin) ? true : undefined};
+		console.log(data);
+		ajax({
+			method:"PUT",
+	        url: `${window.settings.uri}/v1/users/root/${this.state.user._id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        dataType: "json",
+	        data:data,
+	        crossDomain:true,
+	        success:(data:any)=>{
+				this.setState({
+			      user : data
+			    });
+	        	this.state.user=data;
+	        }
+		});
 	}
 	componentDidMount(){
 		ajax({
@@ -30,7 +53,8 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 	        dataType: "json",
 	        data:null,	        
 	        success:(data:users.profile)=>{
-				this.setState({
+	        	console.log(data);
+			    this.setState({
 			      user : data
 			    });
 	        }
@@ -47,7 +71,6 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 		}
 		var data={};
 		data[parent.id]=this.fields[parent.id];
-		console.log(data);
 		ajax({
 			method:"PUT",
 	        url: `${window.settings.uri}/v1/users/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
@@ -67,9 +90,8 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 				});
 	        }
 		});
-	}
+	}	
 	render () {
-		console.log("RENDER!");
 		if(!this.state.user){
 			return (
     			<div className="container">
@@ -110,7 +132,7 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 					<div className="field">
 						<b>{row.label}:</b>									
 					</div>
-					<div className="value" onKeyUp={(e)=>{this.getFields(e)}}>
+					<div className="value" onKeyUp={(e)=>{this.getFields(e)}} onKeyDown={(e)=>{this.keycod(e)}}>
 						{row.value}
 					</div>
 					<div className="toolbox">
@@ -119,13 +141,14 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 				</div>
 			);
 		});
+		var iconAdmin=(this.state.user.isAdmin==true) ? "user" : "certified";
     return (
     	<div className="container">
 			{this.state.error && (
 				<div className="alert alert-danger" role="alert">
 				  {this.state.error}
 				</div>
-			)}
+			)}			
     		<div className="flex row">
 				<div className="left_side">
 					<img id="profile-img" className="rounded-circle" src="/images/user-login-icon-14.png" />							
@@ -134,7 +157,7 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 					<div className="fieldset">
 						<div className="item" id="username">
 							<div className="field"></div>
-							<div className="value" onKeyUp={(e)=>{this.getFields(e)}}>{this.state.user.username}</div>
+							<div className="value" onKeyUp={(e)=>{this.getFields(e)}} onKeyDown={(e)=>{this.keycod(e)}}>{this.state.user.username}</div>
 							<div className="toolbox">
 								<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e)=>{this.edit(e)}}></button>
 							</div>
@@ -159,6 +182,9 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 					</div>
 					<div className="value">
 						{(this.state.user.isAdmin==true) ? 'GESTOR DEL CONOCIMIENTO' : 'USUARIO'}
+					</div>
+					<div className="tool">
+						<button className={`button circle icons x16 ${iconAdmin} white`} data-id={this.state.user._id} onClick={(e)=>{this.changeAdmin(e)}}></button>
 					</div>
 				</div>
 				<div className="item">

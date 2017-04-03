@@ -7,6 +7,17 @@ declare namespace crud{
 		_v:number
 		name:string
 	}
+	interface cognition{
+		_id:string
+		name:string
+		description:string		
+	}
+	interface domain{
+		_id:string
+		name:string
+		_v:number
+		cognitions:Array<cognition>
+	}
 }
 declare namespace compat {
   interface Map {
@@ -33,10 +44,10 @@ declare namespace peoples{
 		_id:string
 		_v:number		
 		data:peoples.people
-		grade: crud.grade
-		activities:any
-		physics:any
-		discapacityLevel:number
+		grade?: crud.grade
+		activities?:any
+		physics?:any
+		discapacityLevel?:number
 	}
 	interface parents{
 		_id:string
