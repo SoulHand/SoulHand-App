@@ -1525,6 +1525,26 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 
+
+	StudentsURI.delete("/:id/physic/:id2",function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.id) || !Validator.isMongoId()(request.params.id2)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		app.container.database.Schema.Students.findOne({_id:request.params.id}).then(function(data){
+			for (i in data.physics){
+				if(data.physics[i]._id==request.params.id2){
+					data.physics[i].remove();
+					break;
+				}
+			}
+			return data.save();
+		}).then(function(data){
+			response.send(data);			
+		}).catch(function(error){
+			next(error);
+		});
+	});
+
 	/*
 	* @api {post} /:dni/test/:test Crear test alumno
 	* @params request peticiones del cliente

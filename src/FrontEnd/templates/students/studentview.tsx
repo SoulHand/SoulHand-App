@@ -109,7 +109,22 @@ export class StudentView extends React.Component<props.usersItem, props.stateUse
 				});
 	        }
 		});
-	}	
+	}
+	deleteField(event: any){
+		var element:EventTarget=event.target;		
+		ajax({
+			method:"DELETE",
+	        url: `${window.settings.uri}/v1/people/students/${element.dataset.id}/physic/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        dataType: "json",
+	        data:null,
+	        crossDomain:true,
+	        success:(data:peoples.teachers)=>{	        	
+		    	this.setState({
+					student:data
+				});
+	        }
+		});
+	}
 	render () {
 		if(!this.state.student){
 			return (
