@@ -89,6 +89,7 @@ window.addEventListener("load",()=>{
 		    </Route>
 		    <Route path="/domain" component={Domain} onEnter={Auth}>
 		    	<IndexRoute component={ListDomain}/>
+		    	<Route path=":id" component={DomainView}/>
 		    	<Route path="create" component={DomainCreate}/>
 		    </Route>
 		    <Route path="/type" component={Type} onEnter={Auth}>

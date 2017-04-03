@@ -3,7 +3,7 @@ import {Router, Route, hashHistory, IndexRoute} from 'react-router';
 import {render} from 'react-dom';
 
 export class Bar extends React.Component<{}, {}> {
-	public title:string="Home";
+	public title:string="SoulHand";
 	public parent:Element;
 	componentDidMount(){
 		this.parent=document.querySelector("div[data-app=\"soulhand-services\"]");

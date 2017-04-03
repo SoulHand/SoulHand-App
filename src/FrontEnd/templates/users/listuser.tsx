@@ -10,7 +10,6 @@ export class ListUsers extends React.Component<{}, {}> {
 	public teachers:any=[];
 	state={
 		teachers:[],
-		search:"",
 		error:null
 	};
 	constructor(props:any) {
@@ -28,11 +27,6 @@ export class ListUsers extends React.Component<{}, {}> {
     	});
     	this.setState({
 	      	teachers : this.teachers
-	    });
-	}
-	getFields(event:any){
-		this.setState({
-	      search : event.target.value
 	    });
 	}
 	Filter(event:any){

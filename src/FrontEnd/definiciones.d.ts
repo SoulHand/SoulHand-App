@@ -7,6 +7,17 @@ declare namespace crud{
 		_v:number
 		name:string
 	}
+	interface cognition{
+		_id:string
+		name:string
+		description:string		
+	}
+	interface domain{
+		_id:string
+		name:string
+		_v:number
+		cognitions:Array<cognition>
+	}
 }
 declare namespace compat {
   interface Map {
