@@ -87,11 +87,11 @@ export class GradeView extends React.Component<props.usersItem, props.stateUser 
 				});
 	        }
 		});
-	}	
+	}
 	Filter(event:any){
 		var filter=this.students.filter((row)=>{
 			var exp=new RegExp(event.target.value,"i");
-			if(exp.test(row.name)==true){
+			if(exp.test(row.data.name)==true || exp.test(row.data.dni)==true){
 				return true;
 			}
 			return false;
