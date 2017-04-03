@@ -1386,6 +1386,21 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	/*
+	* @api {get} /:id Obtener un alumno
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	*/
+	StudentsURI.get("/grade/:id",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Students);
+		people.get({"grade._id":request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
 	* @api {put} /:id Editar alumno
 	* @params request peticiones del cliente
 	* @params response respuesta del servidor
@@ -1406,28 +1421,44 @@ module.exports=function(app,express,server,__DIR__){
 		if(request.body.birthdate && !Validator.isDate()(request.body.birthdate)){
 			throw new ValidatorException("La fecha de nacimiento no es valida");
 		}
+		if(request.body.grade && !Validator.isMongoId()(request.body.grade)){
+			throw new ValidatorException("La fecha de nacimiento no es valida");
+		}
 		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
 			throw new ValidatorException("El telefono no tiene un formato valido");
 		}
-		var people, student;
-		app.container.database.Schema.Students.findOne({_id:request.params.id}).then(function(data){
+		var people, student,gradeData,p1;
+		if(request.body.grade){
+			p1=grade.find({_id:request.body.grade}).then(function(data){
+				gradeData=data;
+				return app.container.database.Schema.Students.findOne({_id:request.params.id});
+			});
+		}else{
+			p1=app.container.database.Schema.Students.findOne({_id:request.params.id});
+		}
+		p1=p1.then(function(data){
 			student=data;
+			if(gradeData){
+				student.grade=gradeData;
+			}
 			return app.container.database.Schema.Peoples.findOne({_id:student.data._id});
-		}).then(function(data){
+		});
+		p1.then(function(data){
 			people=data;
 			var fields=people.toJSON();
 			for (i in fields){
-				if(request.body[i] && i!="dni"){
+				if(request.body[i] && i!="dni" && i!="mode" && typeof(fields[i])!="object"){
 					people[i]=request.body[i];
 				}
-			}
+			}			
 			student.data=people;			
 			var fields=student.toJSON();
 			for (i in fields){
-				if(request.body[i] && i!="dni"){
+				if(request.body[i] && i!="dni" && typeof(fields[i])!="object"){
 					student[i]=request.body[i];
 				}
 			}
+			console.log(student,gradeData);
 			return Promise.all([people.save(),student.save()]);
 		}).then(function(data){
 			response.send(data[1]);

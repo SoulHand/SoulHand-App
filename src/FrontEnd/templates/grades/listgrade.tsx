@@ -1,5 +1,7 @@
 import * as React from 'react';
 import {getJSON, ajax} from 'jquery'
+import {Link} from 'react-router';
+
 //import * as settings from "../settings"
 
 export class ListGrade extends React.Component<{}, {}> {
@@ -9,7 +11,6 @@ export class ListGrade extends React.Component<{}, {}> {
 	public grades:any=[];
 	state={
 		grades:[],
-		search:""
 	};
 	constructor(props:any) {
 		super(props);
@@ -40,21 +41,31 @@ export class ListGrade extends React.Component<{}, {}> {
 	}
 	componentDidMount(){
 		getJSON(`//0.0.0:8080/v1/grades/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,(data)=>{
+			console.log(data);
 			this.grades= data;
 			this.setState({
 		      grades: data
 		    });
 		})
+	}	
+	Filter(event:any){
+		var filter=this.grades.filter((row)=>{
+			var exp=new RegExp(event.target.value,"i");
+			if(exp.test(row.name)==true){
+				return true;
+			}
+			return false;
+		});
+		this.setState({
+	      	grades : filter
+	    });
 	}
 	render () {
     return (
 		<div className="container card">
-			<form className="navbar-form navbar-right">
-				<div className="right">
-					<input type="text" className="form-control" placeholder="Buscar"/>
-				</div>
-				<span>{this.state.search}</span>
-			</form>
+			<div className="right">
+				<input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
+			</div>
 			<h3>Grado</h3>
 			<table className="table table-striped">
 				<thead>
@@ -68,7 +79,7 @@ export class ListGrade extends React.Component<{}, {}> {
 					this.state.grades.map((row:any)=>{
 						return (
 							<tr key={row._id}>
-								<td>{row.name}</td>
+								<td><Link to={`/grades/${row._id}`} className="title">{row.name}</Link></td>
 								<td><button type="button" className="btn btn-warning">Editar</button>
 								<button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
 							</tr>

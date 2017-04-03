@@ -44,10 +44,10 @@ declare namespace peoples{
 		_id:string
 		_v:number		
 		data:peoples.people
-		grade: crud.grade
-		activities:any
-		physics:any
-		discapacityLevel:number
+		grade?: crud.grade
+		activities?:any
+		physics?:any
+		discapacityLevel?:number
 	}
 	interface parents{
 		_id:string
