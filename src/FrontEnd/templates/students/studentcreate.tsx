@@ -4,16 +4,11 @@ import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
 
 @withRouter
-export class StudentCreate extends React.Component<{}, {}> {
+export class StudentCreate extends React.Component<props.studentItem, {}> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
-	public fields:any={
-		dni:{
-			match:validator.matches(/^[VE][0-9]+$/i),
-			value:null,
-			required:true
-		},
+	public fields:any={		
 		name:{
 			match:(fn)=>{
 				return !validator.isNull()(fn);
@@ -73,13 +68,14 @@ export class StudentCreate extends React.Component<{}, {}> {
 		if(!data){
 			return;
 		}
+		data.parent=this.props.routeParams.id;
 		ajax({
 			method:"POST",
 	        url: `${window.settings.uri}/v1/people/students/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:data,	        
+	        data:data,
 	        success:(data:any)=>{
-	        	this.props.router.replace('/students');
+	        	this.props.router.replace(`/parents/get/${this.props.routeParams.id}`);
 	        },
 	        error:(data:any)=>{
 	        	var state=this.state.error;
@@ -92,17 +88,9 @@ export class StudentCreate extends React.Component<{}, {}> {
 	}
 
 	render () {
-		console.log(this, this.state);
-    return (<div className="container">    				
+	    return (<div className="container">    				
     		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
-				<label htmlFor="dni"><b>Documento de identidad del representante</b></label>
-				    <input type="texto" className="form-control" id="dni" aria-describedby="ci_representante" maxLength={12} placeholder="documento de identidad" required autoFocus onChange={(e)=>{this.getFields(e)}}/>
-				    {this.state.error.dni && (
-				    	<div className="alert alert-danger" role="alert">
-						  <strong>Error!</strong> Introduzca un documento de identidad valido con la inicial de su nacionalidad.
-						</div>
-				    )}
-				    <div className="form-group">
+					<div className="form-group">
 				    <label htmlFor="name"><b>Nombre y Apellido</b></label>
 				    <input type="texto" className="form-control" id="name" aria-describedby="name" maxLength={20} placeholder="Nombre y Apellido"required autoFocus onChange={(e)=>{this.getFields(e)}}/>
 					{this.state.error.name && (
@@ -126,7 +114,7 @@ export class StudentCreate extends React.Component<{}, {}> {
 				    )}
 				  <button type="submit" className="btn btn-primary">Guardar</button>
 				</form>
-    	</div>		
+    		</div>		
 				    );
 	}
 

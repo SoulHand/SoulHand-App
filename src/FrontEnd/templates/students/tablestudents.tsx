@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as validator from 'string-validator';
 import {ajax} from 'jquery'
-import {Link} from 'react-router';
+import {Link} from 'react-router'
 
 
 export class TableStudents extends React.Component<props.studentItem, {}>{
@@ -18,7 +18,7 @@ export class TableStudents extends React.Component<props.studentItem, {}>{
 		});
 	}
 	render () {
-		if(!this.props.students){
+		if(!this.props.students || (this.props.students && this.props.students.length==0)){
 			return (
 				<span className="text-align center">No existen resultados</span>
 			);

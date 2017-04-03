@@ -82,7 +82,7 @@ window.addEventListener("load",()=>{
 		    <Route path="/students" component={Student} onEnter={Auth}>
 		    	<IndexRoute component={ListStudent}/>
 		    	<Route path="get/:id" component={StudentView}/>
-		    	<Route path="create" component={StudentCreate}/>
+		    	<Route path="create/:id" component={StudentCreate}/>
 		    </Route>
 		    <Route path="/grades" component={Grades} onEnter={Auth}>
 		    	<IndexRoute component={ListGrade}/>

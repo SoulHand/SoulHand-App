@@ -2,6 +2,8 @@ import * as React from 'react';
 import * as validator from 'string-validator';
 import {ajax} from 'jquery'
 import {TableStudents} from "../students/tablestudents"
+import {Link} from 'react-router'
+
 
 export class ParentView extends React.Component<props.usersItem, props.stateUser {
 	public session:users.sessions;
@@ -153,7 +155,7 @@ export class ParentView extends React.Component<props.usersItem, props.stateUser
 			</div>	
 			<h3>Alumnos</h3>
 			<div className="flex row">
-				<button className="button circle icons x16 add white"></button>
+				<Link to={`/students/create/${this.state.parent._id}`} className="button circle icons x16 add white"></Link>
 			</div>
 			<h3>Estudiante</h3>
 			<TableStudents students={this.state.parent.students} session={this.session} delete={this.deleteField.bind(this)}/>

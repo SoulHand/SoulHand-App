@@ -1328,16 +1328,15 @@ module.exports=function(app,express,server,__DIR__){
 		var people=new SubPeople(app.container.database.Schema.Students);
 		var people2=new People(app.container.database.Schema.Peoples);
 		var grade=new Grade(app.container.database.Schema.Grades);
-		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
-			throw new ValidatorException("Solo se aceptan documentos de identidad");
+		if(!Validator.isMongoId()(request.body.parent)){
+			throw new ValidatorException("Es necesario el representante");
 		}
 		if(Validator.matches(/[0-9]/)(request.body.name)){
 			throw new ValidatorException("Solo se aceptan nombres validos");
 		}
 		if(!Validator.isDate()(request.body.birthdate)){
 			throw new ValidatorException("La fecha de nacimiento no es valida");
-		}
-		
+		}		
 		var fields={
 			data:JSON.parse(JSON.stringify(request.body)),
 			activities:[],
@@ -1346,11 +1345,24 @@ module.exports=function(app,express,server,__DIR__){
 		};
 		fields.data.mode="STUDENT";		
 		delete(fields.data.grade);
-		people2.add(fields.data).then(function(data){
-			fields.data=data;
-			return people.add(fields);
+		delete(fields.data.parent);
+		var parentData,responseData;
+		app.container.database.Schema.Representatives.findOne({_id:request.body.parent}).then(function(data){
+			if(!data){
+				throw new ValidatorException("No existe el representante");
+			}
+			parentData=data;
+			fields.data.dni=parentData.data.dni+"-"+Date.now();			
+			return people2.add(fields.data);
 		}).then(function(data){
-			response.send(data);
+			fields.data=data;
+			return people.add(fields);			
+		}).then(function(data){
+			parentData.students.push(data._id);
+			responseData=data;
+			return parentData.save();			
+		}).then(function(data){
+			response.send(responseData);
 		}).catch(function(error){
 			next(error);
 		});
