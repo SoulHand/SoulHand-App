@@ -9,8 +9,7 @@ export class ListMatter extends React.Component<{}, {}> {
 	public session:users.sessions;
 	public matter:any=[];
 	state={
-		matter:[],
-		search:""
+		matter:[]
 	};
 	
 	constructor(props:any) {
@@ -19,16 +18,16 @@ export class ListMatter extends React.Component<{}, {}> {
     	let session=JSON.parse(str);
 		this.session=session;		
 	}
-	deleteField(data: any){
+	deleteField(event: any){
 		var element:EventTarget=event.target;		
 		ajax({
 			method:"DELETE",
-	        url: `${window.settings.uri}/v1/courser/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/courses/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
 	        success:(data:peoples.teachers)=>{
-	        	this.teachers=this.matter.filter(function(row:peoples.teachers){
+	        	this.matter=this.matter.filter(function(row:peoples.teachers){
 					if(row._id==data._id){
 						return false;
 					}
@@ -40,10 +39,20 @@ export class ListMatter extends React.Component<{}, {}> {
 	        }
 		});
 	}
-	
-	Xiu, [31.03.17 20:44]
+    Filter(event:any){
+        var filter=this.matter.filter((row)=>{
+            var exp=new RegExp(event.target.value,"i");
+            if(exp.test(row.name)==true){
+                return true;
+            }
+            return false;
+        });
+        this.setState({
+              matter : filter
+        });
+    }
 componentDidMount(){
-        getJSON(`//0.0.0:8080/v1/courser/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,(data)=>{
+        getJSON(`//0.0.0:8080/v1/courses/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,(data)=>{
             this.matter= data;
             this.setState({
               matter: data
@@ -55,9 +64,8 @@ componentDidMount(){
         <div className="container card">
             <form className="navbar-form navbar-right">
                 <div className="right">
-                    <input type="text" className="form-control" placeholder="Buscar"/>
+                    <input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
                 </div>
-                <span>{this.state.search}</span>
             </form>
             <h3>Grado</h3>
             <table className="table table-striped">
@@ -73,8 +81,7 @@ componentDidMount(){
                         return (
                             <tr key={row._id}>
                                 <td>{row.name}</td>
-                                <td><button type="button" className="btn btn-warning">Editar</button>
-                                <button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
+                                <td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
                             </tr>
                         );
                     })

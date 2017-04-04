@@ -112,7 +112,7 @@ window.addEventListener("load",()=>{
 		    </Route>
 		    <Route path="/matter" component={Matter} onEnter={Auth}>
 		    	<IndexRoute component={ListMatter}/>
-		    	<Route path=":id" component={MatterView}/>
+		    	<Route path="get/:id" component={MatterView}/>
 		    	<Route path="create" component={MatterCreate}/>
 		    </Route>
 		     <Route path="/periodschools" component={PeriodSchools} onEnter={Auth}>
