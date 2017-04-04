@@ -41,7 +41,9 @@ export class TableStudents extends React.Component<props.studentItem, {}>{
 							<tr key={row._id}>
 								<td>{row.data.dni}</td>
 								<td><Link to={`/students/get/${row._id}`} className="title">{row.data.name}</Link></td>
-								<td>{(row.discapacityLevel==0) ?
+								<td>
+								<Link to={`/students/get/${row._id}/physic/sound`}>
+								{(row.discapacityLevel==0) ?
 									"NO EVALUADA"
 									:  (row.discapacityLevel>25 && row.discapacityLevel<=40) ?
 										"LEVE"
@@ -53,7 +55,9 @@ export class TableStudents extends React.Component<props.studentItem, {}>{
 										"PROFUNDA"
 									:
 										"SIN PERDIDA"
-								}</td>
+								}
+								</Link>
+								</td>
 								<td>{(row.grade) ? row.grade.name : "NO ASIGNADO"}</td>
 								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
 							</tr>

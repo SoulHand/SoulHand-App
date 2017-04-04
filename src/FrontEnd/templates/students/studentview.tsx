@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as validator from 'string-validator'
 import {Link} from 'react-router'
+import Highcharts from 'highcharts/highstock'
 import {ajax} from 'jquery'
 
 
@@ -195,19 +196,21 @@ export class StudentView extends React.Component<props.usersItem, props.stateUse
 						<b>Escalar perdida de audición:</b>						
 					</div>
 					<div className="value">
+						<Link to={`/students/get/${this.props.routeParams.id}/physic/sound`}>							
 						{(this.state.student.discapacityLevel==0) ?
 							"NO EVALUADA"
-							:  (row.discapacityLevel>25 && row.discapacityLevel<=40) ?
+							:  (this.state.student.discapacityLevel>25 && this.state.student.discapacityLevel<=40) ?
 								"LEVE"
-							: (row.discapacityLevel>40 && row.discapacityLevel<=70) ?
+							: (this.state.student.discapacityLevel>40 && this.state.student.discapacityLevel<=70) ?
 								"MODERADA"
-							: (row.discapacityLevel>70 && row.discapacityLevel<=90) ?
+							: (this.state.student.discapacityLevel>70 && this.state.student.discapacityLevel<=90) ?
 								"SEVERA"
-							: (row.discapacityLevel>90 && row.discapacityLevel<=120) ?
+							: (this.state.student.discapacityLevel>90 && this.state.student.discapacityLevel<=120) ?
 								"PROFUNDA"
 							:
 								"SIN PERDIDA"
 						}
+						</Link>
 					</div>
 				</div>
 				<div className="item">

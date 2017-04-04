@@ -22,6 +22,9 @@ import {MatterView} from './templates/matter/matterview';
 import {Student} from './templates/students';
 import {ListStudent} from './templates/students/liststudents';
 import {PhysicCreate} from './templates/physic/physiccreate';
+import {WelcomeAudio} from './templates/physic/welcomeaudio';
+import {RegistryAudio} from './templates/physic/registryaudio';
+import {AsistAudio} from './templates/physic/asistaudio';
 import {StudentCreate} from './templates/students/studentcreate';
 import {StudentView} from './templates/students/studentview';
 
@@ -84,6 +87,9 @@ window.addEventListener("load",()=>{
 		    	<IndexRoute component={ListStudent}/>
 		    	<Route path="get/:id" component={StudentView}/>
 		    	<Route path="get/:id/physic/create" component={PhysicCreate}/>
+		    	<Route path="get/:id/physic/sound" component={WelcomeAudio} />
+		    	<Route path="get/:id/physic/sound/registry" component={RegistryAudio}/>
+		    	<Route path="get/:id/physic/sound/asistent" component={AsistAudio}/>
 		    	<Route path="create/:id" component={StudentCreate}/>
 		    </Route>
 		    <Route path="/grades" component={Grades} onEnter={Auth}>
