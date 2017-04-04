@@ -1,8 +1,10 @@
 import * as React from 'react';
 import * as validator from 'string-validator'
 import {Link} from 'react-router'
-import Highcharts from 'highcharts/highstock'
+import {ReactHighcharts} from 'react-highcharts'
+import * as Highcharts from 'highcharts/highcharts'
 import {ajax} from 'jquery'
+import * as $ from 'jquery'
 
 
 export class StudentView extends React.Component<props.usersItem, props.stateUser {
@@ -31,7 +33,30 @@ export class StudentView extends React.Component<props.usersItem, props.stateUse
 			event.preventDefault();
 			element.parentNode.children[2].children[0].click();
 		}
-	}
+	}/*
+	componentDidUpdate(){
+		var chart = new Highcharts["Chart"](
+            document.getElementById("graphic"), 
+            {
+				title:{
+					text:"Desarrollo físico",
+					x:-20
+				},
+				xAxis:{
+					category:[7,9,15]
+				},
+				series: [{
+					data: [{
+						name:"peso",
+						data:[1,2,3]
+					},{
+						name:"altura",
+						data:[7,2,4]
+					}]
+				}]		
+			}
+        );
+	}*/
 	componentDidMount(){
 		ajax({
 			method:"GET",
@@ -176,7 +201,25 @@ export class StudentView extends React.Component<props.usersItem, props.stateUse
 				</div>
 			);
 		});
-		var iconAdmin=(this.state.student.isAdmin==true) ? "student" : "certified";
+		var iconAdmin=(this.state.student.isAdmin==true) ? "student" : "certified";		
+		var config={
+				title:{
+					text:"Desarrollo físico",
+					x:-20
+				},
+				xAxis:{
+					category:[7,9,15]
+				},
+				series: [{
+					data: [{
+						name:"peso",
+						data:[1,2,3]
+					},{
+						name:"altura",
+						data:[7,2,4]
+					}]
+				}]		
+			};
     return (
     	<div className="container">
 			{this.state.error && (
@@ -245,7 +288,8 @@ export class StudentView extends React.Component<props.usersItem, props.stateUse
 					</div>
 				</div>
 			</div>	
-			<h3>Desarrollo físico</h3>
+			<h3>Desarrollo físico</h3>			
+			<LineChart config={config}></LineChart>
 			<div className="flex row">
 				<Link to={`/students/get/${this.props.routeParams.id}/physic/create`} className="button circle icons x16 add white"></Link>
 			</div>
@@ -277,4 +321,27 @@ export class StudentView extends React.Component<props.usersItem, props.stateUse
     	</div>		
     );
   }	
+}
+class LineChart extends React.Component <{},{}>{
+	public chart:any;
+  constructor(props) {
+    	super(props);
+    }
+  
+  componentDidMount() {
+	this.chart = new Highcharts.Chart("#chart",{
+		series: [{
+			data: [1, 3, 2, 4]
+		}]
+	});
+	}
+	componentWillReceiveProps(props) {
+	  	//this.chart.highcharts().series[0].setData(props.data);
+	}	  
+	render() {
+	  return (
+	    <div id='chart'>
+	    </div>
+	  )
+	}
 }
