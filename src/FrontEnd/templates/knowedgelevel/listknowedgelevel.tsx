@@ -27,8 +27,8 @@ export class ListKnowedgeLevel extends React.Component<{}, {}> {
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
-	        success:(data:peoples.teachers)=>{
-	        	this.teachers=this.knowledgelevel.filter(function(row:peoples.teachers){
+	        success:(data:knowledgelevel)=>{
+	        	this.knowledgelevel=this.knowledgelevel.filter(function(row:knowledgelevel){
 					if(row._id==data._id){
 						return false;
 					}

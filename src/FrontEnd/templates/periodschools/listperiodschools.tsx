@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {getJSON,ajax} from 'jquery'
-import {Item} from "./item"
+import {Item} from "./Item"
 //import * as settings from "../settings"
 
 export class ListPeriodSchools extends React.Component<{}, {}> {
@@ -23,12 +23,12 @@ export class ListPeriodSchools extends React.Component<{}, {}> {
 		var element:EventTarget=event.target;		
 		ajax({
 			method:"DELETE",
-	        url: `${window.settings.uri}/v1/periods/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `//localhost:8080/v1/periods/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
-	        success:(data:peoples.teachers)=>{
-	        	this.teachers=this.periodschools.filter(function(row:peoples.teachers){
+	        success:(data:periodschools)=>{
+	        	this.periodschools=this.periodschools.filter(function(row:periodschools){
 					if(row._id==data._id){
 						return false;
 					}
