@@ -47,7 +47,7 @@ export class Item extends React.Component<props.teacherItem, {}> {
 			<div className="item">
 				<img src="/images/user-login-icon-14.png" alt="Perfil de usuario" className="rounded-circle" width="84" height="84"/>
 	  			<div className="container-element text-align center">
-	  				<Link to={`/users/${this.props.people._id}`} className="title">{this.props.people.username}</Link>
+	  				<Link to={`/users/get/${this.props.people._id}`} className="title">{this.props.people.username}</Link>
 	  				<small>{this.props.people._id}</small>
 	  			</div>
 				<div className="toolbox">

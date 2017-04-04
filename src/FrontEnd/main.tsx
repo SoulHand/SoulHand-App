@@ -81,7 +81,7 @@ window.addEventListener("load",()=>{
 		    <Route path="/teacher" component={Teachers} onEnter={Auth}>
 		    	<IndexRoute component={ListTeachers}/>
 		    	<Route path="create" component={TeacherCreate}/>
-		    	<Route path=":id" component={TeacherView}/>
+		    	<Route path="get/:id" component={TeacherView}/>
 		    </Route>
 		    <Route path="/students" component={Student} onEnter={Auth}>
 		    	<IndexRoute component={ListStudent}/>
@@ -94,7 +94,7 @@ window.addEventListener("load",()=>{
 		    </Route>
 		    <Route path="/grades" component={Grades} onEnter={Auth}>
 		    	<IndexRoute component={ListGrade}/>
-		    	<Route path=":id" component={GradeView}/>
+		    	<Route path="get/:id" component={GradeView}/>
 		    	<Route path="create" component={GradeCreate}/>
 		    </Route>
 		    <Route path="/parents" component={Parents} onEnter={Auth}>
@@ -104,7 +104,7 @@ window.addEventListener("load",()=>{
 		    </Route>
 		    <Route path="/domain" component={Domain} onEnter={Auth}>
 		    	<IndexRoute component={ListDomain}/>
-		    	<Route path=":id" component={DomainView}/>
+		    	<Route path="get/:id" component={DomainView}/>
 		    	<Route path="create" component={DomainCreate}/>
 		    </Route>
 		    <Route path="/type" component={Type} onEnter={Auth}>
@@ -113,7 +113,7 @@ window.addEventListener("load",()=>{
 		    </Route>
 		    <Route path="/users" component={Home}>
 		    	<IndexRoute component={ListUsers} onEnter={Auth}/>
-		    	<Route path=":id" component={UserView}/>
+		    	<Route path="get/:id" component={UserView}/>
 		    	<Route path="create" component={UserCreate}/>
 		    </Route>
 		    <Route path="/matter" component={Matter} onEnter={Auth}>

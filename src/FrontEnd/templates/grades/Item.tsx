@@ -22,7 +22,7 @@ export class Item extends React.Component<props.gradeItem, {}> {
 			<div className="item">
 				<img src="/images/user-login-icon-14.png" alt="Perfil de usuario" className="rounded-circle" width="84" height="84"/>
 	  			<div className="container-element text-align center">
-	  				<Link to={`/grades/${this.props.grade._id}`} className="title">{this.props.grade.data.name}</Link>
+	  				<Link to={`/grades/get/${this.props.grade._id}`} className="title">{this.props.grade.data.name}</Link>
 	  				
 	  			</div>
 				<div className="toolbox">

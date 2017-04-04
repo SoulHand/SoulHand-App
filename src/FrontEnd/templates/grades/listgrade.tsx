@@ -79,7 +79,7 @@ export class ListGrade extends React.Component<{}, {}> {
 					this.state.grades.map((row:any)=>{
 						return (
 							<tr key={row._id}>
-								<td><Link to={`/grades/${row._id}`} className="title">{row.name}</Link></td>
+								<td><Link to={`/grades/get/${row._id}`} className="title">{row.name}</Link></td>
 								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
 							</tr>
 						);

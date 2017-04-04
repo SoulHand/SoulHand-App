@@ -5,9 +5,6 @@ import {withRouter} from 'react-router';
 
 @withRouter
 export class UserCreate extends React.Component<props.teacherItem, {}> {
-	public session:users.sessions;
-	public PrivateKeyId:string;
-	public PublicKeyId:string;
 	public fields:any={
 		dni:{
 			match:validator.matches(/^[VE][0-9]{6,9}$/i),

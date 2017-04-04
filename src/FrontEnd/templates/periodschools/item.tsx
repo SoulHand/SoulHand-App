@@ -22,7 +22,7 @@ export class Item extends React.Component<props.periodschoolsItem, {}> {
 			<div className="item">
 				<img src="/images/user-login-icon-14.png" alt="Perfil de usuario" className="rounded-circle" width="84" height="84"/>
 	  			<div className="container-element text-align center">
-	  				<Link to={`/periodschools/${this.props.periodschools._id}`} className="title">{this.props.periodschools.data.name}</Link>
+	  				<Link to={`/periodschools/get/${this.props.periodschools._id}`} className="title">{this.props.periodschools.data.name}</Link>
 	  				
 	  			</div>
 				<div className="toolbox">

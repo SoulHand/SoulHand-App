@@ -77,7 +77,7 @@ export class ListDomain extends React.Component<{}, {}> {
 					this.state.domain.map((row:any)=>{
 						return (
 							<tr key={row._id}>
-								<td><Link to={`/domain/${row._id}`} className="title">{row.name}</Link></td>
+								<td><Link to={`/domain/get/${row._id}`} className="title">{row.name}</Link></td>
 								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
 							</tr>
 						);
