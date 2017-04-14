@@ -1,9 +1,5 @@
 var mongoose= require('mongoose');
-var structDb={
-	Cognitions:mongoose.Schema({
-		name:{type:String, required:true, trim:true, uppercase: true},
-		description:{type:String, required:true, trim:true, uppercase: true}
-	}),
+var structDb={	
 	Grades:mongoose.Schema({
 		name:{type:String, required:true, trim:true, uppercase: true}
 	}),
@@ -49,9 +45,6 @@ var structDb={
 		tel:{type:String, required: false},
 		image:{type:String, required:false},
 		mode:{type:String, required:true}
-	}),
-	typeLearning:mongoose.Schema({
-		name:{type:String, trim:true, required: true, uppercase: true}
 	})
 };
 structDb.Teachers=mongoose.Schema({
@@ -72,38 +65,7 @@ structDb.User=mongoose.Schema({
    	people:structDb.Peoples,
    	isAdmin:{type:Boolean, default:false}
 });
-structDb.LearningObjetive=mongoose.Schema({
-	name:{type:String, trim:true, required: true, uppercase: true},
-	description:{type:String, trim:true, required: false, uppercase: true},
-	cognitions:[structDb.Cognitions],
-	type:structDb.typeLearning,
-	domain:{ type: mongoose.Schema.ObjectId, ref: "domainsLearning" }
-});
-structDb.ConflictCognitions=mongoose.Schema({
-	name:{type:String, trim:true, uppercase: true},
-	createDate:{type:Date, default:Date.now},
-	cognitions:[structDb.Cognitions],
-	level:{type:Number,min:0,max:100,default:0}
-});
-structDb.Activities=mongoose.Schema({
-	name:{type:String, trim:true, required: true, uppercase: true},
-	description:{type:String, trim:true, required: true, uppercase: true},
-	course:structDb.Courses,
-	domain:{ type: mongoose.Schema.ObjectId, ref: "domainsLearning" },
-	dateCreated:{ type: Date, default: Date.now },
-	objetives:[structDb.LearningObjetive]
-});
-structDb.ActivitiesMaked=mongoose.Schema({
-	data:structDb.Activities,
-	dateCreated:{ type: Date, default: Date.now },
-	teacher: { type: mongoose.Schema.ObjectId, ref: "Teachers" },
-	student: { type: mongoose.Schema.ObjectId, ref: "Students" },
-	grade:structDb.Grades,
-	description:{type:String, trim:true, required:true, uppercase:true},
-	video:Buffer,
-	isCompleted:{type:Boolean, default:false},
-	objetives:[structDb.LearningObjetive]
-});
+
 structDb.Sessions=mongoose.Schema({
 	privateKeyId:{ type : String, trim : true, index : true , unique:true},
 	publicKeyId:{ type : String, trim : true},
@@ -114,18 +76,7 @@ structDb.Sessions=mongoose.Schema({
    	dateLastConnect:Date,
    	user:{ type: mongoose.Schema.ObjectId, ref: "User" }
 });
-structDb.domainsLearning=mongoose.Schema({
-	name:{type:String, required:true, trim:true, uppercase: true},
-	cognitions:[structDb.Cognitions]
-});
 
-structDb.Students=mongoose.Schema({
-	data: structDb.Peoples,
-	grade:structDb.Grades,
-	discapacityLevel:{type:Number, required:true, default:0},
-	physics:[structDb.physic],
-	activities:[structDb.ActivitiesMaked]
-});
 structDb.morphems=mongoose.Schema({
 	type:structDb.type_morphema,
 	mode:structDb.mode_morphema,
@@ -140,11 +91,59 @@ structDb.words=mongoose.Schema({
 	lexema:structDb.lexemas,
 	concept:{type:String, required:true, trim:true, uppercase: true}	
 });
+structDb.Cognitions=mongoose.Schema({
+	name:{type:String, required:true, trim:true, uppercase: true},
+	description:{type:String, required:true, trim:true, uppercase: true},
+	words:[structDb.words]
+})
+structDb.domainsLearning=mongoose.Schema({
+	name:{type:String, required:true, trim:true, uppercase: true},
+	description:{type:String, required:true, trim:true, uppercase: true},
+	cognitions:[structDb.Cognitions],
+	words:[structDb.words]
+});
+structDb.LearningObjetive=mongoose.Schema({
+	name:{type:String, trim:true, required: true, uppercase: true},
+	description:{type:String, trim:true, required: false, uppercase: true},
+	domain:{ type: mongoose.Schema.ObjectId, ref: "domainsLearning" },
+	cognitions:[structDb.Cognitions],
+   	dateCreated:{ type: Date, default: Date.now },
+	words:[structDb.words],
+	completed:{type:Number}
+});
+structDb.Students=mongoose.Schema({
+	data: structDb.Peoples,
+	grade:structDb.Grades,
+	discapacityLevel:{type:Number, required:true, default:0},
+	physics:[structDb.physic],
+	domain:{ type: mongoose.Schema.ObjectId, ref: "domainsLearning" },
+	objetives:[structDb.LearningObjetive]
+});
+
+structDb.Activities=mongoose.Schema({
+	name:{type:String, trim:true, required: true, uppercase: true},
+	description:{type:String, trim:true, required: true, uppercase: true},
+	objetives:[structDb.LearningObjetive],
+	isCompleted:{type:Boolean,default:false},
+   	dateCreated:{ type: Date, default: Date.now },
+   	dateExpire:{ type: Date, required:true },
+   	teacher: { type: mongoose.Schema.ObjectId, ref: "Teachers" },
+	student: { type: mongoose.Schema.ObjectId, ref: "Students" },
+	grade:structDb.Grades,
+	course:structDb.Courses,
+	dateCreated:{ type: Date, default: Date.now },
+});
 
 
+/*
+structDb.ConflictCognitions=mongoose.Schema({
+	name:{type:String, trim:true, uppercase: true},
+	createDate:{type:Date, default:Date.now},
+	cognitions:[structDb.Cognitions],
+	level:{type:Number,min:0,max:100,default:0}
+});
 
-
-
+*/
 
 
 

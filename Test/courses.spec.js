@@ -6,6 +6,7 @@ describe("Test route courses",function(){
 	afterEach(utils.dropDatabase.bind(self));
 	beforeEach(function(done){
 		self.db=utils.getDatabase();
+		
 		utils.insertSession(self.db).then(function(data){
 			user=data
 			done();

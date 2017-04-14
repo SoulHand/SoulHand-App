@@ -106,7 +106,7 @@ module.exports.runApp=function(method,uri,args){
 				if(error){ reject(error)}
 				app.container.database.db.close(function(){
 					server.close(function(){
-						complete(JSON.parse(response));
+						complete(response);
 					});
 				})
 			})			

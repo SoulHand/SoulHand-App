@@ -441,6 +441,7 @@ module.exports=function(app,express,server,__DIR__){
 		domain.find({name:request.params.domain.toUpperCase()}).then(function(row){
 			response.send(row.cognitions);			
 		}).catch(function(error){
+			console.log(error.toString());
 			next(error);
 		});
 	});
@@ -451,16 +452,19 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	cognitions.get("/:domain/cognitions/:name",function(request, response,next) {
-		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);			
+	cognitions.get("/:domain/cognitions/:id",function(request, response,next) {
+		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id no es valido!");
+		}			
 		domain.find({name:request.params.domain.toUpperCase()}).then(function(data){
-			var name=request.params.name.toUpperCase();
-			for (i in data.cognitions){
-				if(data.cognitions[i].name==name){
+			for (var i=0,n=data.cognitions.length;i<n;i++){
+				if(data.cognitions[i]._id==request.params.id){
 					response.send(data.cognitions[i]);
-					break;
+					return;
 				}
 			}
+			throw new VoidException("No existe un resultado!");
 		}).catch(function(error){
 			next(error);
 		});
@@ -474,13 +478,25 @@ module.exports=function(app,express,server,__DIR__){
 	*/
 	cognitions.put("/:domain/cognitions/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
-		if(Validator.isNull()(request.body.name)){
-			throw new ValidatorException("Solo se aceptan textos categoricos");
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		if(!Validator.isNull()(request.body.words)){
+			throw new ValidatorException("Este campo no es valido!");
 		}
 		category.update({name:request.params.domain.toUpperCase()},function(obj){
+			var findElement=false;
 			obj.cognitions=obj.cognitions.map(function(row){
-				if(request.params.id==row.id){
-					row.name=request.body.name;
+				if(request.params.id==row._id){
+					findElement=true;
+					for(var i=0,keys=Object.keys(row.schema.obj),n=keys.length;i<n;i++){
+						if(request.body[keys[i]]){
+							row[keys[i]]=request.body[keys[i]];							
+						}
+					}
+				}
+				if(!findElement){
+					throw VoidException("No existe el registro!");
 				}
 				return row;
 			});
@@ -488,6 +504,7 @@ module.exports=function(app,express,server,__DIR__){
 		}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
+			console.log(error);
 			next(error);
 		});
 	});

@@ -18,7 +18,6 @@ module.exports.isAdmin=function(request,response,next){
 			{dateDeleted:null}
 		]
 	}).then(function(data){
-		console.log(data);
 		if(!data || data.user.isAdmin!=true){
 			throw new UserException('No posee permisos administrativos');			
 		}
