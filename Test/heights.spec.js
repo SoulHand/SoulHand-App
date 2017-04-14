@@ -24,7 +24,7 @@ describe("Test route knowedge cognitions",function(){
 	it("GET /v1/physic/static/height/",function(done){
 		utils.runApp("GET",`/v1/physic/static/height/`).then(function(response){
 			response=JSON.parse(response);
-			expect(response[0].name).toBe(find.name);
+			expect(response[0].age).toBe(find.age);
 			done();
 		}).catch(function(error){
 			console.log(error);
@@ -36,7 +36,7 @@ describe("Test route knowedge cognitions",function(){
 	it("GET /v1/physic/static/height/:id",function(done){
 		utils.runApp("GET",`/v1/physic/static/height/${find._id}`).then(function(response){
 			response=JSON.parse(response);
-			expect(response.name).toBe(find.name);
+			expect(response.age).toBe(find.age);
 			done();
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();

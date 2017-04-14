@@ -845,14 +845,28 @@ module.exports=function(app,express,server,__DIR__){
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("EL id no es valido");
 		}
-		if((request.body.max-request.body.min)<=0 || request.body.min==0 || request.body.max==0){
-			throw new ValidatorException("El rango de pesos es invalido");
-		}
-		category.update({_id:request.params.id},function(obj){
-			obj.age=request.body.age;
-			obj.min=request.body.min;
-			obj.max=request.body.max;
-			return obj;
+		if((request.body.height && !Validator.isFloat()(request.body.height)) || (request.body.min && !Validator.isFloat()(request.body.min)) || (request.body.max && !Validator.isFloat()(request.body.max))){
+			throw new ValidatorException("Solo se aceptan numeros");
+		}		
+		if(request.body.genero && request.body.genero.toUpperCase()!="MASCULINO" && request.body.genero.toUpperCase()!="FEMENINO" ){
+			throw new ValidatorException("El genero es invalido");
+		}		
+		category.update({_id:request.params.id},function(row){
+			if(request.body.max && request.body.min && ((request.body.max-request.body.min)<=0 || request.body.min==0 || request.body.max==0)){
+				throw new ValidatorException("El rango de pesos es invalido");				
+			}
+			if(request.body.max && ((request.body.max-row.min)<=0 || row.min==0 || request.body.max==0)){
+				throw new ValidatorException("El rango máximo no es valido con el minimo existente!");				
+			}
+			if(request.body.max && ((row.max-request.body.min)<=0 || request.body.min==0 || row.max==0)){
+				throw new ValidatorException("El rango mínimo no es valido con el máximo existente!");				
+			}
+			for(var i=0,keys=Object.keys(row.schema.obj),n=keys.length;i<n;i++){
+				if(request.body[keys[i]]){
+					row[keys[i]]=request.body[keys[i]];							
+				}
+			}
+			return row;
 		}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
