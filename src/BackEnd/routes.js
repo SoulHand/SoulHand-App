@@ -1186,7 +1186,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var people<People>	objeto CRUD
 	*/
 	PeopleURI.get("/",function(request, response,next) {
-		var people=new People(app.container.database.Schema.Teachers);		
+		var people=new People(app.container.database.Schema.Teachers);
 		people.get().then(function(data){
 			response.send(data);
 		}).catch(function(error){
