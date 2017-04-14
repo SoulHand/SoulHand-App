@@ -961,7 +961,7 @@ module.exports=function(app,express,server,__DIR__){
 		if(!Validator.matches(/^[VE][0-9]{6,9}$/)(request.body.dni)){
 			throw new ValidatorException("Solo se aceptan documentos de identidad");			
 		}
-		if(!Validator.isAlphanumeric()(request.body.username)){
+		if(Validator.isNull()(request.body.username)){
 			throw new ValidatorException("Es necesario un nombre de usuario valido");			
 		}
 		if(!Validator.isEmail()(request.body.email)){
@@ -1060,27 +1060,21 @@ module.exports=function(app,express,server,__DIR__){
 		}
 		var USER;
 		var user=new User(app.container.database.Schema.User);
-		app.container.database.Schema.User.findOne({_id:request.params.id}).then(function(data){
+		app.container.database.Schema.User.findOne({_id:request.params.id}).then(function(row){
+			if(!row){
+				throw new VoidException("No existe el registro");
+			}
 			if(request.user.isAdmin!=true && data._id!=request.user._id){
 				throw new ValidatorException("No tiene permisos para editar este registro");
 			}
-			for (i in data){
-				if(request.body[i] && i!='people'){
-					data[i]=request.body[i];
+			for(var i=0,keys=Object.keys(row.schema.obj),n=keys.length;i<n;i++){
+				if(request.body[keys[i]] && keys[i]!="dni"){
+					row[keys[i]]=request.body[keys[i]];							
 				}
 			}
-			USER=data;
-			return app.container.database.Schema.Peoples.findOne({dni:data.people.dni});
+			return row.save();
 		}).then(function(data){
-			for (i in data){
-				if(request.body[i] && i!='dni'){
-					data[i]=request.body[i];
-				}
-			}
-			USER.people=data;
-			return Promise.all([data.save(),USER.save()]);
-		}).then(function(data){
-			response.send(data[1]);
+			response.send(data);
 		}).catch(function(error){
 			next(error);
 		});
