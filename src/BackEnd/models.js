@@ -13,6 +13,12 @@ var structDb={
 	PeriodSchools:mongoose.Schema({
 		name:{type:String, required:true, trim:true, uppercase: true}
 	}),
+	type_morphema:mongoose.Schema({
+		name:{type:String, required:true, trim:true, uppercase: true}
+	}),
+	mode_morphema:mongoose.Schema({
+		name:{type:String, required:true, trim:true, uppercase: true}
+	}),
 	physic:mongoose.Schema({
 		date:{type:Date, default:Date.now},
 		weight:{type:Number, required:true, min:0},
@@ -34,15 +40,7 @@ var structDb={
 		min:{type:Number, min:0},
 		max:{type:Number, min:0},
 		genero:{type:String, trim:true, uppercase:true}
-	}),
-	morphem_type:mongoose.Schema({
-		name:{type:String, trim:true, uppercase:true}
-	}),
-	morphemas:mongoose.Schema({
-		word:{type:String, trim:true, uppercase:true},
-		type:{ type: mongoose.Schema.ObjectId, ref: "morphem_type" },
-		description:{type:String, trim:true, uppercase:true}
-	}),
+	}),	
 	Peoples:mongoose.Schema({
 		dni:{type:String, trim: true, index:true, required: true, unique:true, uppercase: true},
 		name:{type:String, trim:true, required: true, uppercase: true},
@@ -128,13 +126,28 @@ structDb.Students=mongoose.Schema({
 	physics:[structDb.physic],
 	activities:[structDb.ActivitiesMaked]
 });
-
-structDb.monema=mongoose.Schema({
-	lexema:{type:String, trim:true, uppercase:true},
-	morphema:[structDb.morphemas],
-	increment:[{type:String, trim:true, uppercase:true}],
-	concept:{type:String, required:true, trim:true, uppercase: true}
+structDb.morphems=mongoose.Schema({
+	type:structDb.type_morphema,
+	mode:structDb.mode_morphema,
+	key:{type:String, required:true, trim:true, uppercase: true}
 });
+structDb.lexemas=mongoose.Schema({
+	key:{type:String, required:true, trim:true, uppercase: true},
+	morphems:structDb.morphems
+});
+structDb.words=mongoose.Schema({
+	key:{type:String, required:true, trim:true, uppercase: true},
+	lexema:structDb.lexemas,
+	concept:{type:String, required:true, trim:true, uppercase: true}	
+});
+
+
+
+
+
+
+
+
 
 /*
 structDb.Learning=mongoose.Schema({

@@ -329,6 +329,7 @@ class LineChart extends React.Component <{},{}>{
     }
   
   componentDidMount() {
+  	console.log(document.querySelector("#chart"))
 	this.chart = new Highcharts.Chart("#chart",{
 		series: [{
 			data: [1, 3, 2, 4]
