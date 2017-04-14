@@ -1255,7 +1255,6 @@ module.exports=function(app,express,server,__DIR__){
 		}).then(function(data){
 			response.send(data[1]);
 		}).catch(function(error){
-			console.log(error)
 			next(error);
 		});
 	});
@@ -1437,7 +1436,6 @@ module.exports=function(app,express,server,__DIR__){
 					student[i]=request.body[i];
 				}
 			}
-			console.log(student,gradeData);
 			return Promise.all([people.save(),student.save()]);
 		}).then(function(data){
 			response.send(data[1]);
