@@ -213,97 +213,6 @@ module.exports=function(app,express,server,__DIR__){
 	*/
 	var learningURI = express.Router();
 	/*
-	* @api {post} / Crear tipo de aprendizaje
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var course<Course>	objeto CRUD
-	*/
-	learningURI.post("/type",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var course=new Course(app.container.database.Schema.typeLearning);
-		if(Validator.isNull()(request.body.name)){
-			throw new ValidatorException("El nombre solo debe contener letras");
-		}
-		course.add(request.body.name).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} / Obtener todas las tipos de aprendizaje
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var course<Course>	objeto CRUD
-	*/
-	learningURI.get("/type",function(request, response,next) {
-		var course=new Course(app.container.database.Schema.typeLearning);		
-		course.get().then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} /:name Obtener un tipo de aprendizaje
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var course<Course>	objeto CRUD
-	*/
-	learningURI.get("/type/:name",function(request, response,next) {		
-		var course=new Course(app.container.database.Schema.typeLearning);			
-		course.find({name:request.params.name.toUpperCase()}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {put} /:id Editar tipo de aprendizaje
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var course<Course>	objeto CRUD
-	*/
-	learningURI.put("/type/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var course=new Course(app.container.database.Schema.typeLearning);
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("El id es invalido!");
-		}
-		if(Validator.isNull()(request.body.name)){
-			throw new ValidatorException("El nombre solo debe contener letras");
-		}
-		course.update({_id:request.params.id},function(obj){
-			obj.name=request.body.name;
-			return obj;
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {delete} /:id Eliminar una materia
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var course<Course>	objeto CRUD
-	*/
-	learningURI.delete("/type/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("El id es invalido!");
-		}
-		var course=new Course(app.container.database.Schema.typeLearning);
-		course.remove({_id:request.params.id}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-
-	/*
 	* Ruta /v1/learning/domain
 
 	* @api {post} / Crear dominio del aprendizaje
@@ -317,7 +226,7 @@ module.exports=function(app,express,server,__DIR__){
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Solo se aceptan textos categoricos");
 		}
-		category.add(request.body.name.toUpperCase()).then(function(data){
+		category.add(request.body.name.toUpperCase(),request.body).then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -346,8 +255,11 @@ module.exports=function(app,express,server,__DIR__){
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
 	learningURI.get("/domain/:id",function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);			
-		category.find({_id:request.params.id.toUpperCase()}).then(function(data){
+		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		category.find({_id:request.params.id}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -362,12 +274,22 @@ module.exports=function(app,express,server,__DIR__){
 	*/
 	learningURI.put("/domain/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
-		if(Validator.isNull()(request.body.name)){
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		if(request.body.name && Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Solo se aceptan textos categoricos");
 		}
-		category.update({_id:request.params.id.toUpperCase()},function(obj){
-			obj.name=request.body.name;
-			return obj;
+		if(request.body.description && Validator.isNull()(request.body.description)){
+			throw new ValidatorException("Solo se aceptan textos categoricos");
+		}
+		category.update({_id:request.params.id},function(row){
+			for(var i=0,keys=Object.keys(row.schema.obj),n=keys.length;i<n;i++){
+				if(request.body[keys[i]]){
+					row[keys[i]]=request.body[keys[i]];							
+				}
+			}
+			return row;
 		}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
