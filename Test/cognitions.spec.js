@@ -57,7 +57,7 @@ describe("Test route knowedge cognitions",function(){
 		});	
 	});
 	it("PUT /v1/knowedge/:domain/cognitions/:id",function(done){
-			utils.runApp("PUT",`/v1/knowedge/${category.name}/cognitions/${find._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
+		utils.runApp("PUT",`/v1/knowedge/${category.name}/cognitions/${find._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
 			form:{
 				name:"hola"
 			}
@@ -68,6 +68,27 @@ describe("Test route knowedge cognitions",function(){
 					return true;
 				}
 				return false;
+			});
+			expect(cognition[0].name).toBe("HOLA");
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
+		});	
+	});
+	it("POST /v1/knowedge/:domain/cognitions/:id",function(done){
+		utils.runApp("POST",`/v1/knowedge/${category.name}/cognitions/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
+			form:{
+				name:"hola",
+				description:"proceso de hola"
+			}
+		}).then(function(response){
+			response=JSON.parse(response);
+			var cognition=response.cognitions.filter(function(row){
+				if(row._id==find._id){
+					return false;
+				}
+				return true;
 			});
 			expect(cognition[0].name).toBe("HOLA");
 			done();
