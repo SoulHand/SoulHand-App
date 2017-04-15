@@ -339,3 +339,51 @@ elimina un registro al historico de desarrollo físico del alumno
 }
 ```
 
+evaluar el nivel de audicion
+--------------------
+
+```curl
+PUT /v1/people/students/:id/sound/test
+```
+
+Evalua el nivel de audición y genera resultados del aprendizaje
+
+### Parametros
+
+**id**:mongoId
+
+###  Entrada
+
+**value**:Array<Number> de 5 elementos
+
+### Respuesta
+
+```json
+{
+  "__v":0,
+  "data":
+    {
+      "__v":0,
+      "name":"WADE LOCKMAN",
+      "birthdate":"1992-03-15",
+      "tel":"384-758-6384",
+      "mode":"STUDENT",
+      "dni":"V13145679-1492221385518",
+      "_id":"58f17dc94c67041232984cb4",
+      "createDate":"2017-04-15T01:56:25.525Z"
+    },
+  "_id":"58f17dc94c67041232984cb5",
+  "objetives":[],
+  "physics":[
+      { 
+        height: 23.43,
+        weight: 33,
+        age: 24,
+        _id: '58f242b5d8589f4cb2d3ef67',
+        date: '2017-04-15T15:56:37.838Z' 
+      }
+  ],
+  "discapacityLevel":35.57689666748047
+}
+```
+

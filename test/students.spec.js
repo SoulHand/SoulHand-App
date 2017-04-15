@@ -85,8 +85,22 @@ describe("Test route knowedge cognitions",function(){
 				name:"hola"
 			}
 		}).then(function(response){
-			response=JSON.parse(response);			
+			response=JSON.parse(response);
 			expect(response.data.name).toBe("HOLA");
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
+		});	
+	});
+	it("PUT /v1/people/students/:id/sound/test",function(done){
+		utils.runApp("PUT",`/v1/people/students/${self.student._id}/sound/test?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
+			form:{
+				value:JSON.stringify([5,7,1,3,6])
+			}
+		}).then(function(response){
+			response=JSON.parse(response);
+			expect(response.discapacityLevel).toBe(35.57689666748047);
 			done();
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();
@@ -135,22 +149,17 @@ describe("Test route knowedge cognitions",function(){
 			expect(error.toString()).toBeNull();
 			done();
 		});
-	});/*
+	});
 	it("DELETE /v1/people/students/:id/physic/:del",function(done){
-		var input={
-			height:12.30,
-			weight:40
-		};
-		utils.runApp("DELETE",`/v1/people/students/${self.student._id}/physic/${self.student.physics[0]._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
+		utils.runApp("DEL",`/v1/people/students/${self.student._id}/physic/${self.student.physics[0]._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
 			response=JSON.parse(response);
-			expect(response.physics[0].height).toBe(input.height);
-			expect(response.physics[0].weight).toBe(input.weight);			
+			expect(response.physics.length).toBe(0);
 			done();
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();
 			done();
 		});
-	});*/
+	});
 	it("DELETE /v1/people/students/:id",function(done){
 		utils.runApp("DEL",`/v1/people/students/${self.student._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
 			response=JSON.parse(response);

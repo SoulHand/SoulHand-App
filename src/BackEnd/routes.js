@@ -1384,6 +1384,9 @@ module.exports=function(app,express,server,__DIR__){
 		var people=new SubPeople(app.container.database.Schema.Students);
 		var people2=new People(app.container.database.Schema.Peoples);
 		var grade=new Grade(app.container.database.Schema.Grades);
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido");
+		}
 		if(request.body.dni && !Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
 			throw new ValidatorException("Solo se aceptan documentos de identidad");
 		}
@@ -1394,7 +1397,7 @@ module.exports=function(app,express,server,__DIR__){
 			throw new ValidatorException("La fecha de nacimiento no es valida");
 		}
 		if(request.body.grade && !Validator.isMongoId()(request.body.grade)){
-			throw new ValidatorException("La fecha de nacimiento no es valida");
+			throw new ValidatorException("El grado es invalido");
 		}
 		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
 			throw new ValidatorException("El telefono no tiene un formato valido");
@@ -1433,6 +1436,36 @@ module.exports=function(app,express,server,__DIR__){
 			return Promise.all([people.save(),student.save()]);
 		}).then(function(data){
 			response.send(data[1]);
+		}).catch(function(error){
+			next(error);
+		});		
+	});
+	/*
+	* @api {put} /:id Editar alumno
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	*/
+	StudentsURI.put("/:id/sound/test",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Students);
+		var people2=new People(app.container.database.Schema.Peoples);
+		var CIWeb=require("ciweb");
+		var data=require("ciweb/data/audiometria.json");
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido");
+		}
+		if(!Validator.isJSON()(request.body.value)){
+			throw new ValidatorException("es necesario un arreglo valido");
+		}
+		var X=CIWeb.Matrix.Reshape(JSON.parse(request.body.value),1,5);
+		var H=CIWeb.Tbrain.LinealRegression.Propagation(X,data);
+		app.container.database.Schema.Students.findOne({_id:request.params.id}).then(function(data){
+			data.discapacityLevel=140-H;
+			return data.save();
+		}).then(function(data){			
+			response.send(data);
 		}).catch(function(error){
 			next(error);
 		});		
