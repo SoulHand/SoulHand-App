@@ -24,7 +24,14 @@ describe("Test route knowedge cognitions",function(){
 		self.student=self.db.schema.Students({
 			data:self.people,
 			grade:self.grade,
-			discapacityLevel:0
+			discapacityLevel:0,
+			physics:[
+				{
+					height:23.43,
+					weight:33,
+					age:24
+				}
+			]
 		});
 		self.parent=self.db.schema.Representatives({
 			data:self.people2,
@@ -108,6 +115,42 @@ describe("Test route knowedge cognitions",function(){
 			done();
 		});
 	});
+	it("POST /v1/people/students/:id/physic",function(done){
+		var input={
+			height:12.30,
+			weight:40
+		};
+		utils.runApp("POST",`/v1/people/students/${self.student._id}/physic/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
+			form:input
+		}).then(function(response){
+			response=JSON.parse(response);
+			var now=Date.now();
+			var last=new Date(`${response.data.birthdate}T00:00:00`);
+			var age=((now-last.getTime())/31536000000);
+			expect(response.physics[1].height).toBe(input.height);
+			expect(response.physics[1].weight).toBe(input.weight);			
+			expect(Math.round(response.physics[1].age)).toBe(Math.round(age));			
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
+		});
+	});/*
+	it("DELETE /v1/people/students/:id/physic/:del",function(done){
+		var input={
+			height:12.30,
+			weight:40
+		};
+		utils.runApp("DELETE",`/v1/people/students/${self.student._id}/physic/${self.student.physics[0]._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
+			response=JSON.parse(response);
+			expect(response.physics[0].height).toBe(input.height);
+			expect(response.physics[0].weight).toBe(input.weight);			
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
+		});
+	});*/
 	it("DELETE /v1/people/students/:id",function(done){
 		utils.runApp("DEL",`/v1/people/students/${self.student._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
 			response=JSON.parse(response);

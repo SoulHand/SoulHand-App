@@ -23,12 +23,13 @@ var structDb={
 	physic:mongoose.Schema({
 		date:{type:Date, default:Date.now},
 		weight:{type:Number, required:true, min:0},
-		height:{type:Number, required:true, min:0}
+		height:{type:Number, required:true, min:0},
+		age:{type:Number, required:true, min:0}
 	}),
 	inferences:mongoose.Schema({
-		rule:{type:String, trim:true, uppercase: true},
-		result:{type:String, trim:true, uppercase: true},
-		conditional:{type:String, trim:true, uppercase: true}
+		premise:{type:String, trim:true},
+		consecuent:{type:String, trim:true},
+		event:{type:String, trim:true, uppercase: true}
 	}),
 	weights:mongoose.Schema({
 		height:{type:Number, min:0},

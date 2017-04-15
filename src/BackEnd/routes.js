@@ -17,6 +17,7 @@ var VoidException=require('./SoulHand/Exceptions/VoidException.js');
 var UserException=require('./SoulHand/Exceptions/UserException.js');
 var basicAuth = require('basic-auth-connect');
 var Auth = require('./SoulHand/Auth.js');
+var Events = require('./SoulHand/inferencia/events.js');
 
 module.exports=function(app,express,server,__DIR__){
 	/*
@@ -1116,7 +1117,6 @@ module.exports=function(app,express,server,__DIR__){
 		}).catch(function(error){
 			next(error);
 		});		
-		
 	},function(request,response,next){
 		var user=new Token(app.container.database.Schema.Sessions);
 		var address=request.connection.address() || request.socket.address();
@@ -1471,13 +1471,18 @@ module.exports=function(app,express,server,__DIR__){
 			throw new ValidatorException("El id es invalido!");
 		}
 		app.container.database.Schema.Students.findOne({_id:request.params.id}).then(function(data){
+			var now=Date.now();
+			var last=new Date(`${data.data.birthdate}T00:00:00`);
+			var age=((now-last.getTime())/31536000000);
 			var element=app.container.database.Schema.physic({
 				weight:request.body.weight,
-				height:request.body.height
+				height:request.body.height,
+				age:age
 			});
 			data.physics.push(element);
 			return data.save();
 		}).then(function(data){
+			Events.emit("event");
 			response.send(data);			
 		}).catch(function(error){
 			next(error);
