@@ -200,7 +200,7 @@ eliminar un Alumno
 --------------------
 
 ```curl
-DELETE /v1/people/students/:id	
+DELETE /v1/people/students/:id  
 ```
 
 elimina un Alumno de la colección de Alumnos existente
@@ -232,3 +232,110 @@ elimina un Alumno de la colección de Alumnos existente
   "discapacityLevel":0
 }
 ```
+
+añadir un desarrollo físico
+--------------------
+
+```curl
+POST /v1/people/students/:id/physic
+```
+
+añade un registro al historico de desarrollo físico del alumno
+
+### Parametros
+
+**id**:mongoId
+
+###  Entrada
+
+
+**height**:Number
+
+**weight**:Number
+
+### Respuesta
+
+```json
+{
+  "__v":0,
+  "data":
+    {
+      "__v":0,
+      "name":"WADE LOCKMAN",
+      "birthdate":"1992-03-15",
+      "tel":"384-758-6384",
+      "mode":"STUDENT",
+      "dni":"V13145679-1492221385518",
+      "_id":"58f17dc94c67041232984cb4",
+      "createDate":"2017-04-15T01:56:25.525Z"
+    },
+  "_id":"58f17dc94c67041232984cb5",
+  "objetives":[],
+  "physics":[
+      { 
+        height: 23.43,
+        weight: 33,
+        age: 24,
+        _id: '58f242b5d8589f4cb2d3ef67',
+        date: '2017-04-15T15:56:37.838Z' 
+      },
+      { 
+        _id: '58f242b6d8589f4cb2d3ef72',
+        age: 25.103189958491882,
+        height: 12.3,
+        weight: 40,
+        date: '2017-04-15T15:56:38.532Z' 
+      }
+  ],
+  "discapacityLevel":0
+}
+```
+
+eliminar un desarrollo físico
+--------------------
+
+```curl
+POST /v1/people/students/:id/physic/:del
+```
+
+elimina un registro al historico de desarrollo físico del alumno
+
+### Parametros
+
+**id**:mongoId
+
+**del**:mongoId
+
+###  Entrada
+
+### Respuesta
+
+```json
+{
+  "__v":0,
+  "data":
+    {
+      "__v":0,
+      "name":"WADE LOCKMAN",
+      "birthdate":"1992-03-15",
+      "tel":"384-758-6384",
+      "mode":"STUDENT",
+      "dni":"V13145679-1492221385518",
+      "_id":"58f17dc94c67041232984cb4",
+      "createDate":"2017-04-15T01:56:25.525Z"
+    },
+  "_id":"58f17dc94c67041232984cb5",
+  "objetives":[],
+  "physics":[
+      { 
+        height: 23.43,
+        weight: 33,
+        age: 24,
+        _id: '58f242b5d8589f4cb2d3ef67',
+        date: '2017-04-15T15:56:37.838Z' 
+      }
+  ],
+  "discapacityLevel":0
+}
+```
+
