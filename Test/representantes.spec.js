@@ -97,6 +97,7 @@ describe("Test route knowedge cognitions",function(){
 		utils.runApp("POST",`/v1/people/parents/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
 			form:input
 		}).then(function(response){
+			console.log(response);
 			response=JSON.parse(response);
 			expect(response.data.dni).toBe(input.dni.toUpperCase());
 			expect(response.data.name).toBe(input.name.toUpperCase());

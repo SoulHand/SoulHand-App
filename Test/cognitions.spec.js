@@ -22,8 +22,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(error).toBeNull();
 			done();
 		})
-	})
-	
+	});	
 	it("GET /v1/knowedge/:domain/cognitions",function(done){
 		utils.runApp("GET",`/v1/knowedge/${category.name}/cognitions/`).then(function(response){
 			response=JSON.parse(response);

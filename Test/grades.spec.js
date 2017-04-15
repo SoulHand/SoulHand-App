@@ -70,7 +70,7 @@ describe("Test route knowedge cognitions",function(){
 				name:"1ro",
 			}
 		}).then(function(response){
-			response=JSON.parse(response);			
+			response=JSON.parse(response);	
 			expect(response.name).toBe("1RO");
 			done();
 		}).catch(function(error){

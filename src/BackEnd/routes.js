@@ -1029,7 +1029,7 @@ module.exports=function(app,express,server,__DIR__){
 	UsersURI.put("/root/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var user=new User(app.container.database.Schema.User);
 		user.update({_id:request.params.id},function(data){
-			data.isAdmin=(request.body.isAdmin) ? true : false;
+			data.isAdmin=(!request.body.isAdmin || request.body.isAdmin=="false") ? false : true;
 			return data;
 		}).then(function(data){
 			response.send(data);

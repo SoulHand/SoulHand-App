@@ -85,6 +85,20 @@ describe("Test route knowedge cognitions",function(){
 			done();
 		});	
 	});
+	it("PUT /v1/users/root/:id",function(done){
+		utils.runApp("PUT",`/v1/users/root/${user.user}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
+			form:{
+				isAdmin:false
+			}
+		}).then(function(response){
+			response=JSON.parse(response);
+			expect(response.isAdmin).toBe(false);
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
+		});	
+	});
 	it("POST /v1/users/",function(done){
 		var input={
 			dni:self.teacher.data.dni,
@@ -98,6 +112,22 @@ describe("Test route knowedge cognitions",function(){
 		}).then(function(response){
 			response=JSON.parse(response);
 			expect(response.username).toBe(input.username);
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
+		});
+	});
+	it("POST /v1/auth/",function(done){
+		var input={
+			username:"root",
+			password:"12345"
+		};
+		utils.runApp("POST",`/v1/auth/`,{
+			form:input
+		}).then(function(response){
+			response=JSON.parse(response);
+			expect(response.user.username).toBe(input.username);
 			done();
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();

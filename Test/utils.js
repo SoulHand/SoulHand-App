@@ -35,7 +35,7 @@ function insertUser(db){
 	});
 	var p2=db.schema.User({
 			username:"root",
-			password:base64.encode('123'),
+			password:base64.encode('12345'),
 			isAdmin:true,
 			people:p1
 		});
