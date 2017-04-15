@@ -127,7 +127,7 @@ describe("Test route knowedge cognitions",function(){
 			form:input
 		}).then(function(response){
 			response=JSON.parse(response);
-			expect(response.user.username).toBe(input.username);
+			expect(response.user._id).toBe(user.user.toString());
 			done();
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();

@@ -970,11 +970,10 @@ module.exports=function(app,express,server,__DIR__){
 		if(!Validator.isLength(5,14)(request.body.password)){
 			throw new ValidatorException("Es necesario una contraseña de por lo menos 5 caracteres");			
 		}
-		const base64=require('base-64');
 		var fields={
 			username:request.body.username,
 			email:request.body.email,
-			password:base64.encode(request.body.password),
+			password:request.body.password,
 			people:null
 		};
 		people.find({dni:request.body.dni}).then(function(data){
@@ -1104,12 +1103,13 @@ module.exports=function(app,express,server,__DIR__){
 	* Authorization: Basic base64(username:pass)
 	*/
 	app.post('/v1/auth',function(request,response,next){
-		var username=request.body.username;
-		var pass=request.body.password;
 		const base64=require('base-64');
-		app.container.database.Schema.User.findOne({$and:[{$or:[{username:username},{email:username}]},{password:base64.encode(pass)}]}).then(function(data){
-			if(!data){
-				throw new UserException("no existe el usuario!");
+		var username=request.body.username;
+		var pass=base64.encode(request.body.password);
+		app.container.database.Schema.User.findOne({$or:[{username:username},{email:username}]}).then(function(data){
+			console.log(pass,base64.decode(data.password));
+			if(!data || pass!=data.password){
+				throw new UserException("usuario invalido!");
 			}
 			request.user = request.remoteUser = data;
 			next();

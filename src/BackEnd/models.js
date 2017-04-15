@@ -1,4 +1,9 @@
 var mongoose= require('mongoose');
+var encode=function(str){
+	const base64=require('base-64');
+	return base64.encode(str);
+};
+
 var structDb={	
 	Grades:mongoose.Schema({
 		name:{type:String, required:true, trim:true, uppercase: true}
@@ -58,7 +63,7 @@ structDb.Representatives=mongoose.Schema({
 
 structDb.User=mongoose.Schema({
 	username:{ type : String, trim : true, index : true , unique:true},
-   	password : { type : String },
+   	password : { type : String, set:encode},
    	email:{ type : String, trim : true, unique:true},
    	dateCreated:{ type: Date, default: Date.now },
    	dateConfirmed:Date,

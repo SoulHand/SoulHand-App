@@ -26,7 +26,6 @@ module.exports.dropDatabase=function(done){
 
 
 function insertUser(db){
-	const base64=require('base-64');
 	var p1=db.schema.Peoples({
 		dni:'V12345678',
 		name:"ROOT USER",
@@ -35,7 +34,7 @@ function insertUser(db){
 	});
 	var p2=db.schema.User({
 			username:"root",
-			password:base64.encode('12345'),
+			password:'12345',
 			isAdmin:true,
 			people:p1
 		});
