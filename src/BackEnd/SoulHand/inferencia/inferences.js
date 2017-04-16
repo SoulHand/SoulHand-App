@@ -5,11 +5,9 @@ class Inferences extends EventEmitter{
 		super();
 		this.db = db;
 	}
-	get(event,var_premise){
-		var premise=new RegExp(`${var_premise}`,"ig");
+	get(event){
 		return db.find({
-			event:event,
-			$or:[{objects:var_premise},{consecuent:premise}]
+			name:event			
 		});
 	}
 	ModusPones(premises,var_globals){

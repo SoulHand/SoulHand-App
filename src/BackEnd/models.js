@@ -29,8 +29,7 @@ var structDb={
 	inferences:mongoose.Schema({
 		premise:{type:String, trim:true},
 		consecuent:{type:String, trim:true},
-		objects:[{type:String, trim:true}],
-		event:{type:String, trim:true, uppercase: true}
+		h:{type:Number, default:1}
 	}),
 	weights:mongoose.Schema({
 		height:{type:Number, min:0},
@@ -140,7 +139,11 @@ structDb.Activities=mongoose.Schema({
 	course:structDb.Courses,
 	dateCreated:{ type: Date, default: Date.now },
 });
-
+structDb.events=mongoose.Schema({
+	name:{type:String, trim:true,uppercase: true},
+	objects:[],
+	premises:[structDb.inferences]
+})
 
 /*
 structDb.ConflictCognitions=mongoose.Schema({

@@ -19,7 +19,7 @@ var basicAuth = require('basic-auth-connect');
 var Auth = require('./SoulHand/Auth.js');
 
 module.exports=function(app,express,server,__DIR__){
-	var Events = require('./SoulHand/inferencia/events.js')(app.container.database.Schema.inferences);
+	var Events = require('./SoulHand/inferencia/events.js')(app.container.database.Schema.events);
 	/*
 	* Ruta /v1/grades
 	* @var gradeURI object enrutador para agrupar metodos
@@ -418,11 +418,11 @@ module.exports=function(app,express,server,__DIR__){
 						}
 					}
 				}
-				if(!findElement){
-					throw VoidException("No existe el registro!");
-				}
 				return row;
 			});
+			if(!findElement){
+				throw VoidException("No existe el registro!");
+			}
 			return obj;
 		}).then(function(data){
 			response.send(data);
@@ -1976,6 +1976,251 @@ module.exports=function(app,express,server,__DIR__){
 
 
 
+	/*
+	* Ruta /v1/learning
+	* @var learningURI object enrutador para agrupar metodos
+	*/
+	var inferenURI = express.Router();
+	/*
+	* Ruta /v1/learning/domain
+
+	* @api {post} / Crear dominio del aprendizaje
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions> objeto CRUD
+	*/
+	inferenURI.post("/type",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.events);
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("Solo se aceptan textos categoricos");
+		}
+		if(!Validator.isJSON()(request.body.objects)){
+			throw new ValidatorException("Es necesario un arreglo valido");
+		}
+		request.body.objects=JSON.parse(request.body.objects);
+		category.add(request.body.name.toUpperCase(),request.body).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todas los dominios del aprendizaje
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	inferenURI.get("/type",function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.events);
+		category.get().then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} /:name Obtener un dominio del aprendizaje
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	inferenURI.get("/type/:id",function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.events);
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		category.find({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {put} /:id Editar categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	inferenURI.put("/type/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.events);
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		if(request.body.name && Validator.isNull()(request.body.name)){
+			throw new ValidatorException("Solo se aceptan textos categoricos");
+		}
+		if(request.body.objects && !Validator.isJSON()(request.body.objects)){
+			throw new ValidatorException("Es necesario un arreglo valido");
+		}
+		category.update({_id:request.params.id},function(row){
+			for(var i=0,keys=Object.keys(row.schema.obj),n=keys.length;i<n;i++){
+				if(request.body[keys[i]]){
+					row[keys[i]]=request.body[keys[i]];							
+				}
+			}
+			return row;
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {delete} /:id Eliminar una categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	inferenURI.delete("/type/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.events);
+		category.remove({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+
+
+	/*
+	* @api {post} / Crear Categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions> objeto CRUD
+	*/
+	inferenURI.post("/:event/inferences",Auth.isAdmin.bind(app.container),function(request, response,next) {		
+		var domain=new CategoryCoginitions(app.container.database.Schema.events);
+		if(Validator.isNull()(request.body.premise)){
+			throw new ValidatorException("Solo se aceptan textos categoricos");
+		}
+		if(Validator.isNull()(request.body.consecuent)){
+			throw new ValidatorException("Es necesario una consecuencia");
+		}
+		if(Validator.isNull()(request.params.event)){
+			throw new ValidatorException("Solo se aceptan dominios validos");
+		}
+		domain.find({name:request.params.event.toUpperCase()}).then(function(row){
+			row.premises.push(app.container.database.Schema.inferences({
+				premise:request.body.premise,
+				consecuent:request.body.consecuent
+			}));
+			return row.save();
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todas las categorias cognitivas
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	inferenURI.get("/:event/inferences",function(request, response,next) {
+		var domain=new CategoryCoginitions(app.container.database.Schema.events);
+		if(Validator.isNull()(request.params.event)){
+			throw new ValidatorException("Solo se aceptan dominios validos");
+		}
+		domain.find({name:request.params.event.toUpperCase()}).then(function(row){
+			response.send(row.premises);			
+		}).catch(function(error){
+			console.log(error.toString());
+			next(error);
+		});
+	});
+	/*
+	* @api {get} /:name Obtener una categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	inferenURI.get("/:event/inferences/:id",function(request, response,next) {
+		var domain=new CategoryCoginitions(app.container.database.Schema.events);
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id no es valido!");
+		}			
+		domain.find({name:request.params.event.toUpperCase()}).then(function(data){
+			for (var i=0,n=data.premises.length;i<n;i++){
+				if(data.premises[i]._id==request.params.id){
+					response.send(data.premises[i]);
+					return;
+				}
+			}
+			throw new VoidException("No existe un resultado!");
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {put} /:id Editar categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	inferenURI.put("/:event/inferences/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.events);
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		category.update({name:request.params.event.toUpperCase()},function(obj){
+			var findElement=false;
+			obj.premises=obj.premises.map(function(row){
+				if(request.params.id==row._id){
+					findElement=true;
+					for(var i=0,keys=Object.keys(row.schema.obj),n=keys.length;i<n;i++){
+						if(request.body[keys[i]]){
+							row[keys[i]]=request.body[keys[i]];							
+						}
+					}
+				}
+				return row;
+			});
+			if(!findElement){
+				throw VoidException("No existe el registro!");
+			}
+			return obj;
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			console.log(error);
+			next(error);
+		});
+	});
+	/*
+	* @api {delete} /:id Eliminar una categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	inferenURI.delete("/:event/inferences/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.events);
+		category.update({name:request.params.event.toUpperCase()},function(obj){
+			for(i in obj.premises){
+				if(obj.premises[i]._id==request.params.id){
+					obj.premises[i].remove();
+					break;
+				}
+			}
+			return obj;			
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+
+
+	app.use("/v1/events",inferenURI);
 
 
 
