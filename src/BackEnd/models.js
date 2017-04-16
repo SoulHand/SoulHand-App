@@ -29,6 +29,7 @@ var structDb={
 	inferences:mongoose.Schema({
 		premise:{type:String, trim:true},
 		consecuent:{type:String, trim:true},
+		objects:[{type:String, trim:true}],
 		event:{type:String, trim:true, uppercase: true}
 	}),
 	weights:mongoose.Schema({

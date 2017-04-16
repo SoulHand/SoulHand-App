@@ -17,9 +17,9 @@ var VoidException=require('./SoulHand/Exceptions/VoidException.js');
 var UserException=require('./SoulHand/Exceptions/UserException.js');
 var basicAuth = require('basic-auth-connect');
 var Auth = require('./SoulHand/Auth.js');
-var Events = require('./SoulHand/inferencia/events.js');
 
 module.exports=function(app,express,server,__DIR__){
+	var Events = require('./SoulHand/inferencia/events.js')(app.container.database.Schema.inferences);
 	/*
 	* Ruta /v1/grades
 	* @var gradeURI object enrutador para agrupar metodos
@@ -1515,14 +1515,12 @@ module.exports=function(app,express,server,__DIR__){
 			data.physics.push(element);
 			return data.save();
 		}).then(function(data){
-			Events.emit("event");
-			response.send(data);			
+			Events.emit("physic-add");
+			response.send(data);
 		}).catch(function(error){
 			next(error);
 		});
 	});
-
-
 	StudentsURI.delete("/:id/physic/:del",function(request, response,next) {
 		if(!Validator.isMongoId()(request.params.id) || !Validator.isMongoId()(request.params.del)){
 			throw new ValidatorException("El id es invalido!");
@@ -1595,7 +1593,7 @@ module.exports=function(app,express,server,__DIR__){
 	}); */
 	app.use("/v1/people/students",StudentsURI);
 	/*
-	* Ruta /v1/representives		
+	* Ruta /v1/representives
 	* @var ReferencesToURI object enrutador para agrupar metodos
 	*/
 	var ReferencesToURI = express.Router();

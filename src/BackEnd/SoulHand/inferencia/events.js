@@ -1,13 +1,14 @@
-const EventEmitter = require('events');
+const Inferences = require('./inferences.js');
 
-class MyEmitter extends EventEmitter {}
+module.exports=function(db){
+	const myEmitter = new Inferences(db);
 
-const myEmitter = new MyEmitter();
+	myEmitter.on('physic-add', () => {
+	  console.log('an event occurred!');
+	});
 
-myEmitter.on('event', () => {
-  console.log('an event occurred!');
-});
-//myEmitter.emit('event');
-
-module.exports=myEmitter;
-//myEmitter.emit('event');
+	myEmitter.on('history', (message) => {
+	  console.log(message);
+	});
+	return myEmitter;
+}
