@@ -30,7 +30,6 @@ describe("Test route knowedge cognitions",function(){
 			expect(response[0].name).toBe(category.name);
 			done();
 		}).catch(function(error){
-			console.log(error);
 			expect(error).toBeNull();
 			done();
 		});

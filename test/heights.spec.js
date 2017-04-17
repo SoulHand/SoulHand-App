@@ -27,7 +27,6 @@ describe("Test route knowedge cognitions",function(){
 			expect(response[0].age).toBe(find.age);
 			done();
 		}).catch(function(error){
-			console.log(error);
 			expect(error).toBeNull();
 			done();
 		});

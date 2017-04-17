@@ -19,7 +19,7 @@ var basicAuth = require('basic-auth-connect');
 var Auth = require('./SoulHand/Auth.js');
 
 module.exports=function(app,express,server,__DIR__){
-	var Events = require('./SoulHand/inferencia/events.js')(app.container.database.Schema.events);
+	var Events = require('./SoulHand/inferencia/events.js')(app.container.database.Schema);
 	/*
 	* Ruta /v1/grades
 	* @var gradeURI object enrutador para agrupar metodos
@@ -364,7 +364,6 @@ module.exports=function(app,express,server,__DIR__){
 		domain.find({name:request.params.domain.toUpperCase()}).then(function(row){
 			response.send(row.cognitions);			
 		}).catch(function(error){
-			console.log(error.toString());
 			next(error);
 		});
 	});
@@ -427,7 +426,6 @@ module.exports=function(app,express,server,__DIR__){
 		}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
-			console.log(error);
 			next(error);
 		});
 	});
@@ -1108,7 +1106,6 @@ module.exports=function(app,express,server,__DIR__){
 		var username=request.body.username;
 		var pass=base64.encode(request.body.password);
 		app.container.database.Schema.User.findOne({$or:[{username:username},{email:username}]}).then(function(data){
-			console.log(pass,base64.decode(data.password));
 			if(!data || pass!=data.password){
 				throw new UserException("usuario invalido!");
 			}
@@ -1155,6 +1152,12 @@ module.exports=function(app,express,server,__DIR__){
 		}
 		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
 			throw new ValidatorException("El telefono no tiene un formato valido");
+		}
+		if(Validator.isNull()(request.body.genero)){
+			throw new ValidatorException("Es necesario un genero");
+		}
+		if(request.body.genero.toUpperCase()!="MASCULINO" && request.body.genero.toUpperCase()!="FEMENINO" ){
+			throw new ValidatorException("El genero es invalido");
 		}
 		request.body.dni=request.body.dni.toUpperCase();
 		var fields={
@@ -1222,6 +1225,9 @@ module.exports=function(app,express,server,__DIR__){
 		}
 		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
 			throw new ValidatorException("El telefono no tiene un formato valido");
+		}
+		if(request.body.genero && request.body.genero.toUpperCase()!="MASCULINO" && request.body.genero.toUpperCase()!="FEMENINO" ){
+			throw new ValidatorException("El genero es invalido");
 		}
 		var people,teacher;
 		app.container.database.Schema.Teachers.findOne({_id:request.params.id}).then(function(data){
@@ -1296,7 +1302,13 @@ module.exports=function(app,express,server,__DIR__){
 		}
 		if(!Validator.isDate()(request.body.birthdate)){
 			throw new ValidatorException("La fecha de nacimiento no es valida");
-		}		
+		}
+		if(Validator.isNull()(request.body.genero)){
+			throw new ValidatorException("Es necesario un genero");
+		}
+		if(request.body.genero.toUpperCase()!="MASCULINO" && request.body.genero.toUpperCase()!="FEMENINO" ){
+			throw new ValidatorException("El genero es invalido");
+		}
 		var fields={
 			data:JSON.parse(JSON.stringify(request.body)),
 			activities:[],
@@ -1401,6 +1413,9 @@ module.exports=function(app,express,server,__DIR__){
 		}
 		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
 			throw new ValidatorException("El telefono no tiene un formato valido");
+		}
+		if(request.body.genero && request.body.genero.toUpperCase()!="MASCULINO" && request.body.genero.toUpperCase()!="FEMENINO" ){
+			throw new ValidatorException("El genero es invalido");
 		}
 		var people, student,gradeData,p1;
 		if(request.body.grade){
@@ -1513,9 +1528,9 @@ module.exports=function(app,express,server,__DIR__){
 				age:age
 			});
 			data.physics.push(element);
+			Events.emit("physic-add",element,data);
 			return data.save();
 		}).then(function(data){
-			Events.emit("physic-add");
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -1562,7 +1577,6 @@ module.exports=function(app,express,server,__DIR__){
 			return people.update({"data.dni":request.params.dni},function(data){
 				var time=new Date(data.data.birthdate);
 				var age=Math.floor((Date.now()-time.getTime())/(86400000*364));
-				console.log(age);
 				var value=0,percentil=0;
 				inteligence.serie.forEach(function(serie){
 					if(input.serie[serie.name] && !(serie.age.min>=age && serie.age.max<=age)){
@@ -1621,6 +1635,12 @@ module.exports=function(app,express,server,__DIR__){
 		}
 		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
 			throw new ValidatorException("El telefono no tiene un formato valido");
+		}
+		if(Validator.isNull()(request.body.genero)){
+			throw new ValidatorException("Es necesario un genero");
+		}
+		if(request.body.genero.toUpperCase()!="MASCULINO" && request.body.genero.toUpperCase()!="FEMENINO" ){
+			throw new ValidatorException("El genero es invalido");
 		}
 		var fields={
 			data:JSON.parse(JSON.stringify(request.body)),
@@ -1697,7 +1717,9 @@ module.exports=function(app,express,server,__DIR__){
 		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
 			throw new ValidatorException("El telefono no tiene un formato valido");
 		}
-
+		if(request.body.genero && request.body.genero.toUpperCase()!="MASCULINO" && request.body.genero.toUpperCase()!="FEMENINO" ){
+			throw new ValidatorException("El genero es invalido");
+		}
 		var people, represent;
 		app.container.database.Schema.Representatives.findOne({_id:request.params.id}).then(function(data){
 			represent=data;
@@ -2131,7 +2153,6 @@ module.exports=function(app,express,server,__DIR__){
 		domain.find({name:request.params.event.toUpperCase()}).then(function(row){
 			response.send(row.premises);			
 		}).catch(function(error){
-			console.log(error.toString());
 			next(error);
 		});
 	});
@@ -2191,7 +2212,6 @@ module.exports=function(app,express,server,__DIR__){
 		}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
-			console.log(error);
 			next(error);
 		});
 	});

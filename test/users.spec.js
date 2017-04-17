@@ -45,7 +45,6 @@ describe("Test route knowedge cognitions",function(){
 			expect(response[0]._id).toBe(user.user.toString());
 			done();
 		}).catch(function(error){
-			console.log(error);
 			expect(error).toBeNull();
 			done();
 		});

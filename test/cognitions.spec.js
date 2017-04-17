@@ -29,7 +29,6 @@ describe("Test route knowedge cognitions",function(){
 			expect(response[0].name).toBe(find.name);
 			done();
 		}).catch(function(error){
-			console.log(error);
 			expect(error).toBeNull();
 			done();
 		});
@@ -71,7 +70,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(cognition[0].name).toBe("HOLA");
 			done();
 		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+			expect(error).toBeNull();
 			done();
 		});	
 	});
@@ -92,7 +91,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(cognition[0].name).toBe("HOLA");
 			done();
 		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+			expect(error).toBeNull();
 			done();
 		});	
 	});
@@ -102,7 +101,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(response.cognitions.length).toBe(0);
 			done();
 		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+			expect(error).toBeNull();
 			done();
 		});
 	});

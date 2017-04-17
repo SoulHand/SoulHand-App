@@ -30,7 +30,9 @@ function insertUser(db){
 		dni:'V12345678',
 		name:"ROOT USER",
 		birthdate:"1970-01-01",
-		mode:"TEACHER"
+		mode:"TEACHER",
+		genero:"FEMENINO"
+
 	});
 	var p2=db.schema.User({
 			username:"root",

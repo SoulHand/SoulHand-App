@@ -10,13 +10,15 @@ describe("Test route knowedge cognitions",function(){
 			dni:"V12345679",
 			name:"people",
 			birthdate:"1992-03-15",
-			mode:"STUDENT"
+			mode:"STUDENT",
+			genero:"FEMENINO"
 		});
 		self.people2=self.db.schema.Peoples({
 			dni:"V13145679",
 			name:"people",
 			birthdate:"1992-03-15",
-			mode:"PARENT"
+			mode:"PARENT",
+			genero:"FEMENINO"
 		});
 		self.grade=self.db.schema.Grades({
 			name:"1ro"
@@ -46,7 +48,6 @@ describe("Test route knowedge cognitions",function(){
 			expect(response[0].students[0]._id).toBe(self.student._id.toString());
 			done();
 		}).catch(function(error){
-			console.log(error);
 			expect(error).toBeNull();
 			done();
 		});
@@ -97,7 +98,6 @@ describe("Test route knowedge cognitions",function(){
 		utils.runApp("POST",`/v1/people/parents/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
 			form:input
 		}).then(function(response){
-			console.log(response);
 			response=JSON.parse(response);
 			expect(response.data.dni).toBe(input.dni.toUpperCase());
 			expect(response.data.name).toBe(input.name.toUpperCase());

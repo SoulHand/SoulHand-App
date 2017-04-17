@@ -27,7 +27,6 @@ describe("Test route knowedge cognitions",function(){
 			expect(response[0].height).toBe(find.height);
 			done();
 		}).catch(function(error){
-			console.log(error);
 			expect(error).toBeNull();
 			done();
 		});
@@ -39,7 +38,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(response.height).toBe(find.height);
 			done();
 		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+			expect(error).toBeNull();
 			done();
 		});	
 	});
@@ -63,7 +62,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(response.height).toBe(12);
 			done();
 		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+			expect(error).toBeNull();
 			done();
 		});	
 	});
@@ -80,7 +79,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(response.height).toBe(8);
 			done();
 		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+			expect(error).toBeNull();
 			done();
 		});	
 	});
@@ -90,7 +89,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(response._id).toBe(find._id.toString());
 			done();
 		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+			expect(error).toBeNull();
 			done();
 		});
 	});

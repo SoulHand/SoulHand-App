@@ -6,17 +6,18 @@ class Inferences extends EventEmitter{
 		this.db = db;
 	}
 	get(event){
-		return db.find({
+		return this.db.findOne({
 			name:event			
 		});
 	}
 	ModusPones(premises,var_globals){
 		var keys=Object.keys(var_globals);
-		var exp=new RegExp(`([p-t][0-9]+)`,'g');
+		var exp=new RegExp(`([xp-t][0-9]+)`,'g');
 		var consecuents=[];
 		while(premises.length){
 			var row=premises.shift();
 			var premise=row.premise.replace(exp,"var_globals.$1");
+			console.log(premise);
 			var p1=eval(premise);
 			if(p1){
 				var vars={};

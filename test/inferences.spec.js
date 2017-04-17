@@ -13,11 +13,9 @@ describe("Test route knowedge cognitions",function(){
 		});
 		category=new self.db.schema.events({
 			name:faker.name.findName(),
-			objects:[
-				{
-					p1:"var1"
-				}
-			],
+			objects:{
+				p1:"var1"
+			},
 			premises:[find]
 		});
 		Promise.all([utils.insertSession(self.db), category.save()]).then(function(data){	
@@ -34,7 +32,6 @@ describe("Test route knowedge cognitions",function(){
 			expect(response[0].name).toBe(find.name);
 			done();
 		}).catch(function(error){
-			console.log(error);
 			expect(error).toBeNull();
 			done();
 		});
@@ -76,7 +73,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(cognition[0].premise).toBe("hola");
 			done();
 		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+			expect(error).toBeNull();
 			done();
 		});	
 	});
@@ -97,7 +94,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(cognition[0].premise).toBe("hola");
 			done();
 		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+			expect(error).toBeNull();
 			done();
 		});	
 	});
@@ -107,7 +104,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(response.premises.length).toBe(0);
 			done();
 		}).catch(function(error){
-			expect(error.toString()).toBeNull();
+			expect(error).toBeNull();
 			done();
 		});
 	});

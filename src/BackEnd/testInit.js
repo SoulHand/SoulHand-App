@@ -3,7 +3,6 @@ var VoidException=require("./SoulHand/Exceptions/VoidException.js");
 
 module.exports=function(app,express,server,__DIR__){
 	const uuidV4 = require('uuid/v4');
-	const base64=require('base-64');
 	var admin=new User(app.container.database.Schema.User);
 	var password=uuidV4();
 	var people=app.container.database.Schema.Peoples({
@@ -17,7 +16,7 @@ module.exports=function(app,express,server,__DIR__){
 			people.save().then(function(){
 				return admin.add({
 					username:"root",
-					password:base64.encode(password),
+					password:password,
 					isAdmin:true,
 					people:people
 				});

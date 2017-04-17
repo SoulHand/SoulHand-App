@@ -13,11 +13,9 @@ describe("Test route knowedge cognitions",function(){
 		});
 		category=new self.db.schema.events({
 			name:faker.name.findName(),
-			objects:[
-				{
-					p1:"var1"
-				}
-			],
+			objects:{
+				p1:"var1"
+			},
 			premises:[find]
 		});
 		Promise.all([utils.insertSession(self.db), category.save()]).then(function(data){	
@@ -35,7 +33,6 @@ describe("Test route knowedge cognitions",function(){
 			expect(response[0].name).toBe(category.name);
 			done();
 		}).catch(function(error){
-			console.log(error);
 			expect(error).toBeNull();
 			done();
 		});
@@ -44,7 +41,6 @@ describe("Test route knowedge cognitions",function(){
 	it("GET /v1/events/type/:id",function(done){
 		utils.runApp("GET",`/v1/events/type/${category._id}`).then(function(response){
 			response=JSON.parse(response);
-			console.log(response);
 			expect(response.name).toBe(category.name);
 			done();
 		}).catch(function(error){
@@ -80,11 +76,11 @@ describe("Test route knowedge cognitions",function(){
 		utils.runApp("POST",`/v1/events/type?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
 			form:{
 				name:"hola",
-				objects:JSON.stringify([
+				objects:JSON.stringify(
 					{
 						p1:"var1.value"
 					}
-				])
+				)
 			}
 		}).then(function(response){
 			response=JSON.parse(response);	

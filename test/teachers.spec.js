@@ -10,13 +10,15 @@ describe("Test route knowedge cognitions",function(){
 			dni:"V12345679",
 			name:"people",
 			birthdate:"1992-03-15",
-			mode:"STUDENT"
+			mode:"STUDENT",
+			genero:"FEMENINO"
 		});
 		self.people2=self.db.schema.Peoples({
 			dni:"V13145679",
 			name:"people",
 			birthdate:"1992-03-15",
-			mode:"TEACHER"
+			mode:"TEACHER",
+			genero:"FEMENINO"
 		});
 		self.grade=self.db.schema.Grades({
 			name:"1ro"
@@ -45,7 +47,6 @@ describe("Test route knowedge cognitions",function(){
 			expect(response[0].data.name).toBe(self.teacher.data.name);
 			done();
 		}).catch(function(error){
-			console.log(error);
 			expect(error).toBeNull();
 			done();
 		});

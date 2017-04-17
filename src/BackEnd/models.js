@@ -50,7 +50,8 @@ var structDb={
 		createDate:{type:Date, default:Date.now},
 		tel:{type:String, required: false},
 		image:{type:String, required:false},
-		mode:{type:String, required:true}
+		mode:{type:String, required:true},
+		genero:{type:String, trim:true, uppercase: true}
 	})
 };
 structDb.Teachers=mongoose.Schema({
@@ -141,7 +142,7 @@ structDb.Activities=mongoose.Schema({
 });
 structDb.events=mongoose.Schema({
 	name:{type:String, trim:true,uppercase: true},
-	objects:[],
+	objects:{type:Object},
 	premises:[structDb.inferences]
 })
 
