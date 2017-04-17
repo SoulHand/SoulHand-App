@@ -452,6 +452,104 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* @api {post} / Crear Categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions> objeto CRUD
+	*/
+	cognitions.post("/:domain/level",Auth.isAdmin.bind(app.container),function(request, response,next) {		
+		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("Solo se aceptan textos categoricos");
+		}
+		if(!Validator.isNumeric()(request.body.level)){
+			throw new ValidatorException("El nivel es numerico");
+		}
+		domain.find({name:request.params.domain.toUpperCase()}).then(function(row){
+			var level= new app.container.database.Schema.nivelDomain({
+				name:request.body.name.toUpperCase(),
+				level:request.body.level
+			});
+			row.levels.forEach((row)=>{
+				if(row.level==level.level || row.name == level.name){
+					throw new ValidatorException("ya existe un registro con similares descripciones!");
+				}
+			});
+			row.levels.push(level);
+			return row.save();
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todas las categorias cognitivas
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	cognitions.get("/:domain/level",function(request, response,next) {
+		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
+		if(Validator.isNull()(request.params.domain)){
+			throw new ValidatorException("Solo se aceptan dominios validos");
+		}
+		domain.find({name:request.params.domain.toUpperCase()}).then(function(row){
+			response.send(row.levels);			
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} /:name Obtener una categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	cognitions.get("/:domain/level/:id",function(request, response,next) {
+		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id no es valido!");
+		}			
+		domain.find({name:request.params.domain.toUpperCase()}).then(function(data){
+			for (var i=0,n=data.levels.length;i<n;i++){
+				if(data.levels[i]._id==request.params.id){
+					response.send(data.levels[i]);
+					return;
+				}
+			}
+			throw new VoidException("No existe un resultado!");
+		}).catch(function(error){
+			next(error);
+		});
+	});	
+	/*
+	* @api {delete} /:id Eliminar una categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	cognitions.delete("/:domain/level/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
+		category.update({name:request.params.domain.toUpperCase()},function(obj){
+			for(i in obj.levels){
+				if(obj.levels[i]._id==request.params.id){
+					obj.levels[i].remove();
+					break;
+				}
+			}
+			return obj;			
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
 
 	/*
 	* @api {post} /:domain/objetives/:type Crear Categoria cognitiva

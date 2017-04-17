@@ -20,6 +20,11 @@ var structDb={
 	mode_morphema:mongoose.Schema({
 		name:{type:String, required:true, trim:true, uppercase: true}
 	}),
+	nivelDomain:mongoose.Schema({
+		name:{type:String, required:true, trim:true, uppercase: true},
+		level:{type:Number},
+		words:[]
+	}),
 	physic:mongoose.Schema({
 		date:{type:Date, default:Date.now},
 		weight:{type:Number, required:true, min:0},
@@ -107,12 +112,21 @@ structDb.domainsLearning=mongoose.Schema({
 	name:{type:String, required:true, trim:true, uppercase: true},
 	description:{type:String, required:true, trim:true, uppercase: true},
 	cognitions:[structDb.Cognitions],
+	levels:[structDb.nivelDomain],
 	words:[structDb.words]
 });
 structDb.LearningObjetive=mongoose.Schema({
 	name:{type:String, trim:true, required: true, uppercase: true},
 	description:{type:String, trim:true, required: false, uppercase: true},
-	domain:{ type: mongoose.Schema.ObjectId, ref: "domainsLearning" },
+	domain:{
+		_id:{ type: mongoose.Schema.ObjectId, ref: "domainsLearning" },
+		name:{type:String, trim:true, uppercase: true}
+	},
+	level:{
+		_id:{ type: mongoose.Schema.ObjectId, ref: "nivelDomain" },
+		name:{type:String, trim:true, uppercase: true},
+		level:{type:Number}
+	},
 	cognitions:[structDb.Cognitions],
    	dateCreated:{ type: Date, default: Date.now },
 	words:[structDb.words],
