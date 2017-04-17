@@ -459,7 +459,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions> objeto CRUD
 	*/
-	cognitions.post("/:domain/level",Auth.isAdmin.bind(app.container),function(request, response,next) {		
+	cognitions.post("/:domain/level/",Auth.isAdmin.bind(app.container),function(request, response,next) {		
 		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Solo se aceptan textos categoricos");
@@ -492,7 +492,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	cognitions.get("/:domain/level",function(request, response,next) {
+	cognitions.get("/:domain/level/",function(request, response,next) {
 		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
 		if(Validator.isNull()(request.params.domain)){
 			throw new ValidatorException("Solo se aceptan dominios validos");
@@ -558,7 +558,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions> objeto CRUD
 	*/
-	cognitions.post("/:domain/objetives/:type",Auth.isAdmin.bind(app.container),function(request, response,next) {		
+	cognitions.post("/:domain/objetives/:level",Auth.isAdmin.bind(app.container),function(request, response,next) {		
 		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
 		var dm;
 		if(Validator.isNull()(request.body.name)){
@@ -567,15 +567,27 @@ module.exports=function(app,express,server,__DIR__){
 		if(Validator.isNull()(request.body.description)){
 			throw new ValidatorException("Es necesaria una description");
 		}
+		request.params.level=request.params.level.toUpperCase();
 		domain.find({name:request.params.domain.toUpperCase()}).then(function(row){
 			dm=row;
-			return app.container.database.Schema.typeLearning.findOne({name:request.params.type.toUpperCase()});
+			for(var i in row.levels){
+				if(row.levels[i].name ==request.params.level){
+					return row.levels[i];
+				}
+			}
+			throw new ValidatorException("No existe el nivel de aprendizaje");
 		}).then(function(data){
 			var p1=new app.container.database.Schema.LearningObjetive({
 				name:request.body.name,
 				description:request.body.description,
-				type:data,
-				domain:dm._id
+				domain:{
+					_id:dm._id,
+					name:dm.name
+				},
+				level:{
+					_id:data._id,
+					name:data.name
+				}
 			});
 			return p1.save();
 		}).then(function(data){
@@ -591,13 +603,9 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	cognitions.get("/:domain/objetives/:type",function(request, response,next) {
-		if(!Validator.isMongoId()(request.params.domain)){
-			throw new ValidatorException("El id es invalido!");
-		}
-		app.container.database.Schema.LearningObjetive.find({domain:request.params.domain,"type.name":request.params.type}).then(function(rows){
+	cognitions.get("/:domain/objetives/:level",function(request, response,next) {
+		app.container.database.Schema.LearningObjetive.find({"domain.name":request.params.domain.toString(),"level.name":request.params.level.toString()}).then(function(rows){
 			response.send(rows);			
-			
 		}).catch(function(error){
 			next(error);
 		});
@@ -609,11 +617,11 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	cognitions.get("/:domain/objetives/:type/:id",function(request, response,next) {
-		if(!Validator.isMongoId()(request.params.domain) || !Validator.isMongoId()(request.params.id)){
+	cognitions.get("/:domain/objetives/:level/:id",function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
-		app.container.database.Schema.LearningObjetive.findOne({domain:request.params.domain,"type.name":request.params.type, _id:request.params.id }).then(function(rows){
+		app.container.database.Schema.LearningObjetive.findOne({"domain.name":request.params.domain.toString(),"level.name":request.params.level.toString(), _id:request.params.id }).then(function(rows){
 			response.send(rows);			
 		}).catch(function(error){
 			next(error);
@@ -628,15 +636,16 @@ module.exports=function(app,express,server,__DIR__){
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
 	cognitions.put("/:domain/objetives/:type/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		if(!Validator.isMongoId()(request.params.domain) || !Validator.isMongoId()(request.params.id)){
+		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
-		}
-		if(Validator.isNull()(request.body.name)){
-			throw new ValidatorException("Solo se aceptan textos categoricos");
-		}
-		app.container.database.Schema.LearningObjetive.findOne({domain:request.params.domain,"type.name":request.params.type, _id:request.params.id }).then(function(obj){		
-			obj.name=request.body.name;				
-			return obj.save();			
+		}		
+		app.container.database.Schema.LearningObjetive.findOne({"domain.name":request.params.domain.toString(),"level.name":request.params.level.toString(), _id:request.params.id }).then(function(rows){		
+			for(var i=0,keys=Object.keys(row.schema.obj),n=keys.length;i<n;i++){
+				if(request.body[keys[i]]){
+					row[keys[i]]=request.body[keys[i]];							
+				}
+			}			
+			return row.save();			
 		}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -651,11 +660,11 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	cognitions.delete("/:domain/objetives/:type/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		if(!Validator.isMongoId()(request.params.domain) || !Validator.isMongoId()(request.params.id)){
+	cognitions.delete("/:domain/objetives/:level/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
-		app.container.database.Schema.LearningObjetive.findOne({domain:request.params.domain,"type.name":request.params.type, _id:request.params.id }).then(function(obj){		
+		app.container.database.Schema.LearningObjetive.findOne({"domain.name":request.params.domain.toString(),"level.name":request.params.level.toString(), _id:request.params.id }).then(function(obj){		
 			return obj.remove();	
 		}).then(function(data){
 			response.send(data);
