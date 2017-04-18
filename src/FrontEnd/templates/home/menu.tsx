@@ -82,17 +82,7 @@ export class Menu extends React.Component<props.basic, props.basic> {
 					)}
 					{this.state.session && this.state.session.user.isAdmin==true && (
 					<li>
-						<Link to="/cognitive" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Funciones Cognitivas</Link>
-					</li>
-					)}
-					{this.state.session && this.state.session.user.isAdmin==true && (
-					<li>
 						<Link to="/matter" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Materias</Link>
-					</li>
-					)}
-					{this.state.session && this.state.session.user.isAdmin==true && (
-					<li>
-						<Link to="/periodschools" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Periodo Escolar</Link>
 					</li>
 					)}
 					{this.state.session && this.state.session.user.isAdmin==true && (
