@@ -10,10 +10,15 @@ describe("Test route knowedge cognitions",function(){
 			name:faker.name.findName(),
 			level:1
 		});
+		self.cognition=new  self.db.schema.Cognitions({
+			name:faker.name.findName(),
+			description:"mensaje"
+		});
 		category=new self.db.schema.domainsLearning({
 			name:faker.name.findName(),
 			description:"mensaje",
-			levels:[find]
+			levels:[find],
+			cognitions:[self.cognition]
 		});
 		self.objetive=new self.db.schema.LearningObjetive({
 			name:faker.name.findName(),
@@ -73,8 +78,18 @@ describe("Test route knowedge cognitions",function(){
 			}
 		}).then(function(response){
 			response=JSON.parse(response);
-			console.log(response);			
 			expect(response.name).toBe("CORRER 200 MTS");
+			done();
+		}).catch(function(error){
+			expect(error).toBeNull();
+			done();
+		});	
+	});
+	it("PUT /v1/knowedge/:domain/objetives/:level/:id/cognitions/:cognition",function(done){
+		utils.runApp("PUT",`/v1/knowedge/${category.name}/objetives/${find.name}/${self.objetive._id}/cognitions/${self.cognition._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
+			response=JSON.parse(response);
+			expect(response.cognitions.length).toBe(1);
+			expect(response.cognitions[0].name).toBe(self.cognition.name);
 			done();
 		}).catch(function(error){
 			expect(error).toBeNull();

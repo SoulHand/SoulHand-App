@@ -187,6 +187,59 @@ editar un objetivo de la colección de objetivos existente
   }
 ```
 
+
+añadir una funcion cognitiva a un objetivo
+--------------------
+
+```curl
+PUT /v1/knowedge/:domain/objetives/:level/:id/cognitions/:cognition
+```
+
+### Parametros
+
+**domain**:string => nombre dominio
+
+**level**:string => nombre nivel
+
+añade una funcion cognitiva a un objetivo de la colección de objetivos existente
+
+### Parametros
+
+**id**:mongoId
+
+**domain**:string
+
+**level**:string
+
+**id**:string
+
+**cognition**:mongoId
+
+###  Entrada
+
+**name**:string
+
+### Respuesta
+
+```json
+{ __v: 0,
+    name: 'CORRER 100 MTS',
+    description: 'ALCANZAR LOS 100MTS SIN PARAR',
+    _id: '58f4d131dd693661c7f7d8eb',
+    words: [],
+    dateCreated: '2017-04-17T14:29:08.278Z',
+    cognitions: [],
+    level: { 
+      _id: '58f4d133dd693661c7f7d8e3', 
+      name: 'CONOCER'
+    },
+    domain: { 
+      _id: '58f4d133dd693661c7f7d8e4',
+      name: 'COGNITIVO'
+    } 
+  }
+```
+
 eliminar un objetivo
 --------------------
 

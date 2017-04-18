@@ -5,7 +5,7 @@ Crear Funciones Cognitivas
 --------------------
 
 ```curl
-POST /v1/learning/domain/?PublicKeyId=:publickeyId&PrivateKeyId=:privateKeyId	
+POST /v1/knowedge/:domain/cognitions/?PublicKeyId=:publickeyId&PrivateKeyId=:privateKeyId	
 	
 ```
 añade un Funciones Cognitiva a la colección de Funciones Cognitivas existente
@@ -37,7 +37,7 @@ Obtener todas las materias
 --------------------
 
 ```curl
-GET /v1/learning/domain/
+GET /v1/knowedge/:domain/cognitions/
 	
 ```
 obtiene todas los Funciones Cognitivas existente
@@ -75,7 +75,7 @@ Obtener un Funciones Cognitiva
 --------------------
 
 ```curl
-GET /v1/learning/domain/
+GET /v1/knowedge/:domain/cognitions/
 	
 ```
 obtiene una materia de la colección de materias existente
@@ -100,7 +100,7 @@ editar un Funciones Cognitiva
 --------------------
 
 ```curl
-PUT /v1/learning/domain/:id
+PUT /v1/knowedge/:domain/cognitions/:id
 ```
 
 editar un Funciones Cognitiva de la colección de Funciones Cognitivas existente
@@ -129,7 +129,7 @@ eliminar un Funciones Cognitiva
 --------------------
 
 ```curl
-DELETE /v1/learning/domain/:id	
+DELETE /v1/knowedge/:domain/cognitions/:id	
 ```
 
 elimina un Funciones Cognitiva de la colección de Funciones Cognitivas existente
