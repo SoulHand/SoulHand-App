@@ -126,14 +126,11 @@ window.addEventListener("load",()=>{
 		    	<IndexRoute component={ListKnowedgeLevel}/>
 		    	<Route path="create" component={KnowedgeLevelCreate}/>
 		    </Route>
-<<<<<<< HEAD
-		     
-=======
+
 		     <Route path="/congnitive" component={Congnitive} onEnter={Auth}>
 		    	<IndexRoute component={ListCongnitive}/>
 		    	<Route path="create" component={CongnitiveCreate}/>
 		    </Route>
->>>>>>> 03fa0010dd73057854020e4fb10a8da08e2e7030
 	  	</Router>
 	  ), document.body
 	);

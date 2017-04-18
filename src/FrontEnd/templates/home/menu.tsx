@@ -80,7 +80,11 @@ export class Menu extends React.Component<props.basic, props.basic> {
 						<Link to="/domain" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Dominio del aprendizaje</Link>
 					</li>
 					)}
-					
+					{this.state.session && this.state.session.user.isAdmin==true && (
+					<li>
+						<Link to="/cognitive" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Funciones Cognitivas</Link>
+					</li>
+					)}
 					{this.state.session && this.state.session.user.isAdmin==true && (
 					<li>
 						<Link to="/matter" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Materias</Link>
@@ -99,11 +103,6 @@ export class Menu extends React.Component<props.basic, props.basic> {
 					{this.state.session && this.state.session.user.people.mode=="TEACHER" && (
 					<li>
 						<Link to="/students" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Alumnos</Link>
-					</li>
-					)}
-					{this.state.session && this.state.session.user.isAdmin==true && (
-					<li>
-						<Link to="/congnitive" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Funciones congnitva</Link>
 					</li>
 					)}
 				</ul>
