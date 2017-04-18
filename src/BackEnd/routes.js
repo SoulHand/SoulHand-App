@@ -1522,6 +1522,38 @@ module.exports=function(app,express,server,__DIR__){
 			next(error);
 		});
 	});
+	/*
+	* @api {put} /:id Editar alumno
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	*/
+	StudentsURI.put("/:id/activity/:activity",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Students);
+		var people2=new People(app.container.database.Schema.Peoples);
+		var CIWeb=require("ciweb");
+		var data=require("ciweb/data/audiometria.json");
+		if(!Validator.isMongoId()(request.params.id)|| !Validator.isMongoId()(request.params.activity)){
+			throw new ValidatorException("El id es invalido");
+		}
+		Promise.all([app.container.database.Schema.Students.findOne({_id:request.params.id}),app.container.database.Schema.Activities.findOne({_id:request.params.activity})]).then(function(data){
+			if(!data[0]){
+				throw new ValidatorException("No existe el alumno!");
+			}
+			if(!data[1]){
+				throw new ValidatorException("No existe la actividad!");
+			}
+			data[1].students.push(data[0]._id);
+			return data[1].save();
+		}).then(function(data){			
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+
 	StudentsURI.delete("/:id/physic/:del",function(request, response,next) {
 		if(!Validator.isMongoId()(request.params.id) || !Validator.isMongoId()(request.params.del)){
 			throw new ValidatorException("El id es invalido!");

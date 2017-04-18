@@ -115,7 +115,8 @@ describe("Test route knowedge cognitions",function(){
 			birthdate:"1992-03-15",
 			tel:faker.phone.phoneNumberFormat(),
 			grade:self.grade._id.toString(),
-			parent:self.parent._id.toString()
+			parent:self.parent._id.toString(),
+			genero:"MASCULINO"
 		};
 		utils.runApp("POST",`/v1/people/students/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
 			form:input

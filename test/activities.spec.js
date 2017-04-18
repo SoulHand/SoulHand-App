@@ -12,6 +12,13 @@ describe("Test route knowedge cognitions",function(){
 		self.grade=new  self.db.schema.Grades({
 			name:faker.name.findName()
 		});
+		self.people=self.db.schema.Peoples({
+			dni:"V12345679",
+			name:"people",
+			birthdate:"1992-03-15",
+			mode:"STUDENT",
+			genero:"FEMENINO"
+		});
 		self.people2=self.db.schema.Peoples({
 			dni:"V13145679",
 			name:"people",
@@ -23,6 +30,18 @@ describe("Test route knowedge cognitions",function(){
 			data:self.people2,
 			interprete:true
 		});
+		self.student=self.db.schema.Students({
+			data:self.people,
+			grade:self.grade,
+			discapacityLevel:0,
+			physics:[
+				{
+					height:23.43,
+					weight:33,
+					age:24
+				}
+			]
+		});
 		self.activity= new self.db.schema.Activities({
 			name:faker.name.findName(),
 			description:"actividad",
@@ -33,7 +52,7 @@ describe("Test route knowedge cognitions",function(){
 			grade:self.grade,
 			course:self.course
 		});
-		Promise.all([utils.insertSession(self.db), self.course.save(),self.grade.save(),self.people2.save(),self.teacher.save(),self.activity.save()]).then(function(data){	
+		Promise.all([utils.insertSession(self.db), self.course.save(),self.grade.save(),self.people2.save(),self.teacher.save(),self.activity.save(),self.people.save(),self.student.save()]).then(function(data){	
 			user=data[0]
 			done();
 		}).catch(function(error){
@@ -99,4 +118,19 @@ describe("Test route knowedge cognitions",function(){
 			done();
 		});
 	});
-})
+	it("PUT /v1/people/students/:id/activity/:activity",function(done){
+		utils.runApp("PUT",`/v1/people/students/${self.student._id}/activity/${self.activity._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
+			form:{
+				name:"hola"
+			}
+		}).then(function(response){
+			response=JSON.parse(response);
+			expect(response.students.length).toBe(1);
+			expect(response.students[0]).toBe(self.student._id.toString());
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
+		});	
+	});
+});

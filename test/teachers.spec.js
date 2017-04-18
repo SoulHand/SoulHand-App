@@ -92,7 +92,8 @@ describe("Test route knowedge cognitions",function(){
 			name:faker.name.findName(),
 			birthdate:"1992-03-15",
 			tel:faker.phone.phoneNumberFormat(),
-			interprete:true
+			interprete:true,
+			genero:"MASCULINO"
 		};
 		utils.runApp("POST",`/v1/people/teachers/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
 			form:input

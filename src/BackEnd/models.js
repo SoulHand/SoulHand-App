@@ -149,7 +149,7 @@ structDb.Activities=mongoose.Schema({
    	dateCreated:{ type: Date, default: Date.now },
    	dateExpire:{ type: Date, required:true },
    	teacher: { type: mongoose.Schema.ObjectId, ref: "Teachers" },
-	student: [{ type: mongoose.Schema.ObjectId, ref: "Students" }],
+	students: [{ type: mongoose.Schema.ObjectId, ref: "Students" }],
 	grade:structDb.Grades,
 	course:structDb.Courses,
 	dateCreated:{ type: Date, default: Date.now }

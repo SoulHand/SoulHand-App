@@ -93,7 +93,8 @@ describe("Test route knowedge cognitions",function(){
 			dni:faker.helpers.replaceSymbolWithNumber("V########"),
 			name:faker.name.findName(),
 			birthdate:"1992-03-15",
-			tel:faker.phone.phoneNumberFormat()
+			tel:faker.phone.phoneNumberFormat(),
+			genero:"MASCULINO"
 		};
 		utils.runApp("POST",`/v1/people/parents/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
 			form:input

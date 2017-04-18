@@ -17,7 +17,6 @@ class Inferences extends EventEmitter{
 		while(premises.length){
 			var row=premises.shift();
 			var premise=row.premise.replace(exp,"var_globals.$1");
-			console.log(premise);
 			var p1=eval(premise);
 			if(p1){
 				var vars={};
