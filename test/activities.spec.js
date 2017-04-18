@@ -72,7 +72,7 @@ describe("Test route knowedge cognitions",function(){
 			done();
 		});	
 	});
-	it("POST/v1/activities/:grade/:course/:id",function(done){
+	it("POST /v1/activities/:grade/:course/:id",function(done){
 		utils.runApp("POST",`/v1/activities/${self.grade.name}/${self.course.name}/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
 			form:{
 				name:"hola",
