@@ -110,7 +110,7 @@ export class ParentsCreate extends React.Component<props.parentsItem, {}> {
     return (
     	<div className="container">    				
     		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
-				<label htmlFor="dni"><b>Cedula</b></label>
+				<label htmlFor="dni"><b>Cedula*</b></label>
 				    <input type="texto" className="form-control" id="dni" aria-describedby="ci_respresetante" maxLength={12} placeholder="documento de identidad" required autoFocus onChange={(e)=>{this.getFields(e)}}/>
 				    {this.state.error.dni && (
 				    	<div className="alert alert-danger" role="alert">
@@ -118,7 +118,7 @@ export class ParentsCreate extends React.Component<props.parentsItem, {}> {
 						</div>
 				    )}
 				  <div className="form-group">
-				    <label htmlFor="name"><b>Nombre y Apellido</b></label>
+				    <label htmlFor="name"><b>Nombre y Apellido*</b></label>
 				    <input type="texto" className="form-control" id="name" aria-describedby="name" maxLength={20} placeholder="Nombre y Apellido"required autoFocus onChange={(e)=>{this.getFields(e)}}/>
 					{this.state.error.name && (
 				    	<div className="alert alert-danger" role="alert">
@@ -134,12 +134,12 @@ export class ParentsCreate extends React.Component<props.parentsItem, {}> {
 						</div>
 				    )}
 				  </div>				  
-				   <div className="form-group">
-				    <label htmlFor="address"><b>Fecha de nacimiento </b></label>
-				    <input type="texto" className="form-control" id="birthdate" aria-describedby="Fecha de nacimiento" placeholder="Dirección" onChange={(e)=>{this.getFields(e)}}/>
+				  <div className="form-group">
+				    <label htmlFor="birthdate"><b>Fecha de nacimiento*</b></label>
+				    <input type="date" className="form-control" id="birthdate" aria-describedby="emailHelp" placeholder="YYYY-mm-dd" onChange={(e)=>{this.getFields(e)}}/>
 				    {this.state.error.birthdate && (
 				    	<div className="alert alert-danger" role="alert">
-						  <strong>Error!</strong> Debe ser la dirección.
+						  <strong>Error!</strong> Debe ser una fecha valida.
 						</div>
 				    )}
 				  </div>

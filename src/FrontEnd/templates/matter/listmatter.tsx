@@ -67,7 +67,7 @@ componentDidMount(){
                     <input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
                 </div>
             </form>
-            <h3>Grado</h3>
+            <h3>Materia</h3>
             <table className="table table-striped">
                 <thead>
                     <tr>

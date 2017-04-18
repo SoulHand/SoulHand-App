@@ -91,7 +91,7 @@ export class StudentCreate extends React.Component<props.studentItem, {}> {
 	    return (<div className="container">    				
     		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
 					<div className="form-group">
-				    <label htmlFor="name"><b>Nombre y Apellido</b></label>
+				    <label htmlFor="name"><b>Nombre y Apellido*</b></label>
 				    <input type="texto" className="form-control" id="name" aria-describedby="name" maxLength={20} placeholder="Nombre y Apellido"required autoFocus onChange={(e)=>{this.getFields(e)}}/>
 					{this.state.error.name && (
 				    	<div className="alert alert-danger" role="alert">
@@ -99,7 +99,7 @@ export class StudentCreate extends React.Component<props.studentItem, {}> {
 						</div>
 				    )}</div>
 				    <div className="form-group">
-				    <label htmlFor="birthdate"><b>Fecha de nacimiento </b></label>
+				    <label htmlFor="birthdate"><b>Fecha de nacimiento*</b></label>
 				    <input type="date" className="form-control" id="birthdate" aria-describedby="emailHelp" placeholder="YYYY-mm-dd" onChange={(e)=>{this.getFields(e)}}/>
 				    {this.state.error.birthdate && (
 				    	<div className="alert alert-danger" role="alert">

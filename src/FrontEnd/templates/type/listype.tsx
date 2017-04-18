@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {getJSON, ajax} from 'jquery'
+import {Item} from "./item"
 //import * as settings from "../settings"
 
 export class ListType extends React.Component<{}, {}> {
@@ -9,7 +10,6 @@ export class ListType extends React.Component<{}, {}> {
 	public type:any=[];
 	state={
 		type:[],
-		search:""
 	};
 	constructor(props:any) {
 		super(props);
@@ -38,6 +38,18 @@ export class ListType extends React.Component<{}, {}> {
 	        }
 		});
 	}
+	Filter(event:any){
+        var filter=this.type.filter((row)=>{
+            var exp=new RegExp(event.target.value,"i");
+            if(exp.test(row.name)==true){
+                return true;
+            }
+            return false;
+        });
+        this.setState({
+              type : filter
+        });
+    }
 	componentDidMount(){
 		getJSON(`//0.0.0:8080/v1/learning/type/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,(data)=>{
 			this.type= data;
@@ -46,37 +58,37 @@ export class ListType extends React.Component<{}, {}> {
 		    });
 		})
 	}
+	
 	render () {
     return (
-		<div className="container card">
-			<form className="navbar-form navbar-right">
-				<div className="right">
-					<input type="text" className="form-control" placeholder="Buscar"/>
-				</div>
-				<span>{this.state.search}</span>
-			</form>
-			<h3>Tipo de aprendizaje</h3>
-			<table className="table table-striped">
-				<thead>
-					<tr>
-						<th>Nombre</th>
-                 		<th>Acción</th>
-					</tr>
-				</thead>
-				<tbody>
-				{
-					this.state.type.map((row:any)=>{
-						return (
-							<tr key={row._id}>
-								<td>{row.name}</td>
-								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
-							</tr>
-						);
-					})
-				}
-				</tbody>
-			</table>
-		</div>
+        <div className="container card">
+            <form className="navbar-form navbar-right">
+                <div className="right">
+                    <input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
+                </div>
+            </form>
+            <h3>Tipo de Aprendizaje</h3>
+            <table className="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                         <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {
+                    this.state.type.map((row:any)=>{
+                        return (
+                            <tr key={row._id}>
+                                <td>{row.name}</td>
+                                <td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
+                            </tr>
+                        );
+                    })
+                }
+                </tbody>
+            </table>
+        </div>
     );
   }
 }
