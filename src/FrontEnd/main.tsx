@@ -62,7 +62,7 @@ import {TypeView} from './templates/type/typeview';
 import {CongnitiveFunctions} from './templates/congnitive';
 import {ListCongnitive} from './templates/congnitive/listcongnitive';
 import {CongnitiveCreate} from './templates/congnitive/congnitivecreate';
-import {CongnitiveView} from './templates/congnitive/typeview';
+import {CongnitiveView} from './templates/congnitive/congnitiveview';
 import {Login} from './templates/login';
 
 /*import {PageRepresentative} from './templates/PageRepresentative';
