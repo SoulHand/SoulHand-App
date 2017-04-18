@@ -52,7 +52,27 @@ describe("Test route knowedge cognitions",function(){
 			grade:self.grade,
 			course:self.course
 		});
-		Promise.all([utils.insertSession(self.db), self.course.save(),self.grade.save(),self.people2.save(),self.teacher.save(),self.activity.save(),self.people.save(),self.student.save()]).then(function(data){	
+		find=new  self.db.schema.nivelDomain({
+			name:faker.name.findName(),
+			level:1
+		});
+		category=new self.db.schema.domainsLearning({
+			name:faker.name.findName(),
+			description:"mensaje",
+			levels:[find]
+		});
+		self.objetive=new self.db.schema.LearningObjetive({
+			name:faker.name.findName(),
+			description:"hola",
+			domain:{
+				name:category.name
+			},
+			level:{
+				name:find.name
+			},
+			cognitions:[]
+		});
+		Promise.all([utils.insertSession(self.db), self.course.save(),self.grade.save(),self.people2.save(),self.teacher.save(),self.activity.save(),self.people.save(),self.student.save(),category.save(),self.objetive.save()]).then(function(data){	
 			user=data[0]
 			done();
 		}).catch(function(error){
@@ -127,6 +147,18 @@ describe("Test route knowedge cognitions",function(){
 			response=JSON.parse(response);
 			expect(response.students.length).toBe(1);
 			expect(response.students[0]).toBe(self.student._id.toString());
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
+		});
+	});
+	it("PUT /v1/activities/:grade/:course/:id/:domain/objetives/:level/:objetive",function(done){
+		utils.runApp("PUT",`/v1/activities/${self.grade.name}/${self.course.name}/${self.activity._id}/${category.name}/objetives/${find.name}/${self.objetive._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
+			response=JSON.parse(response);
+			console.log(response);
+			expect(response.objetives.length).toBe(1);
+			expect(response.objetives[0]._id).toBe(self.objetive._id.toString());
 			done();
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();

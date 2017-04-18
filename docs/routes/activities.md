@@ -5,8 +5,8 @@ Crear actividades
 --------------------
 
 ```curl
-POST /v1/activities/:grade/:course/?PublicKeyId=:publickeyId&PrivateKeyId=:privateKeyId	
-	
+POST /v1/activities/:grade/:course/?PublicKeyId=:publickeyId&PrivateKeyId=:privateKeyId 
+  
 ```
 añade un actividad a la colección de actividades existente
 
@@ -45,6 +45,61 @@ añade un actividad a la colección de actividades existente
   dateCreated: '2017-04-18T01:34:32.668Z',
   isCompleted: false,
   objetives: [] 
+}
+```
+
+asignar objetivos a una actividades
+--------------------
+
+```curl
+POST /v1/activities/:grade/:course/:id/:domain/objetives/:level/:objetive	
+	
+```
+añade un actividad a la colección de actividades existente
+
+### Parametros
+
+**grade**: string
+
+**course**: string
+
+**id**: mongoId
+
+**domain**: string
+
+**level**: string
+
+**objetive**: mongoId
+
+### Respuesta
+
+```json
+{ 
+  _id: '58f5ebbb0d9ca33a2845679f',
+  name: 'MARLEN HEANEY',
+  description: 'ACTIVIDAD',
+  dateExpire: '2017-04-18T10:34:35.396Z',
+  teacher: '58f5ebbb0d9ca33a28456799',
+  grade: { name: 'NATHEN CONNELLY', _id: '58f5ebbb0d9ca33a28456796' },
+  course: { name: 'KADE KOVACEK', _id: '58f5ebbb0d9ca33a28456795' },
+  __v: 1,
+  students: [],
+  dateCreated: '2017-04-18T10:34:35.396Z',
+  isCompleted: false,
+  objetives: 
+  [ 
+    { 
+      __v: 0,
+      description: 'HOLA',
+      name: 'FRANCESCO REYNOLDS',
+      _id: '58f5ebbb0d9ca33a284567a4',
+      words: [],
+      dateCreated: '2017-04-18T10:34:35.402Z',
+      cognitions: [],
+      level: [Object],
+      domain: [Object]
+    } 
+  ] 
 }
 ```
 

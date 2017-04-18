@@ -2314,6 +2314,33 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	/*
+	* @api {post} /:domain/activities/:type Crear Categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions> objeto CRUD
+	*/
+	activityURI.put("/:grade/:course/:id/:domain/objetives/:level/:objetive",Auth.isAdmin.bind(app.container),function(request, response,next) {		
+		var dm;		
+		if(!Validator.isMongoId()(request.params.objetive)){
+			throw new ValidatorException("El objetivo no es un id valido!");
+		}
+		Promise.all([app.container.database.Schema.LearningObjetive.findOne({_id:request.params.objetive}),app.container.database.Schema.Activities.findOne({"grade.name":request.params.grade.toUpperCase(),"course.name":request.params.course.toUpperCase(),_id:request.params.id})]).then((data)=>{
+			if(!data[0]){
+				throw new ValidatorException("No existe el objetivo de aprendizaje!");
+			}
+			if(!data[1]){
+				throw new ValidatorException("No existe la actividad!");
+			}
+			data[1].objetives.push(data[0]);
+			return data[1].save();
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
 	* @api {get} / Obtener todas las categorias cognitivas
 	* @params request peticiones del cliente
 	* @params response respuesta del servidor

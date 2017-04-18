@@ -387,3 +387,37 @@ Evalua el nivel de audición y genera resultados del aprendizaje
 }
 ```
 
+asignar alumno a actividad
+--------------------
+
+```curl
+PUT /v1/people/students/:id/activity/:activity
+```
+
+Asigna un alumno a la actividad creada por el docente
+
+### Parametros
+
+**id**:mongoId
+
+**activity**:mongoId
+
+### Respuesta
+
+```json
+{ _id: '58f5dd7ce9ea3635972e5480',
+  name: 'cantar y contar',
+  description: 'cantar los numeros del 1 al 10',
+  dateExpire: '2017-04-18T09:33:48.795Z',
+  teacher: '58f5dd7ce9ea3635972e547a',
+  grade: { name: '1RO', _id: '58f5dd7ce9ea3635972e5477' },
+  course: { name: 'MATEMATICA', _id: '58f5dd7ce9ea3635972e5476' },
+  __v: 1,
+  students: [ '58f5dd7ce9ea3635972e547c' ],
+  dateCreated: '2017-04-18T09:33:48.796Z',
+  isCompleted: false,
+  objetives: [] }
+  "discapacityLevel":35.57689666748047
+}
+```
+
