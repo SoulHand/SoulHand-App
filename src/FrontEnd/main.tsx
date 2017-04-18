@@ -58,7 +58,6 @@ import {ListDomain} from './templates/domain/listdomain';
 import {DomainView} from './templates/domain/domainview';
 
 
-
 import {Login} from './templates/login';
 
 /*import {PageRepresentative} from './templates/PageRepresentative';
@@ -123,6 +122,7 @@ window.addEventListener("load",()=>{
 		    	<IndexRoute component={ListKnowedgeLevel}/>
 		    	<Route path="create" component={KnowedgeLevelCreate}/>
 		    </Route>
+		     
 	  	</Router>
 	  ), document.body
 	);
