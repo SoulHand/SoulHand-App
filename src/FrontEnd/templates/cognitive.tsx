@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {hashHistory} from 'react-router';
 import {Bar} from './bar';
-import {Menu} from './cognitive/Menu';
+import {Menu} from './cognitive/menu';
 //import {NavBar} from './templates/NavBar';
 
 export class Cognitive extends React.Component<{}, {}> {

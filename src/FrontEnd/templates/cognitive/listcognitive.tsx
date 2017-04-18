@@ -1,4 +1,4 @@
-mport * as React from 'react';
+import * as React from 'react';
 import {getJSON,ajax} from 'jquery'
 import {Item} from "./item"
 //import * as settings from "../settings"
