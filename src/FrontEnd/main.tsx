@@ -57,10 +57,7 @@ import {DomainCreate} from './templates/domain/domaincreate';
 import {ListDomain} from './templates/domain/listdomain';
 import {DomainView} from './templates/domain/domainview';
 
-import {Type} from './templates/type';
-import {ListType} from './templates/type/listype';
-import {TypeCreate} from './templates/type/typecreate';
-import {TypeView} from './templates/type/typeview';
+
 
 import {Login} from './templates/login';
 
@@ -107,10 +104,7 @@ window.addEventListener("load",()=>{
 		    	<Route path="get/:id" component={DomainView}/>
 		    	<Route path="create" component={DomainCreate}/>
 		    </Route>
-		    <Route path="/type" component={Type} onEnter={Auth}>
-		    	<IndexRoute component={ListType}/>
-		    	<Route path="create" component={TypeCreate}/>
-		    </Route>
+		    
 		    <Route path="/users" component={Home}>
 		    	<IndexRoute component={ListUsers} onEnter={Auth}/>
 		    	<Route path="get/:id" component={UserView}/>
