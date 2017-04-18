@@ -38,7 +38,7 @@ export class Menu extends React.Component<{}, {}> {
 				<ul>
 					<li>
 						<Link to="/" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Inicio</Link>
-					</li>					
+					</li>
 					<li>
 						<Link to="/students" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Ver alumnos</Link>
 					</li>

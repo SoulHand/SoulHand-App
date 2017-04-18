@@ -32,6 +32,9 @@ export class ParentsCreate extends React.Component<props.parentsItem, {}> {
 			value:null,
 			required:true
 		},
+		genero:{
+			value:null
+		}
 				
 	};
 	state:props.fieldsTeachers={
@@ -142,8 +145,20 @@ export class ParentsCreate extends React.Component<props.parentsItem, {}> {
 						  <strong>Error!</strong> Debe ser una fecha valida.
 						</div>
 				    )}
+				  </div>				   
+				   <div className="form-group">
+				    <label htmlFor="genero"><b>Fecha de nacimiento*</b></label>
+				    <select id="genero" required onChange={(e)=>{this.getFields(e)}}>
+				    	<option value="">Seleccione una opción</option>
+				    	<option value="MASCULINO">MASCULINO</option>
+				    	<option value="FEMENINO">FEMENINO</option>
+				    </select>
+				    {this.state.error.genero && (
+				    	<div className="alert alert-danger" role="alert">
+						  <strong>Error!</strong> Debe ser una fecha valida.
+						</div>
+				    )}
 				  </div>
-				   
 				  
 				  
 				  	{this.state.error.server && (

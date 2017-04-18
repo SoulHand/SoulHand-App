@@ -39,6 +39,9 @@ export class TeacherCreate extends React.Component<props.teacherItem, {}> {
 		},
 		interprete:{
 			value:null
+		},
+		genero:{
+			value:null
 		}
 	};
 	state:props.fieldsTeachers={
@@ -160,6 +163,19 @@ export class TeacherCreate extends React.Component<props.teacherItem, {}> {
 				    <label htmlFor="birthdate"><b>Fecha de nacimiento*</b></label>
 				    <input type="date" className="form-control" id="birthdate" aria-describedby="emailHelp" placeholder="YYYY-mm-dd" onChange={(e)=>{this.getFields(e)}}/>
 				    {this.state.error.birthdate && (
+				    	<div className="alert alert-danger" role="alert">
+						  <strong>Error!</strong> Debe ser una fecha valida.
+						</div>
+				    )}
+				  </div>
+				   <div className="form-group">
+				    <label htmlFor="genero"><b>Fecha de nacimiento*</b></label>
+				    <select id="genero" required onChange={(e)=>{this.getFields(e)}}>
+				    	<option value="">Seleccione una opción</option>
+				    	<option value="MASCULINO">MASCULINO</option>
+				    	<option value="FEMENINO">FEMENINO</option>
+				    </select>
+				    {this.state.error.genero && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> Debe ser una fecha valida.
 						</div>
