@@ -4,7 +4,7 @@ import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
 
 @withRouter
-export class CongnitiveCreate extends React.Component<, {}> {
+export class CognitiveCreate extends React.Component<, {}> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
@@ -83,7 +83,7 @@ export class CongnitiveCreate extends React.Component<, {}> {
 	        dataType: "json",
 	        data:data,	        
 	        success:(data:any)=>{
-	        	this.props.router.replace('/CongnitiveCreate');
+	        	this.props.router.replace('/cognitive');
 	        },
 	        error:(data:any)=>{
 	        	var state=this.state.error;

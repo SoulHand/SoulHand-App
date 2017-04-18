@@ -1,15 +1,15 @@
-mport * as React from 'react';
+import * as React from 'react';
 import {getJSON,ajax} from 'jquery'
 import {Item} from "./item"
 //import * as settings from "../settings"
 
-export class ListKnowedgeLevel extends React.Component<{}, {}> {
+export class ListCognitive extends React.Component<{}, {}> {
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
 	public session:users.sessions;
-	public Congnitive:any=[];
+	public cognitive:any=[];
 	state={
-		Congnitive:[],
+		cognitive:[],
 		search:""
 	};
 	
@@ -23,19 +23,19 @@ export class ListKnowedgeLevel extends React.Component<{}, {}> {
 		var element:EventTarget=event.target;		
 		ajax({
 			method:"DELETE",
-	        url: `${window.settings.uri}/v1//${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/learning/domain/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
-	        success:(data:congnitive)=>{
-	        	this.congnitive=this.congnitive.filter(function(row:congnitive){
+	        success:(data:cognitive)=>{
+	        	this.cognitive=this.cognitive.filter(function(row:cognitive){
 					if(row._id==data._id){
 						return false;
 					}
 					return true;
 		    	});
 		    	this.setState({
-			      	congnitive : this.congnitive
+			      	cognitive : this.cognitive
 			    });
 	        }
 		});
@@ -44,9 +44,9 @@ export class ListKnowedgeLevel extends React.Component<{}, {}> {
 	Xiu, [31.03.17 20:44]
 componentDidMount(){
         getJSON(`//0.0.0:8080/v1/learning/domain/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,(data)=>{
-            this.congnitive= data;
+            this.cognitive= data;
             this.setState({
-              congnitive: data
+              cognitive: data
             });
         })
     }
@@ -59,7 +59,7 @@ componentDidMount(){
                 </div>
                 <span>{this.state.search}</span>
             </form>
-            <h3>Funciones Cognitivo</h3>
+            <h3>Funciones Cognitivas</h3>
             <table className="table table-striped">
                 <thead>
                     <tr>
@@ -70,7 +70,7 @@ componentDidMount(){
                 </thead>
                 <tbody>
                 {
-                    this.state.Congnitive.map((row:any)=>{
+                    this.state.cognitive.map((row:any)=>{
                         return (
                             <tr key={row._id}>
                                 <td>{row.name}</td>

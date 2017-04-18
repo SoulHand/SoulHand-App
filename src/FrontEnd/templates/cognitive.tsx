@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {hashHistory} from 'react-router';
 import {Bar} from './bar';
-import {Menu} from './congnitive/menu';
+import {Menu} from './cognitive/menu';
 //import {NavBar} from './templates/NavBar';
 
-export class Congnitive extends React.Component<{}, {}> {
+export class Cognitive extends React.Component<{}, {}> {
 	render () {
 		return (
 			<div className="content" data-app="soulhand-services" data-align="left">

@@ -3,14 +3,14 @@ import * as validator from 'string-validator';
 import {ajax} from 'jquery'
 
 
-export class CongnitiveView extends React.Component<props.usersItem, props.stateUser {
+export class CognitiveView extends React.Component<props.usersItem, props.stateUser {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
 	public fields={};
-	public congnitive:crud.congnitive;
+	public cognitive:crud.cognitive;
 	state = {
-		congnitive:null,
+		cognitive:null,
 		error:null
 	};
 	constructor(props:any) {
@@ -36,10 +36,10 @@ export class CongnitiveView extends React.Component<props.usersItem, props.state
 	        url: `${window.settings.uri}/v1/learning/domain/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,	        
-	        success:(data:crud.congnitive)=>{
-	        	this.congnitive=data;
+	        success:(data:crud.cognitive)=>{
+	        	this.cognitive=data;
 			    this.setState({
-			      congnitive : data
+			      cognitive : data
 			    });
 	        }
 		});
@@ -65,7 +65,7 @@ export class CongnitiveView extends React.Component<props.usersItem, props.state
 	        	parent.children[1].contentEditable=false;
 				element.setAttribute("data-save","false");
 	        	this.setState({
-					congnitive:data
+					cognitive:data
 				});
 	        },
 	        error:(data:any)=>{
@@ -84,34 +84,34 @@ export class CongnitiveView extends React.Component<props.usersItem, props.state
 	        data:null,
 	        crossDomain:true,
 	        success:(data:peoples.teachers)=>{
-	        	this.congnitive.cognitions=this.congnitive.cognitions.filter(function(row:crud.congnitive){
+	        	this.cognitive=this.cognitive.filter(function(row:crud.cognitive){
 					if(row._id==data._id){
 						return false;
 					}
 					return true;
 		    	});
 		    	this.setState({
-			      	congnitive : this.congnitive
+			      	cognitive : this.cognitive
 			    });
 	        }
 		});
 	}
 	Filter(event:any){
-		var filter=this.congnitive.cognitions.filter((row)=>{
+		var filter=this.cognitive.filter((row)=>{
 			var exp=new RegExp(event.target.value,"i");
 			if(exp.test(row.name)==true){
 				return true;
 			}
 			return false;
 		});
-		var data=JSON.parse(JSON.stringify(this.congnitive));
-		data.cognitions=filter;
+		var data=JSON.parse(JSON.stringify(this.cognitive));
+		data=filter;
 		this.setState({
-	      	congnitive : data
+	      	cognitive : data
 	    });
 	}
 	render () {
-		if(!this.state.congnitive){
+		if(!this.state.cognitive){
 			return (
     			<div className="container">
     			{this.state.error && (
@@ -133,7 +133,7 @@ export class CongnitiveView extends React.Component<props.usersItem, props.state
 			<div className="fieldset">
 				<div className="item" id="name">
 					<div className="field"></div>
-					<div className="value" onKeyUp={(e)=>{this.getFields(e)}} onKeyDown={(e)=>{this.keycod(e)}}>{this.state.congnitive.name}</div>
+					<div className="value" onKeyUp={(e)=>{this.getFields(e)}} onKeyDown={(e)=>{this.keycod(e)}}>{this.state.cognitive.name}</div>
 					<div className="toolbox">
 						<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e)=>{this.edit(e)}}></button>
 					</div>
@@ -151,7 +151,7 @@ export class CongnitiveView extends React.Component<props.usersItem, props.state
 				</thead>
 				<tbody>
 				{
-					this.state.congnitive.cognitions.map((row:crud.congnitive)=>{
+					this.state.cognitive.map((row:crud.cognitive)=>{
 						return (
 							<tr key={row._id}>
 								<td><b>{row.name}</b></td>
