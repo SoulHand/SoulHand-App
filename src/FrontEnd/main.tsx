@@ -62,6 +62,10 @@ import {ListType} from './templates/type/listype';
 import {TypeCreate} from './templates/type/typecreate';
 import {TypeView} from './templates/type/typeview';
 
+import {CongnitiveFunctions} from './templates/congnitive';
+import {ListCongnitive} from './templates/congnitive/listcongnitive';
+import {CongnitiveCreate} from './templates/congnitive/congnitivecreate';
+import {CongnitiveView} from './templates/congnitive/congnitiveview';
 import {Login} from './templates/login';
 
 /*import {PageRepresentative} from './templates/PageRepresentative';
@@ -128,6 +132,10 @@ window.addEventListener("load",()=>{
 		     <Route path="/knowedge" component={KnowedgeLevel} onEnter={Auth}>
 		    	<IndexRoute component={ListKnowedgeLevel}/>
 		    	<Route path="create" component={KnowedgeLevelCreate}/>
+		    </Route>
+		     <Route path="/congnitive" component={Congnitive} onEnter={Auth}>
+		    	<IndexRoute component={ListCongnitive}/>
+		    	<Route path="create" component={CongnitiveCreate}/>
 		    </Route>
 	  	</Router>
 	  ), document.body
