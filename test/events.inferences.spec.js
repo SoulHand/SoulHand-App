@@ -83,10 +83,9 @@ describe("Test route knowedge cognitions",function(){
 				)
 			}
 		}).then(function(response){
-			response=JSON.parse(response);	
+			response=JSON.parse(response);
 			expect(response.name).toBe("HOLA");
-			expect(response.objects.length).toBe(1);
-			expect(response.objects[0].p1).toBe("var1.value");
+			expect(response.objects.p1).toBe("var1.value");
 			done();
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();

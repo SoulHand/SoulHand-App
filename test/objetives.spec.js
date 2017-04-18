@@ -72,7 +72,8 @@ describe("Test route knowedge cognitions",function(){
 				description:"Alcanzar los 200mts sin parar"
 			}
 		}).then(function(response){
-			response=JSON.parse(response);			
+			response=JSON.parse(response);
+			console.log(response);			
 			expect(response.name).toBe("CORRER 200 MTS");
 			done();
 		}).catch(function(error){
