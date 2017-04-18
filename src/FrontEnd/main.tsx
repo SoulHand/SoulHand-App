@@ -57,15 +57,10 @@ import {DomainCreate} from './templates/domain/domaincreate';
 import {ListDomain} from './templates/domain/listdomain';
 import {DomainView} from './templates/domain/domainview';
 
-import {Type} from './templates/type';
-import {ListType} from './templates/type/listype';
-import {TypeCreate} from './templates/type/typecreate';
-import {TypeView} from './templates/type/typeview';
-
-import {CongnitiveFunctions} from './templates/congnitive';
-import {ListCongnitive} from './templates/congnitive/listcongnitive';
-import {CongnitiveCreate} from './templates/congnitive/congnitivecreate';
-import {CongnitiveView} from './templates/congnitive/congnitiveview';
+import {Cognitive} from './templates/cognitive';
+import {ListCognitive} from './templates/cognitive/listcognitive';
+import {CognitiveCreate} from './templates/cognitive/cognitivecreate';
+import {CognitiveView} from './templates/cognitive/cognitiveview';
 import {Login} from './templates/login';
 
 /*import {PageRepresentative} from './templates/PageRepresentative';
@@ -111,10 +106,7 @@ window.addEventListener("load",()=>{
 		    	<Route path="get/:id" component={DomainView}/>
 		    	<Route path="create" component={DomainCreate}/>
 		    </Route>
-		    <Route path="/type" component={Type} onEnter={Auth}>
-		    	<IndexRoute component={ListType}/>
-		    	<Route path="create" component={TypeCreate}/>
-		    </Route>
+		    
 		    <Route path="/users" component={Home}>
 		    	<IndexRoute component={ListUsers} onEnter={Auth}/>
 		    	<Route path="get/:id" component={UserView}/>
@@ -133,9 +125,10 @@ window.addEventListener("load",()=>{
 		    	<IndexRoute component={ListKnowedgeLevel}/>
 		    	<Route path="create" component={KnowedgeLevelCreate}/>
 		    </Route>
-		     <Route path="/congnitive" component={Congnitive} onEnter={Auth}>
-		    	<IndexRoute component={ListCongnitive}/>
-		    	<Route path="create" component={CongnitiveCreate}/>
+
+		     <Route path="/cognitive" component={Cognitive} onEnter={Auth}>
+		    	<IndexRoute component={ListCognitive}/>
+		    	<Route path="create" component={CognitiveCreate}/>
 		    </Route>
 	  	</Router>
 	  ), document.body
