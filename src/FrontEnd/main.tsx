@@ -58,6 +58,10 @@ import {ListDomain} from './templates/domain/listdomain';
 import {DomainView} from './templates/domain/domainview';
 
 
+import {CongnitiveFunctions} from './templates/congnitive';
+import {ListCongnitive} from './templates/congnitive/listcongnitive';
+import {CongnitiveCreate} from './templates/congnitive/congnitivecreate';
+import {CongnitiveView} from './templates/congnitive/congnitiveview';
 import {Login} from './templates/login';
 
 /*import {PageRepresentative} from './templates/PageRepresentative';
@@ -122,7 +126,14 @@ window.addEventListener("load",()=>{
 		    	<IndexRoute component={ListKnowedgeLevel}/>
 		    	<Route path="create" component={KnowedgeLevelCreate}/>
 		    </Route>
+<<<<<<< HEAD
 		     
+=======
+		     <Route path="/congnitive" component={Congnitive} onEnter={Auth}>
+		    	<IndexRoute component={ListCongnitive}/>
+		    	<Route path="create" component={CongnitiveCreate}/>
+		    </Route>
+>>>>>>> 03fa0010dd73057854020e4fb10a8da08e2e7030
 	  	</Router>
 	  ), document.body
 	);
