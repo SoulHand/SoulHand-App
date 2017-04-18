@@ -71,7 +71,7 @@ export class PeriodSchoolsCreate extends React.Component<, {}> {
 		}
 		ajax({
 			method:"POST",
-	        url: `${window.settings.uri}/v1/periods/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/periodschool/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:data,	        
 	        success:(data:any)=>{

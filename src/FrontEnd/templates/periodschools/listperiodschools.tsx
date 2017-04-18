@@ -40,6 +40,18 @@ export class ListPeriodSchools extends React.Component<{}, {}> {
 	        }
 		});
 	}
+    Filter(event:any){
+        var filter=this.periodschools.filter((row)=>{
+            var exp=new RegExp(event.target.value,"i");
+            if(exp.test(row.name)==true){
+                return true;
+            }
+            return false;
+        });
+        this.setState({
+              periodschools : filter
+        });
+    }
 	
 	Xiu, [31.03.17 20:44]
 componentDidMount(){
@@ -55,11 +67,11 @@ componentDidMount(){
         <div className="container card">
             <form className="navbar-form navbar-right">
                 <div className="right">
-                    <input type="text" className="form-control" placeholder="Buscar"/>
+                    <input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
                 </div>
                 <span>{this.state.search}</span>
             </form>
-            <h3>Grado</h3>
+            <h3>Periodo Escolar</h3>
             <table className="table table-striped">
                 <thead>
                     <tr>
