@@ -33,54 +33,40 @@ export class StudentView extends React.Component<props.usersItem, props.stateUse
 			event.preventDefault();
 			element.parentNode.children[2].children[0].click();
 		}
-	}/*
-	componentDidUpdate(){
-		var chart = new Highcharts["Chart"](
-            document.getElementById("graphic"), 
-            {
-				title:{
-					text:"Desarrollo físico",
-					x:-20
-				},
-				xAxis:{
-					category:[7,9,15]
-				},
-				series: [{
-					data: [{
-						name:"peso",
-						data:[1,2,3]
-					},{
-						name:"altura",
-						data:[7,2,4]
-					}]
-				}]		
-			}
-        );
-	}*/
+	}
 	componentDidMount(){
-		ajax({
+		var p1=	ajax({
 			method:"GET",
 	        url: `${window.settings.uri}/v1/people/students/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:null,	        
-	        success:(data:students.profile)=>{
-	        	console.log(data);
-			    this.setState({
-			      student : data
-			    });
-	        }
-		});
-		ajax({
+	        data:null
+		}),
+		p2=ajax({
 			method:"GET",
-	        url: `//0.0.0:8080/v1/grades/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/grades/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:null,	        
-	        success:(data:students.profile)=>{
-	        	console.log(data);
-			    this.setState({
-			      grades: data
-			    });
-	        }
+	        data:null
+		}),
+		p3=ajax({
+			method:"GET",
+	        url: `${window.settings.uri}/v1/physic/static/height/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        dataType: "json",
+	        data:null	        
+		}),
+		p4=ajax({
+			method:"GET",
+	        url: `${window.settings.uri}/v1/physic/static/weight/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        dataType: "json",
+	        data:null	        
+		});
+		Promise.all([p1.done(),p2.done(),p3.done(),p4.done()]).then((data:any)=>{
+			this.setState({
+		      student : data[0],
+		      grades: data[1],
+		      weights: data[3],
+		      heights: data[2]		      
+		    });
+		    //students.profile
 		});
 	}
 	edit(event:any){
@@ -164,6 +150,9 @@ export class StudentView extends React.Component<props.usersItem, props.stateUse
     			</div>
 			);
 		}
+		let styleflex={
+			flex:"1 1 50%"
+		};
 		var valid=[
 			{
 				name:"dni",
@@ -202,24 +191,115 @@ export class StudentView extends React.Component<props.usersItem, props.stateUse
 			);
 		});
 		var iconAdmin=(this.state.student.isAdmin==true) ? "student" : "certified";		
-		var config={
+		var config1={
+			title:{
+				text:"Indice mensual de peso",
+				x:-20
+			},
+			xAxis:{
+				categories:[],
 				title:{
-					text:"Desarrollo físico",
-					x:-20
+					text:"meses del año"
+				}
+			},
+			yAxis:{
+				title:{
+					text:"kg"
+				}
+			},
+			series: [
+				{
+					name:"Peso actual",
+					data: []
 				},
-				xAxis:{
-					category:[7,9,15]
+				{
+					name:"Peso minimo",
+					data: []
 				},
-				series: [{
-					data: [{
-						name:"peso",
-						data:[1,2,3]
-					},{
-						name:"altura",
-						data:[7,2,4]
-					}]
-				}]		
-			};
+				{
+					name:"Peso máximo",
+					data: []
+				}
+			]
+		}, config2={
+			title:{
+				text:"Indice mensual de altura",
+				x:-20
+			},
+			xAxis:{
+				categories:[],
+				title:{
+					text:"meses del año"
+				}
+			},
+			yAxis:{
+				title:{
+					text:"cm"
+				}
+			},
+			series: [
+				{
+					name:"Altura actual",
+					data: []
+				},
+				{
+					name:"Altura mínima",
+					data: []
+				},
+				{
+					name:"Altura máxima",
+					data: []
+				}
+			]
+		};
+		var today=new Date();
+		var months=[
+			"Enero",
+			"Febrero",
+			"Marzo",
+			"Abril",
+			"Mayo",
+			"Junio",
+			"Julio",
+			"Agosto",
+			"Septiembre",
+			"Octubre",
+			"Noviembre",
+			"Diciembre"
+		];
+		this.state.student.physics.forEach((row)=>{
+			var date=new Date(row.date);
+			if(today.getFullYear()==date.getFullYear()){
+				config1.xAxis.categories.push(months[date.getMonth()]);			
+				config2.xAxis.categories.push(months[date.getMonth()]);			
+				config1.series[0].data.push(row.weight);
+				var maxWeight;
+				this.state.weights.forEach((weight)=>{
+					if(!maxWeight){
+						maxWeight=weight;
+					}
+					if(Math.abs(maxWeight.height-row.height)>Math.abs(row.height-weight.height)){
+						maxWeight=weight;						
+					}
+				});
+				config1.series[1].data.push(maxWeight.min);
+				config1.series[2].data.push(maxWeight.max);
+				config2.series[0].data.push(row.height);
+				var maxAge;
+				this.state.heights.forEach((height)=>{
+					if(!maxAge){
+						maxAge=height;
+					}
+					if(Math.abs(maxAge.age-row.age)>Math.abs(row.age-height.age)){
+						maxAge=height;						
+					}
+				});
+				config2.series[1].data.push(maxAge.min);
+				config2.series[2].data.push(maxAge.max);
+
+			}
+			//config1.series[1].data.push(row.height);
+		});
     return (
     	<div className="container">
 			{this.state.error && (
@@ -288,15 +368,23 @@ export class StudentView extends React.Component<props.usersItem, props.stateUse
 					</div>
 				</div>
 			</div>	
-			<h3>Desarrollo físico</h3>			
-			<LineChart config={config}></LineChart>
+			<h3 className="text-align center">Desarrollo físico</h3>			
 			<div className="flex row">
 				<Link to={`/students/get/${this.props.routeParams.id}/physic/create`} className="button circle icons x16 add white"></Link>
+			</div>
+			<div className="flex row">
+				<div className="text-align center" style={styleflex}>
+					<LineChart config={config1} id="weight"></LineChart>					
+				</div>
+				<div className="text-align center" style={styleflex}>
+					<LineChart config={config2} id="height"></LineChart>					
+				</div>						
 			</div>
 			<table className="table table-striped">
 				<thead>
 					<tr>
 						<th>Fecha del registro</th>
+						<th>Edad</th>
 						<th>Peso</th>
                   		<th>Estatura</th>
                   		<th>Acción</th>
@@ -308,9 +396,31 @@ export class StudentView extends React.Component<props.usersItem, props.stateUse
 						return (
 							<tr key={row._id}>
 								<td>{row.date}</td>
+								<td>{row.age}</td>
 								<td>{row.weight} kg</td>
 								<td>{row.height} cm</td>
 								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
+							</tr>
+						);
+					})
+				}
+				</tbody>
+			</table>
+			<h3 className="text-align center">Historico de eventos</h3>			
+			<table className="table table-striped">
+				<thead>
+					<tr>
+						<th>Fecha del registro</th>
+                  		<th>Acción</th>
+					</tr>
+				</thead>
+				<tbody>
+				{
+					this.state.student.history.map((row:any)=>{
+						return (
+							<tr key={row._id}>
+								<td>{row.dateCreated}</td>
+								<td>{row.description}</td>
 							</tr>
 						);
 					})
@@ -329,19 +439,19 @@ class LineChart extends React.Component <{},{}>{
     }
   
   componentDidMount() {
-  	console.log(document.querySelector("#chart"))
-	this.chart = new Highcharts.Chart("#chart",{
-		series: [{
-			data: [1, 3, 2, 4]
-		}]
-	});
+		this.chart = new Highcharts.Chart(this.props.id,this.props.config);
 	}
-	componentWillReceiveProps(props) {
+	/*componentWillReceiveProps(props) {
+		//console.log(props);
 	  	//this.chart.highcharts().series[0].setData(props.data);
-	}	  
+	}*/
 	render() {
+		let flex = {
+		  display:"block",
+		  width:"100%"
+		}
 	  return (
-	    <div id='chart'>
+	    <div id={this.props.id} style={flex}>
 	    </div>
 	  )
 	}

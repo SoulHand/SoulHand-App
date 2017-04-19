@@ -143,10 +143,10 @@ describe("Test route knowedge cognitions",function(){
 			response=JSON.parse(response);
 			var now=Date.now();
 			var last=new Date(`${response.data.birthdate}T00:00:00`);
-			var age=((now-last.getTime())/31536000000);
+			var age=Math.round((now-last.getTime())/31536000000);
 			expect(response.physics[1].height).toBe(input.height);
 			expect(response.physics[1].weight).toBe(input.weight);			
-			expect(Math.round(response.physics[1].age)).toBe(Math.round(age));			
+			expect(response.physics[1].age).toBe(age);			
 			done();
 		}).catch(function(error){
 			expect(error).toBeNull();

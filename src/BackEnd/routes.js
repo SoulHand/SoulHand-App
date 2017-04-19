@@ -1538,7 +1538,7 @@ module.exports=function(app,express,server,__DIR__){
 		app.container.database.Schema.Students.findOne({_id:request.params.id}).then(function(data){
 			var now=Date.now();
 			var last=new Date(`${data.data.birthdate}T00:00:00`);
-			var age=((now-last.getTime())/31536000000);
+			var age=Math.round((now-last.getTime())/31536000000);
 			var element=app.container.database.Schema.physic({
 				weight:request.body.weight,
 				height:request.body.height,
@@ -1815,238 +1815,7 @@ module.exports=function(app,express,server,__DIR__){
 	});
 	app.use("/v1/people/parents",ReferencesToURI);/*
 
-	/*
-	* Ruta /v1/words/morphema		
-	* @var ReferencesToURI object enrutador para agrupar metodos
-	*/
-	var morphema = express.Router();
-	/*
-	* @api {post} / Crear representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople> objeto CRUD
-	* @var people3<SubPeople> objeto CRUD
-	* @var people2<People> objeto CRUD
-	*/
-	morphema.post("/",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Representatives);
-		var people3=new SubPeople(app.container.database.Schema.Students);
-		var people2=new People(app.container.database.Schema.Peoples);
-		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
-			throw new ValidatorException("Solo se aceptan documentos de identidad");
-		}
-		if(Validator.matches(/[0-9]/)(request.body.name)){
-			throw new ValidatorException("Solo se aceptan nombres validos");
-		}
-		if(!Validator.isDate()(request.body.birthdate)){
-			throw new ValidatorException("La fecha de nacimiento no es valida");
-		}
-		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
-			throw new ValidatorException("El telefono no tiene un formato valido");
-		}
-		var fields={
-			data:JSON.parse(JSON.stringify(request.body)),
-			idStudent:request.body.idStudent			
-		};
-		fields.data.mode="PARENT";
-		delete(fields.data.idStudent);
-		people3.find({"data.dni":request.body.idStudent}).then(function(data){
-			fields.idStudent=data._id;
-			return people2.add(fields.data);
-		}).then(function(data){
-			fields.data=data;
-			return people.add(fields);
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {post} /type Crear representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople> objeto CRUD
-	* @var people3<SubPeople> objeto CRUD
-	* @var people2<People> objeto CRUD
-	*/
-	morphema.post("/type",function(request, response,next) {
-		var morphem=new CRUD(app.container.database.Schema.morphem_type);
-		if(Validator.isNull()(request.body.name)){
-			throw new ValidatorException("El nombre solo debe contener letras");
-		}
-		var input={
-			name:request.body.name.toString()
-		};
-		morphem.add(input,input).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {post} /type Crear representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople> objeto CRUD
-	* @var people3<SubPeople> objeto CRUD
-	* @var people2<People> objeto CRUD
-	*/
-	morphema.get("/type",function(request, response,next) {
-		var morphem=new CRUD(app.container.database.Schema.morphem_type);
-		morphem.get().then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {post} /type Crear representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople> objeto CRUD
-	* @var people3<SubPeople> objeto CRUD
-	* @var people2<People> objeto CRUD
-	*/
-	morphema.get("/type/:id",function(request, response,next) {
-		var morphem=new CRUD(app.container.database.Schema.morphem_type);
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("El id es invalido!");
-		}
-		morphem.find({_id:request.params.id}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {post} /type Crear representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople> objeto CRUD
-	* @var people3<SubPeople> objeto CRUD
-	* @var people2<People> objeto CRUD
-	*/
-	morphema.delete("/type/:id",function(request, response,next) {
-		var morphem=new CRUD(app.container.database.Schema.morphem_type);
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("El id es invalido!");
-		}
-		morphem.remove({_id:request.params.id}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} / Obtener todos los representantes
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople>	objeto CRUD
-	*/
-	morphema.get("/",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Representatives);
-		people.get().then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} /:id Obtener un representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople>	objeto CRUD
-	*/
-	morphema.get("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Representatives);
-		people.find({_id:request.params.id}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {put} /:id Editar representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople>	objeto CRUD
-	* @var people2<People>	objeto CRUD
-	* @var grade<Grade>	objeto CRUD
-	*/
-	morphema.put("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Representatives);
-		var people2=new People(app.container.database.Schema.Peoples);
-		var grade=new Grade(app.container.database.Schema.Grades);
-		if(request.body.dni && !Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
-			throw new ValidatorException("Solo se aceptan documentos de identidad");
-		}
-		if(request.body.name && Validator.matches(/[0-9]/)(request.body.name)){
-			throw new ValidatorException("Solo se aceptan nombres validos");
-		}
-		if(request.body.birthdate && !Validator.isDate()(request.body.birthdate)){
-			throw new ValidatorException("La fecha de nacimiento no es valida");
-		}
-		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
-			throw new ValidatorException("El telefono no tiene un formato valido");
-		}
-
-		var people, represent;
-		app.container.database.Schema.Representatives.findOne({_id:request.params.id}).then(function(data){
-			represent=data;
-			return app.container.database.Schema.Peoples.findOne({_id:represent.data._id});
-		}).then(function(data){
-			people=data;
-			var fields=people.toJSON();
-			for (i in fields){
-				if(request.body[i] && i!="dni"){
-					people[i]=request.body[i];
-				}
-			}
-			represent.data=people;			
-			var fields=represent.toJSON();
-			for (i in fields){
-				if(request.body[i] && i!="dni"){
-					represent[i]=request.body[i];
-				}
-			}
-			return Promise.all([people.save(),represent.save()]);
-		}).then(function(data){
-			response.send(data[1]);
-		}).catch(function(error){
-			next(error);
-		});		
-	});
-	/*
-	* @api {delete} /:id Eliminar un representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion	
-	* @var people<SubPeople>	objeto CRUD
-	* @var people2<People>	objeto CRUD
-	*/
-	morphema.delete("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Representatives);
-		var people2=new People(app.container.database.Schema.Peoples);
-		people.remove({_id:request.params.id}).then(function(data){
-			response.send(data);
-			return people2.remove(data.data._id);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	app.use("/v1/words/morphema",morphema);/*
-
-
-
+	
 	/*
 	* Ruta /v1/learning
 	* @var learningURI object enrutador para agrupar metodos
@@ -2315,7 +2084,7 @@ module.exports=function(app,express,server,__DIR__){
 		if(request.body.teacher && request.user.isAdmin==true){
 			dni=request.body.teacher;
 		}
-		Promise.all([app.container.database.Schema.Grades.findOne({name:request.params.grade.toUpperCase()}),app.container.database.Schema.Courses.findOne({name:request.params.course.toUpperCase()}),app.container.database.Schema.Teachers.findOne({"data.dni":dni.toUpperCase()})]).then((data)=>{
+		Promise.all([app.container.database.Schema.Grades.findOne({name:request.params.grade.toUpperCase()}),app.container.database.Schema.Courses.findOne({name:request.params.course.toUpperCase()}),app.container.database.Schema.Teachers.findOne({"data.dni":dni.toUpperCase()}),Events.get("ACTIVITY-ADD")]).then((data)=>{
 			if(!data[0]){
 				throw new ValidatorException("No existe el grado!");
 			}
@@ -2336,6 +2105,17 @@ module.exports=function(app,express,server,__DIR__){
 				grade:data[0],
 				course:data[1]
 			});
+			if(data[3]){
+				var result=Inference.apareamiento(data.premises,{
+					p1:request.body.name,
+					p2:request.body.description,
+					p3:activity.dateExpire.getTime(),
+					p4:Date.now(),
+				});
+				if(result.q1 && /Error\:/ig.test(result.q1)){
+					throw new ValidatorException(result.q1);
+				}
+			}
 			return activity.save();
 			return "Hola";
 		}).then(function(data){
@@ -2430,6 +2210,239 @@ module.exports=function(app,express,server,__DIR__){
 	});
 	app.use("/v1/activities",activityURI);
 
+
+/*
+	
+	/*
+	* Ruta /v1/words/morphema		
+	* @var ReferencesToURI object enrutador para agrupar metodos
+	*\/
+	var morphema = express.Router();
+	/*
+	* @api {post} / Crear representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people3<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*\/
+	morphema.post("/",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Representatives);
+		var people3=new SubPeople(app.container.database.Schema.Students);
+		var people2=new People(app.container.database.Schema.Peoples);
+		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
+			throw new ValidatorException("Solo se aceptan documentos de identidad");
+		}
+		if(Validator.matches(/[0-9]/)(request.body.name)){
+			throw new ValidatorException("Solo se aceptan nombres validos");
+		}
+		if(!Validator.isDate()(request.body.birthdate)){
+			throw new ValidatorException("La fecha de nacimiento no es valida");
+		}
+		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
+			throw new ValidatorException("El telefono no tiene un formato valido");
+		}
+		var fields={
+			data:JSON.parse(JSON.stringify(request.body)),
+			idStudent:request.body.idStudent			
+		};
+		fields.data.mode="PARENT";
+		delete(fields.data.idStudent);
+		people3.find({"data.dni":request.body.idStudent}).then(function(data){
+			fields.idStudent=data._id;
+			return people2.add(fields.data);
+		}).then(function(data){
+			fields.data=data;
+			return people.add(fields);
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {post} /type Crear representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people3<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*\/
+	morphema.post("/type",function(request, response,next) {
+		var morphem=new CRUD(app.container.database.Schema.morphem_type);
+		if(Validator.isNull()(request.body.name)){
+			throw new ValidatorException("El nombre solo debe contener letras");
+		}
+		var input={
+			name:request.body.name.toString()
+		};
+		morphem.add(input,input).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {post} /type Crear representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people3<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*\/
+	morphema.get("/type",function(request, response,next) {
+		var morphem=new CRUD(app.container.database.Schema.morphem_type);
+		morphem.get().then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {post} /type Crear representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people3<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*\/
+	morphema.get("/type/:id",function(request, response,next) {
+		var morphem=new CRUD(app.container.database.Schema.morphem_type);
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		morphem.find({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {post} /type Crear representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople> objeto CRUD
+	* @var people3<SubPeople> objeto CRUD
+	* @var people2<People> objeto CRUD
+	*\/
+	morphema.delete("/type/:id",function(request, response,next) {
+		var morphem=new CRUD(app.container.database.Schema.morphem_type);
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		morphem.remove({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todos los representantes
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	*\/
+	morphema.get("/",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Representatives);
+		people.get().then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} /:id Obtener un representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	*\/
+	morphema.get("/:id",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Representatives);
+		people.find({_id:request.params.id}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {put} /:id Editar representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	* @var grade<Grade>	objeto CRUD
+	*\/
+	morphema.put("/:id",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Representatives);
+		var people2=new People(app.container.database.Schema.Peoples);
+		var grade=new Grade(app.container.database.Schema.Grades);
+		if(request.body.dni && !Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
+			throw new ValidatorException("Solo se aceptan documentos de identidad");
+		}
+		if(request.body.name && Validator.matches(/[0-9]/)(request.body.name)){
+			throw new ValidatorException("Solo se aceptan nombres validos");
+		}
+		if(request.body.birthdate && !Validator.isDate()(request.body.birthdate)){
+			throw new ValidatorException("La fecha de nacimiento no es valida");
+		}
+		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
+			throw new ValidatorException("El telefono no tiene un formato valido");
+		}
+
+		var people, represent;
+		app.container.database.Schema.Representatives.findOne({_id:request.params.id}).then(function(data){
+			represent=data;
+			return app.container.database.Schema.Peoples.findOne({_id:represent.data._id});
+		}).then(function(data){
+			people=data;
+			var fields=people.toJSON();
+			for (i in fields){
+				if(request.body[i] && i!="dni"){
+					people[i]=request.body[i];
+				}
+			}
+			represent.data=people;			
+			var fields=represent.toJSON();
+			for (i in fields){
+				if(request.body[i] && i!="dni"){
+					represent[i]=request.body[i];
+				}
+			}
+			return Promise.all([people.save(),represent.save()]);
+		}).then(function(data){
+			response.send(data[1]);
+		}).catch(function(error){
+			next(error);
+		});		
+	});
+	/*
+	* @api {delete} /:id Eliminar un representante
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	*\/
+	morphema.delete("/:id",function(request, response,next) {
+		var people=new SubPeople(app.container.database.Schema.Representatives);
+		var people2=new People(app.container.database.Schema.Peoples);
+		people.remove({_id:request.params.id}).then(function(data){
+			response.send(data);
+			return people2.remove(data.data._id);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	app.use("/v1/words/morphema",morphema);
+*/
 
 
 
