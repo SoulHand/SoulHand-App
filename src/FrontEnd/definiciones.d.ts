@@ -79,6 +79,15 @@ declare namespace users{
 }
 
 declare namespace props{
+	interface menu{
+    	router?:ReactRouter.InjectedRouter		
+	}
+	interface profilebox{
+    	router?:ReactRouter.InjectedRouter
+    	callback:Function
+    	session:users.sessions
+	}
+
 	interface codeError{
 		code:string
 		message:string
@@ -156,5 +165,11 @@ declare namespace props{
     	router?:ReactRouter.InjectedRouter
     	location?: any
     	children?: any
+	}
+}
+
+declare namespace states{
+	interface menu{
+		session: users.sessions
 	}
 }

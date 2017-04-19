@@ -9,17 +9,16 @@ import {withRouter} from 'react-router';
 import {ProfileBox} from "../profilebox"
 
 @withRouter
-export class Menu extends React.Component<props.basic, props.basic> {
+export class Menu extends React.Component<props.menu, states.menu> {
 	public parent:Element;
-	public session:users.sessions;
-	state={
-		session:null
-	}
-	constructor(props:any) {
-		super(props);
+	public session:users.sessions;	
+	constructor(props:props.menu) {
+		super(props);		
     	let str=localStorage.getItem("session");
     	let session=JSON.parse(str);
-		this.session=session;		
+		this.state={
+			session:session	
+		};	
 	}
 	componentDidMount(){
 		this.parent=document.querySelector("div[data-app=\"soulhand-services\"]");
@@ -35,76 +34,70 @@ export class Menu extends React.Component<props.basic, props.basic> {
 	destroy(){
 		this.session=null;
 		this.setState({
-			session:this.session
+			session:null
 		});
 	}
-	toogle(event:any){
+	toogle(event:MouseEvent){
 		this.parent.classList.toggle("slider");
 	}	
 	render (){
 		return(
 			<div className="menu">
-				{this.state.session && (<ProfileBox session={this.state.session} callback={(e)=>{this.destroy()}}/>)
+				{this.state.session && (
+					<ProfileBox session={this.state.session} callback={(e:MouseEvent)=>{this.destroy()}}/>
+					)
 				}
 				<ul>
 					<li>
-						<Link to="/" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Inicio</Link>
+						<Link to="/" activeClassName="active" onClick={(e:MouseEvent)=>{this.toogle(e)}}>Inicio</Link>
 					</li>
 					{!this.state.session && (
 						<li>
-							<Link to="/auth" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Iniciar sesión</Link>
+							<Link to="/users/create" activeClassName="active" onClick={(e:MouseEvent)=>{this.toogle(e)}}>Registrarse</Link>
 						</li>						
 					)}
 					{!this.state.session && (
 						<li>
-							<Link to="/users/create" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Registrarse</Link>
+							<Link to="/auth" activeClassName="active" onClick={(e:MouseEvent)=>{this.toogle(e)}}>Iniciar sesión</Link>
 						</li>						
 					)}
 					{this.state.session && this.state.session.user.isAdmin==true && (
 						<li>
-							<Link to="/teacher" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Docentes</Link>
+							<Link to="/teacher" activeClassName="active" onClick={(e:MouseEvent)=>{this.toogle(e)}}>Docentes</Link>
 						</li>						
 					)}
 					{this.state.session && this.state.session.user.isAdmin==true && (
 						<li>
-							<Link to="/users" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Usuarios</Link>
+							<Link to="/users" activeClassName="active" onClick={(e:MouseEvent)=>{this.toogle(e)}}>Usuarios</Link>
 						</li>						
 					)}
 					{this.state.session && this.state.session.user.isAdmin==true && (
 					<li>
-						<Link to="/parents" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Representantes</Link>
+						<Link to="/parents" activeClassName="active" onClick={(e:MouseEvent)=>{this.toogle(e)}}>Representantes</Link>
 					</li>
 					)}
 					{this.state.session && this.state.session.user.isAdmin==true && (
 					<li>
-						<Link to="/domain" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Dominio del aprendizaje</Link>
+						<Link to="/domain" activeClassName="active" onClick={(e:MouseEvent)=>{this.toogle(e)}}>Dominio del aprendizaje</Link>
 					</li>
 					)}
 					{this.state.session && this.state.session.user.isAdmin==true && (
 					<li>
-						<Link to="/matter" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Materias</Link>
+						<Link to="/matter" activeClassName="active" onClick={(e:MouseEvent)=>{this.toogle(e)}}>Materias</Link>
 					</li>
 					)}
 					{this.state.session && this.state.session.user.isAdmin==true && (
 					<li>
-						<Link to="/grades" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Grados</Link>
+						<Link to="/grades" activeClassName="active" onClick={(e:MouseEvent)=>{this.toogle(e)}}>Grados</Link>
 					</li>
 					)}
 					{this.state.session && this.state.session.user.people.mode=="TEACHER" && (
 					<li>
-						<Link to="/students" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Alumnos</Link>
+						<Link to="/students" activeClassName="active" onClick={(e:MouseEvent)=>{this.toogle(e)}}>Alumnos</Link>
 					</li>
 					)}
 				</ul>
 			</div>
 		);
 	}
-
-/*
-
-					{this.state.session && this.state.session.user.isAdmin==true && (
-					<li>
-						<Link to="/knowedge" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Nivel de conocimiento</Link>
-					</li>
-					)}
-*/
+}

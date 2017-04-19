@@ -5,7 +5,7 @@ import {Link} from 'react-router';
 import {ProfileBox} from "../profilebox"
 
 
-export class Menu extends React.Component<{}, {}> {
+export class Menu extends React.Component<props.menu, states.menu> {
 	public parent:Element;
 	public session:users.sessions;
 	state={

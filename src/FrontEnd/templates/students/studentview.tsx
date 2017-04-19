@@ -6,7 +6,6 @@ import * as Highcharts from 'highcharts/highcharts'
 import {ajax} from 'jquery'
 import * as $ from 'jquery'
 
-
 export class StudentView extends React.Component<props.usersItem, props.stateUser {
 	public session:users.sessions;
 	public PrivateKeyId:string;
