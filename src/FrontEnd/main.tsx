@@ -57,6 +57,11 @@ import {DomainCreate} from './templates/domain/domaincreate';
 import {ListDomain} from './templates/domain/listdomain';
 import {DomainView} from './templates/domain/domainview';
 
+import {Activities} from './templates/activities';
+import {ActivitiesCreate} from './templates/activities/activitiescreate';
+//import {ListActivities} from './templates/activities/listactivities';
+//import {ActivitiesView} from './templates/activities/activitiesview';
+
 import {Cognitive} from './templates/cognitive';
 import {ListCognitive} from './templates/cognitive/listcognitive';
 import {CognitiveCreate} from './templates/cognitive/cognitivecreate';
@@ -105,6 +110,11 @@ window.addEventListener("load",()=>{
 		    	<IndexRoute component={ListDomain}/>
 		    	<Route path="get/:id" component={DomainView}/>
 		    	<Route path="create" component={DomainCreate}/>
+		    </Route> 
+		    <Route path="/activities" component={Activities} onEnter={Auth}>
+		    	<IndexRoute component={ListActivities}/>
+		    	<Route path="get/:id" component={ActivitiesView}/>
+		    	<Route path="create" component={ActivitiesCreate}/>
 		    </Route>
 		    
 		    <Route path="/users" component={Home}>
