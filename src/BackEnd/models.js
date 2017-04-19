@@ -11,6 +11,10 @@ var structDb={
 	Courses:mongoose.Schema({
 		name:{type:String, required:true, trim:true, uppercase: true}
 	}),
+	HistoryLearning:mongoose.Schema({
+		description:{type:String, required:true, trim:true, uppercase: true},
+		dateCreated:{type:Date,default:Date.now}
+	}),
 	PeriodSchools:mongoose.Schema({
 		name:{type:String, required:true, trim:true, uppercase: true}
 	}),
@@ -138,7 +142,8 @@ structDb.Students=mongoose.Schema({
 	discapacityLevel:{type:Number, required:true, default:0},
 	physics:[structDb.physic],
 	domain:{ type: mongoose.Schema.ObjectId, ref: "domainsLearning" },
-	objetives:[structDb.LearningObjetive]
+	objetives:[structDb.LearningObjetive],
+	history:[structDb.HistoryLearning]
 });
 
 structDb.Activities=mongoose.Schema({

@@ -22,16 +22,25 @@ module.exports=function(db){
 			if(!result){
 				throw new VoidException("No hay premisa valida!");				
 			}
-			return result.q1;
+			return Promise.all([result.q1,people._id]);
 		}).then((result)=>{
-	  		console.log(`Mensaje del motor: ${result}`);			
-		}).catch((error)=>{
+			Inference.emit('history-students',result[0],result[1]);
+		})/*.catch((error)=>{
 			console.log(error.toString());
-		});
+		});*/
 	});
 
-	Inference.on('history', (message) => {
-	  console.log(message);
+	Inference.on('history-students', (message,student) => {
+		db.Students.findOne({_id:student}).then((data)=>{
+			if(!data){
+				throw new VoidException("No existe el alumno!");
+			}
+			var history=new db.HistoryLearning({
+				description:message
+			});
+			data.history.push(history);
+			return data.save();
+		})
 	});
 	return Inference;
 }
