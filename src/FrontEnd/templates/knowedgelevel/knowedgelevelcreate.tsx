@@ -113,7 +113,7 @@ export class KnowedgeLevelCreate extends React.Component<, {}> {
 			
 				  <div className="form-group">
 				    <label htmlFor="name"><b>Nombre </b></label>
-				    <input type="texto" className="form-control" id="name" aria-describedby="name" maxLength={20} placeholder="Nombre "required autoFocus onChange={(e)=>{this.getFields(e)}}/>
+				    <input type="texto" className="form-control" id="name" aria-describedby="name" placeholder="Nombre "required autoFocus onChange={(e)=>{this.getFields(e)}}/>
 					{this.state.error.name && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> El campo es obligatorio.
@@ -121,7 +121,7 @@ export class KnowedgeLevelCreate extends React.Component<, {}> {
 				    )}				  </div>	
 				     <div className="form-group">
 				    <label htmlFor="number"><b>Edad Minima</b></label>
-				    <input type="number" className="form-control" id="min" aria-describedby="age_min" placeholder="Edad" maxLength={2} onChange={(e)=>{this.getFields(e)}}/>
+				    <input type="number" className="form-control" id="min" aria-describedby="age_min" placeholder="Edad" onChange={(e)=>{this.getFields(e)}}/>
 				    {this.state.error.min && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> Debe ser un numero valido.
@@ -130,7 +130,7 @@ export class KnowedgeLevelCreate extends React.Component<, {}> {
 				  </div>			  
 				  	   <div className="form-group">
 				    <label htmlFor="number"><b>Edad Maxima</b></label>
-				    <input type="number" className="form-control" id="max" aria-describedby="age_max" placeholder="Edad" maxLength={2} onChange={(e)=>{this.getFields(e)}}/>
+				    <input type="number" className="form-control" id="max" aria-describedby="age_max" placeholder="Edad" onChange={(e)=>{this.getFields(e)}}/>
 				    {this.state.error.max && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> Debe ser un numero valido.

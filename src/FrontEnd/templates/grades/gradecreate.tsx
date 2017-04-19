@@ -91,7 +91,7 @@ export class GradeCreate extends React.Component<{}, {}> {
     		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
 				    <div className="form-group">
 				    <label htmlFor="name"><b>Nombre</b></label>
-				    <input type="texto" className="form-control" id="name" aria-describedby="name" maxLength={20} placeholder="Nombre"required autoFocus onChange={(e)=>{this.getFields(e)}}/>
+				    <input type="texto" className="form-control" id="name" aria-describedby="name" placeholder="Nombre"required autoFocus onChange={(e)=>{this.getFields(e)}}/>
 					{this.state.error.name && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> El campo es obligatorio.

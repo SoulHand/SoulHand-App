@@ -111,7 +111,7 @@ window.addEventListener("load",()=>{
 		    	<Route path="get/:id" component={DomainView}/>
 		    	<Route path="create" component={DomainCreate}/>
 		    </Route> 
-		    <Route path="/activities" component={Activities} onEnter={Auth}>
+		    <Route path="/activities" component={Teachers} onEnter={Auth}>
 		    	<Route path=":id/:grade/create" component={ActivitiesCreate}/>
 		    	<Route path="get/:id" component={ActivitieView}/>
 		    </Route>

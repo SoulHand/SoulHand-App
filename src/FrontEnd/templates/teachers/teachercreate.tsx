@@ -127,7 +127,7 @@ export class TeacherCreate extends React.Component<props.teacherItem, {}> {
     	<div className="container">    				
     		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
 				<label htmlFor="dni"><b>Cedula*</b></label>
-				    <input type="texto" className="form-control" id="dni" aria-describedby="ci_docente" maxLength={12} placeholder="documento de identidad" required autoFocus onChange={(e)=>{this.getFields(e)}}/>
+				    <input type="texto" className="form-control" id="dni" aria-describedby="ci_docente" placeholder="documento de identidad" required autoFocus onChange={(e)=>{this.getFields(e)}}/>
 				    {this.state.error.dni && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> Introduzca un documento de identidad valido con la inicial de su nacionalidad.
@@ -135,7 +135,7 @@ export class TeacherCreate extends React.Component<props.teacherItem, {}> {
 				    )}
 				  <div className="form-group">
 				    <label htmlFor="name"><b>Nombre y Apellido*</b></label>
-				    <input type="texto" className="form-control" id="name" aria-describedby="name" maxLength={20} placeholder="Nombre y Apellido"required autoFocus onChange={(e)=>{this.getFields(e)}}/>
+				    <input type="texto" className="form-control" id="name" aria-describedby="name" placeholder="Nombre y Apellido"required autoFocus onChange={(e)=>{this.getFields(e)}}/>
 					{this.state.error.name && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> El campo es obligatorio.
@@ -143,7 +143,7 @@ export class TeacherCreate extends React.Component<props.teacherItem, {}> {
 				    )}				  </div>				  
 				  <div className="form-group">
 				    <label htmlFor="phone"><b>Telefono*</b></label>
-				    <input type="texto" className="form-control" id="phone" aria-describedby="Telefono" placeholder="número telefónico" maxLength={12} onChange={(e)=>{this.getFields(e)}}/>
+				    <input type="texto" className="form-control" id="phone" aria-describedby="Telefono" placeholder="número telefónico" onChange={(e)=>{this.getFields(e)}}/>
 				    {this.state.error.phone && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> Debe ser un numero de telefono valido.

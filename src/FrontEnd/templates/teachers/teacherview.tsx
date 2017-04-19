@@ -96,38 +96,16 @@ export class TeacherView extends React.Component<Props.usersItem, props.stateUse
 	        }
 		});
 	}
-	changeGrade(event:any){		
-		ajax({
-			method:"PUT",
-	        url: `${window.settings.uri}/v1/people/teachers/${this.props.routeParams.id}/grade/${event.target.value}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
-	        dataType: "json",
-	        data:null,	        
-	        success:(data:teachers.profile)=>{				
-	        	this.setState({
-					teacher:data
-				});
-	        },
-	        error:(data:any)=>{
-	        	this.setState({
-					error:data.responseJSON.message
-				});
-	        }
-		});
-	}
-	deleteField(event: any){
-		var element:EventTarget=event.target;		
-		ajax({
-			method:"DELETE",
-	        url: `${window.settings.uri}/v1/people/teachers/${this.props.routeParams.id}/physic/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
-	        dataType: "json",
-	        data:null,
-	        crossDomain:true,
-	        success:(data:peoples.teachers)=>{	        	
-		    	this.setState({
-					teacher:data
-				});
-	        }
-		});
+	deleteField(data: any){
+		this.state.activities=this.state.activities.filter(function(row:peoples.teachers){
+			if(row._id==data._id){
+				return false;
+			}
+			return true;
+    	});
+    	this.setState({
+	      	activities : this.state.activities
+	    });
 	}
 	render () {
 		if(!this.state.teacher){

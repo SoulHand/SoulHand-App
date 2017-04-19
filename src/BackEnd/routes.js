@@ -2237,11 +2237,11 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	activityURI.delete("/:grade/:course/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	activityURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
-		app.container.database.Schema.Activities.findOne({domain:request.params.domain,"course.name":request.params.course, _id:request.params.id }).then(function(obj){		
+		app.container.database.Schema.Activities.findOne({_id:request.params.id }).then(function(obj){		
 			if(!obj){
 				throw new ValidatorException("No existe el registro");
 			}

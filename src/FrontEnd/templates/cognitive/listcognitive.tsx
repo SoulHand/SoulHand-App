@@ -39,9 +39,7 @@ export class ListCognitive extends React.Component<{}, {}> {
 			    });
 	        }
 		});
-	}
-	
-	Xiu, [31.03.17 20:44]
+	}	
 componentDidMount(){
         getJSON(`//0.0.0:8080/v1/learning/domain/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,(data)=>{
             this.cognitive= data;
