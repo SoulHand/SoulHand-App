@@ -59,8 +59,8 @@ import {DomainView} from './templates/domain/domainview';
 
 import {Activities} from './templates/activities';
 import {ActivitiesCreate} from './templates/activities/activitiescreate';
+import {ActivitieView} from './templates/activities/activitieview';
 //import {ListActivities} from './templates/activities/listactivities';
-//import {ActivitiesView} from './templates/activities/activitiesview';
 
 import {Cognitive} from './templates/cognitive';
 import {ListCognitive} from './templates/cognitive/listcognitive';
@@ -113,6 +113,7 @@ window.addEventListener("load",()=>{
 		    </Route> 
 		    <Route path="/activities" component={Activities} onEnter={Auth}>
 		    	<Route path=":id/:grade/create" component={ActivitiesCreate}/>
+		    	<Route path="get/:id" component={ActivitieView}/>
 		    </Route>
 		    
 		    <Route path="/users" component={Home}>

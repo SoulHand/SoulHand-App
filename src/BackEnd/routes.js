@@ -2216,11 +2216,11 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	activityURI.get("/:grade/:course/:id",function(request, response,next) {
+	activityURI.get("/:id",function(request, response,next) {
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
-		app.container.database.Schema.Activities.findOne({"grade.name":request.params.grade.toUpperCase(),"course.name":request.params.course.toUpperCase(),_id:request.params.id}).then(function(rows){
+		app.container.database.Schema.Activities.findOne({_id:request.params.id}).then(function(rows){
 			if(!rows){
 				throw new ValidatorException("No existe el registro");
 			}

@@ -8,7 +8,7 @@ export class TableActivities extends React.Component<Props.tableactivities, {}>{
 	deleteField(event: any){
 		ajax({
 			method:"DELETE",
-	        url: `${window.settings.uri}/v1/people/teachers/${event.target.dataset.id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/activities/${event.target.dataset.id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
@@ -18,7 +18,7 @@ export class TableActivities extends React.Component<Props.tableactivities, {}>{
 		});
 	}
 	render () {
-		if(!this.props.teachers || (this.props.teachers && this.props.teachers.length==0)){
+		if(!this.props.activities || (this.props.activities && this.props.activities.length==0)){
 			return (
 				<span className="text-align center">No existen resultados</span>
 			);
@@ -27,9 +27,10 @@ export class TableActivities extends React.Component<Props.tableactivities, {}>{
 			<table className="table table-striped">
 				<thead>
 					<tr>
-						<th>Cedula Escolar</th>
-						<th>Nombre y Apellido</th>
-                 		<th>grado asignado</th>
+						<th>Nombre</th>
+						<th>Expira</th>
+                 		<th>Materia</th>
+                 		<th>Estado</th>
                   		<th>Acción</th>
 					</tr>
 				</thead>
@@ -38,9 +39,10 @@ export class TableActivities extends React.Component<Props.tableactivities, {}>{
 					this.props.activities.map((row:any)=>{
 						return (
 							<tr key={row._id}>
-								<td>{row.data.dni}</td>
-								<td><Link to={`/teacher/get/${row._id}`} className="title">{row.data.name}</Link></td>
-								<td>{(row.grade) ? row.grade.name : "NO ASIGNADO"}</td>
+								<td><Link to={`/activities/get/${row._id}`}>{row.name}</Link></td>
+								<td>{row.dateExpire}</td>
+								<td>{row.course.name}</td>
+								<td>{(row.isCompleted==true) ? "COMPLETADO" : "NO COMPLETADO"}</td>
 								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
 							</tr>
 						);

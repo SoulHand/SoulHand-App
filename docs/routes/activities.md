@@ -30,12 +30,12 @@ añade un actividad a la colección de actividades existente
   description: 'contar del 1 al 10 mientras canta y baila',
   dateExpire: '2016-03-15T23:04:12.000Z',
   teacher: '58f56d275dd49d18993ae36d',
-  grade:{ 
+  grade:{
     name: '1RO',
     __v: 0,
     _id: '58f56d275dd49d18993ae36b' 
   },
-  course: { 
+  course: {
     name: 'LOREN YUNDT',
     __v: 0,
     _id: '58f56d275dd49d18993ae36a'
