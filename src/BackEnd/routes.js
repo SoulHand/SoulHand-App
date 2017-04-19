@@ -1276,6 +1276,33 @@ module.exports=function(app,express,server,__DIR__){
 		});
 	});
 	/*
+	* @api {put} /:id Editar profesor
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	*/
+	PeopleURI.put("/:id/grade/:grade",function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.grade)){
+			throw new ValidatorException("el id no es valido!");	
+		}
+		Promise.all([app.container.database.Schema.Teachers.findOne({_id:request.params.id}),app.container.database.Schema.Grades.findOne({_id:request.params.grade})]).then(function(data){
+			if(!data[0]){
+				throw new ValidatorException("No existe un registro de este tipo");
+			}
+			if(!data[1]){
+				throw new ValidatorException("No existe el grado!");
+			}
+			data[0].grade=data[1];
+			return data[0].save();
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
 	* @api {delete} /:id Eliminar un profesor
 	* @params request peticiones del cliente
 	* @params response respuesta del servidor
@@ -2158,8 +2185,25 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion	
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	activityURI.get("/:grade/:course",function(request, response,next) {		
+	activityURI.get("/:grade/:teacher/:course",function(request, response,next) {		
 		app.container.database.Schema.Activities.find({"grade.name":request.params.grade.toUpperCase(),"course.name":request.params.course.toUpperCase()}).then(function(rows){
+			response.send(rows);			
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todas las categorias cognitivas
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion	
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	activityURI.get("/:grade/:teacher",function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.teacher)){
+			throw new ValidatorException("el docente es invalido");
+		}		
+		app.container.database.Schema.Activities.find({"grade.name":request.params.grade.toUpperCase(),teacher:request.params.teacher}).then(function(rows){
 			response.send(rows);			
 		}).catch(function(error){
 			next(error);

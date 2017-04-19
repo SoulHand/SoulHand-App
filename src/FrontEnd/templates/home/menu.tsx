@@ -9,7 +9,7 @@ import {withRouter} from 'react-router';
 import {ProfileBox} from "../profilebox"
 
 @withRouter
-export class Menu extends React.Component<props.menu, states.menu> {
+export class Menu extends React.Component<Props.menu, states.menu> {
 	public parent:Element;
 	public session:users.sessions;	
 	constructor(props:props.menu) {
@@ -78,7 +78,12 @@ export class Menu extends React.Component<props.menu, states.menu> {
 					)}
 					{this.state.session && this.state.session.user.isAdmin==true && (
 					<li>
-						<Link to="/domain" activeClassName="active" onClick={(e:MouseEvent)=>{this.toogle(e)}}>Dominio del aprendizaje</Link>
+						<Link to="/activities" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Actividades</Link>
+					</li>
+					)}
+					{this.state.session && this.state.session.user.isAdmin==true && (
+					<li>
+						<Link to="/domain" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Dominio del aprendizaje</Link>
 					</li>
 					)}
 					{this.state.session && this.state.session.user.isAdmin==true && (

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {getJSON,ajax} from 'jquery'
 import {Item} from "./item"
+import {TableTeachers} from "./tableteachers"
 //import * as settings from "../settings"
 
 export class ListTeachers extends React.Component<{}, {}> {
@@ -19,29 +20,26 @@ export class ListTeachers extends React.Component<{}, {}> {
 		this.session=session;		
 	}
 	deleteField(data: any){
-		var element:EventTarget=event.target;		
-		ajax({
-			method:"DELETE",
-	        url: `${window.settings.uri}/v1/people/teachers/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
-	        dataType: "json",
-	        data:null,
-	        crossDomain:true,
-	        success:(data:peoples.teachers)=>{
-	        	this.teachers=this.teachers.filter(function(row:peoples.teachers){
-					if(row._id==data._id){
-						return false;
-					}
-					return true;
-		    	});
-		    	this.setState({
-			      	teachers : this.teachers
-			    });
-	        }
-		});
+		this.teachers=this.teachers.filter(function(row:peoples.teachers){
+			if(row._id==data._id){
+				return false;
+			}
+			return true;
+    	});
+    	this.setState({
+	      	teachers : this.teachers
+	    });
 	}
-	getFields(event:any){
+	Filter(event:any){
+		var filter=this.teachers.filter((row)=>{
+			var exp=new RegExp(event.target.value,"i");
+			if(exp.test(row.data.name)==true || exp.test(row.data.dni)==true || (row.grade && exp.test(row.grade.name)==true)){
+				return true;
+			}
+			return false;
+		});
 		this.setState({
-	      search : event.target.value
+	      	teachers : filter
 	    });
 	}
 	componentDidMount(){
@@ -58,22 +56,14 @@ export class ListTeachers extends React.Component<{}, {}> {
 	        }
 		});
 	}
-	render(){
-		let teachers = this.state.teachers.map((row:peoples.teachers) => {
-	      return (
-	        <Item people={row} key={row._id} session={this.session} delete={this.deleteField.bind(this)}/>
-	      );
-	    });
+	render(){		
 		return (
-			<div className="container">
-				<div className="fieldset" data-align="justify">
-					{
-						(this.state.teachers.length>0) ?
-							teachers
-						:
-							<span className="text-align center">No existen resultados</span>
-					}
+			<div className="container card">
+				<div className="right">
+					<input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
 				</div>
+				<h3>Docentes</h3>
+				<TableTeachers teachers={this.state.teachers} session={this.session} delete={this.deleteField.bind(this)}/>			
 			</div>
 		);
 	}

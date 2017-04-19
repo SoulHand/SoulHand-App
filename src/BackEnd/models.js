@@ -65,6 +65,7 @@ var structDb={
 };
 structDb.Teachers=mongoose.Schema({
 	data: structDb.Peoples,
+	grade:structDb.Grades,
 	interprete:{type:Boolean, required:true}
 });
 structDb.Representatives=mongoose.Schema({

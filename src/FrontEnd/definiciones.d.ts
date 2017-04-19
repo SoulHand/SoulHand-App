@@ -11,12 +11,43 @@ declare namespace crud{
 		_id:string
 		name:string
 		description:string		
+      	words: Array<string>
 	}
 	interface domain{
 		_id:string
 		name:string
 		_v:number
 		cognitions:Array<cognition>
+	}
+	interface level{
+		_id:string
+		name:string
+		level:Number
+		_v:number
+	}
+	interface objetive{
+      __v: Number
+      description: string
+      name: string
+      _id: string
+      words: Array<string>
+      dateCreated: string
+      cognitions: Array<cognition>
+      level: Array<level>
+      domain: Array<domain>
+  	}
+	interface activity{
+		name: string
+  		description: string
+  		dateExpire:string
+  		teacher: string
+		grade:grade
+		course: grade
+  		_id: string
+  		student: Array<peoples.students>
+  		dateCreated: string
+  		isCompleted: Boolean
+  		objetives: Array<objetive>
 	}
 }
 declare namespace compat {
@@ -78,7 +109,7 @@ declare namespace users{
 	}	
 }
 
-declare namespace props{
+declare namespace Props{
 	interface menu{
     	router?:ReactRouter.InjectedRouter		
 	}
@@ -87,6 +118,31 @@ declare namespace props{
     	callback:Function
     	session:users.sessions
 	}
+	interface tableteacher{
+		teachers:Array<peoples.teachers>
+	}
+	interface tableactivities{
+		activities:Array<crud.activity>
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	interface codeError{
 		code:string

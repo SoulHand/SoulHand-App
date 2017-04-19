@@ -2,9 +2,8 @@ import * as React from 'react';
 import * as validator from 'string-validator'
 import {Link} from 'react-router'
 import {ReactHighcharts} from 'react-highcharts'
-import * as Highcharts from 'highcharts/highcharts'
 import {ajax} from 'jquery'
-import * as $ from 'jquery'
+import {LineChart} from '../linechart'
 
 export class StudentView extends React.Component<props.usersItem, props.stateUser {
 	public session:users.sessions;
@@ -103,7 +102,6 @@ export class StudentView extends React.Component<props.usersItem, props.stateUse
 		var data={
 			grade:event.target.value
 		}
-		console.log(data);
 		ajax({
 			method:"PUT",
 	        url: `${window.settings.uri}/v1/people/students/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
@@ -431,27 +429,4 @@ export class StudentView extends React.Component<props.usersItem, props.stateUse
     );
   }	
 }
-class LineChart extends React.Component <{},{}>{
-	public chart:any;
-  constructor(props) {
-    	super(props);
-    }
-  
-  componentDidMount() {
-		this.chart = new Highcharts.Chart(this.props.id,this.props.config);
-	}
-	/*componentWillReceiveProps(props) {
-		//console.log(props);
-	  	//this.chart.highcharts().series[0].setData(props.data);
-	}*/
-	render() {
-		let flex = {
-		  display:"block",
-		  width:"100%"
-		}
-	  return (
-	    <div id={this.props.id} style={flex}>
-	    </div>
-	  )
-	}
-}
+
