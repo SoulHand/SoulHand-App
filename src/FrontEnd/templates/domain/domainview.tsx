@@ -160,7 +160,7 @@ export class DomainView extends React.Component<props.usersItem, props.stateUser
 				}
 				</tbody>
 			</table>
-			<h3>Objetivos de aprendizaje</h3>			
+			<h3>Niveles de aprendizaje</h3>			
 			<table className="table table-striped">
 				<thead>
 					<tr>
