@@ -56,6 +56,7 @@ import {Domain} from './templates/domain';
 import {DomainCreate} from './templates/domain/domaincreate';
 import {ListDomain} from './templates/domain/listdomain';
 import {DomainView} from './templates/domain/domainview';
+import {DomainObjetiveView} from './templates/domain/domainobjetiveview';
 
 import {Activities} from './templates/activities';
 import {ActivitiesCreate} from './templates/activities/activitiescreate';
@@ -115,6 +116,7 @@ window.addEventListener("load",()=>{
 		    <Route path="/domain" component={Domain} onEnter={Auth}>
 		    	<IndexRoute component={ListDomain}/>
 		    	<Route path="get/:id" component={DomainView}/>
+		    	<Route path="get/:domain/objetive/:level" component={DomainObjetiveView}/>
 		    	<Route path="create" component={DomainCreate}/>
 		    </Route>
 		    <Route path="/activities" component={Teachers} onEnter={Auth}>

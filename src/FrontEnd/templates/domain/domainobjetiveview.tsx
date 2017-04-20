@@ -1,16 +1,16 @@
 import * as React from 'react';
 import * as validator from 'string-validator';
-import {ajax} from 'jquery'
 import {Link} from 'react-router'
+import {ajax} from 'jquery'
 
-export class DomainView extends React.Component<props.usersItem, props.stateUser {
+export class DomainObjetiveView extends React.Component<props.usersItem, props.stateUser {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
 	public fields={};
 	public domain:crud.domain;
 	state = {
-		domain:null,
+		objetives:[],
 		error:null
 	};
 	constructor(props:any) {
@@ -33,13 +33,13 @@ export class DomainView extends React.Component<props.usersItem, props.stateUser
 	componentDidMount(){
 		ajax({
 			method:"GET",
-	        url: `${window.settings.uri}/v1/learning/domain/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/knowedge/${this.props.routeParams.domain}/objetives/${this.props.routeParams.level}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
-	        success:(data:crud.domain)=>{
+	        success:(data:Array<crud.objetive>)=>{
 	        	this.domain=data;
 			    this.setState({
-			      domain : data
+			      objetives : data
 			    });
 	        }
 		});
@@ -111,13 +111,25 @@ export class DomainView extends React.Component<props.usersItem, props.stateUser
 	    });
 	}
 	render () {
-	  return (
+		if(!this.state.domain){
+			return (
+    			<div className="container">
+    			{this.state.error && (
+					<div className="alert alert-danger" role="alert">
+					  {this.state.error}
+					</div>
+				)}
+    				<div className="loadding"></div>
+    			</div>
+			);
+		}
+    return (
     	<div className="container">
 			{this.state.error && (
 				<div className="alert alert-danger" role="alert">
 				  {this.state.error}
 				</div>
-			)}			
+			)}
 			<h3>Objetivos de aprendizajes</h3>
 			<table className="table table-striped">
 				<thead>
@@ -128,33 +140,10 @@ export class DomainView extends React.Component<props.usersItem, props.stateUser
 				</thead>
 				<tbody>
 				{
-					this.state.domain.cognitions.map((row:crud.cognition)=>{
+					this.state.objetives.map((row:crud.objetive)=>{
 						return (
 							<tr key={row._id}>
 								<td><b>{row.name}</b></td>
-								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
-							</tr>
-						);
-					})
-				}
-				</tbody>
-			</table>
-			<h3>Niveles de aprendizaje</h3>
-			<table className="table table-striped">
-				<thead>
-					<tr>
-						<th>Nivel</th>
-						<th>Nombre</th>
-            <th>Acción</th>
-					</tr>
-				</thead>
-				<tbody>
-				{
-					this.state.domain.levels.map((row:crud.level)=>{
-						return (
-							<tr key={row._id}>
-								<td>{row.level}</td>
-								<td><Link to={`/domain/get/${this.state.domain.name}/objetive/${row.name}`}>{row.name}</Link></td>
 								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
 							</tr>
 						);
