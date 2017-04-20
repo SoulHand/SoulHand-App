@@ -111,19 +111,40 @@ export class DomainView extends React.Component<props.usersItem, props.stateUser
 	    });
 	}
 	render () {
-	  return (
+		if(!this.state.domain){
+			return (
+    			<div className="container">
+    			{this.state.error && (
+					<div className="alert alert-danger" role="alert">
+					  {this.state.error}
+					</div>
+				)}
+    				<div className="loadding"></div>
+    			</div>
+			);
+		}
+    return (
     	<div className="container">
 			{this.state.error && (
 				<div className="alert alert-danger" role="alert">
 				  {this.state.error}
 				</div>
-			)}			
-			<h3>Objetivos de aprendizajes</h3>
+			)}
+			<div className="fieldset">
+				<div className="item" id="name">
+					<div className="field"></div>
+					<div className="value" onKeyUp={(e)=>{this.getFields(e)}} onKeyDown={(e)=>{this.keycod(e)}}>{this.state.domain.name}</div>
+					<div className="toolbox">
+						<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e)=>{this.edit(e)}}></button>
+					</div>
+				</div>
+			</div>
+			<h3>Funciones cognitivas</h3>
 			<table className="table table-striped">
 				<thead>
 					<tr>
 						<th>Nombre</th>
-            <th>Acción</th>
+                 		<th>Acción</th>
 					</tr>
 				</thead>
 				<tbody>

@@ -111,18 +111,6 @@ export class DomainObjetiveView extends React.Component<props.usersItem, props.s
 	    });
 	}
 	render () {
-		if(!this.state.domain){
-			return (
-    			<div className="container">
-    			{this.state.error && (
-					<div className="alert alert-danger" role="alert">
-					  {this.state.error}
-					</div>
-				)}
-    				<div className="loadding"></div>
-    			</div>
-			);
-		}
     return (
     	<div className="container">
 			{this.state.error && (
