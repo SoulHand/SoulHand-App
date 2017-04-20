@@ -5,7 +5,7 @@ import {ReactHighcharts} from 'react-highcharts'
 import {ajax} from 'jquery'
 import {LineChart} from '../linechart'
 
-export class ActivitieView extends React.Component<props.usersItem, props.stateUser {
+export class ActivitieView extends React.Component<props.usersItem, props.stateUser >{
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
@@ -40,7 +40,7 @@ export class ActivitieView extends React.Component<props.usersItem, props.stateU
 	        data:null
 		}).done((data:any)=>{
 			this.setState({
-		      activity:data	      
+		      activity:data
 		    });
 		    //activitys.profile
 		});
@@ -60,7 +60,7 @@ export class ActivitieView extends React.Component<props.usersItem, props.stateU
 			method:"PUT",
 	        url: `${window.settings.uri}/v1/people/activity/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:data,	        
+	        data:data,
 	        success:(data:activitys.profile)=>{
 				element.className="button circle icons x16 edit white";
 	        	parent.children[1].contentEditable=false;
@@ -84,8 +84,8 @@ export class ActivitieView extends React.Component<props.usersItem, props.stateU
 			method:"PUT",
 	        url: `${window.settings.uri}/v1/people/students/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:data,	        
-	        success:(data:students.profile)=>{				
+	        data:data,
+	        success:(data:students.profile)=>{
 	        	this.setState({
 					student:data
 				});
@@ -98,14 +98,14 @@ export class ActivitieView extends React.Component<props.usersItem, props.stateU
 		});
 	}
 	deleteField(event: any){
-		var element:EventTarget=event.target;		
+		var element:EventTarget=event.target;
 		ajax({
 			method:"DELETE",
 	        url: `${window.settings.uri}/v1/people/students/${this.props.routeParams.id}/physic/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
-	        success:(data:peoples.teachers)=>{	        	
+	        success:(data:peoples.teachers)=>{
 		    	this.setState({
 					student:data
 				});
@@ -159,38 +159,38 @@ export class ActivitieView extends React.Component<props.usersItem, props.stateU
 				label:"Estado",
 				value:(this.state.activity.isCompleted==true) ? "COMPLETADO" : "NO COMPLETADO"
 			}
-		];		
+		];
 		var Items=valid.map((row)=>{
 			return (
 				<div className="item" key={row.name} id={row.name}>
 					<div className="field">
-						<b>{row.label}:</b>									
+						<b>{row.label}:</b>
 					</div>
 					<div className="value" onKeyUp={(e)=>{this.getFields(e)}} onKeyDown={(e)=>{this.keycod(e)}}>
 						{row.value}
-					</div>					
+					</div>
 				</div>
 			);
-		});		
+		});
     return (
     	<div className="container">
 			{this.state.error && (
 				<div className="alert alert-danger" role="alert">
 				  {this.state.error}
 				</div>
-			)}			
+			)}
     		<div className="flex row">
 				<div className="left_side">
-					<img id="profile-img" className="rounded-circle" src="/images/user-login-icon-14.png" />							
-				</div>				
+					<img id="profile-img" className="rounded-circle" src="/images/user-login-icon-14.png" />
+				</div>
 			</div>
 			<div className="fieldset v-align middle">
-				{Items}						
-			</div>	
-			<h3 className="text-align center">Objetivos de aprendizaje</h3>			
+				{Items}
+			</div>
+			<h3 className="text-align center">Objetivos de aprendizaje</h3>
 			<div className="flex row">
-				<Link to={`/activitys/get/${this.props.routeParams.id}/physic/create`} className="button circle icons x16 add white"></Link>
-			</div>			
+				<Link to={`/activities/objetive/create/${this.state.activity._id}`} className="button circle icons x16 add white"></Link>
+			</div>
 			<table className="table table-striped">
 				<thead>
 					<tr>
@@ -202,7 +202,7 @@ export class ActivitieView extends React.Component<props.usersItem, props.stateU
 					this.state.activity.objetives.map((row:any)=>{
 						return (
 							<tr key={row._id}>
-								<td><Link to={``}>{row.name}</Link></td>
+								<td><Link to={`/activities/get/${this.state.activity._id}/objetive/get/${row._id}`}>{row.name}</Link></td>
 								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
 							</tr>
 						);
@@ -210,8 +210,7 @@ export class ActivitieView extends React.Component<props.usersItem, props.stateU
 				}
 				</tbody>
 			</table>
-    	</div>		
+    	</div>
     );
-  }	
+  }
 }
-

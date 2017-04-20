@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"string",
+				"string\tkeyword"
+			],
+			[
+				"Grade",
+				"Grades"
+			],
+			[
+				"Vali",
+				"ValidatorException"
+			],
+			[
 				"do",
 				"document\tvar"
 			],
@@ -502,37 +514,25 @@
 			[
 				"delta",
 				"delta1"
-			],
-			[
-				"the",
-				"theta1"
-			],
-			[
-				"Thet",
-				"theta2"
-			],
-			[
-				"Thea",
-				"Theta1"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "src/FrontEnd/templates/activities/activitiescreate.tsx",
+			"file": "src/FrontEnd/definiciones.d.ts",
 			"settings":
 			{
-				"buffer_size": 4126,
+				"buffer_size": 3842,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/FrontEnd/definiciones.d.ts",
+			"file": "src/BackEnd/routes.js",
 			"settings":
 			{
-				"buffer_size": 3075,
+				"buffer_size": 126306,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -641,20 +641,49 @@
 	"expanded_folders":
 	[
 		"/home/matajm/Documentos/SoulHand-App",
+		"/home/matajm/Documentos/SoulHand-App/docs",
+		"/home/matajm/Documentos/SoulHand-App/docs/routes",
 		"/home/matajm/Documentos/SoulHand-App/src",
+		"/home/matajm/Documentos/SoulHand-App/src/BackEnd",
 		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd",
 		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates",
 		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/activities",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/cognitive",
 		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/grades",
 		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/home",
 		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/teachers"
 	],
 	"file_history":
 	[
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/type/typecreate.tsx",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/teachers/teachercreate.tsx",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/students/studentcreate.tsx",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/periodschools/periodschoolscreate.tsx",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/parents/parentscreate.tsx",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/matter/mattercreate.tsx",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/knowedgelevel/knowedgelevelcreate.tsx",
 		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/grades/gradecreate.tsx",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/domain/domaincreate.tsx",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/cognitive/cognitivecreate.tsx",
 		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/activities/activitiescreate.tsx",
-		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/home/menu.tsx",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/teachers/teacherview.tsx",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/students/studentview.tsx",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/cognitive/listcognitive.tsx",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/activities/activitieview.tsx",
 		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/main.tsx",
+		"/home/matajm/Documentos/SoulHand-App/docs/routes/activities.md",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/teachers/tableactivities.tsx",
+		"/home/matajm/Documentos/SoulHand-App/docs/routes/objetives.md",
+		"/home/matajm/Documentos/SoulHand-App/src/BackEnd/routes.js",
+		"/home/matajm/Documentos/SoulHand-App/docs/routes/courses.md",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/teachers/listteachers.tsx",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/teachers/tableteachers.tsx",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/students/liststudents.tsx",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/students/tablestudents.tsx",
+		"/home/matajm/Documentos/SoulHand-App/src/BackEnd/models.js",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/linechart.tsx",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/teachers/item.tsx",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/home/menu.tsx",
 		"/home/matajm/Documentos/SoulHand-App/package.json",
 		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/teachers/menu.tsx",
 		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/teachers/Item.tsx",
@@ -753,42 +782,18 @@
 		"/home/mata/Documentos/WebProject/SoulHand-App/package.json",
 		"/home/mata/Documentos/WebProject/chat/package.json",
 		"/home/mata/Documentos/WebProject/SoulHand-App/grunt.js",
-		"/home/mata/Documentos/WebProject/SoulHand-App/_SpecRunner.html",
-		"/home/mata/Documentos/WebProject/SoulHand-App/Test/requirejs.config.js",
-		"/home/mata/Documentos/WebProject/SoulHand-App/Test/homeWorkTest.js",
-		"/home/mata/Documentos/WebProject/SoulHand-App/tests/homeWorkTest.js",
-		"/home/mata/Documentos/WebProject/SoulHand-App/tests/requirejs.config.js",
-		"/home/mata/Documentos/WebProject/SoulHand-App/npm-debug.log",
-		"/home/mata/Documentos/WebProject/SoulHand-App/tsconfig.json",
-		"/home/mata/Documentos/WebProject/SoulHand-App/public/index.html",
-		"/home/mata/Documentos/WebProject/SoulHand-App/server.js",
-		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/routes.js",
-		"/home/mata/Documentos/WebProject/CIWebOctaveTool/Tools/getFacesFrontal.js",
-		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/routes.php",
-		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand/Validator.php",
-		"/home/mata/Documentos/WebProject/SoulHand-App/src/database.sql",
-		"/home/mata/Documentos/WebProject/SoulHand-App/public/VisionConfig.js",
-		"/home/mata/Documentos/WebProject/SoulHand-App/app.sublime-project",
-		"/home/mata/Documentos/WebProject/SoulHand-App/.bowerrc",
-		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/dependences.js",
-		"/tmp/.fr-YyFID8/workspace/package.json",
-		"/home/mata/Documentos/WebProject/CIWebOctaveTool/Tools/getSketch.js",
-		"/home/mata/Documentos/WebProject/CIWebOctaveTool/Tools/getFaceProfile.js",
-		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand/Academic/Teacher.php",
-		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand/Academic/Subject.php",
-		"/home/mata/Documentos/WebProject/SoulHand-App/src/loadDatabase.php",
-		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/SoulHand/Exception.php",
-		"/home/mata/Documentos/WebProject/SoulHand-App/src/BackEnd/dependencies.php"
+		"/home/mata/Documentos/WebProject/SoulHand-App/_SpecRunner.html"
 	],
 	"find":
 	{
-		"height": 35.0
+		"height": 34.0
 	},
 	"find_in_files":
 	{
 		"height": 93.0,
 		"where_history":
 		[
+			"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates",
 			"/var/www/html/firefoxos/messenger/debug/hosted/local"
 		]
 	},
@@ -797,6 +802,39 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"maxLength",
+			"placeholder",
+			"maxLength",
+			"maxLenght",
+			"this.activities",
+			"students",
+			"dateExpire",
+			"Completado",
+			"activitieview",
+			"ActivitieView",
+			"ActivitiesView",
+			"GradeView",
+			"student",
+			"STUDENT",
+			"student",
+			"teachers",
+			"expiration",
+			"genero",
+			"get",
+			"name",
+			"students",
+			"props.students",
+			"students",
+			"jquery",
+			"ajax",
+			"$",
+			"TableTeachers",
+			"ValidatorException",
+			"id",
+			"student",
+			"STUDENT",
+			"student",
+			"Link",
 			"<Link>",
 			"EventTarget",
 			"any",
@@ -891,40 +929,7 @@
 			"text",
 			"activity_name",
 			"PhoneNumber",
-			"faker",
-			"REFERENCES institucion",
-			"institucion",
-			"mydb",
-			"BLOB",
-			"ASC",
-			"AUTO_IN",
-			"ENGINE = InnoDB",
-			"ENGINE = InnoDB;",
-			"`",
-			"IF NOT EXISTS",
-			"NO ACTION",
-			"database",
-			"php",
-			"\"=>$",
-			"nusoap_client",
-			"CascadeClassifier",
-			"width",
-			"fps",
-			"79",
-			");",
-			"line",
-			"initclear",
-			"delete",
-			"this",
-			"endPaint",
-			"initPaint",
-			"cleaner",
-			"mouse",
-			"paint:",
-			"this",
-			"EventMouse",
-			"initPaint",
-			"init"
+			"faker"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1021,61 +1026,19 @@
 			[
 				{
 					"buffer": 0,
-					"file": "src/FrontEnd/templates/activities/activitiescreate.tsx",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4126,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1799,
-								1799
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/TypeScript/TypeScriptReact.tmLanguage",
-							"translate_tabs_to_spaces": false,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": false,
-								"indentSize": 4,
-								"tabSize": 4
-							},
-							"use_tab_stops": false
-						},
-						"translation.x": 52.0,
-						"translation.y": 1125.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 0,
-			"sheets":
-			[
-				{
-					"buffer": 1,
 					"file": "src/FrontEnd/definiciones.d.ts",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3075,
+						"buffer_size": 3842,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1215,
-								1215
+								2012,
+								2012
 							]
 						],
 						"settings":
@@ -1085,12 +1048,47 @@
 							"use_tab_stops": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1080.0,
+						"translation.y": 1665.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 0,
 					"type": "text"
 				},
+				{
+					"buffer": 1,
+					"file": "src/BackEnd/routes.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 126306,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								82411,
+								82411
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 390.0,
+						"translation.y": 33553.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
 				{
 					"buffer": 2,
 					"semi_transient": false,
@@ -1103,19 +1101,25 @@
 						"selection":
 						[
 							[
-								106,
-								106
+								18,
+								18
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/TypeScript/TypeScriptReact.tmLanguage"
+							"syntax": "Packages/TypeScript/TypeScriptReact.tmLanguage",
+							"typescript_plugin_format_options":
+							{
+								"convertTabsToSpaces": false,
+								"indentSize": 4,
+								"tabSize": 4
+							}
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 1,
 					"type": "text"
 				}
 			]
@@ -1154,7 +1158,7 @@
 		"rows":
 		[
 			0.0,
-			0.550972256123,
+			0.654901960784,
 			1.0
 		]
 	},

@@ -3,8 +3,7 @@ var encode=function(str){
 	const base64=require('base-64');
 	return base64.encode(str);
 };
-
-var structDb={	
+var structDb={
 	Grades:mongoose.Schema({
 		name:{type:String, required:true, trim:true, uppercase: true}
 	}),
@@ -13,6 +12,7 @@ var structDb={
 	}),
 	HistoryLearning:mongoose.Schema({
 		description:{type:String, required:true, trim:true, uppercase: true},
+		dateCreated:{type:Date,default:Date.now}
 		dateCreated:{type:Date,default:Date.now}
 	}),
 	PeriodSchools:mongoose.Schema({
@@ -51,7 +51,7 @@ var structDb={
 		min:{type:Number, min:0},
 		max:{type:Number, min:0},
 		genero:{type:String, trim:true, uppercase:true}
-	}),	
+	}),
 	Peoples:mongoose.Schema({
 		dni:{type:String, trim: true, index:true, required: true, unique:true, uppercase: true},
 		name:{type:String, trim:true, required: true, uppercase: true},
@@ -106,7 +106,7 @@ structDb.lexemas=mongoose.Schema({
 structDb.words=mongoose.Schema({
 	key:{type:String, required:true, trim:true, uppercase: true},
 	lexema:structDb.lexemas,
-	concept:{type:String, required:true, trim:true, uppercase: true}	
+	concept:{type:String, required:true, trim:true, uppercase: true}
 });
 structDb.Cognitions=mongoose.Schema({
 	name:{type:String, required:true, trim:true, uppercase: true},
@@ -210,8 +210,8 @@ var structDb={
 		}),
 		Cognitions:mongoose.Schema({
 			name:{type:String, trim:true, uppercase: true}
-		})		
-	};	
+		})
+	};
 	structDb.Teachers=mongoose.Schema({
 		data: structDb.Peoples,
 		interprete:{type:Boolean, required:true}
@@ -268,7 +268,7 @@ var structDb={
 	   	dateConfirmed:Date,
 	   	people:structDb.Peoples,
 	   	isAdmin:{type:Boolean, default:false}
-	});	
+	});
 	structDb.Sessions=mongoose.Schema({
 		privateKeyId:{ type : String, trim : true, index : true , unique:true},
 		publicKeyId:{ type : String, trim : true},
@@ -383,7 +383,7 @@ var structDb={
 		serie:[structDb.SerieInteligence],
 	   	dateCreated:{ type: Date, default: Date.now },
 	   	range:structDb.RangeInteligence
-	});	
+	});
 	structDb.serieStudent=mongoose.Schema({
 		name:{ type : String, trim : true,uppercase: true},
 		items:[structDb.ItemsInteligence],

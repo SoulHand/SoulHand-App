@@ -66,6 +66,12 @@ import {Cognitive} from './templates/cognitive';
 import {ListCognitive} from './templates/cognitive/listcognitive';
 import {CognitiveCreate} from './templates/cognitive/cognitivecreate';
 import {CognitiveView} from './templates/cognitive/cognitiveview';
+
+//import {Cognitive} from './templates/cognitive';
+//import {ListCognitive} from './templates/cognitive/listcognitive';
+import {ObjetiveCreate} from './templates/objetives/objetivecreate';
+//import {CognitiveView} from './templates/cognitive/cognitiveview';
+
 import {Login} from './templates/login';
 
 /*import {PageRepresentative} from './templates/PageRepresentative';
@@ -80,7 +86,7 @@ window.addEventListener("load",()=>{
 		    	<IndexRoute component={Index}/>
 		    </Route>
 		    <Route path="/auth" component={Home}>
-		    	<IndexRoute component={Login}/>		    
+		    	<IndexRoute component={Login}/>
 		    </Route>
 		    <Route path="/teacher" component={Teachers} onEnter={Auth}>
 		    	<IndexRoute component={ListTeachers}/>
@@ -110,12 +116,14 @@ window.addEventListener("load",()=>{
 		    	<IndexRoute component={ListDomain}/>
 		    	<Route path="get/:id" component={DomainView}/>
 		    	<Route path="create" component={DomainCreate}/>
-		    </Route> 
+		    </Route>
 		    <Route path="/activities" component={Teachers} onEnter={Auth}>
 		    	<Route path=":id/:grade/create" component={ActivitiesCreate}/>
 		    	<Route path="get/:id" component={ActivitieView}/>
+		    	<Route path="objetive/create/:id" component={ObjetiveCreate}/>
+		    	<Route path="get/:id/objetive/get/:objetive/" component={ActivitieView}/>
 		    </Route>
-		    
+
 		    <Route path="/users" component={Home}>
 		    	<IndexRoute component={ListUsers} onEnter={Auth}/>
 		    	<Route path="get/:id" component={UserView}/>
@@ -146,7 +154,7 @@ window.addEventListener("load",()=>{
 
 /*
 		    	<IndexRoute component={ListStudent}/>
-	
+
 		    <Route path="/parents" component={Parents}>
 		    	<IndexRoute component={ListParent}/>
 		    	<Route path="create" component={PageRepresentativeCreate}/>
