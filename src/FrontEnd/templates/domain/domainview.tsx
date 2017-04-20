@@ -35,7 +35,7 @@ export class DomainView extends React.Component<props.usersItem, props.stateUser
 			method:"GET",
 	        url: `${window.settings.uri}/v1/learning/domain/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:null,	        
+	        data:null,
 	        success:(data:crud.domain)=>{
 	        	this.domain=data;
 			    this.setState({
@@ -59,7 +59,7 @@ export class DomainView extends React.Component<props.usersItem, props.stateUser
 			method:"PUT",
 	        url: `${window.settings.uri}/v1/learning/domain/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:data,	        
+	        data:data,
 	        success:(data:users.profile)=>{
 				element.className="button circle icons x16 edit white";
 	        	parent.children[1].contentEditable=false;
@@ -76,7 +76,7 @@ export class DomainView extends React.Component<props.usersItem, props.stateUser
 		});
 	}
 	deleteField(event: any){
-		var element:EventTarget=event.target;		
+		var element:EventTarget=event.target;
 		ajax({
 			method:"DELETE",
 	        url: `${window.settings.uri}/v1/learning/domain/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
@@ -122,14 +122,14 @@ export class DomainView extends React.Component<props.usersItem, props.stateUser
     				<div className="loadding"></div>
     			</div>
 			);
-		}		
+		}
     return (
     	<div className="container">
 			{this.state.error && (
 				<div className="alert alert-danger" role="alert">
 				  {this.state.error}
 				</div>
-			)}			
+			)}
 			<div className="fieldset">
 				<div className="item" id="name">
 					<div className="field"></div>
@@ -137,11 +137,9 @@ export class DomainView extends React.Component<props.usersItem, props.stateUser
 					<div className="toolbox">
 						<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e)=>{this.edit(e)}}></button>
 					</div>
-				</div>						
+				</div>
 			</div>
-			<div className="right">
-				<input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
-			</div>
+			<h3>Funciones cognitivas</h3>
 			<table className="table table-striped">
 				<thead>
 					<tr>
@@ -162,7 +160,30 @@ export class DomainView extends React.Component<props.usersItem, props.stateUser
 				}
 				</tbody>
 			</table>
-    	</div>		
+			<h3>Objetivos de aprendizaje</h3>			
+			<table className="table table-striped">
+				<thead>
+					<tr>
+						<th>Nivel</th>
+						<th>Nombre</th>
+            <th>Acción</th>
+					</tr>
+				</thead>
+				<tbody>
+				{
+					this.state.domain.levels.map((row:crud.level)=>{
+						return (
+							<tr key={row._id}>
+								<td><b>{row.level}</b></td>
+								<td><b>{row.name}</b></td>
+								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
+							</tr>
+						);
+					})
+				}
+				</tbody>
+			</table>
+    	</div>
     );
-  }	
+  }
 }
