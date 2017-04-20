@@ -13,7 +13,6 @@ var structDb={
 	HistoryLearning:mongoose.Schema({
 		description:{type:String, required:true, trim:true, uppercase: true},
 		dateCreated:{type:Date,default:Date.now}
-		dateCreated:{type:Date,default:Date.now}
 	}),
 	PeriodSchools:mongoose.Schema({
 		name:{type:String, required:true, trim:true, uppercase: true}
