@@ -64,7 +64,7 @@ export class ListUsers extends React.Component<{}, states.UserList> {
 	render(){
 		let teachers = this.state.users.map((row:users.profile) => {
 	      return (
-	        <Item people={row} key={row._id} session={this.session} delete={this.deleteField.bind(this)}/>
+	        <Item user={row} key={row._id} session={this.session} delete={this.deleteField.bind(this)}/>
 	      );
 	    });
 		return (
