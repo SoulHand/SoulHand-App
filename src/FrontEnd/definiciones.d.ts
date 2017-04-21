@@ -44,6 +44,7 @@ declare namespace crud{
 		_id:string
 		name:string
 		_v:number
+		levels: Array<level>
 		cognitions:Array<cognition>
 	}
 	interface level{
@@ -60,7 +61,7 @@ declare namespace crud{
       words: Array<string>
       dateCreated: string
       cognitions: Array<cognition>
-      level: Array<level>
+      level: level
       domain: Array<domain>
   	}
 	interface activity{
@@ -294,6 +295,14 @@ declare namespace states{
 	interface StudentList{
 		students:Array<peoples.students>
 		search:string
+	}
+	interface DomainList{
+		domains:Array<crud.domain>
+		search:string
+	}
+	interface DomainView{
+		domain:crud.domain
+		error:any
 	}
 	interface StudentCreate{
 		error:any

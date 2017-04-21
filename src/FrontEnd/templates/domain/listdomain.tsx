@@ -2,38 +2,40 @@ import * as React from 'react';
 import {getJSON, ajax} from 'jquery'
 import {Link} from 'react-router';
 
-export class ListDomain extends React.Component<{}, {}> {
+export class ListDomain extends React.Component<Props.GenericRouter, states.DomainList> {
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
 	public session:users.sessions;
-	public domain:any=[];
-	state={
-		domain:[],
+	public domain:Array<crud.domain>=[];
+	state:states.DomainList={
+		domains:[],
 		search:""
 	};
-	constructor(props:any) {
+	constructor(props:Props.GenericRouter) {
 		super(props);
-    	let str=localStorage.getItem("session");
-    	let session=JSON.parse(str);
-		this.session=session;		
+			let str: string=localStorage.getItem("session");
+	    	if(str){
+					let session:users.sessions = JSON.parse(str);
+		    	this.session=session;
+	    	}
 	}
 	deleteField(event: any){
-		var element:EventTarget=event.target;		
+		var element:HTMLElement=event.target;
 		ajax({
 			method:"DELETE",
-	        url: `${window.settings.uri}/v1/learning/domain/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/learning/domain/${element.getAttribute("data-id")}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
-	        success:(data:peoples.teachers)=>{
-	        	this.domain=this.domain.filter(function(row:peoples.teachers){
+	        success:(data:crud.domain)=>{
+	        	this.domain=this.domain.filter(function(row){
 					if(row._id==data._id){
 						return false;
 					}
 					return true;
 		    	});
 		    	this.setState({
-			      	domain : this.domain
+			      	domains : this.domain
 			    });
 	        }
 		});
@@ -47,14 +49,14 @@ export class ListDomain extends React.Component<{}, {}> {
 			return false;
 		});
 		this.setState({
-	      	domain : filter
-	    });
+      	domains : filter
+    });
 	}
 	componentDidMount(){
-		getJSON(`${window.settings.uri}/v1/learning/domain/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,(data)=>{
+		getJSON(`${window.settings.uri}/v1/learning/domain/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,(data:Array<crud.domain>)=>{
 			this.domain= data;
 			this.setState({
-		      domain: data
+		      domains: data
 		    });
 		})
 	}
@@ -74,7 +76,7 @@ export class ListDomain extends React.Component<{}, {}> {
 				</thead>
 				<tbody>
 				{
-					this.state.domain.map((row:any)=>{
+					this.state.domains.map((row:any)=>{
 						return (
 							<tr key={row._id}>
 								<td><Link to={`/domain/get/${row._id}`} className="title">{row.name}</Link></td>

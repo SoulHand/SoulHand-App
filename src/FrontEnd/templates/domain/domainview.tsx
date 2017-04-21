@@ -3,21 +3,23 @@ import 'string-validator'
 import {ajax} from 'jquery'
 import {Link} from 'react-router'
 
-export class DomainView extends React.Component<props.usersItem, props.stateUser {
+export class DomainView extends React.Component<Props.GenericRouter, states.DomainView> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
-	public fields={};
+	public fields:compat.Map={};
 	public domain:crud.domain;
-	state = {
+	state: states.DomainView = {
 		domain:null,
 		error:null
 	};
-	constructor(props:any) {
-		super(props);
-    	let session=localStorage.getItem("session");
-    	session=JSON.parse(session);
-		this.session=session;
+	constructor(props:Props.GenericRouter) {
+			super(props);
+			let str: string=localStorage.getItem("session");
+	    	if(str){
+					let session:users.sessions = JSON.parse(str);
+		    	this.session=session;
+	    	}
 	}
 	public getFields(event:any){
 		var element=event.target.parentNode;
@@ -53,20 +55,20 @@ export class DomainView extends React.Component<props.usersItem, props.stateUser
 			element.setAttribute("data-save","true");
 			return;
 		}
-		var data={};
+		var data:compat.Map={};
 		data[parent.id]=this.fields[parent.id];
 		ajax({
 			method:"PUT",
 	        url: `${window.settings.uri}/v1/learning/domain/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:data,
-	        success:(data:users.profile)=>{
-				element.className="button circle icons x16 edit white";
+	        success:(data:crud.domain)=>{
+						element.className="button circle icons x16 edit white";
 	        	parent.children[1].contentEditable=false;
-				element.setAttribute("data-save","false");
+						element.setAttribute("data-save","false");
 	        	this.setState({
-					domain:data
-				});
+							domain:data
+						});
 	        },
 	        error:(data:any)=>{
 	        	this.setState({
@@ -76,10 +78,10 @@ export class DomainView extends React.Component<props.usersItem, props.stateUser
 		});
 	}
 	deleteField(event: any){
-		var element:EventTarget=event.target;
+		var element:HTMLElement=event.target;
 		ajax({
 			method:"DELETE",
-	        url: `${window.settings.uri}/v1/learning/domain/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/learning/domain/${element.getAttribute("data-id")}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
