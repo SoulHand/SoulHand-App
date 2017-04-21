@@ -181,11 +181,11 @@ export class StudentView extends React.Component<Props.StudentView, states.Stude
 					<div className="field">
 						<b>{row.label}:</b>
 					</div>
-					<div className="value" onKeyUp={(e)=>{this.getFields(e)}} onKeyDown={(e)=>{this.keycod(e)}}>
+					<div className="value" onKeyUp={(e:any)=>{this.getFields(e)}} onKeyDown={(e:any)=>{this.keycod(e)}}>
 						{row.value}
 					</div>
 					<div className="toolbox">
-						<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e)=>{this.edit(e)}}></button>
+						<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e:any)=>{this.edit(e)}}></button>
 					</div>
 				</div>
 			);
@@ -347,7 +347,7 @@ export class StudentView extends React.Component<Props.StudentView, states.Stude
 						<b>Grado:</b>
 					</div>
 					<div className="value">
-						<select id="grade" onChange={(e)=>{this.changeGrade(e)}}>
+						<select id="grade" onChange={(e:any)=>{this.changeGrade(e)}}>
 							<option value="">Seleccione una opción</option>
 							{
 								this.state.grades.map((row)=>{
@@ -397,7 +397,7 @@ export class StudentView extends React.Component<Props.StudentView, states.Stude
 								<td>{row.age}</td>
 								<td>{row.weight} kg</td>
 								<td>{row.height} cm</td>
-								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
+								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e:any)=>{this.deleteField(e)}}>Eliminar</button></td>
 							</tr>
 						);
 					})

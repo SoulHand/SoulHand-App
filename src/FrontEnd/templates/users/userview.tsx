@@ -132,11 +132,11 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 					<div className="field">
 						<b>{row.label}:</b>									
 					</div>
-					<div className="value" onKeyUp={(e)=>{this.getFields(e)}} onKeyDown={(e)=>{this.keycod(e)}}>
+					<div className="value" onKeyUp={(e:any)=>{this.getFields(e)}} onKeyDown={(e:any)=>{this.keycod(e)}}>
 						{row.value}
 					</div>
 					<div className="toolbox">
-						<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e)=>{this.edit(e)}}></button>
+						<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e:any)=>{this.edit(e)}}></button>
 					</div>
 				</div>
 			);
@@ -157,9 +157,9 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 					<div className="fieldset">
 						<div className="item" id="username">
 							<div className="field"></div>
-							<div className="value" onKeyUp={(e)=>{this.getFields(e)}} onKeyDown={(e)=>{this.keycod(e)}}>{this.state.user.username}</div>
+							<div className="value" onKeyUp={(e:any)=>{this.getFields(e)}} onKeyDown={(e:any)=>{this.keycod(e)}}>{this.state.user.username}</div>
 							<div className="toolbox">
-								<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e)=>{this.edit(e)}}></button>
+								<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e:any)=>{this.edit(e)}}></button>
 							</div>
 						</div>						
 					</div>
@@ -184,7 +184,7 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 						{(this.state.user.isAdmin==true) ? 'GESTOR DEL CONOCIMIENTO' : 'USUARIO'}
 					</div>
 					<div className="tool">
-						<button className={`button circle icons x16 ${iconAdmin} white`} data-id={this.state.user._id} onClick={(e)=>{this.changeAdmin(e)}}></button>
+						<button className={`button circle icons x16 ${iconAdmin} white`} data-id={this.state.user._id} onClick={(e:any)=>{this.changeAdmin(e)}}></button>
 					</div>
 				</div>
 				<div className="item">

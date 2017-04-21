@@ -87,10 +87,10 @@ export class PhysicCreate extends React.Component<Props.StudentCreate, states.Ma
 		render () {
     return (
     	<div className="container">
-    		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
+    		<form method="POST" className="formulario" onSubmit={(e:any)=>{this.send(e)}}>
 				<div className="form-group">
 					<label htmlFor="height"><b>Altura</b></label>
-					<input type="text" className="form-control" id="height" aria-describedby="name" placeholder="cm" required autoFocus onChange={(e)=>{this.getFields(e)}}/>
+					<input type="text" className="form-control" id="height" aria-describedby="name" placeholder="cm" required autoFocus onChange={(e:any)=>{this.getFields(e)}}/>
 					{this.state.error.height && (
 						<div className="alert alert-danger" role="alert">
 						<strong>Error!</strong> El campo es obligatorio.
@@ -99,7 +99,7 @@ export class PhysicCreate extends React.Component<Props.StudentCreate, states.Ma
 				</div>
 		    <div className="form-group">
 			    <label htmlFor="weight"><b>Peso</b></label>
-			    <input type="text" className="form-control" id="weight" aria-describedby="name" placeholder="kg" required autoFocus onChange={(e)=>{this.getFields(e)}}/>
+			    <input type="text" className="form-control" id="weight" aria-describedby="name" placeholder="kg" required autoFocus onChange={(e:any)=>{this.getFields(e)}}/>
 					{this.state.error.weight && (
 			    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> El campo es obligatorio.

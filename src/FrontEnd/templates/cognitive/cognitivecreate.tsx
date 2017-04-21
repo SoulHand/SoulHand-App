@@ -98,11 +98,11 @@ export class CognitiveCreate extends React.Component<, {}> {
 		console.log(this, this.state);
     return (
     	<div className="container">
-    		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
+    		<form method="POST" className="formulario" onSubmit={(e:any)=>{this.send(e)}}>
 
 				  <div className="form-group">
 				    <label htmlFor="name"><b>Nombre </b></label>
-				    <input type="texto" className="form-control" id="name" aria-describedby="name" placeholder="Nombre "required autoFocus onChange={(e)=>{this.getFields(e)}}/>
+				    <input type="texto" className="form-control" id="name" aria-describedby="name" placeholder="Nombre "required autoFocus onChange={(e:any)=>{this.getFields(e)}}/>
 					{this.state.error.name && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> El campo es obligatorio.
@@ -110,7 +110,7 @@ export class CognitiveCreate extends React.Component<, {}> {
 				    )}				  </div>
 				     <div className="form-group">
 				    <label htmlFor="texto"><b>Descripción</b></label>
-				    <input type="texto" className="form-control" id="description" aria-describedby="description" placeholder="Descripción" onChange={(e)=>{this.getFields(e)}}/>
+				    <input type="texto" className="form-control" id="description" aria-describedby="description" placeholder="Descripción" onChange={(e:any)=>{this.getFields(e)}}/>
 				    {this.state.error.min && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> Debe ser un numero valido.

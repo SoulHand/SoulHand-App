@@ -26,7 +26,7 @@ export class Item extends React.Component<props.gradeItem, {}> {
 	  				
 	  			</div>
 				<div className="toolbox">
-					<button className="button circle icons x16 delete white" data-id={this.props.grade._id} onClick={(e)=>{this.deleteField(e)}}></button>
+					<button className="button circle icons x16 delete white" data-id={this.props.grade._id} onClick={(e:any)=>{this.deleteField(e)}}></button>
 				</div>
 			</div>
 		);

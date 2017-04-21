@@ -139,10 +139,10 @@ export class ObjetiveCreate extends React.Component<Props.parentsItem, {}> {
 	render () {
     return (
     	<div className="container">
-    		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
+    		<form method="POST" className="formulario" onSubmit={(e:any)=>{this.send(e)}}>
         <div className="form-group">
           <label htmlFor="domain"><b>Dominio del aprendizaje*</b></label>
-          <select id="domain" required onChange={(e)=>{this.selectDomain(e)}}>
+          <select id="domain" required onChange={(e:any)=>{this.selectDomain(e)}}>
             <option value="">Seleccione una opción</option>
             {
               this.state.domains.map((row)=>{
@@ -161,7 +161,7 @@ export class ObjetiveCreate extends React.Component<Props.parentsItem, {}> {
 
         <div className="form-group">
           <label htmlFor="level"><b>Nivel de aprendizaje*</b></label>
-          <select id="level" required onChange={(e)=>{this.selectLevel(e)}}>
+          <select id="level" required onChange={(e:any)=>{this.selectLevel(e)}}>
             <option value="">Seleccione una opción</option>
             {
               this.state.levels.map((row)=>{
@@ -179,7 +179,7 @@ export class ObjetiveCreate extends React.Component<Props.parentsItem, {}> {
         </div>
         <div className="form-group">
           <label htmlFor="objetive"><b>Objetivo de aprendizaje*</b></label>
-          <select id="objetive" required onChange={(e)=>{this.selectLevel(e)}}>
+          <select id="objetive" required onChange={(e:any)=>{this.selectLevel(e)}}>
             <option value="">Seleccione una opción</option>
             {
               this.state.objetives.map((row)=>{

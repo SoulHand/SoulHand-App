@@ -56,7 +56,7 @@ export class ListStudent extends React.Component<{}, states.StudentList> {
     return (
 		<div className="container card">
 			<div className="right">
-				<input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
+				<input type="text" className="form-control" placeholder="Buscar" onChange={(e:any)=>{this.Filter(e)}}/>
 			</div>
 			<h3>Estudiante</h3>
 			<TableStudents students={this.state.students} session={this.session} delete={this.deleteField.bind(this)}/>

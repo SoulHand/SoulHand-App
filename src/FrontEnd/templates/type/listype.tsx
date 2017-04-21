@@ -64,7 +64,7 @@ export class ListType extends React.Component<{}, {}> {
         <div className="container card">
             <form className="navbar-form navbar-right">
                 <div className="right">
-                    <input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
+                    <input type="text" className="form-control" placeholder="Buscar" onChange={(e:any)=>{this.Filter(e)}}/>
                 </div>
             </form>
             <h3>Tipo de Aprendizaje</h3>
@@ -81,7 +81,7 @@ export class ListType extends React.Component<{}, {}> {
                         return (
                             <tr key={row._id}>
                                 <td>{row.name}</td>
-                                <td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
+                                <td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e:any)=>{this.deleteField(e)}}>Eliminar</button></td>
                             </tr>
                         );
                     })

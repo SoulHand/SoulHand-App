@@ -37,13 +37,13 @@ export class Menu extends React.Component<{}, {}> {
 				}
 				<ul>
 					<li>
-						<Link to="/" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Inicio</Link>
+						<Link to="/" activeClassName="active" onClick={(e:any)=>{this.toogle(e)}}>Inicio</Link>
 					</li>
 					<li>
-						<Link to="/activities/create" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Crear actividad</Link>
+						<Link to="/activities/create" activeClassName="active" onClick={(e:any)=>{this.toogle(e)}}>Crear actividad</Link>
 					</li>
 					<li>
-						<Link to="/activities" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Ver actividad</Link>
+						<Link to="/activities" activeClassName="active" onClick={(e:any)=>{this.toogle(e)}}>Ver actividad</Link>
 					</li>
 				</ul>
 			</div>

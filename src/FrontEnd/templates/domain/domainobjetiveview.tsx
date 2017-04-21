@@ -135,7 +135,7 @@ export class DomainObjetiveView extends React.Component<props.usersItem, props.s
 						return (
 							<tr key={row._id}>
 								<td><b>{row.name}</b></td>
-								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
+								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e:any)=>{this.deleteField(e)}}>Eliminar</button></td>
 							</tr>
 						);
 					})

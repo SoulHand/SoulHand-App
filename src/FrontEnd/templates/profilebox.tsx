@@ -22,7 +22,7 @@ export class ProfileBox extends React.Component<Props.profilebox, {}> {
 	              </a>
 	              <div className="media-body">
 	                <div className="media-links">
-	                   <a href="#" className="sidebar-menu-toggle">Ver mi perfil -</a> <a href="pages_login(alt).html" onClick={(e)=>{this.destroy(e)}}>Cerrar sesión</a>
+	                   <a href="#" className="sidebar-menu-toggle">Ver mi perfil -</a> <a href="pages_login(alt).html" onClick={(e:any)=>{this.destroy(e)}}>Cerrar sesión</a>
 	                </div>
 	                <div className="media-author">{this.props.session.user.username}</div>
 	              </div>

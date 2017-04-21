@@ -40,10 +40,10 @@ export class Menu extends React.Component<Props.menu, states.menu> {
 						<Link to="/" activeClassName="active">Inicio</Link>
 					</li>
 					<li>
-						<Link to="/parents/create" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Crear Representante</Link>
+						<Link to="/parents/create" activeClassName="active" onClick={(e:any)=>{this.toogle(e)}}>Crear Representante</Link>
 					</li>
 					<li>
-						<Link to="/parents" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Ver representantes</Link>
+						<Link to="/parents" activeClassName="active" onClick={(e:any)=>{this.toogle(e)}}>Ver representantes</Link>
 					</li>
 				</ul>
 			</div>

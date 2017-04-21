@@ -133,14 +133,14 @@ export class CognitiveView extends React.Component<props.usersItem, props.stateU
 			<div className="fieldset">
 				<div className="item" id="name">
 					<div className="field"></div>
-					<div className="value" onKeyUp={(e)=>{this.getFields(e)}} onKeyDown={(e)=>{this.keycod(e)}}>{this.state.cognitive.name}</div>
+					<div className="value" onKeyUp={(e:any)=>{this.getFields(e)}} onKeyDown={(e:any)=>{this.keycod(e)}}>{this.state.cognitive.name}</div>
 					<div className="toolbox">
-						<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e)=>{this.edit(e)}}></button>
+						<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e:any)=>{this.edit(e)}}></button>
 					</div>
 				</div>
 			</div>
 			<div className="right">
-				<input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
+				<input type="text" className="form-control" placeholder="Buscar" onChange={(e:any)=>{this.Filter(e)}}/>
 			</div>
 			<table className="table table-striped">
 				<thead>
@@ -155,7 +155,7 @@ export class CognitiveView extends React.Component<props.usersItem, props.stateU
 						return (
 							<tr key={row._id}>
 								<td><b>{row.name}</b></td>
-								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
+								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e:any)=>{this.deleteField(e)}}>Eliminar</button></td>
 							</tr>
 						);
 					})

@@ -26,7 +26,7 @@ export class Item extends React.Component<Props.ParentTable, {}> {
 	  				<small>{this.props.parent.data.dni}</small>
 	  			</div>
 				<div className="toolbox">
-					<button className="button circle icons x16 delete white" data-id={this.props.parent._id} onClick={(e)=>{this.deleteField(e)}}></button>
+					<button className="button circle icons x16 delete white" data-id={this.props.parent._id} onClick={(e:any)=>{this.deleteField(e)}}></button>
 				</div>
 			</div>
 		);

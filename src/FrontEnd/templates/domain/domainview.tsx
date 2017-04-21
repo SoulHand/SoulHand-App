@@ -133,9 +133,9 @@ export class DomainView extends React.Component<props.usersItem, props.stateUser
 			<div className="fieldset">
 				<div className="item" id="name">
 					<div className="field"></div>
-					<div className="value" onKeyUp={(e)=>{this.getFields(e)}} onKeyDown={(e)=>{this.keycod(e)}}>{this.state.domain.name}</div>
+					<div className="value" onKeyUp={(e:any)=>{this.getFields(e)}} onKeyDown={(e:any)=>{this.keycod(e)}}>{this.state.domain.name}</div>
 					<div className="toolbox">
-						<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e)=>{this.edit(e)}}></button>
+						<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e:any)=>{this.edit(e)}}></button>
 					</div>
 				</div>
 			</div>
@@ -153,7 +153,7 @@ export class DomainView extends React.Component<props.usersItem, props.stateUser
 						return (
 							<tr key={row._id}>
 								<td><b>{row.name}</b></td>
-								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
+								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e:any)=>{this.deleteField(e)}}>Eliminar</button></td>
 							</tr>
 						);
 					})
@@ -176,7 +176,7 @@ export class DomainView extends React.Component<props.usersItem, props.stateUser
 							<tr key={row._id}>
 								<td>{row.level}</td>
 								<td><Link to={`/domain/get/${this.state.domain.name}/objetive/${row.name}`}>{row.name}</Link></td>
-								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
+								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e:any)=>{this.deleteField(e)}}>Eliminar</button></td>
 							</tr>
 						);
 					})

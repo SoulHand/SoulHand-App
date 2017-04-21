@@ -129,9 +129,9 @@ export class TeacherCreate extends React.Component<Props.TeacherCreate, states.T
 		console.log(this, this.state);
     return (
     	<div className="container">
-    		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
+    		<form method="POST" className="formulario" onSubmit={(e:any)=>{this.send(e)}}>
 				<label htmlFor="dni"><b>Cedula*</b></label>
-				    <input type="texto" className="form-control" id="dni" aria-describedby="ci_docente" placeholder="documento de identidad" required autoFocus onChange={(e)=>{this.getFields(e)}}/>
+				    <input type="texto" className="form-control" id="dni" aria-describedby="ci_docente" placeholder="documento de identidad" required autoFocus onChange={(e:any)=>{this.getFields(e)}}/>
 				    {this.state.error.dni && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> Introduzca un documento de identidad valido con la inicial de su nacionalidad.
@@ -139,7 +139,7 @@ export class TeacherCreate extends React.Component<Props.TeacherCreate, states.T
 				    )}
 				  <div className="form-group">
 				    <label htmlFor="name"><b>Nombre y Apellido*</b></label>
-				    <input type="texto" className="form-control" id="name" aria-describedby="name" placeholder="Nombre y Apellido"required autoFocus onChange={(e)=>{this.getFields(e)}}/>
+				    <input type="texto" className="form-control" id="name" aria-describedby="name" placeholder="Nombre y Apellido"required autoFocus onChange={(e:any)=>{this.getFields(e)}}/>
 					{this.state.error.name && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> El campo es obligatorio.
@@ -147,7 +147,7 @@ export class TeacherCreate extends React.Component<Props.TeacherCreate, states.T
 				    )}				  </div>
 				  <div className="form-group">
 				    <label htmlFor="phone"><b>Telefono*</b></label>
-				    <input type="texto" className="form-control" id="phone" aria-describedby="Telefono" placeholder="número telefónico" onChange={(e)=>{this.getFields(e)}}/>
+				    <input type="texto" className="form-control" id="phone" aria-describedby="Telefono" placeholder="número telefónico" onChange={(e:any)=>{this.getFields(e)}}/>
 				    {this.state.error.phone && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> Debe ser un numero de telefono valido.
@@ -156,7 +156,7 @@ export class TeacherCreate extends React.Component<Props.TeacherCreate, states.T
 				  </div>
 				   <div className="form-group">
 				    <label htmlFor="email"><b>Email*</b></label>
-				    <input type="email" className="form-control" id="email" aria-describedby="emailHelp" placeholder="Correo Electrónico" onChange={(e)=>{this.getFields(e)}}/>
+				    <input type="email" className="form-control" id="email" aria-describedby="emailHelp" placeholder="Correo Electrónico" onChange={(e:any)=>{this.getFields(e)}}/>
 				    {this.state.error.email && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> Debe ser un correo electronico.
@@ -165,7 +165,7 @@ export class TeacherCreate extends React.Component<Props.TeacherCreate, states.T
 				  </div>
 				   <div className="form-group">
 				    <label htmlFor="birthdate"><b>Fecha de nacimiento*</b></label>
-				    <input type="date" className="form-control" id="birthdate" aria-describedby="emailHelp" placeholder="YYYY-mm-dd" onChange={(e)=>{this.getFields(e)}}/>
+				    <input type="date" className="form-control" id="birthdate" aria-describedby="emailHelp" placeholder="YYYY-mm-dd" onChange={(e:any)=>{this.getFields(e)}}/>
 				    {this.state.error.birthdate && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> Debe ser una fecha valida.
@@ -174,7 +174,7 @@ export class TeacherCreate extends React.Component<Props.TeacherCreate, states.T
 				  </div>
 				   <div className="form-group">
 				    <label htmlFor="genero"><b>Fecha de nacimiento*</b></label>
-				    <select id="genero" required onChange={(e)=>{this.getFields(e)}}>
+				    <select id="genero" required onChange={(e:any)=>{this.getFields(e)}}>
 				    	<option value="">Seleccione una opción</option>
 				    	<option value="MASCULINO">MASCULINO</option>
 				    	<option value="FEMENINO">FEMENINO</option>
@@ -190,13 +190,13 @@ export class TeacherCreate extends React.Component<Props.TeacherCreate, states.T
 				    <legend><b>Interprete</b></legend>
 				    <div className="form-check">
 				      <label className="form-check-label">
-				        <input type="radio" className="form-check-input" name="interprete" id="yes" value="option1" checked={this.state.radio=="yes"} onChange={(e)=>{this.getRadioButton(e)}}/>
+				        <input type="radio" className="form-check-input" name="interprete" id="yes" value="option1" checked={this.state.radio=="yes"} onChange={(e:any)=>{this.getRadioButton(e)}}/>
 				        Si
 				      </label>
 				    </div>
 				    <div className="form-check">
 				    <label className="form-check-label">
-				        <input type="radio" className="form-check-input" name="interprete" id="no" value="option2" checked={(this.state.radio!="yes")} onChange={(e)=>{this.getRadioButton(e)}}/>
+				        <input type="radio" className="form-check-input" name="interprete" id="no" value="option2" checked={(this.state.radio!="yes")} onChange={(e:any)=>{this.getRadioButton(e)}}/>
 				        No
 				      </label>
 				    </div>

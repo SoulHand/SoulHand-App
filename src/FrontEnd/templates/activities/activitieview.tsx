@@ -1,7 +1,6 @@
 import * as React from 'react';
 import 'string-validator'
 import {Link} from 'react-router'
-import {ReactHighcharts} from 'react-highcharts'
 import {ajax} from 'jquery'
 import {LineChart} from '../linechart'
 
@@ -166,7 +165,7 @@ export class ActivitieView extends React.Component<props.usersItem, props.stateU
 					<div className="field">
 						<b>{row.label}:</b>
 					</div>
-					<div className="value" onKeyUp={(e)=>{this.getFields(e)}} onKeyDown={(e)=>{this.keycod(e)}}>
+					<div className="value" onKeyUp={(e:any)=>{this.getFields(e)}} onKeyDown={(e:any)=>{this.keycod(e)}}>
 						{row.value}
 					</div>
 				</div>
@@ -203,7 +202,7 @@ export class ActivitieView extends React.Component<props.usersItem, props.stateU
 						return (
 							<tr key={row._id}>
 								<td><Link to={`/activities/get/${this.state.activity._id}/objetive/get/${row._id}`}>{row.name}</Link></td>
-								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
+								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e:any)=>{this.deleteField(e)}}>Eliminar</button></td>
 							</tr>
 						);
 					})

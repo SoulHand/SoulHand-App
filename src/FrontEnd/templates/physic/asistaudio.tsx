@@ -91,7 +91,7 @@ export class AsistAudio extends React.Component<Props.StudentCreate, states.Teac
 		console.log(this, this.state);
     return (
     	<div className="container">
-    		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
+    		<form method="POST" className="formulario" onSubmit={(e:any)=>{this.send(e)}}>
     				<h1 className="title">Pruebas auditivas</h1>
     				<p>A continuación le ayudaremos a evaluar la perdida auditiva del alumno, seleccione las opciones de acuerdo a las observaciones en el entorno de clases.</p>
     				<p><b>¡Recuerde!</b> SoulHand lo apoyará durante todo el proceso de enseñanza pero no podemos reemplazar los diagnosticos de un profesional</p>

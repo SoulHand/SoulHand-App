@@ -116,7 +116,7 @@ export class StudentCreate extends React.Component<Props.StudentCreate, states.S
 				  </div>
 				   <div className="form-group">
 				    <label htmlFor="genero"><b>Genero *:</b></label>
-				    <select id="genero" required onChange={(e)=>{this.getFields(e)}}>
+				    <select id="genero" required onChange={(e:any)=>{this.getFields(e)}}>
 				    	<option value="">Seleccione una opción</option>
 				    	<option value="MASCULINO">MASCULINO</option>
 				    	<option value="FEMENINO">FEMENINO</option>

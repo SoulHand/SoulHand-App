@@ -62,7 +62,7 @@ export class ListTeachers extends React.Component<{}, states.ListTeachers> {
 		return (
 			<div className="container card">
 				<div className="right">
-					<input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
+					<input type="text" className="form-control" placeholder="Buscar" onChange={(e:any)=>{this.Filter(e)}}/>
 				</div>
 				<h3>Docentes</h3>
 				<TableTeachers teachers={this.state.teachers} session={this.session} delete={this.deleteField.bind(this)}/>

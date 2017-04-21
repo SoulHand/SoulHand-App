@@ -62,7 +62,7 @@ export class ListDomain extends React.Component<{}, {}> {
     return (
 		<div className="container card">
 			<div className="right">
-				<input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
+				<input type="text" className="form-control" placeholder="Buscar" onChange={(e:any)=>{this.Filter(e)}}/>
 			</div>
 			<h3>Dominio</h3>
 			<table className="table table-striped">
@@ -78,7 +78,7 @@ export class ListDomain extends React.Component<{}, {}> {
 						return (
 							<tr key={row._id}>
 								<td><Link to={`/domain/get/${row._id}`} className="title">{row.name}</Link></td>
-								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
+								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e:any)=>{this.deleteField(e)}}>Eliminar</button></td>
 							</tr>
 						);
 					})

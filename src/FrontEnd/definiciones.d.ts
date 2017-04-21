@@ -129,17 +129,19 @@ declare namespace peoples{
 		_id:string
 		data:peoples.people
 		_v:number
-		idStudent:string
+		students?: Array<students>
 	}
 }
 declare namespace users{
 	interface profile{
 		_id:string
 		username:string
+		password?:string
 		_v:number
 		isAdmin:boolean
 		dateCreated:string
 		people:peoples.people
+		email:string
 	}
 	interface sessions{
 		_id:string
@@ -247,6 +249,11 @@ declare namespace Props{
 		parent:peoples.parents
 		session:users.sessions
 	}
+	interface ItemUser {
+		delete:Function
+		user:users.profile
+		session:users.sessions
+	}
 }
 
 declare namespace states{
@@ -260,6 +267,10 @@ declare namespace states{
 	interface ListParent{
 		parents:Array<peoples.parents>
 		search:string
+	}
+	interface ViewParent{
+		parent:peoples.parents
+		error:any
 	}
 	interface TeacherCreate{
 		error: any
@@ -293,6 +304,20 @@ declare namespace states{
 		grades:Array<crud.grade>
 		weights:Array<crud.weights>
 		heights:Array<crud.heights>
+	}
+	interface GradeList{
+		grades:Array<crud.grade>
+		students?:Array<peoples.students>
+		error?:any
+	}
+	interface UserList{
+		users:Array<users.profile>
+		error?:any
+	}
+	interface GradeView{
+		grade:crud.grade
+		students:Array<peoples.students>
+		error:any
 	}
 }
 declare namespace Fields {

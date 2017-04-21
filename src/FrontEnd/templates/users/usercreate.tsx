@@ -4,8 +4,8 @@ import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
 
 @withRouter
-export class UserCreate extends React.Component<props.teacherItem, {}> {
-	public fields:any={
+export class UserCreate extends React.Component<Props.GenericRouter, {}> {
+	public fields:compat.Map={
 		dni:{
 			match:validator.matches(/^[VE][0-9]{6,9}$/i),
 			value:null,
@@ -36,7 +36,7 @@ export class UserCreate extends React.Component<props.teacherItem, {}> {
 			required:true
 		}
 	};
-	state:props.fieldsTeachers={
+	state:states.MatterCreate={
 		error:{
 			dni:false,
 			name:false,
@@ -57,8 +57,8 @@ export class UserCreate extends React.Component<props.teacherItem, {}> {
 	}
 	public validate(){
 		var value=true;
-		var state:props.errorState=this.state.error;
-		var data:props.dataTeachers={
+		var state:compat.Map=this.state.error;
+		var data:compat.Map={
 			dni:null,
 			name:null,
 			password:null,
@@ -93,12 +93,11 @@ export class UserCreate extends React.Component<props.teacherItem, {}> {
 		if(!data){
 			return;
 		}
-		console.log(data);
 		ajax({
 			method:"POST",
 	        url: `${window.settings.uri}/v1/users/`,
 	        dataType: "json",
-	        data:data,	        
+	        data:data,
 	        success:(data:any)=>{
 	        	this.props.router.replace('/auth');
 	        },
@@ -121,15 +120,15 @@ export class UserCreate extends React.Component<props.teacherItem, {}> {
 	               		<h1 className="title">Registro de usuario</h1>
 	               		<hr />
 	               	</div>
-	            </div> 
+	            </div>
 				<div className="main-login main-center">
-					<form className="form-horizontal" method="post" onSubmit={(e)=>{this.send(e)}}>
-						
+					<form className="form-horizontal" method="post" onSubmit={(e:any)=>{this.send(e)}}>
+
 						<div className="form-group">
 							<label htmlFor="dni" className="cols-sm-2 control-label">Documento de identidad</label>
 							<div className="cols-sm-10">
 								<div className="input-group">
-									<input type="text" className="form-control" name="dni" id="dni"  placeholder="Documento de identidad" onChange={(e)=>{this.getFields(e)}}/>
+									<input type="text" className="form-control" name="dni" id="dni"  placeholder="Documento de identidad" onChange={(e:any)=>{this.getFields(e)}}/>
 								</div>
 								{this.state.error.dni && (
 							    	<div className="alert alert-danger" role="alert">
@@ -143,7 +142,7 @@ export class UserCreate extends React.Component<props.teacherItem, {}> {
 							<label htmlFor="email" className="cols-sm-2 control-label">Correo electrónico</label>
 							<div className="cols-sm-10">
 								<div className="input-group">
-									<input type="text" className="form-control" name="email" id="email"  placeholder="ingrese correo electrónico" onChange={(e)=>{this.getFields(e)}}/>
+									<input type="text" className="form-control" name="email" id="email"  placeholder="ingrese correo electrónico" onChange={(e:any)=>{this.getFields(e)}}/>
 								</div>
 								{this.state.error.email && (
 							    	<div className="alert alert-danger" role="alert">
@@ -157,7 +156,7 @@ export class UserCreate extends React.Component<props.teacherItem, {}> {
 							<label htmlFor="username" className="cols-sm-2 control-label">Nombre de usuario</label>
 							<div className="cols-sm-10">
 								<div className="input-group">
-									<input type="text" className="form-control" name="username" id="username"  placeholder="Ingrese su nombre de usuario" onChange={(e)=>{this.getFields(e)}}/>
+									<input type="text" className="form-control" name="username" id="username"  placeholder="Ingrese su nombre de usuario" onChange={(e:any)=>{this.getFields(e)}}/>
 								</div>
 								{this.state.error.username && (
 							    	<div className="alert alert-danger" role="alert">
@@ -171,7 +170,7 @@ export class UserCreate extends React.Component<props.teacherItem, {}> {
 							<label htmlFor="password" className="cols-sm-2 control-label">Contraseña</label>
 							<div className="cols-sm-10">
 								<div className="input-group">
-									<input type="password" className="form-control" name="password" id="password"  placeholder="Ingrese su contraseña" onChange={(e)=>{this.getFields(e)}}/>
+									<input type="password" className="form-control" name="password" id="password"  placeholder="Ingrese su contraseña" onChange={(e:any)=>{this.getFields(e)}}/>
 								</div>
 								{this.state.error.dni && (
 							    	<div className="alert alert-danger" role="alert">
@@ -185,7 +184,7 @@ export class UserCreate extends React.Component<props.teacherItem, {}> {
 							<label htmlFor="confirm" className="cols-sm-2 control-label">Confirme contraseña</label>
 							<div className="cols-sm-10">
 								<div className="input-group">
-									<input type="password" className="form-control" name="confirm" id="confirm"  placeholder="Confirme su contraseña" onChange={(e)=>{this.getFields(e)}}/>
+									<input type="password" className="form-control" name="confirm" id="confirm"  placeholder="Confirme su contraseña" onChange={(e:any)=>{this.getFields(e)}}/>
 								</div>
 								{this.state.error.dni && (
 							    	<div className="alert alert-danger" role="alert">
@@ -206,11 +205,11 @@ export class UserCreate extends React.Component<props.teacherItem, {}> {
 					    )}
 						<div className="form-group ">
 							<button type="submit" className="button btn btn-primary btn-lg btn-block login-button">Register</button>
-						</div>						
+						</div>
 					</form>
 				</div>
 			</div>
-		</div>		
+		</div>
     );
   }
 }

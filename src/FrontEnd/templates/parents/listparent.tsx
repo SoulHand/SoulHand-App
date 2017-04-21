@@ -64,7 +64,7 @@ export class ListParent extends React.Component<{}, states.ListParent> {
 		return (
 			<div className="container">
 				<div className="right">
-					<input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
+					<input type="text" className="form-control" placeholder="Buscar" onChange={(e:any)=>{this.Filter(e)}}/>
 				</div>
 				<div className="fieldset" data-align="justify">
 					{

@@ -120,11 +120,11 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 		console.log(this, this.state);
     return (
     	<div className="container">
-    		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
+    		<form method="POST" className="formulario" onSubmit={(e:any)=>{this.send(e)}}>
 
 				  <div className="form-group">
 				    <label htmlFor="name"><b>Nombre*</b></label>
-				    <input type="texto" className="form-control" id="name" aria-describedby="name" placeholder="Nombre"required autoFocus onChange={(e)=>{this.getFields(e)}}/>
+				    <input type="texto" className="form-control" id="name" aria-describedby="name" placeholder="Nombre"required autoFocus onChange={(e:any)=>{this.getFields(e)}}/>
 					{this.state.error.name && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> El campo es obligatorio.
@@ -133,7 +133,7 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 
 				    <div className="form-group">
 				    <label htmlFor="description"><b>Descripcion*</b></label>
-				    <input type="texto" className="form-control" id="description" aria-describedby="description" placeholder="Descripcion"required autoFocus onChange={(e)=>{this.getFields(e)}}/>
+				    <input type="texto" className="form-control" id="description" aria-describedby="description" placeholder="Descripcion"required autoFocus onChange={(e:any)=>{this.getFields(e)}}/>
 					{this.state.error.description && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> El campo es obligatorio.
@@ -142,7 +142,7 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 
 				  <div className="form-group">
 				    <label htmlFor="expire"><b>Expiracion*</b></label>
-				    <input type="date" className="form-control" id="expire" aria-describedby="emailHelp" placeholder="YYYY-mm-dd" onChange={(e)=>{this.getFields(e)}}/>
+				    <input type="date" className="form-control" id="expire" aria-describedby="emailHelp" placeholder="YYYY-mm-dd" onChange={(e:any)=>{this.getFields(e)}}/>
 				    {this.state.error.expire && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> Debe ser una fecha valida.
@@ -151,7 +151,7 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 				  </div>
 				  <div className="form-group">
 				    <label htmlFor="course"><b>Materia*</b></label>
-				    <select id="course" required onChange={(e)=>{this.getFields(e)}}>
+				    <select id="course" required onChange={(e:any)=>{this.getFields(e)}}>
 				    	<option value="">Seleccione una opción</option>
 				    	{
 				    		this.state.courses.map((row)=>{

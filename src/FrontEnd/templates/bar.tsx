@@ -17,7 +17,7 @@ export class Bar extends React.Component<{}, {}> {
 				<label className="label">{this.title}</label>
 				</div>
 				<div className="right_side">
-          			<button type="button" className="navbar-toggle icon-bar" onClick={(e)=>{this.inShow(e)}}>
+          			<button type="button" className="navbar-toggle icon-bar" onClick={(e:any)=>{this.inShow(e)}}>
           				<span className="icon-bar"></span>
           				<span className="icon-bar"></span>
           				<span className="icon-bar"></span>

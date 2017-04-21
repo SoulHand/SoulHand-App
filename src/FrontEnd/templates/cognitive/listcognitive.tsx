@@ -74,7 +74,7 @@ componentDidMount(){
                                 <td>{row.name}</td>
                                 <td>{row.description}</td>
                                 <td><button type="button" className="btn btn-warning">Editar</button>
-                                <button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
+                                <button type="button" className="btn btn-danger" data-id={row._id} onClick={(e:any)=>{this.deleteField(e)}}>Eliminar</button></td>
                             </tr>
                         );
                     })

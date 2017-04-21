@@ -42,10 +42,10 @@ export class Menu extends React.Component<Props.menu, states.menu> {
 						<Link to="/" activeClassName="active">Inicio</Link>
 					</li>
 					<li>
-						<Link to="/matter/create" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Crear Materia</Link>
+						<Link to="/matter/create" activeClassName="active" onClick={(e:any)=>{this.toogle(e)}}>Crear Materia</Link>
 					</li>
 					<li>
-						<Link to="/matter" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Ver Materia</Link>
+						<Link to="/matter" activeClassName="active" onClick={(e:any)=>{this.toogle(e)}}>Ver Materia</Link>
 					</li>
 				</ul>
 			</div>

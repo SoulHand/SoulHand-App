@@ -43,10 +43,10 @@ export class Login extends React.Component<props.teacherItem, props.teacherState
 	        <div className="card card-container" style={{marginTop:"5px"}}>
 	            <img id="profile-img" className="profile-img-card" src="/images/user-login-icon-14.png" />
 	            <p id="profile-name" className="profile-name-card"></p>
-	            <form className="form-signin" onSubmit={(e)=>{this.auth(e)}}>
+	            <form className="form-signin" onSubmit={(e:any)=>{this.auth(e)}}>
 	                <span id="reauth-email" className="reauth-email"></span>
-	                <input type="text" id="username" className="form-control" placeholder="Email address" required autoFocus onChange={(e)=>{this.getFields(e)}}/>
-	                <input type="password" id="password" className="form-control" placeholder="Password" required onChange={(e)=>{this.getFields(e)}}/>
+	                <input type="text" id="username" className="form-control" placeholder="Email address" required autoFocus onChange={(e:any)=>{this.getFields(e)}}/>
+	                <input type="password" id="password" className="form-control" placeholder="Password" required onChange={(e:any)=>{this.getFields(e)}}/>
 	                {this.state.error && (
 				    	<div className="alert alert-danger" role="alert">
 				    		{this.state.error}

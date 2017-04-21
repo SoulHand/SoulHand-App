@@ -40,7 +40,7 @@ export class TableTeachers extends React.Component<Props.tableteacher, {}>{
 								<td>{row.data.dni}</td>
 								<td><Link to={`/teacher/get/${row._id}`} className="title">{row.data.name}</Link></td>
 								<td>{(row.grade) ? row.grade.name : "NO ASIGNADO"}</td>
-								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
+								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e:any)=>{this.deleteField(e)}}>Eliminar</button></td>
 							</tr>
 						);
 					})

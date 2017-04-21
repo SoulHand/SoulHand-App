@@ -4,22 +4,24 @@ import {ajax} from 'jquery'
 import {TableStudents} from "../students/tablestudents"
 
 
-export class GradeView extends React.Component<props.usersItem, props.stateUser {
+export class GradeView extends React.Component<Props.GenericRouter, states.GradeView> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
-	public fields={};
-	public students=[];
-	state = {
+	public fields:compat.Map={};
+	public students:Array<peoples.students>=[];
+	state:states.GradeView = {
 		grade:null,
 		error:null,
 		students:[]
 	};
-	constructor(props:any) {
+	constructor(props:Props.GenericRouter) {
 		super(props);
-    	let session=localStorage.getItem("session");
-    	session=JSON.parse(session);
-		this.session=session;
+			let str: string=localStorage.getItem("session");
+	    	if(str){
+					let session:users.sessions = JSON.parse(str);
+		    	this.session=session;
+	    	}
 	}
 	public getFields(event:any){
 		var element=event.target.parentNode;
@@ -37,23 +39,23 @@ export class GradeView extends React.Component<props.usersItem, props.stateUser 
 			method:"GET",
 	        url: `${window.settings.uri}/v1/grades/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:null,	        
-	        success:(data:students.profile)=>{
-			    this.setState({
-			      grade : data
-			    });
+	        data:null,
+	        success:(data:crud.grade)=>{
+				    this.setState({
+				      grade : data
+				    });
 	        }
 		});
 		ajax({
 			method:"GET",
 	        url: `//0.0.0:8080/v1/people/students/grade/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:null,	        
-	        success:(data:students.profile)=>{
+	        data:null,
+	        success:(data:Array<peoples.students>)=>{
 	        	this.students=data;
-			    this.setState({
-			      students: data
-			    });
+				    this.setState({
+				      students: data
+				    });
 	        }
 		});
 	}
@@ -66,25 +68,25 @@ export class GradeView extends React.Component<props.usersItem, props.stateUser 
 			element.setAttribute("data-save","true");
 			return;
 		}
-		var data={};
+		var data:compat.Map={};
 		data[parent.id]=this.fields[parent.id];
 		ajax({
 			method:"PUT",
 	        url: `${window.settings.uri}/v1/grades/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:data,	        
-	        success:(data:students.profile)=>{
+	        data:data,
+	        success:(data:crud.grade)=>{
 				element.className="button circle icons x16 edit white";
 	        	parent.children[1].contentEditable=false;
 				element.setAttribute("data-save","false");
 	        	this.setState({
-					grade:data
-				});
+							grade:data
+						});
 	        },
 	        error:(data:any)=>{
 	        	this.setState({
-					error:data.responseJSON.message
-				});
+							error:data.responseJSON.message
+						});
 	        }
 		});
 	}
@@ -101,7 +103,7 @@ export class GradeView extends React.Component<props.usersItem, props.stateUser 
 	    });
 	}
 	deleteField(data: any){
-		this.students=this.students.filter(function(row:peoples.teachers){
+		this.students=this.students.filter((row)=>{
 			if(row._id==data._id){
 				return false;
 			}
@@ -130,13 +132,13 @@ export class GradeView extends React.Component<props.usersItem, props.stateUser 
 				<div className="alert alert-danger" role="alert">
 				  {this.state.error}
 				</div>
-			)}				
+			)}
 			<h3>Alumnos del {this.state.grade.name} grado</h3>
 			<div className="right">
-				<input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
-			</div>	
-			<TableStudents students={this.state.students} session={this.session} delete={this.deleteField.bind(this)}/>	
-    	</div>		
+				<input type="text" className="form-control" placeholder="Buscar" onChange={(e:any)=>{this.Filter(e)}}/>
+			</div>
+			<TableStudents students={this.state.students} session={this.session} delete={this.deleteField.bind(this)}/>
+    	</div>
     );
-  }	
+  }
 }

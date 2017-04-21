@@ -42,7 +42,7 @@ export class TableActivities extends React.Component<Props.tableactivities, {}>{
 								<td>{row.dateExpire}</td>
 								<td>{row.course.name}</td>
 								<td>{(row.isCompleted==true) ? "COMPLETADO" : "NO COMPLETADO"}</td>
-								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>
+								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e:any)=>{this.deleteField(e)}}>Eliminar</button></td>
 							</tr>
 						);
 					})
