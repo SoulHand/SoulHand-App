@@ -3,39 +3,40 @@ import {getJSON,ajax} from 'jquery'
 import {Item} from "./item"
 //import * as settings from "../settings"
 
-export class ListMatter extends React.Component<{}, {}> {
+export class ListMatter extends React.Component<{}, states.MatterList> {
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
 	public session:users.sessions;
-	public matter:any=[];
-	state={
-		matter:[]
+	public matter:Array<crud.courses>=[];
+	state:states.MatterList ={
+		matters:[]
 	};
-	
-	constructor(props:any) {
+	constructor(props:{}) {
 		super(props);
-    	let str=localStorage.getItem("session");
-    	let session=JSON.parse(str);
-		this.session=session;		
+			let str: string=localStorage.getItem("session");
+	    	if(str){
+					let session:users.sessions = JSON.parse(str);
+		    	this.session=session;
+	    	}
 	}
 	deleteField(event: any){
-		var element:EventTarget=event.target;		
+		var element:HTMLElement=event.target;
 		ajax({
 			method:"DELETE",
-	        url: `${window.settings.uri}/v1/courses/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/courses/${element.getAttribute("data-id")}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
 	        success:(data:peoples.teachers)=>{
-	        	this.matter=this.matter.filter(function(row:peoples.teachers){
-					if(row._id==data._id){
-						return false;
-					}
-					return true;
-		    	});
-		    	this.setState({
-			      	matter : this.matter
-			    });
+	        	this.matter=this.matter.filter(function(row){
+							if(row._id==data._id){
+								return false;
+							}
+							return true;
+			    	});
+			    	this.setState({
+				      	matters : this.matter
+				    });
 	        }
 		});
 	}
@@ -48,14 +49,14 @@ export class ListMatter extends React.Component<{}, {}> {
             return false;
         });
         this.setState({
-              matter : filter
+              matters : filter
         });
     }
 componentDidMount(){
         getJSON(`//0.0.0:8080/v1/courses/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,(data)=>{
             this.matter= data;
             this.setState({
-              matter: data
+              matters: data
             });
         })
     }
@@ -64,7 +65,7 @@ componentDidMount(){
         <div className="container card">
             <form className="navbar-form navbar-right">
                 <div className="right">
-                    <input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
+                    <input type="text" className="form-control" placeholder="Buscar" onChange={(e:any)=>{this.Filter(e)}}/>
                 </div>
             </form>
             <h3>Materia</h3>
@@ -77,7 +78,7 @@ componentDidMount(){
                 </thead>
                 <tbody>
                 {
-                    this.state.matter.map((row:any)=>{
+                    this.state.matters.map((row)=>{
                         return (
                             <tr key={row._id}>
                                 <td>{row.name}</td>

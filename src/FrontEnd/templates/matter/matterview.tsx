@@ -1,34 +1,32 @@
 import * as React from 'react';
-import * as validator from 'string-validator';
 import {ajax} from 'jquery'
 
-export class MatterView extends React.Component<{}, {}> {
+export class MatterView extends React.Component<Props.MatterView, states.MatterView> {
 	public session:users.sessions;
-	public PrivateKeyId:string;
-	public PublicKeyId:string;	
-	constructor(props:any) {
+	public matter: crud.courses;
+	constructor(props:Props.MatterView) {
 		super(props);
-    	let session=localStorage.getItem("session");
-		this.state = {matter:[],search:""};
-    	session=JSON.parse(session);
-		this.session=session;
-		this.state = {matter:null};
+			let str: string=localStorage.getItem("session");
+	    	if(str){
+					let session:users.sessions = JSON.parse(str);
+		    	this.session=session;
+	    	}
 	}
 	componentDidMount(){
 		ajax({
 			method:"GET",
 	        url: `${window.settings.uri}/v1/courses/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:null,	        
-	        success:(data:any)=>{
-	        	this.data=data;
-				this.setState({
-			      matter : data
-			    });
+	        data:null,
+	        success:(data:crud.courses)=>{
+	        	this.matter=data;
+						this.setState({
+				      matter : data
+				    });
 	        }
 		});
 	}
-	
+
 	render () {
     return (
     	<div className="container">
@@ -38,20 +36,11 @@ export class MatterView extends React.Component<{}, {}> {
 		            <img src="/images/user-login-icon-14.png" className="imagen img-circle img-responsive"/>
 		          </div>
 		          <div className="col-md-10 parrafo">
-		            <h3>
-		              <b>{(this.state.matter.data.mode=="MATTER") ? "Docente": "Alumno"}</b>
-		            </h3>
-		            <p>
-		              <b>Nombre:</b>{this.state.matter.data.name}
-		            </p>
+		            <h3>{this.state.matter.name}</h3>
 		          </div>
-		        </div>		    	
-		    )}		
-	        <h2>Actividades:</h2>
-	        <div className="fieldset" data-align="justify">
-	        	<span className="text-align center">No posee actividades</span>
-	        </div>
-    	</div>		
+		        </div>
+		    )}
+    	</div>
     );
-  }	
+  }
 }

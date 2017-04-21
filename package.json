@@ -1,6 +1,6 @@
 {
   "name": "soulhand",
-  "version": "2.0.0",
+  "version": "0.0.0",
   "description": "Herramienta web basada en inteligencia artificial para la compresión lectora",
   "main": "server.js",
   "scripts": {

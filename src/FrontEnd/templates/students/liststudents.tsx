@@ -6,23 +6,23 @@ import {TableStudents} from "./tablestudents"
 
 //import * as settings from "../settings"
 
-export class ListStudent extends React.Component<{}, {}> {
-	public PrivateKeyId:string;
-	public PublicKeyId:string;
+export class ListStudent extends React.Component<{}, states.StudentList> {
 	public session:users.sessions;
-	public students:any=[];
-	state={
+	public students:Array<peoples.students>=[];
+	state: states.StudentList={
 		students:[],
 		search:""
 	};
-	constructor(props:any) {
+	constructor(props:Props.TeacherCreate) {
 		super(props);
-    	let str=localStorage.getItem("session");
-    	let session=JSON.parse(str);
-		this.session=session;		
+			let str: string=localStorage.getItem("session");
+	    	if(str){
+					let session:users.sessions = JSON.parse(str);
+		    	this.session=session;
+	    	}
 	}
-	deleteField(data: any){
-		this.students=this.students.filter(function(row:peoples.teachers){
+	deleteField(data: peoples.students){
+		this.students=this.students.filter(function(row){
 			if(row._id==data._id){
 				return false;
 			}
@@ -59,7 +59,7 @@ export class ListStudent extends React.Component<{}, {}> {
 				<input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
 			</div>
 			<h3>Estudiante</h3>
-			<TableStudents students={this.state.students} session={this.session} delete={this.deleteField.bind(this)}/>			
+			<TableStudents students={this.state.students} session={this.session} delete={this.deleteField.bind(this)}/>
 		</div>
     );
   }

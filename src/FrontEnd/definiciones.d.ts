@@ -1,8 +1,17 @@
 interface Window{
 	settings:any
 }
+interface codeError{
+	code:string
+	message:string
+}
 declare namespace crud{
 	interface grade{
+		_id:string
+		_v:number
+		name:string
+	}
+	interface courses{
 		_id:string
 		_v:number
 		name:string
@@ -133,7 +142,9 @@ declare namespace Props{
 		people?:peoples.teachers
 		delete?:Function
 		session?:users.sessions
-    	routeParams ?: teachersParams
+    	routeParams ?: {
+				id:string
+			}
     	router?:ReactRouter.InjectedRouter
     	location?: any
     	children?: any
@@ -151,31 +162,7 @@ declare namespace Props{
 		router?:ReactRouter.InjectedRouter
 		routeParams: TeacherURI
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	interface codeError{
-		code:string
-		message:string
-	}
-	interface errorState{
+	interface ErrorMatter{
 		dni?:boolean
 		name?:boolean
 		phone?:boolean
@@ -183,6 +170,89 @@ declare namespace Props{
 		birthdate?:boolean
 		server?:codeError
 	}
+	interface MatterItem{
+		matter:crud.courses
+		session:users.sessions
+		delete:Function
+	}
+	interface MatterView{
+		routeParams:{
+			id:string
+		}
+	}
+}
+
+declare namespace states{
+	interface menu{
+		session: users.sessions
+	}
+	interface ListTeachers{
+		teachers:Array<peoples.teachers>
+		search:string
+	}
+	interface TeacherCreate{
+		error: any
+		radio:string
+	}
+	interface MatterCreate{
+		error: any
+	}
+	interface TeacherView {
+		teacher:peoples.teachers
+		error:string
+		grades:Array<crud.grade>
+		activities:Array<crud.activity>
+	}
+	interface MatterList{
+		matters:Array<crud.courses>
+	}
+	interface MatterView{
+		matter:crud.courses
+	}
+	interface StudentList{
+		students:Array<peoples.students>
+		search:string
+	}
+}
+declare namespace Fields {
+	interface validator{
+		match?:Function
+		value:string | Boolean
+		required?:Boolean
+	}
+	interface teacher{
+		dni:validator
+		name:validator
+		phone:validator
+		email:validator
+		birthdate:validator
+		interprete:validator
+		genero:validator
+	}
+}
+declare namespace Datas {
+    interface Teacher{
+			dni:string
+			name:string
+			phone:string
+			email:string
+			birthdate:string
+		}
+		interface Matter{
+			name:string
+		}
+}
+declare namespace Errors{
+	interface teacher{
+		dni:Boolean
+		name:Boolean
+		phone:Boolean
+		email:Boolean
+		birthdate:Boolean
+		server:string
+	}
+}
+/*
 	interface dataTeachers{
 		dni?:boolean
 		name?:boolean
@@ -240,59 +310,4 @@ declare namespace Props{
     	location?: any
     	children?: any
 	}
-}
-
-declare namespace states{
-	interface menu{
-		session: users.sessions
-	}
-	interface ListTeachers{
-		teachers:Array<peoples.teachers>
-		search:string
-	}
-	interface TeacherCreate{
-		error: any
-		radio:string
-	}
-	interface TeacherView {
-		teacher:peoples.teachers
-		error:string
-		grades:Array<crud.grade>
-		activities:Array<crud.activity>
-	}
-}
-declare namespace Fields {
-	interface validator{
-		match?:Function
-		value:string | Boolean
-		required?:Boolean
-	}
-	interface teacher{
-		dni:validator
-		name:validator
-		phone:validator
-		email:validator
-		birthdate:validator
-		interprete:validator
-		genero:validator
-	}
-}
-declare namespace Datas {
-    interface Teacher{
-			dni:string
-			name:string
-			phone:string
-			email:string
-			birthdate:string
-		}
-}
-declare namespace Errors{
-	interface teacher{
-		dni:Boolean
-		name:Boolean
-		phone:Boolean
-		email:Boolean
-		birthdate:Boolean
-		server:string
-	}
-}
+*/

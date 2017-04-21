@@ -1,11 +1,10 @@
 import * as React from 'react';
 import * as validator from 'string-validator'
 import {Link} from 'react-router'
-import * as Highcharts from 'highcharts/highcharts'
 import {ajax} from 'jquery'
 import {TableActivities} from './tableactivities'
 
-export class TeacherView extends React.Component<Props.usersItem,states.TeacherView>{
+export class TeacherView extends React.Component<Props.TeacherView,states.TeacherView>{
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
@@ -16,7 +15,7 @@ export class TeacherView extends React.Component<Props.usersItem,states.TeacherV
 		grades:[],
 		activities:[]
 	};
-	constructor(props:any) {
+	constructor(props:Props.TeacherView) {
 		super(props);
 		let str: string=localStorage.getItem("session");
   	if(str){
@@ -218,24 +217,24 @@ export class TeacherView extends React.Component<Props.usersItem,states.TeacherV
 							<option value="">Seleccione una opción</option>
 							{
 								this.state.grades.map((row)=>{
-									var Option =(
-										<option key={row._id} value={row._id}>{row.name}</option>
-									);
-									if(this.state.teacher.grade && row._id==this.state.teacher.grade._id){
-										Option =(
-											<option selected={true} key={row._id} value={row._id}>{row.name}</option>
-										);
+									if(!this.state.teacher.grade || row._id!=this.state.teacher.grade._id){
+										return (<option key={row._id} value={row._id}>{row.name}</option>);
+
 									}
-									return Option;
+									return (
+										<option selected={true} key={row._id} value={row._id}>{row.name}</option>
+									);
 								})
 							}
 						</select>
 					</div>
 				</div>
-				<h3>Actividades creadas:</h3>
-				<div className="flex row">
-					<Link to={`/activities/${this.state.teacher.data.dni}/${this.state.teacher.grade.name}/create`} className="button circle icons x16 add white"></Link>
-				</div>
+				<h3>Actividades creadas :</h3>
+				{this.state.teacher.grade && (
+					<div className="flex row">
+						<Link to={`/activities/${this.state.teacher.data.dni}/${this.state.teacher.grade.name}/create`} className="button circle icons x16 add white"></Link>
+					</div>
+				)}
 				<TableActivities activities={this.state.activities} session={this.session} delete={this.deleteField.bind(this)}/>
 			</div>
     	</div>
