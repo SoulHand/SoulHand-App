@@ -5,33 +5,25 @@ import {Link} from 'react-router';
 import {ProfileBox} from "../profilebox"
 
 
-export class Menu extends React.Component<props.menu, states.menu> {
+export class Menu extends React.Component<Props.menu, states.menu> {
 	public parent:Element;
-	public session:users.sessions;
-	state={
+	state:states.menu={
 		session:null
 	}
-	constructor(props:any) {
+	constructor(props:Props.menu) {
 		super(props);
-    	let str=localStorage.getItem("session");
-    	let session=JSON.parse(str);
-		this.session=session;	
+			let str: string=localStorage.getItem("session");
+	    	if(str){
+					let session:users.sessions = JSON.parse(str);
+		    	this.state.session=session;
+	    	}
 	}
 	componentDidMount(){
 		this.parent=document.querySelector("div[data-app=\"soulhand-services\"]");
-		let session=localStorage.getItem("session");
-
-    	if(session){
-	    	session=JSON.parse(session);
-	    	this.setState({
-				session:session
-			});
-    	}
-	}	
+	}
 	destroy(){
-		this.session=null;
 		this.setState({
-			session:this.session
+			session:null
 		});
 	}
 	toogle(event:any){
@@ -40,17 +32,17 @@ export class Menu extends React.Component<props.menu, states.menu> {
 	render (){
 		return(
 			<div className="menu">
-				{this.state.session && (<ProfileBox session={this.state.session} callback={(e)=>{this.destroy()}}/>)
+				{this.state.session && (<ProfileBox session={this.state.session} callback={(e:any)=>{this.destroy()}}/>)
 				}
 				<ul>
 					<li>
 						<Link to="/" activeClassName="active">Inicio</Link>
 					</li>
 					<li>
-						<Link to="/teacher/create" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Crear Docente</Link>
+						<Link to="/teacher/create" activeClassName="active" onClick={(e:any)=>{this.toogle(e)}}>Crear Docente</Link>
 					</li>
 					<li>
-						<Link to="/teacher" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Ver docentes</Link>
+						<Link to="/teacher" activeClassName="active" onClick={(e:any)=>{this.toogle(e)}}>Ver docentes</Link>
 					</li>
 				</ul>
 			</div>

@@ -1,31 +1,33 @@
 import * as React from 'react';
 import * as validator from 'string-validator'
 import {Link} from 'react-router'
-import {ReactHighcharts} from 'react-highcharts'
 import * as Highcharts from 'highcharts/highcharts'
 import {ajax} from 'jquery'
 import {TableActivities} from './tableactivities'
 
-export class TeacherView extends React.Component<Props.usersItem, props.stateUser {
+export class TeacherView extends React.Component<Props.usersItem,states.TeacherView>{
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
 	public fields={};
-	state = {
-		student:null,
+	state: states.TeacherView = {
+		teacher:null,
 		error:null,
 		grades:[],
 		activities:[]
 	};
 	constructor(props:any) {
 		super(props);
-    	let session=localStorage.getItem("session");
-    	session=JSON.parse(session);
-		this.session=session;
+		let str: string=localStorage.getItem("session");
+  	if(str){
+			let session:users.sessions = JSON.parse(str);
+    	this.session=session;
+  	}
 	}
 	public getFields(event:any){
+		let fields:compat.Map=this.fields;
 		var element=event.target.parentNode;
-		this.fields[element.id]=event.target.innerText || event.target.textContent;
+		fields[element.id]=event.target.innerText || event.target.textContent;
 	}
 	keycod(event:any){
 		var element=event.target;
@@ -46,66 +48,90 @@ export class TeacherView extends React.Component<Props.usersItem, props.stateUse
 	        url: `${window.settings.uri}/v1/grades/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null
-		});	
+		});
 		Promise.all([p1.done(),p2.done()]).then((data:any)=>{
+			let teacher: peoples.teachers = data[0];
+			let grades: Array<crud.grade> = data[1];
 			this.setState({
-		      teacher : data[0],
-		      grades: data[1]	      
-		    });
-		    let p3=ajax({
-				method:"GET",
-		        url: `${window.settings.uri}/v1/activities/${data[0].grade.name}/${this.props.routeParams.id}/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
-		        dataType: "json",
-		        data:null
-			})
+	      teacher : teacher,
+	      grades:grades
+	    });
+	    let p3=ajax({
+			method:"GET",
+	        url: `${window.settings.uri}/v1/activities/${data[0].grade.name}/${this.props.routeParams.id}/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        dataType: "json",
+	        data:null
+			});
 			return p3.done();
-		}).then((data)=>{
+		}).then((data:Array<crud.activity>)=>{
 			this.setState({
 				activities:data
 			});
 		});
 	}
 	edit(event:any){
-		var element=event.target;
-		var parent=element.parentNode.parentNode;
-		if(element.dataset.save=="false"){
+		let fields:compat.Map=this.fields;
+		var element:any=event.target;
+		var parent:any=element.parentNode.parentNode;
+		if(element.getAttribute("data-save")=="false"){
 			element.className="button circle icons x16 check white";
 			parent.children[1].contentEditable=true;
 			element.setAttribute("data-save","true");
 			return;
 		}
-		var data={};
-		data[parent.id]=this.fields[parent.id];
+		var data:compat.Map={};
+		data[parent.id]=fields[parent.id];
 		ajax({
 			method:"PUT",
 	        url: `${window.settings.uri}/v1/people/teachers/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:data,	        
-	        success:(data:teachers.profile)=>{
-				element.className="button circle icons x16 edit white";
+	        data:data,
+	        success:(data:peoples.teachers)=>{
+						element.className="button circle icons x16 edit white";
 	        	parent.children[1].contentEditable=false;
 				element.setAttribute("data-save","false");
 	        	this.setState({
-					teacher:data
-				});
+							teacher:data
+						});
 	        },
 	        error:(data:any)=>{
 	        	this.setState({
-					error:data.responseJSON.message
-				});
+						error:data.responseJSON.message
+					});
 	        }
 		});
 	}
 	deleteField(data: any){
-		this.state.activities=this.state.activities.filter(function(row:peoples.teachers){
+		this.state.activities=this.state.activities.filter((row)=>{
 			if(row._id==data._id){
 				return false;
 			}
 			return true;
-    	});
-    	this.setState({
-	      	activities : this.state.activities
-	    });
+    });
+  	this.setState({
+      	activities : this.state.activities
+    });
+	}
+	changeGrade(event:any){
+		var data={
+			grade:event.target.value
+		}
+		ajax({
+			method:"PUT",
+	        url: `${window.settings.uri}/v1/people/teachers/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        dataType: "json",
+	        data:data,
+	        success:(data:peoples.teachers)=>{
+	        	this.setState({
+							teacher:data
+						});
+	        },
+			    error:(data:any)=>{
+			      this.setState({
+							error:data.responseJSON.message
+						});
+	        }
+		});
 	}
 	render () {
 		if(!this.state.teacher){
@@ -140,43 +166,44 @@ export class TeacherView extends React.Component<Props.usersItem, props.stateUse
 				value:this.state.teacher.data.birthdate
 			}
 		];
-		var role=({
+		var _switch:compat.Map={
 			TEACHER: "Docente",
 			teacher:"Alumno",
 			PARENT:"Representante"
-		})[this.state.teacher.data.mode];
+		};
+		var role:string=_switch[this.state.teacher.data.mode];
 		var Items=valid.map((row)=>{
 			return (
 				<div className="item" key={row.name} id={row.name}>
 					<div className="field">
-						<b>{row.label}:</b>									
+						<b>{row.label}:</b>
 					</div>
-					<div className="value" onKeyUp={(e)=>{this.getFields(e)}} onKeyDown={(e)=>{this.keycod(e)}}>
+					<div className="value" onKeyUp={(e:any)=>{this.getFields(e)}} onKeyDown={(e:any)=>{this.keycod(e)}}>
 						{row.value}
 					</div>
 					<div className="toolbox">
-						<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e)=>{this.edit(e)}}></button>
+						<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e:any)=>{this.edit(e)}}></button>
 					</div>
 				</div>
 			);
-		});		
+		});
     return (
     	<div className="container">
 			{this.state.error && (
 				<div className="alert alert-danger" role="alert">
 				  {this.state.error}
 				</div>
-			)}			
+			)}
     		<div className="flex row">
 				<div className="left_side">
-					<img id="profile-img" className="rounded-circle" src="/images/user-login-icon-14.png" />							
-				</div>				
+					<img id="profile-img" className="rounded-circle" src="/images/user-login-icon-14.png" />
+				</div>
 			</div>
 			<div className="fieldset v-align middle">
-				{Items}				
+				{Items}
 				<div className="item">
 					<div className="field">
-						<b>Creado en:</b>									
+						<b>Creado en:</b>
 					</div>
 					<div className="value">
 						{this.state.teacher.data.createDate}
@@ -184,19 +211,19 @@ export class TeacherView extends React.Component<Props.usersItem, props.stateUse
 				</div>
 				<div className="item">
 					<div className="field">
-						<b>Grado:</b>									
+						<b>Grado:</b>
 					</div>
 					<div className="value">
-						<select id="grade" onChange={(e)=>{this.changeGrade(e)}}>
+						<select id="grade" onChange={(e:any)=>{this.changeGrade(e)}}>
 							<option value="">Seleccione una opción</option>
 							{
 								this.state.grades.map((row)=>{
 									var Option =(
-										<option key={row._id} value={row._id}>{row.name}</option>										
+										<option key={row._id} value={row._id}>{row.name}</option>
 									);
 									if(this.state.teacher.grade && row._id==this.state.teacher.grade._id){
 										Option =(
-											<option selected={true} key={row._id} value={row._id}>{row.name}</option>										
+											<option selected={true} key={row._id} value={row._id}>{row.name}</option>
 										);
 									}
 									return Option;
@@ -211,7 +238,7 @@ export class TeacherView extends React.Component<Props.usersItem, props.stateUse
 				</div>
 				<TableActivities activities={this.state.activities} session={this.session} delete={this.deleteField.bind(this)}/>
 			</div>
-    	</div>		
+    	</div>
     );
-  }	
+  }
 }

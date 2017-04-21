@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as validator from 'string-validator';
 import {ajax} from 'jquery'
 import {Link} from 'react-router'
 
@@ -12,7 +11,7 @@ export class TableTeachers extends React.Component<Props.tableteacher, {}>{
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
-	        success:(data:any)=>{
+	        success:(data:peoples.teachers)=>{
 	        	this.props.delete(data);
 	        }
 		});
@@ -48,7 +47,6 @@ export class TableTeachers extends React.Component<Props.tableteacher, {}>{
 				}
 				</tbody>
 			</table>
-		);		
-  }	
+		);
+  }
 }
-

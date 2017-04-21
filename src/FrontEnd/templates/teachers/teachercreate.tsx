@@ -4,11 +4,11 @@ import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
 
 @withRouter
-export class TeacherCreate extends React.Component<props.teacherItem, {}> {
+export class TeacherCreate extends React.Component<Props.TeacherCreate, states.TeacherCreate> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
-	public fields:any={
+	public fields:Fields.teacher={
 		dni:{
 			match:validator.matches(/^[VE][0-9]+$/i),
 			value:null,
@@ -44,7 +44,7 @@ export class TeacherCreate extends React.Component<props.teacherItem, {}> {
 			value:null
 		}
 	};
-	state:props.fieldsTeachers={
+	state:states.TeacherCreate={
 		error:{
 			dni:false,
 			name:false,
@@ -55,38 +55,42 @@ export class TeacherCreate extends React.Component<props.teacherItem, {}> {
 		},
 		radio:"no"
 	}
-	constructor(props:any) {
+	constructor(props:Props.TeacherCreate) {
 		super(props);
-    	let str=localStorage.getItem("session");
-    	let session=JSON.parse(str);
-		this.session=session;		
+		let str: string=localStorage.getItem("session");
+    	if(str){
+				let session:users.sessions = JSON.parse(str);
+	    	this.session=session;
+    	}
 	}
 	public getFields(event:any){
-		this.fields[event.target.id].value=event.target.value;
+		let fields:compat.Map=this.fields;
+		fields[event.target.id].value=event.target.value;
 	}
 	public getRadioButton(event:any){
-		this.fields["interprete"].value= (event.target.id=="yes") ? true : undefined
+		this.fields.interprete.value= (event.target.id=="yes") ? true : undefined
 		this.setState({
 			radio:event.target.id
 		});
 	}
 	public validate(){
+		let fields:compat.Map=this.fields;
 		var value=true;
-		var state:props.errorState=this.state.error;
-		var data:props.dataTeachers={
+		var state:compat.Map=this.state.error;
+		var data:compat.Map={
 			dni:null,
 			name:null,
 			phone:null,
 			email:null,
 			birthdate:null
 		};
-		for (var i in this.fields){
-			if( (this.fields[i].require && !this.fields[i].value) || (this.fields[i].match && !this.fields[i].match(this.fields[i].value))){
+		for (var i in fields){
+			if( (fields[i].require && !fields[i].value) || (fields[i].match && !fields[i].match(fields[i].value))){
 				value=false;
 				state[i]=true;
 				continue;
 			}
-				data[i]=this.fields[i].value;
+				data[i]=fields[i].value;
 				state[i]=false;
 		}
 		state.server=null;
@@ -108,7 +112,7 @@ export class TeacherCreate extends React.Component<props.teacherItem, {}> {
 			method:"POST",
 	        url: `${window.settings.uri}/v1/people/teachers/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:data,	        
+	        data:data,
 	        success:(data:any)=>{
 	        	this.props.router.replace('/teacher');
 	        },
@@ -124,7 +128,7 @@ export class TeacherCreate extends React.Component<props.teacherItem, {}> {
 	render () {
 		console.log(this, this.state);
     return (
-    	<div className="container">    				
+    	<div className="container">
     		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
 				<label htmlFor="dni"><b>Cedula*</b></label>
 				    <input type="texto" className="form-control" id="dni" aria-describedby="ci_docente" placeholder="documento de identidad" required autoFocus onChange={(e)=>{this.getFields(e)}}/>
@@ -140,7 +144,7 @@ export class TeacherCreate extends React.Component<props.teacherItem, {}> {
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> El campo es obligatorio.
 						</div>
-				    )}				  </div>				  
+				    )}				  </div>
 				  <div className="form-group">
 				    <label htmlFor="phone"><b>Telefono*</b></label>
 				    <input type="texto" className="form-control" id="phone" aria-describedby="Telefono" placeholder="número telefónico" onChange={(e)=>{this.getFields(e)}}/>
@@ -149,7 +153,7 @@ export class TeacherCreate extends React.Component<props.teacherItem, {}> {
 						  <strong>Error!</strong> Debe ser un numero de telefono valido.
 						</div>
 				    )}
-				  </div>				  
+				  </div>
 				   <div className="form-group">
 				    <label htmlFor="email"><b>Email*</b></label>
 				    <input type="email" className="form-control" id="email" aria-describedby="emailHelp" placeholder="Correo Electrónico" onChange={(e)=>{this.getFields(e)}}/>
@@ -181,7 +185,7 @@ export class TeacherCreate extends React.Component<props.teacherItem, {}> {
 						</div>
 				    )}
 				  </div>
-				  
+
 				  <fieldset className="form-group">
 				    <legend><b>Interprete</b></legend>
 				    <div className="form-check">
@@ -196,7 +200,7 @@ export class TeacherCreate extends React.Component<props.teacherItem, {}> {
 				        No
 				      </label>
 				    </div>
-				    
+
 				  </fieldset>
 				  	{this.state.error.server && (
 				    	<div className="alert alert-danger" role="alert">
@@ -205,7 +209,7 @@ export class TeacherCreate extends React.Component<props.teacherItem, {}> {
 				    )}
 				  <button type="submit" className="btn btn-primary">Guardar</button>
 				</form>
-    	</div>		
+    	</div>
     );
   }
 }

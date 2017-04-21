@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as validator from 'string-validator';
 import {ajax} from 'jquery'
 import {Link} from 'react-router'
 
@@ -50,7 +49,6 @@ export class TableActivities extends React.Component<Props.tableactivities, {}>{
 				}
 				</tbody>
 			</table>
-		);		
-  }	
+		);
+  }
 }
-

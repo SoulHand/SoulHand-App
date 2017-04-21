@@ -4,7 +4,7 @@ import {render} from 'react-dom';
 import {ajax} from 'jquery'
 import {Link} from 'react-router';
 
-export class Item extends React.Component<props.teacherItem, {}> {
+export class Item extends React.Component<Props.teacherItem, {}> {
 	deleteField(event: any){
 		ajax({
 			method:"DELETE",

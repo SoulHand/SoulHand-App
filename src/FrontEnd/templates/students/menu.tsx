@@ -4,28 +4,26 @@ import {render} from 'react-dom';
 import {Link} from 'react-router';
 import {ProfileBox} from "../profilebox"
 
-export class Menu extends React.Component<{}, {}> {
+export class Menu extends React.Component<Props.menu, states.menu> {
 	public parent:Element;
-	public session:users.sessions;
-	state={
+	state:states.menu={
 		session:null
 	}
-	constructor(props:any) {
+	constructor(props:Props.menu) {
 		super(props);
-    	let str=localStorage.getItem("session");
-    	let session=JSON.parse(str);
-		this.session=session;	
+			let str: string=localStorage.getItem("session");
+	    	if(str){
+					let session:users.sessions = JSON.parse(str);
+		    	this.state.session=session;
+	    	}
 	}
 	componentDidMount(){
 		this.parent=document.querySelector("div[data-app=\"soulhand-services\"]");
-		let session=localStorage.getItem("session");
-
-    	if(session){
-	    	session=JSON.parse(session);
-	    	this.setState({
-				session:session
-			});
-    	}
+	}
+	destroy(){
+		this.setState({
+			session:null
+		});
 	}
 	toogle(event:any){
 		this.parent.classList.toggle("slider");
@@ -33,14 +31,16 @@ export class Menu extends React.Component<{}, {}> {
 	render (){
 		return(
 			<div className="menu">
-				{this.state.session && (<ProfileBox session={this.state.session}/>)
+				{this.state.session && (
+						<ProfileBox session={this.state.session} callback={(e:any)=>{this.destroy()}}/>
+					)
 				}
 				<ul>
 					<li>
-						<Link to="/" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Inicio</Link>
+						<Link to="/" activeClassName="active" onClick={(e:any)=>{this.toogle(e)}}>Inicio</Link>
 					</li>
 					<li>
-						<Link to="/students" activeClassName="active" onClick={(e)=>{this.toogle(e)}}>Ver alumnos</Link>
+						<Link to="/students" activeClassName="active" onClick={(e:any)=>{this.toogle(e)}}>Ver alumnos</Link>
 					</li>
 				</ul>
 			</div>

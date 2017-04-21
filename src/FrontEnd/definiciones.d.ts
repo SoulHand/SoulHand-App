@@ -10,7 +10,7 @@ declare namespace crud{
 	interface cognition{
 		_id:string
 		name:string
-		description:string		
+		description:string
       	words: Array<string>
 	}
 	interface domain{
@@ -69,11 +69,12 @@ declare namespace peoples{
 		_id:string
 		data:peoples.people
 		interprete:boolean
+		grade?: crud.grade
 		_v:number
 	}
 	interface students{
 		_id:string
-		_v:number		
+		_v:number
 		data:peoples.people
 		grade?: crud.grade
 		activities?:any
@@ -87,7 +88,7 @@ declare namespace peoples{
 		idStudent:string
 	}
 }
-declare namespace users{	
+declare namespace users{
 	interface profile{
 		_id:string
 		username:string
@@ -106,12 +107,12 @@ declare namespace users{
 		dateCreated:string
 		_v:number
 		user:profile
-	}	
+	}
 }
 
 declare namespace Props{
 	interface menu{
-    	router?:ReactRouter.InjectedRouter		
+    	router?:ReactRouter.InjectedRouter
 	}
 	interface profilebox{
     	router?:ReactRouter.InjectedRouter
@@ -120,9 +121,35 @@ declare namespace Props{
 	}
 	interface tableteacher{
 		teachers:Array<peoples.teachers>
+		session?:users.sessions
+		delete:Function
 	}
 	interface tableactivities{
 		activities:Array<crud.activity>
+		delete:Function
+		session:users.sessions
+	}
+	interface teacherItem{
+		people?:peoples.teachers
+		delete?:Function
+		session?:users.sessions
+    	routeParams ?: teachersParams
+    	router?:ReactRouter.InjectedRouter
+    	location?: any
+    	children?: any
+	}
+	interface TeacherCreate{
+		router?:ReactRouter.InjectedRouter
+	}
+	interface promiseTeacherView{
+		[k:string] :  | Array<crud.grade>
+	}
+	interface TeacherURI{
+		id:string
+	}
+	interface TeacherView{
+		router?:ReactRouter.InjectedRouter
+		routeParams: TeacherURI
 	}
 
 
@@ -179,15 +206,6 @@ declare namespace Props{
 		error:errorState,
 		radio?:string
 	}
-	interface teacherItem{
-		people?:peoples.teachers
-		delete?:Function
-		session?:users.sessions
-    	routeParams ?: teachersParams
-    	router?:ReactRouter.InjectedRouter
-    	location?: any
-    	children?: any
-	}
 	interface parentItem{
 		people?:peoples.parents
 		delete?:Function
@@ -215,7 +233,7 @@ declare namespace Props{
     	location?: any
     	children?: any
 	}
-	interface basic{		
+	interface basic{
 		session?:users.sessions
     	routeParams ?: teachersParams
     	router?:ReactRouter.InjectedRouter
@@ -227,5 +245,54 @@ declare namespace Props{
 declare namespace states{
 	interface menu{
 		session: users.sessions
+	}
+	interface ListTeachers{
+		teachers:Array<peoples.teachers>
+		search:string
+	}
+	interface TeacherCreate{
+		error: any
+		radio:string
+	}
+	interface TeacherView {
+		teacher:peoples.teachers
+		error:string
+		grades:Array<crud.grade>
+		activities:Array<crud.activity>
+	}
+}
+declare namespace Fields {
+	interface validator{
+		match?:Function
+		value:string | Boolean
+		required?:Boolean
+	}
+	interface teacher{
+		dni:validator
+		name:validator
+		phone:validator
+		email:validator
+		birthdate:validator
+		interprete:validator
+		genero:validator
+	}
+}
+declare namespace Datas {
+    interface Teacher{
+			dni:string
+			name:string
+			phone:string
+			email:string
+			birthdate:string
+		}
+}
+declare namespace Errors{
+	interface teacher{
+		dni:Boolean
+		name:Boolean
+		phone:Boolean
+		email:Boolean
+		birthdate:Boolean
+		server:string
 	}
 }

@@ -520,15 +520,6 @@
 	"buffers":
 	[
 		{
-			"file": "src/FrontEnd/definiciones.d.ts",
-			"settings":
-			{
-				"buffer_size": 3842,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "src/BackEnd/routes.js",
 			"settings":
 			{
@@ -655,6 +646,10 @@
 	],
 	"file_history":
 	[
+		"/home/matajm/Documentos/entorno-react-tsc/typings.json",
+		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/definiciones.d.ts",
+		"/home/matajm/Documentos/SoulHand-App/node_modules/@types/react-router/lib/IndexLink.d.ts",
+		"/home/matajm/Documentos/SoulHand-App/node_modules/@types/react-router/lib/Link.d.ts",
 		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/type/typecreate.tsx",
 		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/teachers/teachercreate.tsx",
 		"/home/matajm/Documentos/SoulHand-App/src/FrontEnd/templates/students/studentcreate.tsx",
@@ -778,11 +773,7 @@
 		"/home/kiralicius/Documentos/SoulHand-App/src/BackEnd/SoulHand/Exceptions/Exception.js",
 		"/home/kiralicius/Documentos/SoulHand-App/src/BackEnd/SoulHand/Exceptions/InsertException.js",
 		"/home/mata/Documentos/WebProject/CIWeb/data/LBPCascade.js",
-		"/home/mata/Documentos/WebProject/CIWeb/bower.json",
-		"/home/mata/Documentos/WebProject/SoulHand-App/package.json",
-		"/home/mata/Documentos/WebProject/chat/package.json",
-		"/home/mata/Documentos/WebProject/SoulHand-App/grunt.js",
-		"/home/mata/Documentos/WebProject/SoulHand-App/_SpecRunner.html"
+		"/home/mata/Documentos/WebProject/CIWeb/bower.json"
 	],
 	"find":
 	{
@@ -1026,36 +1017,6 @@
 			[
 				{
 					"buffer": 0,
-					"file": "src/FrontEnd/definiciones.d.ts",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3842,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2012,
-								2012
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/TypeScript/TypeScript.tmLanguage",
-							"translate_tabs_to_spaces": false,
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1665.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
 					"file": "src/BackEnd/routes.js",
 					"semi_transient": false,
 					"settings":
@@ -1067,8 +1028,8 @@
 						"selection":
 						[
 							[
-								82411,
-								82411
+								82520,
+								82355
 							]
 						],
 						"settings":
@@ -1076,11 +1037,11 @@
 							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
 							"translate_tabs_to_spaces": false
 						},
-						"translation.x": 390.0,
+						"translation.x": 0.0,
 						"translation.y": 33553.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
@@ -1090,7 +1051,7 @@
 			"sheets":
 			[
 				{
-					"buffer": 2,
+					"buffer": 1,
 					"semi_transient": false,
 					"settings":
 					{

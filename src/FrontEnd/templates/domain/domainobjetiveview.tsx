@@ -119,6 +119,9 @@ export class DomainObjetiveView extends React.Component<props.usersItem, props.s
 				</div>
 			)}
 			<h3>Objetivos de aprendizajes</h3>
+			<div className="flex row">
+			  <Link to={`/students/get/${this.props.routeParams.id}/physic/create`} className="button circle icons x16 add white"></Link>
+			</div>
 			<table className="table table-striped">
 				<thead>
 					<tr>

@@ -6,7 +6,7 @@ import {Link} from 'react-router';
 import {withRouter} from 'react-router';
 
 @withRouter
-export class ProfileBox extends React.Component<props.profilebox, {}> {
+export class ProfileBox extends React.Component<Props.profilebox, {}> {
 	destroy(event:any){
 		event.preventDefault();
 		localStorage.removeItem("session");
