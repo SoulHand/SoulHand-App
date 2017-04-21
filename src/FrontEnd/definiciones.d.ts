@@ -6,6 +6,18 @@ interface codeError{
 	message:string
 }
 declare namespace crud{
+	interface physics{
+		height: number
+		weight:number
+		age: number
+		_id: string
+		date:string
+	}
+	interface historys{
+		_id:string
+		description:string
+		dateCreated: string
+	}
 	interface grade{
 		_id:string
 		_v:number
@@ -31,11 +43,11 @@ declare namespace crud{
 	interface level{
 		_id:string
 		name:string
-		level:Number
+		level:number
 		_v:number
 	}
 	interface objetive{
-      __v: Number
+      __v: number
       description: string
       name: string
       _id: string
@@ -57,6 +69,22 @@ declare namespace crud{
   		dateCreated: string
   		isCompleted: Boolean
   		objetives: Array<objetive>
+	}
+	interface weights{
+		_id:string
+		height:number
+		min:number
+		max:number
+		genero:string
+		__v:number
+	}
+	interface heights{
+		_id:string
+		age:number
+		min:number
+		max:number
+		genero:string
+		__v:number
 	}
 }
 declare namespace compat {
@@ -86,9 +114,10 @@ declare namespace peoples{
 		_v:number
 		data:peoples.people
 		grade?: crud.grade
-		activities?:any
-		physics?:any
+		activities?:Array<crud.activity>
+		physics?:Array<crud.physics>
 		discapacityLevel?:number
+		history?:Array<crud.historys>
 	}
 	interface parents{
 		_id:string
@@ -120,6 +149,10 @@ declare namespace users{
 }
 
 declare namespace Props{
+	interface LineChart{
+		id:string
+		config:any
+	}
 	interface menu{
     	router?:ReactRouter.InjectedRouter
 	}
@@ -180,6 +213,18 @@ declare namespace Props{
 			id:string
 		}
 	}
+	interface StudentCreate{
+		routeParams:{
+			id:string
+		}
+		router:ReactRouter.InjectedRouter
+	}
+	interface StudentView{
+		routeParams:{
+			id:string
+		}
+		router:ReactRouter.InjectedRouter
+	}
 }
 
 declare namespace states{
@@ -213,6 +258,16 @@ declare namespace states{
 		students:Array<peoples.students>
 		search:string
 	}
+	interface StudentCreate{
+		error:any
+	}
+	interface StudentView{
+		student:peoples.students
+		error:any
+		grades:Array<crud.grade>
+		weights:Array<crud.weights>
+		heights:Array<crud.heights>
+	}
 }
 declare namespace Fields {
 	interface validator{
@@ -227,6 +282,11 @@ declare namespace Fields {
 		email:validator
 		birthdate:validator
 		interprete:validator
+		genero:validator
+	}
+	interface student{
+		name:validator
+		birthdate:validator
 		genero:validator
 	}
 }
@@ -251,6 +311,11 @@ declare namespace Errors{
 		birthdate:Boolean
 		server:string
 	}
+}
+interface ValidInput{
+	name:string
+	label:string
+	value:string
 }
 /*
 	interface dataTeachers{

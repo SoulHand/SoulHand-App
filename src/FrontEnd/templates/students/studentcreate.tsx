@@ -4,20 +4,15 @@ import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
 
 @withRouter
-export class StudentCreate extends React.Component<props.studentItem, {}> {
+export class StudentCreate extends React.Component<Props.StudentCreate, states.StudentCreate> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
-	public fields:any={		
+	public fields:Fields.student={
 		name:{
-			match:(fn)=>{
+			match:(fn:string)=>{
 				return !validator.isNull()(fn);
 			},
-			value:null,
-			required:true
-		},
-		birthdate:{
-			match:validator.isDate(),
 			value:null,
 			required:true
 		},
@@ -30,7 +25,7 @@ export class StudentCreate extends React.Component<props.studentItem, {}> {
 			value:null
 		}
 	};
-	state={
+	state: states.StudentCreate={
 		error:{
 			dni:false,
 			name:false,
@@ -38,27 +33,31 @@ export class StudentCreate extends React.Component<props.studentItem, {}> {
 			server:null
 		}
 	};
-	constructor(props:any) {
+	constructor(props:Props.StudentCreate) {
 		super(props);
-    	let session=localStorage.getItem("session");
-    	session=JSON.parse(session);
-		this.session=session;		
+		let str: string=localStorage.getItem("session");
+    	if(str){
+				let session:users.sessions = JSON.parse(str);
+	    	this.session=session;
+    	}
 	}
 	public getFields(event:any){
-		this.fields[event.target.id].value=event.target.value;
+		let fields:compat.Map=this.fields;
+		fields[event.target.id].value=event.target.value;
 	}
 
 	public validate(){
+		let fields:compat.Map=this.fields;
 		var value=true;
-		var state=this.state.error;
-		var data={};
+		var state:compat.Map=this.state.error;
+		var data:compat.Map={};
 		for (var i in this.fields){
-			if( (this.fields[i].require && !this.fields[i].value) || (this.fields[i].match && !this.fields[i].match(this.fields[i].value))){
+			if( (fields[i].require && !fields[i].value) || (fields[i].match && !fields[i].match(fields[i].value))){
 				value=false;
 				state[i]=true;
 				continue;
 			}
-				data[i]=this.fields[i].value;
+				data[i]=fields[i].value;
 				state[i]=false;
 		}
 		state.server=null;
@@ -86,21 +85,21 @@ export class StudentCreate extends React.Component<props.studentItem, {}> {
 	        	this.props.router.replace(`/parents/get/${this.props.routeParams.id}`);
 	        },
 	        error:(data:any)=>{
-	        	var state=this.state.error;
+	        	let state:any=this.state.error;
 	        	state.server=data.responseJSON;
 	        	this.setState({
-					error:state
-				});
+							error:state
+						});
 	        }
 		});
 	}
 
 	render () {
-	    return (<div className="container">    				
-    		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
+	    return (<div className="container">
+    		<form method="POST" className="formulario" onSubmit={(e:any)=>{this.send(e)}}>
 					<div className="form-group">
 				    <label htmlFor="name"><b>Nombre y Apellido*</b></label>
-				    <input type="texto" className="form-control" id="name" aria-describedby="name" placeholder="Nombre y Apellido"required autoFocus onChange={(e)=>{this.getFields(e)}}/>
+				    <input type="texto" className="form-control" id="name" aria-describedby="name" placeholder="Nombre y Apellido"required autoFocus onChange={(e:any)=>{this.getFields(e)}}/>
 					{this.state.error.name && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> El campo es obligatorio.
@@ -108,13 +107,13 @@ export class StudentCreate extends React.Component<props.studentItem, {}> {
 				    )}</div>
 				    <div className="form-group">
 				    <label htmlFor="birthdate"><b>Fecha de nacimiento*</b></label>
-				    <input type="date" className="form-control" id="birthdate" aria-describedby="emailHelp" placeholder="YYYY-mm-dd" onChange={(e)=>{this.getFields(e)}}/>
+				    <input type="date" className="form-control" id="birthdate" aria-describedby="emailHelp" placeholder="YYYY-mm-dd" onChange={(e:any)=>{this.getFields(e)}}/>
 				    {this.state.error.birthdate && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> Debe ser una fecha valida.
 						</div>
 				    )}
-				  </div>				  
+				  </div>
 				   <div className="form-group">
 				    <label htmlFor="genero"><b>Genero *:</b></label>
 				    <select id="genero" required onChange={(e)=>{this.getFields(e)}}>
@@ -135,10 +134,10 @@ export class StudentCreate extends React.Component<props.studentItem, {}> {
 				    )}
 				  <button type="submit" className="btn btn-primary">Guardar</button>
 				</form>
-    		</div>		
+    		</div>
 				    );
 	}
 
-	
+
 
 }

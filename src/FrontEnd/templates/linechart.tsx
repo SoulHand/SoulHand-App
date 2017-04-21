@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as Highcharts from 'highcharts/highcharts'
 
-export class LineChart extends React.Component <{},{}>{
+export class LineChart extends React.Component <Props.LineChart,{}>{
 	public chart:any;
 	componentDidMount() {
 		this.chart = new Highcharts.Chart(this.props.id,this.props.config);

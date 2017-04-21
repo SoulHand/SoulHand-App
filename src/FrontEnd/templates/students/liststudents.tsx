@@ -13,7 +13,7 @@ export class ListStudent extends React.Component<{}, states.StudentList> {
 		students:[],
 		search:""
 	};
-	constructor(props:Props.TeacherCreate) {
+	constructor(props:{}) {
 		super(props);
 			let str: string=localStorage.getItem("session");
 	    	if(str){
