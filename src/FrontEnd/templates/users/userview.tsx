@@ -2,22 +2,22 @@ import * as React from 'react';
 import 'string-validator'
 import {ajax} from 'jquery'
 
-export class UserView extends React.Component<props.usersItem, props.stateUser {
+export class UserView extends React.Component<Props.GenericRouter, states.UserView> {
 	public session:users.sessions;
-	public PrivateKeyId:string;
-	public PublicKeyId:string;
-	public fields={};
-	state = {
+	public fields:compat.Map={};
+	state: states.UserView = {
 		user:null,
 		error:null,
 		icon:"user"
 	};
-	constructor(props:any) {
-		super(props);
-    	let session=localStorage.getItem("session");
-    	session=JSON.parse(session);
-		this.session=session;
-	}
+	constructor(props:Props.GenericRouter) {
+			super(props);
+			let str: string=localStorage.getItem("session");
+	  	if(str){
+				let session:users.sessions = JSON.parse(str);
+	    	this.session=session;
+	  	}
+		}
 	public getFields(event:any){
 		var element=event.target.parentNode;
 		this.fields[element.id]=event.target.innerText || event.target.textContent;
@@ -51,12 +51,11 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 			method:"GET",
 	        url: `${window.settings.uri}/v1/users/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:null,	        
+	        data:null,
 	        success:(data:users.profile)=>{
-	        	console.log(data);
-			    this.setState({
-			      user : data
-			    });
+				    this.setState({
+				      user : data
+				    });
 	        }
 		});
 	}
@@ -69,13 +68,13 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 			element.setAttribute("data-save","true");
 			return;
 		}
-		var data={};
+		var data:compat.Map={};
 		data[parent.id]=this.fields[parent.id];
 		ajax({
 			method:"PUT",
 	        url: `${window.settings.uri}/v1/users/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:data,	        
+	        data:data,
 	        success:(data:users.profile)=>{
 				element.className="button circle icons x16 edit white";
 	        	parent.children[1].contentEditable=false;
@@ -90,7 +89,7 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 				});
 	        }
 		});
-	}	
+	}
 	render () {
 		if(!this.state.user){
 			return (
@@ -121,16 +120,17 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 				value:this.state.user.people.birthdate
 			}
 		];
-		var role=({
+		let _switch:compat.Map={
 			TEACHER: "Docente",
 			STUDENT:"Alumno",
 			PARENT:"Representante"
-		})[this.state.user.people.mode];
+		};
+		var role:string=_switch[this.state.user.people.mode];
 		var Items=valid.map((row)=>{
 			return (
 				<div className="item" key={row.name} id={row.name}>
 					<div className="field">
-						<b>{row.label}:</b>									
+						<b>{row.label}:</b>
 					</div>
 					<div className="value" onKeyUp={(e:any)=>{this.getFields(e)}} onKeyDown={(e:any)=>{this.keycod(e)}}>
 						{row.value}
@@ -148,10 +148,10 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 				<div className="alert alert-danger" role="alert">
 				  {this.state.error}
 				</div>
-			)}			
+			)}
     		<div className="flex row">
 				<div className="left_side">
-					<img id="profile-img" className="rounded-circle" src="/images/user-login-icon-14.png" />							
+					<img id="profile-img" className="rounded-circle" src="/images/user-login-icon-14.png" />
 				</div>
 				<div className="right_side">
 					<div className="fieldset">
@@ -161,7 +161,7 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 							<div className="toolbox">
 								<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e:any)=>{this.edit(e)}}></button>
 							</div>
-						</div>						
+						</div>
 					</div>
 					<p className="text-align small">{this.state.user._id}</p>
 				</div>
@@ -170,7 +170,7 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 				{Items}
 				<div className="item">
 					<div className="field">
-						<b>rol:</b>									
+						<b>rol:</b>
 					</div>
 					<div className="value">
 						{role}
@@ -178,25 +178,25 @@ export class UserView extends React.Component<props.usersItem, props.stateUser {
 				</div>
 				<div className="item">
 					<div className="field">
-						<b>tipo de cuenta:</b>									
+						<b>tipo de cuenta:</b>
 					</div>
 					<div className="value">
 						{(this.state.user.isAdmin==true) ? 'GESTOR DEL CONOCIMIENTO' : 'USUARIO'}
 					</div>
 					<div className="tool">
-						<button className={`button circle icons x16 ${iconAdmin} white`} data-id={this.state.user._id} onClick={(e:any)=>{this.changeAdmin(e)}}></button>
+						<button className={`button circle icons x16 ${iconAdmin} white`} data-id={this.state.user._id} onClick={(e:any)=>{this.changeAdmin()}}></button>
 					</div>
 				</div>
 				<div className="item">
 					<div className="field">
-						<b>Creado en:</b>									
+						<b>Creado en:</b>
 					</div>
 					<div className="value">
 						{this.state.user.dateCreated}
 					</div>
 				</div>
-			</div>				
-    	</div>		
+			</div>
+    	</div>
     );
-  }	
+  }
 }

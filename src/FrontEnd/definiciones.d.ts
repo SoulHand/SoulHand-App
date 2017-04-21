@@ -314,6 +314,11 @@ declare namespace states{
 		users:Array<users.profile>
 		error?:any
 	}
+	interface UserView{
+		user:users.profile
+		error:any
+		icon:string
+	}
 	interface GradeView{
 		grade:crud.grade
 		students:Array<peoples.students>
