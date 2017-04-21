@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as validator from 'string-validator';
+import 'string-validator'
 import {ajax} from 'jquery'
 
 export class UserView extends React.Component<props.usersItem, props.stateUser {

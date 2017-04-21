@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as validator from 'string-validator';
+import 'string-validator'
 import {withRouter} from 'react-router';
 
 @withRouter

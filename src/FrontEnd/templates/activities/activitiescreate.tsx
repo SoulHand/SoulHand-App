@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as validator from 'string-validator';
+import 'string-validator';
 import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
 
@@ -8,7 +8,7 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
-	public fields:any={		
+	public fields:any={
 		name:{
 			match:(fn:string)=>{
 				return !validator.isNull()(fn);
@@ -35,7 +35,7 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 	};
 	public state:Props.fieldsTeachers={
 		error:{
-			
+
 			name:false,
 			description:false,
 			expire:false,
@@ -47,16 +47,16 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 		super(props);
     	let str=localStorage.getItem("session");
     	let session=JSON.parse(str);
-		this.session=session;		
+		this.session=session;
 	}
 	public getFields(event:any){
 		this.fields[event.target.id].value=event.target.value;
 	}
-	
+
 	public validate(){
 		var value=true;
 		var state:props.errorState=this.state.error;
-		var data:props.dataTeachers={			
+		var data:props.dataTeachers={
 			name:null,
 			description:null,
 			expire:null
@@ -88,8 +88,8 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 	        data:null
 		}).done((data:any)=>{
 			this.setState({
-		      courses:data	      
-		    });	    
+		      courses:data
+		    });
 		})
 	}
 	send(event:any){
@@ -103,7 +103,7 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 			method:"POST",
 	        url: `${window.settings.uri}/v1/activities/${this.props.routeParams.grade}/${data.course}/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:data,	        
+	        data:data,
 	        success:(data:any)=>{
 	        	this.props.router.replace(`/teacher/get/${data.teacher}`);
 	        },
@@ -119,9 +119,9 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 	render () {
 		console.log(this, this.state);
     return (
-    	<div className="container">    				
+    	<div className="container">
     		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
-				
+
 				  <div className="form-group">
 				    <label htmlFor="name"><b>Nombre*</b></label>
 				    <input type="texto" className="form-control" id="name" aria-describedby="name" placeholder="Nombre"required autoFocus onChange={(e)=>{this.getFields(e)}}/>
@@ -129,7 +129,7 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> El campo es obligatorio.
 						</div>
-				    )}				  </div>	
+				    )}				  </div>
 
 				    <div className="form-group">
 				    <label htmlFor="description"><b>Descripcion*</b></label>
@@ -138,8 +138,8 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> El campo es obligatorio.
 						</div>
-				    )}				  </div>				  
-				  				  
+				    )}				  </div>
+
 				  <div className="form-group">
 				    <label htmlFor="expire"><b>Expiracion*</b></label>
 				    <input type="date" className="form-control" id="expire" aria-describedby="emailHelp" placeholder="YYYY-mm-dd" onChange={(e)=>{this.getFields(e)}}/>
@@ -148,7 +148,7 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 						  <strong>Error!</strong> Debe ser una fecha valida.
 						</div>
 				    )}
-				  </div>				   
+				  </div>
 				  <div className="form-group">
 				    <label htmlFor="course"><b>Materia*</b></label>
 				    <select id="course" required onChange={(e)=>{this.getFields(e)}}>
@@ -167,7 +167,7 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 						</div>
 				    )}
 				  </div>
-				  
+
 				  	{this.state.error.server && (
 				    	<div className="alert alert-danger" role="alert">
 						  {this.state.error.server.message}
@@ -175,7 +175,7 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 				    )}
 				  <button type="submit" className="btn btn-primary">Guardar</button>
 				</form>
-    	</div>		
+    	</div>
     );
   }
 }

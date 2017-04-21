@@ -1,6 +1,6 @@
 var webpack = require('webpack');
 
-module.exports = {  
+module.exports = {
   entry: {
     app:'./src/FrontEnd/main.tsx',
     style:'./src/FrontEnd/scss/soulhand.scss'
@@ -29,6 +29,7 @@ module.exports = {
   plugins: [
     new webpack.ProvidePlugin({
        $: "jquery",
+       validator: "string-validator",
        jQuery: "jquery",
        Tether:"tether",
        React: "react",
@@ -50,6 +51,6 @@ module.exports = {
       includes:           "/.*\/",
       excludes:           [],
       searchResolveModulesDirectories: true
-    })*/   
+    })*/
   ]
 }

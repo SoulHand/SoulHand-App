@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as validator from 'string-validator';
+import 'string-validator'
 import {ajax} from 'jquery'
 
 
@@ -35,7 +35,7 @@ export class CognitiveView extends React.Component<props.usersItem, props.stateU
 			method:"GET",
 	        url: `${window.settings.uri}/v1/learning/domain/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:null,	        
+	        data:null,
 	        success:(data:crud.cognitive)=>{
 	        	this.cognitive=data;
 			    this.setState({
@@ -59,7 +59,7 @@ export class CognitiveView extends React.Component<props.usersItem, props.stateU
 			method:"PUT",
 	        url: `${window.settings.uri}/v1/learning/domain/:id${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:data,	        
+	        data:data,
 	        success:(data:users.profile)=>{
 				element.className="button circle icons x16 edit white";
 	        	parent.children[1].contentEditable=false;
@@ -76,7 +76,7 @@ export class CognitiveView extends React.Component<props.usersItem, props.stateU
 		});
 	}
 	deleteField(event: any){
-		var element:EventTarget=event.target;		
+		var element:EventTarget=event.target;
 		ajax({
 			method:"DELETE",
 	        url: `${window.settings.uri}/v1/learning/domain/:id${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
@@ -122,14 +122,14 @@ export class CognitiveView extends React.Component<props.usersItem, props.stateU
     				<div className="loadding"></div>
     			</div>
 			);
-		}		
+		}
     return (
     	<div className="container">
 			{this.state.error && (
 				<div className="alert alert-danger" role="alert">
 				  {this.state.error}
 				</div>
-			)}			
+			)}
 			<div className="fieldset">
 				<div className="item" id="name">
 					<div className="field"></div>
@@ -137,7 +137,7 @@ export class CognitiveView extends React.Component<props.usersItem, props.stateU
 					<div className="toolbox">
 						<button className="button circle icons x16 edit white" data-save={false} title="Editar campo" onClick={(e)=>{this.edit(e)}}></button>
 					</div>
-				</div>						
+				</div>
 			</div>
 			<div className="right">
 				<input type="text" className="form-control" placeholder="Buscar" onChange={(e)=>{this.Filter(e)}}/>
@@ -162,7 +162,7 @@ export class CognitiveView extends React.Component<props.usersItem, props.stateU
 				}
 				</tbody>
 			</table>
-    	</div>		
+    	</div>
     );
-  }	
+  }
 }

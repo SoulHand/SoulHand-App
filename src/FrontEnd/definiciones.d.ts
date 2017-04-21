@@ -1,6 +1,8 @@
 interface Window{
 	settings:any
+	validator:any
 }
+declare let validator: any;
 interface codeError{
 	code:string
 	message:string

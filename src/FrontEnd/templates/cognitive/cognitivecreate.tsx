@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as validator from 'string-validator';
+import 'string-validator';
 import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
 
@@ -9,7 +9,7 @@ export class CognitiveCreate extends React.Component<, {}> {
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
 	public fields:any={
-		
+
 		name:{
 			match:(fn:string)=>{
 				return !validator.isNull()(fn);
@@ -24,14 +24,14 @@ export class CognitiveCreate extends React.Component<, {}> {
 			value:null,
 			required:true
 		},
-		
+
 	};
 	state:props.fieldsTeachers={
 		error:{
 
 			name:false,
 			description:false,
-				
+
 		},
 
 	}
@@ -39,19 +39,19 @@ export class CognitiveCreate extends React.Component<, {}> {
 		super(props);
     	let str=localStorage.getItem("session");
     	let session=JSON.parse(str);
-		this.session=session;		
+		this.session=session;
 	}
 	public getFields(event:any){
 		this.fields[event.target.id].value=event.target.value;
 	}
-	
+
 	public validate(){
 		var value=true;
 		var state:props.errorState=this.state.error;
 		var data:props.dataTeachers={
-		
+
 			name:null,
-			
+
 		};
 		for (var i in this.fields){
 			if( (this.fields[i].require && !this.fields[i].value) || (this.fields[i].match && !this.fields[i].match(this.fields[i].value))){
@@ -81,7 +81,7 @@ export class CognitiveCreate extends React.Component<, {}> {
 			method:"POST",
 	        url: `${window.settings.uri}/v1/learning/domain/?PublicKeyId=:publickeyId&PrivateKeyId=:privateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:data,	        
+	        data:data,
 	        success:(data:any)=>{
 	        	this.props.router.replace('/cognitive');
 	        },
@@ -97,9 +97,9 @@ export class CognitiveCreate extends React.Component<, {}> {
 	render () {
 		console.log(this, this.state);
     return (
-    	<div className="container">    				
+    	<div className="container">
     		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
-			
+
 				  <div className="form-group">
 				    <label htmlFor="name"><b>Nombre </b></label>
 				    <input type="texto" className="form-control" id="name" aria-describedby="name" placeholder="Nombre "required autoFocus onChange={(e)=>{this.getFields(e)}}/>
@@ -107,7 +107,7 @@ export class CognitiveCreate extends React.Component<, {}> {
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> El campo es obligatorio.
 						</div>
-				    )}				  </div>	
+				    )}				  </div>
 				     <div className="form-group">
 				    <label htmlFor="texto"><b>Descripción</b></label>
 				    <input type="texto" className="form-control" id="description" aria-describedby="description" placeholder="Descripción" onChange={(e)=>{this.getFields(e)}}/>
@@ -116,9 +116,9 @@ export class CognitiveCreate extends React.Component<, {}> {
 						  <strong>Error!</strong> Debe ser un numero valido.
 						</div>
 				    )}
-				  </div>			  
-				  	   
-				   
+				  </div>
+
+
 				  	{this.state.error.server && (
 				    	<div className="alert alert-danger" role="alert">
 						  {this.state.error.server.message}
@@ -126,8 +126,7 @@ export class CognitiveCreate extends React.Component<, {}> {
 				    )}
 				  <button type="submit" className="btn btn-primary">Guardar</button>
 				</form>
-    	</div>		
+    	</div>
     );
   }
 }
-
