@@ -201,6 +201,12 @@ declare namespace Props{
 		router?:ReactRouter.InjectedRouter
 		routeParams: TeacherURI
 	}
+	interface GenericRouter{
+		router?:ReactRouter.InjectedRouter
+		routeParams?: {
+			id:string
+		}
+	}
 	interface ErrorMatter{
 		dni?:boolean
 		name?:boolean
@@ -236,6 +242,11 @@ declare namespace Props{
 		students:Array<peoples.students>
 		session:users.sessions
 	}
+	interface ParentTable {
+		delete:Function
+		parent:peoples.parents
+		session:users.sessions
+	}
 }
 
 declare namespace states{
@@ -244,6 +255,10 @@ declare namespace states{
 	}
 	interface ListTeachers{
 		teachers:Array<peoples.teachers>
+		search:string
+	}
+	interface ListParent{
+		parents:Array<peoples.parents>
 		search:string
 	}
 	interface TeacherCreate{

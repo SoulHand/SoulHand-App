@@ -28,15 +28,6 @@ import {AsistAudio} from './templates/physic/asistaudio';
 import {StudentCreate} from './templates/students/studentcreate';
 import {StudentView} from './templates/students/studentview';
 
-import {PeriodSchools} from './templates/periodschools';
-import {ListPeriodSchools} from './templates/periodschools/listperiodschools';
-import {PeriodSchoolsCreate} from './templates/periodschools/periodschoolscreate';
-import {PeriodSchoolView} from './templates/periodschools/periodschoolsview';
-
-import {KnowedgeLevel} from './templates/knowedgelevel';
-import {ListKnowedgeLevel} from './templates/knowedgelevel/listknowedgelevel';
-import {KnowedgeLevelCreate} from './templates/knowedgelevel/knowedgelevelcreate';
-
 import {Parents} from './templates/parents';
 import {ListParent} from './templates/parents/listparent';
 import {ParentsCreate} from './templates/parents/parentscreate';
@@ -136,15 +127,6 @@ window.addEventListener("load",()=>{
 		    	<Route path="get/:id" component={MatterView}/>
 		    	<Route path="create" component={MatterCreate}/>
 		    </Route>
-		     <Route path="/periodschools" component={PeriodSchools} onEnter={Auth}>
-		    	<IndexRoute component={ListPeriodSchools}/>
-		    	<Route path="create" component={PeriodSchoolsCreate}/>
-		    </Route>
-		     <Route path="/knowedge" component={KnowedgeLevel} onEnter={Auth}>
-		    	<IndexRoute component={ListKnowedgeLevel}/>
-		    	<Route path="create" component={KnowedgeLevelCreate}/>
-		    </Route>
-
 		     <Route path="/cognitive" component={Cognitive} onEnter={Auth}>
 		    	<IndexRoute component={ListCognitive}/>
 		    	<Route path="create" component={CognitiveCreate}/>

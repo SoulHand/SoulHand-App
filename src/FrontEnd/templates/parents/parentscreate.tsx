@@ -4,11 +4,11 @@ import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
 
 @withRouter
-export class ParentsCreate extends React.Component<props.parentsItem, {}> {
+export class ParentsCreate extends React.Component<Props.GenericRouter, states.MatterCreate> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
-	public fields:any={
+	public fields:compat.Map={
 		dni:{
 			match:validator.matches(/^[VE][0-9]+$/i),
 			value:null,
@@ -35,32 +35,31 @@ export class ParentsCreate extends React.Component<props.parentsItem, {}> {
 		genero:{
 			value:null
 		}
-				
 	};
-	state:props.fieldsTeachers={
+	state:states.MatterCreate={
 		error:{
 			dni:false,
 			name:false,
 			phone:false,
 			address:false,
 			server:null
-		},
-
+		}
 	}
-	constructor(props:any) {
+	constructor(props:{}) {
 		super(props);
-    	let str=localStorage.getItem("session");
-    	let session=JSON.parse(str);
-		this.session=session;		
+			let str: string=localStorage.getItem("session");
+	    	if(str){
+					let session:users.sessions = JSON.parse(str);
+		    	this.session=session;
+	    	}
 	}
 	public getFields(event:any){
 		this.fields[event.target.id].value=event.target.value;
 	}
-	
 	public validate(){
 		var value=true;
-		var state:props.errorState=this.state.error;
-		var data:props.dataTeachers={
+		var state:compat.Map=this.state.error;
+		var data:compat.Map={
 			dni:null,
 			name:null,
 			phone:null,
@@ -95,7 +94,7 @@ export class ParentsCreate extends React.Component<props.parentsItem, {}> {
 			method:"POST",
 	        url: `${window.settings.uri}/v1/people/parents/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:data,	        
+	        data:data,
 	        success:(data:any)=>{
 	        	this.props.router.replace('/parents');
 	        },
@@ -109,9 +108,8 @@ export class ParentsCreate extends React.Component<props.parentsItem, {}> {
 		});
 	}
 	render () {
-		console.log(this, this.state);
     return (
-    	<div className="container">    				
+    	<div className="container">
     		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
 				<label htmlFor="dni"><b>Cedula*</b></label>
 				    <input type="texto" className="form-control" id="dni" aria-describedby="ci_respresetante" placeholder="documento de identidad" required autoFocus onChange={(e)=>{this.getFields(e)}}/>
@@ -127,7 +125,7 @@ export class ParentsCreate extends React.Component<props.parentsItem, {}> {
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> El campo es obligatorio.
 						</div>
-				    )}				  </div>				  
+				    )}				  </div>
 				  <div className="form-group">
 				    <label htmlFor="phone"><b>Telefono</b></label>
 				    <input type="texto" className="form-control" id="phone" aria-describedby="Telefono" placeholder="número telefónico" onChange={(e)=>{this.getFields(e)}}/>
@@ -136,7 +134,7 @@ export class ParentsCreate extends React.Component<props.parentsItem, {}> {
 						  <strong>Error!</strong> Debe ser un numero de telefono valido.
 						</div>
 				    )}
-				  </div>				  
+				  </div>
 				  <div className="form-group">
 				    <label htmlFor="birthdate"><b>Fecha de nacimiento*</b></label>
 				    <input type="date" className="form-control" id="birthdate" aria-describedby="emailHelp" placeholder="YYYY-mm-dd" onChange={(e)=>{this.getFields(e)}}/>
@@ -145,7 +143,7 @@ export class ParentsCreate extends React.Component<props.parentsItem, {}> {
 						  <strong>Error!</strong> Debe ser una fecha valida.
 						</div>
 				    )}
-				  </div>				   
+				  </div>
 				   <div className="form-group">
 				    <label htmlFor="genero"><b>Fecha de nacimiento*</b></label>
 				    <select id="genero" required onChange={(e)=>{this.getFields(e)}}>
@@ -159,16 +157,14 @@ export class ParentsCreate extends React.Component<props.parentsItem, {}> {
 						</div>
 				    )}
 				  </div>
-				  
-				  
-				  	{this.state.error.server && (
-				    	<div className="alert alert-danger" role="alert">
-						  {this.state.error.server.message}
-						</div>
-				    )}
+			  	{this.state.error.server && (
+			    	<div className="alert alert-danger" role="alert">
+					  {this.state.error.server.message}
+					</div>
+			    )}
 				  <button type="submit" className="btn btn-primary">Guardar</button>
 				</form>
-    	</div>		
+    	</div>
     );
   }
 }

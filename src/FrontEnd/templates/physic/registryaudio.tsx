@@ -30,6 +30,10 @@ export class RegistryAudio extends React.Component<Props.StudentCreate, states.S
 	    	this.session=session;
     	}
 	}
+	public getFields(event:any){
+		let fields:compat.Map=this.fields;
+		fields[event.target.id].value=event.target.value;
+	}
 	public validate(){
 		var value=true;
 		var state:compat.Map=this.state.error;

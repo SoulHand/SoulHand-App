@@ -32,11 +32,7 @@ export class AsistAudio extends React.Component<Props.StudentCreate, states.Teac
 				let session:users.sessions = JSON.parse(str);
 	    	this.session=session;
     	}
-	}
-	public getFields(event:any){
-		let fields:compat.Map=this.fields;
-		fields[event.target.id].value=event.target.value;
-	}
+	}	
 	public getRadioButton(event:any){
 		this.fields["interprete"].value= (event.target.id=="yes") ? true : undefined
 		this.setState({
