@@ -3,21 +3,23 @@ import 'string-validator'
 import {Link} from 'react-router'
 import {ajax} from 'jquery'
 
-export class DomainObjetiveView extends React.Component<props.usersItem, props.stateUser {
+export class DomainObjetiveView extends React.Component<Props.GenericRouter, states.DomainObjetiveView> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
-	public fields={};
-	public domain:crud.domain;
-	state = {
-		objetives:[],
+	public fields:compat.Map={};
+	public objetive:crud.objetive;
+	state: states.DomainObjetiveView = {
+		objetive:null,
 		error:null
 	};
-	constructor(props:any) {
+	constructor(props:Props.GenericRouter) {
 		super(props);
-    	let session=localStorage.getItem("session");
-    	session=JSON.parse(session);
-		this.session=session;
+			let str: string=localStorage.getItem("session");
+	    	if(str){
+					let session:users.sessions = JSON.parse(str);
+		    	this.session=session;
+	    	}
 	}
 	public getFields(event:any){
 		var element=event.target.parentNode;
@@ -36,11 +38,11 @@ export class DomainObjetiveView extends React.Component<props.usersItem, props.s
 	        url: `${window.settings.uri}/v1/knowedge/${this.props.routeParams.domain}/objetives/${this.props.routeParams.level}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
-	        success:(data:Array<crud.objetive>)=>{
-	        	this.domain=data;
-			    this.setState({
-			      objetives : data
-			    });
+	        success:(data:crud.objetive)=>{
+	        	this.objetive=data;
+				    this.setState({
+				      objetive : data
+				    });
 	        }
 		});
 	}
@@ -53,20 +55,20 @@ export class DomainObjetiveView extends React.Component<props.usersItem, props.s
 			element.setAttribute("data-save","true");
 			return;
 		}
-		var data={};
+		var data:compat.Map={};
 		data[parent.id]=this.fields[parent.id];
 		ajax({
 			method:"PUT",
 	        url: `${window.settings.uri}/v1/learning/domain/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:data,
-	        success:(data:users.profile)=>{
+	        success:(data:crud.objetive)=>{
 				element.className="button circle icons x16 edit white";
 	        	parent.children[1].contentEditable=false;
 				element.setAttribute("data-save","false");
 	        	this.setState({
-					domain:data
-				});
+							objetive:data
+						});
 	        },
 	        error:(data:any)=>{
 	        	this.setState({
@@ -76,38 +78,38 @@ export class DomainObjetiveView extends React.Component<props.usersItem, props.s
 		});
 	}
 	deleteField(event: any){
-		var element:EventTarget=event.target;
+		var element:HTMLElement=event.target;
 		ajax({
 			method:"DELETE",
-	        url: `${window.settings.uri}/v1/learning/domain/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/learning/domain/${element.getAttribute("data-id")}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
 	        success:(data:peoples.teachers)=>{
-	        	this.domain.cognitions=this.domain.cognitions.filter(function(row:crud.cognition){
+	        	this.objetive.cognitions=this.objetive.cognitions.filter(function(row:crud.cognition){
 					if(row._id==data._id){
 						return false;
 					}
 					return true;
 		    	});
 		    	this.setState({
-			      	domain : this.domain
+			      	objetive : this.objetive
 			    });
 	        }
 		});
 	}
 	Filter(event:any){
-		var filter=this.domain.cognitions.filter((row)=>{
+		var filter=this.objetive.cognitions.filter((row)=>{
 			var exp=new RegExp(event.target.value,"i");
 			if(exp.test(row.name)==true){
 				return true;
 			}
 			return false;
 		});
-		var data=JSON.parse(JSON.stringify(this.domain));
+		var data:crud.objetive=JSON.parse(JSON.stringify(this.objetive));
 		data.cognitions=filter;
 		this.setState({
-	      	domain : data
+	      	objetive : data
 	    });
 	}
 	render () {
@@ -131,7 +133,7 @@ export class DomainObjetiveView extends React.Component<props.usersItem, props.s
 				</thead>
 				<tbody>
 				{
-					this.state.objetives.map((row:crud.objetive)=>{
+					this.state.objetive.cognitions.map((row)=>{
 						return (
 							<tr key={row._id}>
 								<td><b>{row.name}</b></td>

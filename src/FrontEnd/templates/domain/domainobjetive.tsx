@@ -4,11 +4,9 @@ import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
 
 @withRouter
-export class DomainObjetive extends React.Component<{}, {}> {
+export class DomainObjetive extends React.Component<Props.GenericRouter, states.MatterCreate> {
 	public session:users.sessions;
-	public PrivateKeyId:string;
-	public PublicKeyId:string;
-	public fields:any={
+	public fields:compat.Map={
 		name:{
 			match:(fn:string)=>{
 				return !validator.isNull()(fn);
@@ -17,30 +15,28 @@ export class DomainObjetive extends React.Component<{}, {}> {
 			required:true
 		},
 	};
-	state:props.fieldsTeachers={
+	state:states.MatterCreate={
 		error:{
-
 			name:false,
 			server:null
-		},
-
+		}
 	};
-	constructor(props:any) {
+	constructor(props:Props.GenericRouter) {
 		super(props);
-    	let str=localStorage.getItem("session");
-    	let session=JSON.parse(str);
-		this.session=session;
+			let str: string=localStorage.getItem("session");
+	    	if(str){
+					let session:users.sessions = JSON.parse(str);
+		    	this.session=session;
+	    	}
 	}
 	public getFields(event:any){
 		this.fields[event.target.id].value=event.target.value;
 	}
 	public validate(){
 		var value=true;
-		var state:props.errorState=this.state.error;
-		var data:props.dataTeachers={
-
-			name:null,
-
+		var state:compat.Map=this.state.error;
+		var data:compat.Map={
+			name:null
 		};
 		for (var i in this.fields){
 			if( (this.fields[i].require && !this.fields[i].value) || (this.fields[i].match && !this.fields[i].match(this.fields[i].value))){
@@ -71,20 +67,19 @@ export class DomainObjetive extends React.Component<{}, {}> {
 	        url: `${window.settings.uri}/v1/learning/domain/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:data,
-	        success:(data:any)=>{
+	        success:(data:crud.domain)=>{
 	        	this.props.router.replace('/domain');
 	        },
 	        error:(data:any)=>{
 	        	var state=this.state.error;
 	        	state.server=data.responseJSON;
 	        	this.setState({
-					error:state
-				});
+							error:state
+						});
 	        }
 		});
 	}
 		render () {
-		console.log(this, this.state);
     return (
     	<div className="container">
     		<form method="POST" className="formulario" onSubmit={(e:any)=>{this.send(e)}}>

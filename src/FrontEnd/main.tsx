@@ -48,6 +48,7 @@ import {DomainCreate} from './templates/domain/domaincreate';
 import {ListDomain} from './templates/domain/listdomain';
 import {DomainView} from './templates/domain/domainview';
 import {DomainObjetiveView} from './templates/domain/domainobjetiveview';
+import {DomainObjetive} from './templates/domain/domainobjetive';
 
 import {Activities} from './templates/activities';
 import {ActivitiesCreate} from './templates/activities/activitiescreate';

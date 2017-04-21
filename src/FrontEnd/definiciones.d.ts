@@ -206,9 +206,7 @@ declare namespace Props{
 	}
 	interface GenericRouter{
 		router?:ReactRouter.InjectedRouter
-		routeParams?: {
-			id:string
-		}
+		routeParams?: any
 	}
 	interface ErrorMatter{
 		dni?:boolean
@@ -331,6 +329,10 @@ declare namespace states{
 	interface GradeView{
 		grade:crud.grade
 		students:Array<peoples.students>
+		error:any
+	}
+	interface DomainObjetiveView{
+		objetive:crud.objetive
 		error:any
 	}
 }
