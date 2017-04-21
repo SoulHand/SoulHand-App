@@ -1,11 +1,10 @@
 import * as React from 'react';
-import * as validator from 'string-validator';
 import {ajax} from 'jquery'
 import {Link} from 'react-router'
 import {withRouter} from 'react-router';
 
 //@withRouter
-export class WelcomeAudio extends React.Component<{}, {}> {	
+export class WelcomeAudio extends React.Component<Props.StudentCreate, {}> {
 	render () {
     return (
 		<div className="container">

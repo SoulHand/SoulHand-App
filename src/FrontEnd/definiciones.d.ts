@@ -225,6 +225,11 @@ declare namespace Props{
 		}
 		router:ReactRouter.InjectedRouter
 	}
+	interface StudentTable {
+		delete:Function
+		students:Array<peoples.students>
+		session:users.sessions
+	}
 }
 
 declare namespace states{

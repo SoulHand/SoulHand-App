@@ -4,11 +4,9 @@ import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
 
 @withRouter
-export class AsistAudio extends React.Component<{}, {}> {
+export class AsistAudio extends React.Component<Props.StudentCreate, states.TeacherCreate>{
 	public session:users.sessions;
-	public PrivateKeyId:string;
-	public PublicKeyId:string;
-	public fields:any={			
+	public fields:compat.Map={
 		weight:{
 			match:validator.isFloat(),
 			value:null,
@@ -20,19 +18,20 @@ export class AsistAudio extends React.Component<{}, {}> {
 			required:true
 		}
 	};
-	state:props.fieldsTeachers={
+	state:states.TeacherCreate={
 		error:{
-			
 			name:false,
 			server:null
 		},
-		
+		radio:null
 	};
-	constructor(props:any) {
+	constructor(props:Props.StudentCreate) {
 		super(props);
-    	let str=localStorage.getItem("session");
-    	let session=JSON.parse(str);
-		this.session=session;		
+		let str: string=localStorage.getItem("session");
+    	if(str){
+				let session:users.sessions = JSON.parse(str);
+	    	this.session=session;
+    	}
 	}
 	public getRadioButton(event:any){
 		this.fields["interprete"].value= (event.target.id=="yes") ? true : undefined
@@ -42,10 +41,10 @@ export class AsistAudio extends React.Component<{}, {}> {
 	}
 	public validate(){
 		var value=true;
-		var state:props.errorState=this.state.error;
-		var data:props.dataTeachers={		
+		var state:compat.Map=this.state.error;
+		var data:compat.Map={
 			weight:null,
-			height:null			
+			height:null
 		};
 		for (var i in this.fields){
 			if( (this.fields[i].require && !this.fields[i].value) || (this.fields[i].match && !this.fields[i].match(this.fields[i].value))){
@@ -75,7 +74,7 @@ export class AsistAudio extends React.Component<{}, {}> {
 			method:"POST",
 	        url: `${window.settings.uri}/v1/people/students/${this.props.routeParams.id}/physic/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:data,	        
+	        data:data,
 	        success:(data:any)=>{
 	        	this.props.router.replace(`/students/get/${this.props.routeParams.id}`);
 	        },
@@ -91,7 +90,7 @@ export class AsistAudio extends React.Component<{}, {}> {
 		render () {
 		console.log(this, this.state);
     return (
-    	<div className="container">    				
+    	<div className="container">
     		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
     				<h1 className="title">Pruebas auditivas</h1>
     				<p>A continuación le ayudaremos a evaluar la perdida auditiva del alumno, seleccione las opciones de acuerdo a las observaciones en el entorno de clases.</p>
@@ -99,21 +98,13 @@ export class AsistAudio extends React.Component<{}, {}> {
 				    <div className="form-group">
 				    <label htmlFor="weight"><b>Sonidos silencioso</b></label>
 				    <p className="small">Observe si el alumno(a) responde a estimulos como los susurros, sonidos dentro de espacios silenciosos incluyendo aparatos electricos (celulares, reproductores, laptos, etc)</p>
-				    
-				    <p><b>¡Nota!:</b> las observaciones registradas repitala varias veces antes de seleccionar una opción</span>
+
+				    <p><b>¡Nota!:</b> las observaciones registradas repitala varias veces antes de seleccionar una opción</p>
 					{this.state.error.weight && (
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> El campo es obligatorio.
 						</div>
-				    )}</div>
-				    <div className="form-group">
-				    <label htmlFor="height"><b>Altura</b></label>
-				    <input type="text" className="form-control" id="height" aria-describedby="name" placeholder="cm" required autoFocus onChange={(e)=>{this.getFields(e)}}/>
-					{this.state.error.height && (
-				    	<div className="alert alert-danger" role="alert">
-						  <strong>Error!</strong> El campo es obligatorio.
-						</div>
-				    )}</div>				   			  
+				    )}</div>				    
 				  	{this.state.error.server && (
 				    	<div className="alert alert-danger" role="alert">
 						  {this.state.error.server.message}
@@ -121,7 +112,7 @@ export class AsistAudio extends React.Component<{}, {}> {
 				    )}
 				  <button type="submit" className="btn btn-primary">Guardar</button>
 				</form>
-    	</div>		
+    	</div>
     );
   }
 }

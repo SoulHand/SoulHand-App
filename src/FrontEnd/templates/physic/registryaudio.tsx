@@ -4,39 +4,37 @@ import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
 
 @withRouter
-export class RegistryAudio extends React.Component<{}, {}> {
+export class RegistryAudio extends React.Component<Props.StudentCreate, states.StudentCreate> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
-	public fields:any={	
+	public fields:compat.Map={
 		discapacityLevel:{
 			match:validator.isFloat(),
 			value:null,
 			required:true
 		},
 	};
-	state:props.fieldsTeachers={
+	state:states.StudentCreate={
 		error:{
-			
 			discapacityLevel:false,
 			server:null
 		},
-		
+
 	};
-	constructor(props:any) {
+	constructor(props:Props.StudentCreate) {
 		super(props);
-    	let str=localStorage.getItem("session");
-    	let session=JSON.parse(str);
-		this.session=session;		
-	}
-	public getFields(event:any){
-		this.fields[event.target.id].value=event.target.value;
+		let str: string=localStorage.getItem("session");
+    	if(str){
+				let session:users.sessions = JSON.parse(str);
+	    	this.session=session;
+    	}
 	}
 	public validate(){
 		var value=true;
-		var state:props.errorState=this.state.error;
-		var data:props.dataTeachers={			
-			discapacityLevel:null			
+		var state:compat.Map=this.state.error;
+		var data:compat.Map={
+			discapacityLevel:null
 		};
 		for (var i in this.fields){
 			if( (this.fields[i].require && !this.fields[i].value) || (this.fields[i].match && !this.fields[i].match(this.fields[i].value))){
@@ -66,7 +64,7 @@ export class RegistryAudio extends React.Component<{}, {}> {
 			method:"PUT",
 	        url: `${window.settings.uri}/v1/people/students/${this.props.routeParams.id}/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:data,	        
+	        data:data,
 	        success:(data:any)=>{
 	        	this.props.router.replace(`/students/get/${this.props.routeParams.id}`);
 	        },
@@ -81,11 +79,11 @@ export class RegistryAudio extends React.Component<{}, {}> {
 	}
 	render () {
     return (
-    	<div className="container">    				
-    		<form method="POST" className="formulario" onSubmit={(e)=>{this.send(e)}}>
+    	<div className="container">
+    		<form method="POST" className="formulario" onSubmit={(e:any)=>{this.send(e)}}>
     			<label className="title">Seleccione la escala de perdida de audicación considerada</label>
 				    <div className="form-group">
-					    <select id="discapacityLevel" onChange={(e)=>{this.getFields(e)}} required>
+					    <select id="discapacityLevel" onChange={(e:any)=>{this.getFields(e)}} required>
 					    	<option value="">Seleccione una opción</option>
 					    	<option value="33">LEVE</option>
 					    	<option value="55">MODERADA</option>

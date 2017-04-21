@@ -1,14 +1,13 @@
 import * as React from 'react';
-import * as validator from 'string-validator';
 import {ajax} from 'jquery'
 import {Link} from 'react-router'
 
-
-export class TableStudents extends React.Component<props.studentItem, {}>{
+export class TableStudents extends React.Component<Props.StudentTable, {}>{
 	deleteField(event: any){
+		let element:HTMLElement=event.target;
 		ajax({
 			method:"DELETE",
-	        url: `${window.settings.uri}/v1/people/students/${event.target.dataset.id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/people/students/${element.getAttribute("data-id")}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
@@ -66,7 +65,6 @@ export class TableStudents extends React.Component<props.studentItem, {}>{
 				}
 				</tbody>
 			</table>
-		);		
-  }	
+		);
+  }
 }
-
