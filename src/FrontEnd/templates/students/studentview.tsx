@@ -59,7 +59,7 @@ export class StudentView extends React.Component<Props.StudentView, states.Stude
 	        dataType: "json",
 	        data:null
 		});
-		Promise.all([p1.done(),p2.done(),p3.done(),p4.done()]).then((data:any)=>{
+		window.Promise.all([p1.done(),p2.done(),p3.done(),p4.done()]).then((data:any)=>{
 			this.setState({
 		      student : data[0],
 		      grades: data[1],

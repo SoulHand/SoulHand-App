@@ -33,6 +33,10 @@ export class AsistAudio extends React.Component<Props.StudentCreate, states.Teac
 	    	this.session=session;
     	}
 	}
+	public getFields(event:any){
+		let fields:compat.Map=this.fields;
+		fields[event.target.id].value=event.target.value;
+	}
 	public getRadioButton(event:any){
 		this.fields["interprete"].value= (event.target.id=="yes") ? true : undefined
 		this.setState({
@@ -104,7 +108,7 @@ export class AsistAudio extends React.Component<Props.StudentCreate, states.Teac
 				    	<div className="alert alert-danger" role="alert">
 						  <strong>Error!</strong> El campo es obligatorio.
 						</div>
-				    )}</div>				    
+				    )}</div>
 				  	{this.state.error.server && (
 				    	<div className="alert alert-danger" role="alert">
 						  {this.state.error.server.message}

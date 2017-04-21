@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as validator from 'string-validator'
+import 'string-validator'
 import {Link} from 'react-router'
 import {ReactHighcharts} from 'react-highcharts'
 import {ajax} from 'jquery'

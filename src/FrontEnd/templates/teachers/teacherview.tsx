@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as validator from 'string-validator'
+import 'string-validator'
 import {Link} from 'react-router'
 import {ajax} from 'jquery'
 import {TableActivities} from './tableactivities'
@@ -48,7 +48,7 @@ export class TeacherView extends React.Component<Props.TeacherView,states.Teache
 	        dataType: "json",
 	        data:null
 		});
-		Promise.all([p1.done(),p2.done()]).then((data:any)=>{
+		window.Promise.all([p1.done(),p2.done()]).then((data:any)=>{
 			let teacher: peoples.teachers = data[0];
 			let grades: Array<crud.grade> = data[1];
 			this.setState({

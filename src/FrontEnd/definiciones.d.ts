@@ -1,6 +1,10 @@
 interface Window{
 	settings:any
 	validator:any
+	Promise:{
+		all:any
+		race:any
+	}
 }
 declare let validator: any;
 interface codeError{

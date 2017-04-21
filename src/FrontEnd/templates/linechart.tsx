@@ -1,10 +1,10 @@
 import * as React from 'react'
-import * as Highcharts from 'highcharts/highcharts'
+import {Chart} from 'highcharts'
 
 export class LineChart extends React.Component <Props.LineChart,{}>{
 	public chart:any;
 	componentDidMount() {
-		this.chart = new Highcharts.Chart(this.props.id,this.props.config);
+		this.chart = new Chart(this.props.id,this.props.config);
 	}
 	/*componentWillReceiveProps(props) {
 		//console.log(props);
