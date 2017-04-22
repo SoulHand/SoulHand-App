@@ -162,6 +162,10 @@ declare namespace Props{
 		id:string
 		config:any
 	}
+	interface UserLogin {
+		location:ReactRouter.LocationDescriptor
+		router:ReactRouter.InjectedRouter
+	}
 	interface menu{
     	router?:ReactRouter.InjectedRouter
 	}
@@ -284,8 +288,14 @@ declare namespace states{
 		grades:Array<crud.grade>
 		activities:Array<crud.activity>
 	}
+	interface ActivityView {
+		error:string
+		grades:Array<crud.grade>
+		activity:crud.activity
+	}
 	interface MatterList{
 		matters:Array<crud.courses>
+		error?:any
 	}
 	interface MatterView{
 		matter:crud.courses
@@ -324,7 +334,12 @@ declare namespace states{
 	interface UserView{
 		user:users.profile
 		error:any
-		icon:string
+		icon?:string
+	}
+	interface SessionLogin{
+		user:users.sessions
+		error:any
+		icon?:string
 	}
 	interface GradeView{
 		grade:crud.grade

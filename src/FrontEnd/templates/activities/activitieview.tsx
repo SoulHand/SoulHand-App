@@ -4,21 +4,23 @@ import {Link} from 'react-router'
 import {ajax} from 'jquery'
 import {LineChart} from '../linechart'
 
-export class ActivitieView extends React.Component<props.usersItem, props.stateUser >{
+export class ActivitieView extends React.Component<Props.GenericRouter, states.ActivityView >{
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
-	public fields={};
-	state = {
+	public fields:compat.Map={};
+	state: states.ActivityView = {
 		activity:null,
 		error:null,
 		grades:[]
 	};
-	constructor(props:any) {
-		super(props);
-    	let session=localStorage.getItem("session");
-    	session=JSON.parse(session);
-		this.session=session;
+	constructor(props:Props.GenericRouter) {
+			super(props);
+			let str: string=localStorage.getItem("session");
+    	if(str){
+				let session:users.sessions = JSON.parse(str);
+	    	this.session=session;
+    	}
 	}
 	public getFields(event:any){
 		var element=event.target.parentNode;
@@ -53,25 +55,25 @@ export class ActivitieView extends React.Component<props.usersItem, props.stateU
 			element.setAttribute("data-save","true");
 			return;
 		}
-		var data={};
+		var data:compat.Map={};
 		data[parent.id]=this.fields[parent.id];
 		ajax({
 			method:"PUT",
 	        url: `${window.settings.uri}/v1/people/activity/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:data,
-	        success:(data:activitys.profile)=>{
+	        success:(data:crud.activity)=>{
 				element.className="button circle icons x16 edit white";
 	        	parent.children[1].contentEditable=false;
 				element.setAttribute("data-save","false");
 	        	this.setState({
-					activity:data
-				});
+							activity:data
+						});
 	        },
 	        error:(data:any)=>{
 	        	this.setState({
-					error:data.responseJSON.message
-				});
+							error:data.responseJSON.message
+						});
 	        }
 		});
 	}
@@ -84,30 +86,30 @@ export class ActivitieView extends React.Component<props.usersItem, props.stateU
 	        url: `${window.settings.uri}/v1/people/students/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:data,
-	        success:(data:students.profile)=>{
+	        success:(data:Array<peoples.students>)=>{
 	        	this.setState({
-					student:data
-				});
+							student:data
+						});
 	        },
 	        error:(data:any)=>{
 	        	this.setState({
-					error:data.responseJSON.message
-				});
+							error:data.responseJSON.message
+						});
 	        }
 		});
 	}
 	deleteField(event: any){
-		var element:EventTarget=event.target;
+		var element:HTMLElement=event.target;
 		ajax({
 			method:"DELETE",
-	        url: `${window.settings.uri}/v1/people/students/${this.props.routeParams.id}/physic/${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/people/students/${this.props.routeParams.id}/physic/${element.getAttribute("data-id")}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
-	        success:(data:peoples.teachers)=>{
+	        success:(data:peoples.students)=>{
 		    	this.setState({
-					student:data
-				});
+						student:data
+					});
 	        }
 		});
 	}

@@ -3,18 +3,17 @@ import {ajax} from 'jquery'
 import {withRouter, Link} from 'react-router';
 
 @withRouter
-export class Login extends React.Component<props.teacherItem, props.teacherState> {
-	public user:any={
+export class Login extends React.Component<Props.UserLogin, states.SessionLogin> {
+	public user:compat.Map={
 		username:null,
 		password:null
 	}
-	state = {
+	state:states.SessionLogin = {
 		error:null,
 		user:null
 	};
 	getFields(event:any){
 		this.user[event.target.id]=event.target.value;
-		console.log(this.user)
 	}
 	auth(event:any){
 	    this.setState({error:null})
@@ -25,12 +24,13 @@ export class Login extends React.Component<props.teacherItem, props.teacherState
 	        data:{
 	        	username:this.user.username,
 	        	password:this.user.password
-	        },	        
-	        success:(data:any)=>{
-	        	let user=JSON.stringify(data);
-	        	this.setState({user:user})
+	        },
+	        success:(data:users.sessions)=>{
+	        	this.setState({user:data})
+						let user:string=JSON.stringify(data);
+						let url:any= this.props.location.query;
 	        	localStorage.setItem("session",user);
-	        	this.props.router.replace(this.props.location.query.url || '/');
+	        	this.props.router.replace(url.url || '/');
 	        },
 	        error:(data:any)=>{
 	        	this.setState({error:"Nombre de usuario o contraseña incorrecta!"});
@@ -38,6 +38,7 @@ export class Login extends React.Component<props.teacherItem, props.teacherState
 		});
 	}
 	render () {
+		console.log(this.props);
     return (
 		<div className="container">
 	        <div className="card card-container" style={{marginTop:"5px"}}>

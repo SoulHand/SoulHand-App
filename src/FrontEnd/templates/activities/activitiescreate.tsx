@@ -4,11 +4,11 @@ import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
 
 @withRouter
-export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
+export class ActivitiesCreate extends React.Component<Props.GenericRouter, states.MatterList> {
 	public session:users.sessions;
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
-	public fields:any={
+	public fields:compat.Map={
 		name:{
 			match:(fn:string)=>{
 				return !validator.isNull()(fn);
@@ -33,21 +33,22 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 			required:true
 		}
 	};
-	public state:Props.fieldsTeachers={
+	public state:states.MatterList={
 		error:{
-
 			name:false,
 			description:false,
 			expire:false,
 			server:null
 		},
-		courses:[]
+		matters:[]
 	}
-	constructor(props:any) {
-		super(props);
-    	let str=localStorage.getItem("session");
-    	let session=JSON.parse(str);
-		this.session=session;
+	constructor(props:Props.GenericRouter) {
+			super(props);
+			let str: string=localStorage.getItem("session");
+    	if(str){
+				let session:users.sessions = JSON.parse(str);
+	    	this.session=session;
+    	}
 	}
 	public getFields(event:any){
 		this.fields[event.target.id].value=event.target.value;
@@ -55,8 +56,8 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 
 	public validate(){
 		var value=true;
-		var state:props.errorState=this.state.error;
-		var data:props.dataTeachers={
+		var state:compat.Map=this.state.error;
+		var data:compat.Map={
 			name:null,
 			description:null,
 			expire:null
@@ -86,9 +87,9 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 	        url: `${window.settings.uri}/v1/courses/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null
-		}).done((data:any)=>{
+		}).done((data:Array<crud.courses>)=>{
 			this.setState({
-		      courses:data
+		      matters:data
 		    });
 		})
 	}
@@ -117,7 +118,6 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 		});
 	}
 	render () {
-		console.log(this, this.state);
     return (
     	<div className="container">
     		<form method="POST" className="formulario" onSubmit={(e:any)=>{this.send(e)}}>
@@ -154,7 +154,7 @@ export class ActivitiesCreate extends React.Component<props.parentsItem, {}> {
 				    <select id="course" required onChange={(e:any)=>{this.getFields(e)}}>
 				    	<option value="">Seleccione una opción</option>
 				    	{
-				    		this.state.courses.map((row)=>{
+				    		this.state.matters.map((row)=>{
 				    			return (
 				    				<option key={row._id} value={row.name}>{row.name}</option>
 				    			);

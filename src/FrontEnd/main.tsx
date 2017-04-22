@@ -78,9 +78,7 @@ window.addEventListener("load",()=>{
 		    <Route path="/" component={Home}>
 		    	<IndexRoute component={Index}/>
 		    </Route>
-		    <Route path="/auth" component={Home}>
-		    	<IndexRoute component={Login}/>
-		    </Route>
+		    <Route path="/auth" component={Login}/>
 		    <Route path="/teacher" component={Teachers} onEnter={Auth}>
 		    	<IndexRoute component={ListTeachers}/>
 		    	<Route path="create" component={TeacherCreate}/>

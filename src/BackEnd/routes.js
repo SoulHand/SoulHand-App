@@ -2163,7 +2163,7 @@ module.exports=function(app,express,server,__DIR__){
 		if(!Validator.isMongoId()(request.params.objetive)){
 			throw new ValidatorException("El objetivo no es un id valido!");
 		}
-		Promise.all([app.container.database.Schema.LearningObjetive.findOne({_id:request.params.objetive}),app.container.database.Schema.Activities.findOne({"grade.name":request.params.grade.toUpperCase(),"course.name":request.params.course.toUpperCase(),_id:request.params.id})]).then((data)=>{
+		Promise.all([app.container.database.Schema.LearningObjetive.findOne({_id:request.params.objetive}),app.container.database.Schema.Activities.findOne({"grade.name":request.params.grade.toUpperCase(),"course.name":request.params.course.toUpperCase(),_id:request.params.id}).populate("students")]).then((data)=>{
 			if(!data[0]){
 				throw new ValidatorException("No existe el objetivo de aprendizaje!");
 			}
