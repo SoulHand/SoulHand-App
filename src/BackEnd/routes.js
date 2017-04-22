@@ -51,8 +51,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var grade<Grade>	objeto CRUD
 	*/
 	gradeURI.get("/",function(request, response,next) {
-		var grade=new Grade(app.container.database.Schema.Grades);
-		grade.get().then(function(data){
+		app.container.database.Schema.Grades.find().then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -69,8 +68,10 @@ module.exports=function(app,express,server,__DIR__){
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
-		var grade=new Grade(app.container.database.Schema.Grades);
-		grade.find({_id:request.params.id}).then(function(data){
+		app.container.database.Schema.Grades.findOne({_id:request.params.id}).then(function(data){
+			if(!data){
+				throw new ValidatorException("No existe el grado!");
+			}
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -145,8 +146,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var course<Course>	objeto CRUD
 	*/
 	courseURI.get("/",function(request, response,next) {
-		var course=new Course(app.container.database.Schema.Courses);
-		course.get().then(function(data){
+		app.container.database.Schema.Courses.find().then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -163,8 +163,10 @@ module.exports=function(app,express,server,__DIR__){
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
-		var course=new Course(app.container.database.Schema.Courses);
-		course.find({_id:request.params.id}).then(function(data){
+		app.container.database.Schema.Courses.findOne({_id:request.params.id}).then(function(data){
+			if(!data){
+				throw new ValidatorException("No existe la materia!");
+			}
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -241,8 +243,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
 	learningURI.get("/domain/",function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
-		category.get().then(function(data){
+		app.container.database.Schema.domainsLearning.find().then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -256,11 +257,13 @@ module.exports=function(app,express,server,__DIR__){
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
 	learningURI.get("/domain/:id",function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
-		category.find({_id:request.params.id}).then(function(data){
+		app.container.database.Schema.domainsLearning.findOne({_id:request.params.id}).then(function(data){
+			if(!data){
+				throw new ValidatorException("No existe el dominio!");
+			}
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -357,11 +360,13 @@ module.exports=function(app,express,server,__DIR__){
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
 	cognitions.get("/:domain/cognitions",function(request, response,next) {
-		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
 		if(Validator.isNull()(request.params.domain)){
 			throw new ValidatorException("Solo se aceptan dominios validos");
 		}
-		domain.find({name:request.params.domain.toUpperCase()}).then(function(row){
+		app.container.database.Schema.domainsLearning.findOne({name:request.params.domain.toUpperCase()}).then(function(row){
+			if(!data){
+				throw new ValidatorException("No existe el dominio!");
+			}
 			response.send(row.cognitions);
 		}).catch(function(error){
 			next(error);
@@ -375,18 +380,20 @@ module.exports=function(app,express,server,__DIR__){
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
 	cognitions.get("/:domain/cognitions/:id",function(request, response,next) {
-		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id no es valido!");
 		}
-		domain.find({name:request.params.domain.toUpperCase()}).then(function(data){
+		app.container.database.Schema.domainsLearning.findOne({name:request.params.domain.toUpperCase()}).then(function(data){
+			if(!data){
+				throw new ValidatorException("No existe el dominio!");
+			}
 			for (var i=0,n=data.cognitions.length;i<n;i++){
 				if(data.cognitions[i]._id==request.params.id){
 					response.send(data.cognitions[i]);
 					return;
 				}
 			}
-			throw new VoidException("No existe un resultado!");
+			throw new VoidException("No existe la función cognitiva!");
 		}).catch(function(error){
 			next(error);
 		});
@@ -622,6 +629,9 @@ module.exports=function(app,express,server,__DIR__){
 			throw new ValidatorException("El id es invalido!");
 		}
 		app.container.database.Schema.LearningObjetive.findOne({"domain.name":request.params.domain.toString(),"level.name":request.params.level.toString(), _id:request.params.id }).then(function(rows){
+			if(!row){
+				throw new Validator("No existe el objetivo de aprendizaje");
+			}
 			response.send(rows);
 		}).catch(function(error){
 			next(error);
@@ -746,8 +756,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
 	weightURI.get("/",function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.weights);
-		category.get().then(function(data){
+		app.container.database.Schema.weights.find().then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -761,11 +770,13 @@ module.exports=function(app,express,server,__DIR__){
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
 	weightURI.get("/:id",function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.weights);
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("EL id no es valido");
 		}
-		category.find({_id:request.params.id}).then(function(data){
+		app.container.database.Schema.weights.findOne({_id:request.params.id}).then(function(data){
+			if(!data){
+				throw new ValidatorException("No existe el peso!");
+			}
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -872,8 +883,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
 	heightURI.get("/",function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.heights);
-		category.get().then(function(data){
+		app.container.database.Schema.heights.find().then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -887,11 +897,13 @@ module.exports=function(app,express,server,__DIR__){
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
 	heightURI.get("/:id",function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.heights);
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("EL id no es valido");
 		}
-		category.find({_id:request.params.id}).then(function(data){
+		app.container.database.Schema.heights.findOne({_id:request.params.id}).then(function(data){
+			if(!data){
+				throw new ValidatorException("No existe la altura!");
+			}
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -1012,8 +1024,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var user<User>	objeto CRUD
 	*/
 	UsersURI.get("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var user=new User(app.container.database.Schema.User);
-		user.get().then(function(data){
+		app.container.database.Schema.User.find().then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -1027,8 +1038,10 @@ module.exports=function(app,express,server,__DIR__){
 	* @var user<User>	objeto CRUD
 	*/
 	UsersURI.get("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var user=new User(app.container.database.Schema.User);
-		user.find({_id:request.params.id}).then(function(data){
+		app.container.database.Schema.User.findOne({_id:request.params.id}).then(function(data){
+			if(!data){
+				throw new ValidatorException("No existe el usuario!");
+			}
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -1200,8 +1213,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var people<People>	objeto CRUD
 	*/
 	PeopleURI.get("/",function(request, response,next) {
-		var people=new People(app.container.database.Schema.Teachers);
-		people.get().then(function(data){
+		app.container.database.Schema.Teachers.find().then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -1215,8 +1227,10 @@ module.exports=function(app,express,server,__DIR__){
 	* @var people<People>	objeto CRUD
 	*/
 	PeopleURI.get("/:id",function(request, response,next) {
-		var people=new People(app.container.database.Schema.Teachers);
-		people.find({_id:request.params.id}).then(function(data){
+		app.container.database.Schema.Teachers.findOne({_id:request.params.id}).then(function(data){
+			if(!data){
+				throw new ValidatorException("No existe el docente!");
+			}
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -1391,8 +1405,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var people<People>	objeto CRUD
 	*/
 	StudentsURI.get("/",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		people.get().then(function(data){
+		app.container.database.Schema.Students.find().then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -1406,8 +1419,10 @@ module.exports=function(app,express,server,__DIR__){
 	* @var people<SubPeople>	objeto CRUD
 	*/
 	StudentsURI.get("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		people.find({_id:request.params.id}).then(function(data){
+		app.container.database.Schema.Students.findOne({_id:request.params.id}).then(function(data){
+			if(!data){
+				throw new ValidatorException("No existe el alumno!");
+			}
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -1421,8 +1436,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var people<SubPeople>	objeto CRUD
 	*/
 	StudentsURI.get("/grade/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		people.get({"grade._id":request.params.id}).then(function(data){
+		app.container.database.Schema.Students.find({"grade._id":request.params.id}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -1740,9 +1754,6 @@ module.exports=function(app,express,server,__DIR__){
 	*/
 	ReferencesToURI.get("/",function(request, response,next) {
 		app.container.database.Schema.Representatives.find().populate('students').then(function(data){
-			if(data.length==0){
-				throw new VoidException("No existe un registro!");
-			}
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -1761,7 +1772,7 @@ module.exports=function(app,express,server,__DIR__){
 		}
 		app.container.database.Schema.Representatives.findOne({_id:request.params.id}).populate('students').then(function(data){
 			if(!data){
-				throw new VoidException("No existe un registro!");
+				throw new ValidatorException("No existe el representante!");
 			}
 			response.send(data);
 		}).catch(function(error){
@@ -1881,7 +1892,7 @@ module.exports=function(app,express,server,__DIR__){
 	*/
 	inferenURI.get("/type",function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.events);
-		category.get().then(function(data){
+		app.container.database.Schema.events.find().then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -1895,11 +1906,13 @@ module.exports=function(app,express,server,__DIR__){
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
 	inferenURI.get("/type/:id",function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.events);
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
-		category.find({_id:request.params.id}).then(function(data){
+		app.container.database.Schema.events.findOne({_id:request.params.id}).then(function(data){
+			if(!data){
+				throw new ValidatorException("No existe el evento!");
+			}
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -1991,11 +2004,13 @@ module.exports=function(app,express,server,__DIR__){
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
 	inferenURI.get("/:event/inferences",function(request, response,next) {
-		var domain=new CategoryCoginitions(app.container.database.Schema.events);
 		if(Validator.isNull()(request.params.event)){
 			throw new ValidatorException("Solo se aceptan dominios validos");
 		}
-		domain.find({name:request.params.event.toUpperCase()}).then(function(row){
+		app.container.database.Schema.events.findOne({name:request.params.event.toUpperCase()}).then(function(row){
+			if(!data){
+				throw new ValidatorException("No existe el evento!");
+			}
 			response.send(row.premises);
 		}).catch(function(error){
 			next(error);
@@ -2009,18 +2024,20 @@ module.exports=function(app,express,server,__DIR__){
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
 	inferenURI.get("/:event/inferences/:id",function(request, response,next) {
-		var domain=new CategoryCoginitions(app.container.database.Schema.events);
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id no es valido!");
 		}
-		domain.find({name:request.params.event.toUpperCase()}).then(function(data){
+		app.container.database.Schema.events.findOne({name:request.params.event.toUpperCase()}).then(function(data){
+			if(!data){
+				throw new ValidatorException("No existe el evento!");
+			}
 			for (var i=0,n=data.premises.length;i<n;i++){
 				if(data.premises[i]._id==request.params.id){
 					response.send(data.premises[i]);
 					return;
 				}
 			}
-			throw new VoidException("No existe un resultado!");
+			throw new ValidatorException("No existe la inferencia!");
 		}).catch(function(error){
 			next(error);
 		});
@@ -2222,7 +2239,7 @@ module.exports=function(app,express,server,__DIR__){
 		}
 		app.container.database.Schema.Activities.findOne({_id:request.params.id}).then(function(rows){
 			if(!rows){
-				throw new ValidatorException("No existe el registro");
+				throw new ValidatorException("No existe la actividad!");
 			}
 			response.send(rows);
 		}).catch(function(error){
