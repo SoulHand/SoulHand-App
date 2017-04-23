@@ -72,7 +72,28 @@ describe("Test route knowedge cognitions",function(){
 			},
 			cognitions:[]
 		});
-		Promise.all([utils.insertSession(self.db), self.course.save(),self.grade.save(),self.people2.save(),self.teacher.save(),self.activity.save(),self.people.save(),self.student.save(),category.save(),self.objetive.save()]).then(function(data){
+		find=new  self.db.schema.inferences({
+			premise:"p1==\"hola\"",
+			consecuent:"q1=\"saludo\"",
+			h:0.85
+		});
+		self.event=new self.db.schema.events({
+			name:"ACTIVITY-HELP-OBJETIVES",
+			objects:{
+				p1:"name",
+				p2:"description",
+				p3:"grade.name",
+				p4:"course.name",
+				p5:"objetives"
+			},
+			premises:[
+				{
+					premise:"(this.isContaint(p1,['hola', 'actividad', 'progreso'])==true || this.isContaint(p2,['hola', 'actividad', 'progreso'])==true)",
+					consecuent:`q1="${self.objetive._id}"`
+				}
+			]
+		});
+		Promise.all([utils.insertSession(self.db), self.course.save(),self.grade.save(),self.people2.save(),self.teacher.save(),self.activity.save(),self.people.save(),self.student.save(),category.save(),self.objetive.save(),self.event.save()]).then(function(data){
 			user=data[0]
 			done();
 		}).catch(function(error){
@@ -102,6 +123,17 @@ describe("Test route knowedge cognitions",function(){
 	});
 	it("GET/v1/activities/:id",function(done){
 		utils.runApp("GET",`/v1/activities/${self.activity._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
+			response=JSON.parse(response);
+			expect(response.name).toBe(self.activity.name);
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
+		});
+	});
+	it("GET /v1/helps/activity/objetives/:activity/",function(done){
+		utils.runApp("GET",`/v1/helps/activity/objetives/${self.activity._id}/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
+			console.log(response);
 			response=JSON.parse(response);
 			expect(response.name).toBe(self.activity.name);
 			done();

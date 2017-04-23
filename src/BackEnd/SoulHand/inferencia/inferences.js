@@ -10,7 +10,10 @@ class Inferences extends EventEmitter{
 			name:event
 		});
 	}
-
+	isContaint(str,keywords){
+			var exp=new RegExp(keywords.join("|"),"ig");
+			return exp.test(str);
+	}
 	ModusPones(premises,var_globals){
 		var keys=Object.keys(var_globals);
 		var exp=new RegExp(`([xp-t][0-9]+)`,'g');
@@ -38,20 +41,31 @@ class Inferences extends EventEmitter{
 			var condition=premise.premise.replace(exp,"var_globals.$1");
 			var p1=eval(condition);
 			if(p1){
-				matchs.push(premise);
+				var vars={};
+				var consecuent=premise.consecuent.replace(exp,"vars.$1");
+				eval(consecuent);
+				matchs.push(vars);
 			}
 		});
 		return matchs;
 	}
 	ChainGetOne(premises,var_globals){
 		var exp=new RegExp('([p-t][0-9]+)','g');
-		var premise, matchs= this.ChainGetAll(premises,var_globals);
+		var matchs=[],premise;
+		premises.forEach((row)=>{
+			var condition=row.premise.replace(exp,"var_globals.$1");
+			var p1=eval(condition);
+			if(p1){
+				matchs.push(row);
+			}
+		});
 		if(matchs.length==0){
 			return false;
 		}
 		matchs.forEach((row)=>{
 			if(!premise){
 				premise=row;
+				console.log(premise);
 			}
 			if(premise.h<row.h){
 				premise=row;

@@ -2271,6 +2271,54 @@ module.exports=function(app,express,server,__DIR__){
 	});
 	app.use("/v1/activities",activityURI);
 
+	var helpsURI= express.Router();
+	/*
+	* @api {get} / Obtener todas las categorias cognitivas
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	helpsURI.get("/activity/objetives/:activity/",function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.activity)){
+			throw new ValidatorException("No es valido el id");
+		}
+		app.container.database.Schema.Activities.findOne({_id:request.params.activity}).then(function(row){
+			if(!row){
+				throw new ValidatorException("No existe la actividad!");
+			}
+			return Promise.all([Events.get("ACTIVITY-HELP-OBJETIVES"),row]);
+		}).then((data)=>{
+			if(!data[0]){
+				throw new ValidatorException("No tengo inferencia sobre esta acción. Solicite a un gestor del conocimiento añadir un nuevo conocimiento!");
+			}
+			var event=data[0];
+			var objetives=data[1].objetives.map((row)=>{
+				console.log(row);
+				return row.name + " | " + row.description;
+			});
+			var querys=Events.ChainGetAll(event.premises,{
+				p1:data[1].name,
+				p2:data[1].description,
+				p3:data[1].grade.name,
+				p4:data[1].course.name,
+				p5:objetives
+			});
+			if(querys.length==0){
+				return querys;
+			}
+			querys=querys.map((row)=>{
+				return {_id:row.q1};
+			});
+			return app.container.database.Schema.LearningObjetive.find({$or:querys});
+		}).then((rows)=>{
+			response.send(rows);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	app.use("/v1/helps",helpsURI);
+
 
 /*
 
