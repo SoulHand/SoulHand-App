@@ -65,7 +65,6 @@ class Inferences extends EventEmitter{
 		matchs.forEach((row)=>{
 			if(!premise){
 				premise=row;
-				console.log(premise);
 			}
 			if(premise.h<row.h){
 				premise=row;

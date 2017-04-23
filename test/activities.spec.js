@@ -133,9 +133,9 @@ describe("Test route knowedge cognitions",function(){
 	});
 	it("GET /v1/helps/activity/objetives/:activity/",function(done){
 		utils.runApp("GET",`/v1/helps/activity/objetives/${self.activity._id}/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
-			console.log(response);
 			response=JSON.parse(response);
-			expect(response.name).toBe(self.activity.name);
+			expect(response.length).toBe(1);
+			expect(response[0].name).toBe(self.objetive.name);
 			done();
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();
