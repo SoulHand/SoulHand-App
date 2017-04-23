@@ -13,14 +13,14 @@ module.exports=function(db){
 			/*for(var i=0 in data.objects){
 				data.objects[i]=physic[data.objects[i]];
 			}*/
-			var result=Inference.apareamiento(data.premises,{
+			var result=Inference.ChainGetOne(data.premises,{
 				p1:physic.height,
 				p2:people.data.genero,
 				p3:physic.weight,
 				p4:physic.age
 			});
 			if(!result){
-				throw new VoidException("No hay premisa valida!");				
+				throw new VoidException("No hay premisa valida!");
 			}
 			return Promise.all([result.q1,people._id]);
 		}).then((result)=>{

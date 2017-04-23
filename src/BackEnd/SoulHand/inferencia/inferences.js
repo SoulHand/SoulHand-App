@@ -7,9 +7,10 @@ class Inferences extends EventEmitter{
 	}
 	get(event){
 		return this.db.findOne({
-			name:event			
+			name:event
 		});
 	}
+
 	ModusPones(premises,var_globals){
 		var keys=Object.keys(var_globals);
 		var exp=new RegExp(`([xp-t][0-9]+)`,'g');
@@ -30,7 +31,7 @@ class Inferences extends EventEmitter{
 		}
 		return consecuents;
 	}
-	apareamiento(premises,var_globals){
+	ChainGetAll(premises,var_globals){
 		var exp=new RegExp('([p-t][0-9]+)','g');
 		var matchs=[];
 		premises.forEach((premise)=>{
@@ -40,12 +41,14 @@ class Inferences extends EventEmitter{
 				matchs.push(premise);
 			}
 		});
+		return matchs;
+	}
+	ChainGetOne(premises,var_globals){
+		var exp=new RegExp('([p-t][0-9]+)','g');
+		var premise, matchs= this.ChainGetAll(premises,var_globals);
 		if(matchs.length==0){
 			return false;
 		}
-		//var index=Math.round((matchs.length-1)*Math.random());
-		//var premise=matchs[index];
-		var premise;
 		matchs.forEach((row)=>{
 			if(!premise){
 				premise=row;
@@ -61,7 +64,7 @@ class Inferences extends EventEmitter{
 	}
 	propagation(premises,var_globals){
 		var results=var_globals.map((row)=>{
-			return this.apareamiento(premises,row);			
+			return this.ChainGetOne(premises,row);
 		});
 		return results;
 	}

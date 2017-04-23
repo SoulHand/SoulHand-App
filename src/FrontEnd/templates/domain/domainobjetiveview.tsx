@@ -8,9 +8,9 @@ export class DomainObjetiveView extends React.Component<Props.GenericRouter, sta
 	public PrivateKeyId:string;
 	public PublicKeyId:string;
 	public fields:compat.Map={};
-	public objetive:crud.objetive;
+	public objetives:Array<crud.objetive>;
 	state: states.DomainObjetiveView = {
-		objetive:null,
+		objetives:[],
 		error:null
 	};
 	constructor(props:Props.GenericRouter) {
@@ -38,10 +38,10 @@ export class DomainObjetiveView extends React.Component<Props.GenericRouter, sta
 	        url: `${window.settings.uri}/v1/knowedge/${this.props.routeParams.domain}/objetives/${this.props.routeParams.level}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
-	        success:(data:crud.objetive)=>{
-	        	this.objetive=data;
+	        success:(data:Array<crud.objetive>)=>{
+	        	this.objetives=data;
 				    this.setState({
-				      objetive : data
+				      objetives : data
 				    });
 	        }
 		});
@@ -62,12 +62,12 @@ export class DomainObjetiveView extends React.Component<Props.GenericRouter, sta
 	        url: `${window.settings.uri}/v1/learning/domain/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:data,
-	        success:(data:crud.objetive)=>{
+	        success:(data:Array<crud.objetive>)=>{
 				element.className="button circle icons x16 edit white";
 	        	parent.children[1].contentEditable=false;
 				element.setAttribute("data-save","false");
 	        	this.setState({
-							objetive:data
+							objetives:data
 						});
 	        },
 	        error:(data:any)=>{
@@ -86,7 +86,8 @@ export class DomainObjetiveView extends React.Component<Props.GenericRouter, sta
 	        data:null,
 	        crossDomain:true,
 	        success:(data:peoples.teachers)=>{
-	        	this.objetive.cognitions=this.objetive.cognitions.filter(function(row:crud.cognition){
+						console.log(data);
+	        	/*this.objetives.cognitions=this.objetives.cognitions.filter(function(row:crud.cognition){
 					if(row._id==data._id){
 						return false;
 					}
@@ -94,12 +95,12 @@ export class DomainObjetiveView extends React.Component<Props.GenericRouter, sta
 		    	});
 		    	this.setState({
 			      	objetive : this.objetive
-			    });
+			    });*/
 	        }
 		});
 	}
 	Filter(event:any){
-		var filter=this.objetive.cognitions.filter((row)=>{
+		/*var filter=this.objetives.cognitions.filter((row)=>{
 			var exp=new RegExp(event.target.value,"i");
 			if(exp.test(row.name)==true){
 				return true;
@@ -110,7 +111,7 @@ export class DomainObjetiveView extends React.Component<Props.GenericRouter, sta
 		data.cognitions=filter;
 		this.setState({
 	      	objetive : data
-	    });
+	    });*/
 	}
 	render () {
     return (
@@ -133,7 +134,7 @@ export class DomainObjetiveView extends React.Component<Props.GenericRouter, sta
 				</thead>
 				<tbody>
 				{
-					this.state.objetive.cognitions.map((row)=>{
+					this.state.objetives.map((row)=>{
 						return (
 							<tr key={row._id}>
 								<td><b>{row.name}</b></td>

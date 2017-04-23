@@ -348,7 +348,7 @@ declare namespace states{
 		error:any
 	}
 	interface DomainObjetiveView{
-		objetive:crud.objetive
+		objetives:Array<crud.objetive>
 		error:any
 	}
 }

@@ -84,8 +84,8 @@ export class ObjetiveCreate extends React.Component<Props.GenericRouter, states.
 			return;
 		}
 		ajax({
-			method:"POST",
-	        url: `${window.settings.uri}/v1/activities/${this.props.routeParams.id}/${data.domain}/objetives/${data.level}/${data.objetive}/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+			method:"PUT",
+	        url: `${window.settings.uri}/v1/activities/${this.props.routeParams.activity}/${data.domain}/objetives/${data.level}/${data.objetive}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        success:(data:any)=>{
