@@ -292,6 +292,7 @@ declare namespace states{
 		error:string
 		grades:Array<crud.grade>
 		activity:crud.activity
+		objetives:Array<crud.objetive>
 	}
 	interface MatterList{
 		matters:Array<crud.courses>

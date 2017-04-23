@@ -2175,12 +2175,12 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions> objeto CRUD
 	*/
-	activityURI.put("/:grade/:course/:id/:domain/objetives/:level/:objetive",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	activityURI.put("/:id/:domain/objetives/:level/:objetive",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var dm;
 		if(!Validator.isMongoId()(request.params.objetive)){
 			throw new ValidatorException("El objetivo no es un id valido!");
 		}
-		Promise.all([app.container.database.Schema.LearningObjetive.findOne({_id:request.params.objetive}),app.container.database.Schema.Activities.findOne({"grade.name":request.params.grade.toUpperCase(),"course.name":request.params.course.toUpperCase(),_id:request.params.id}).populate("students")]).then((data)=>{
+		Promise.all([app.container.database.Schema.LearningObjetive.findOne({_id:request.params.objetive}),app.container.database.Schema.Activities.findOne({_id:request.params.id}).populate("students")]).then((data)=>{
 			if(!data[0]){
 				throw new ValidatorException("No existe el objetivo de aprendizaje!");
 			}

@@ -12,7 +12,8 @@ export class ActivitieView extends React.Component<Props.GenericRouter, states.A
 	state: states.ActivityView = {
 		activity:null,
 		error:null,
-		grades:[]
+		grades:[],
+		objetives:[]
 	};
 	constructor(props:Props.GenericRouter) {
 			super(props);
@@ -77,39 +78,24 @@ export class ActivitieView extends React.Component<Props.GenericRouter, states.A
 	        }
 		});
 	}
-	changeGrade(event:any){
-		var data={
-			grade:event.target.value
-		}
-		ajax({
-			method:"PUT",
-	        url: `${window.settings.uri}/v1/people/students/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
-	        dataType: "json",
-	        data:data,
-	        success:(data:Array<peoples.students>)=>{
-	        	this.setState({
-							student:data
-						});
-	        },
-	        error:(data:any)=>{
-	        	this.setState({
-							error:data.responseJSON.message
-						});
-	        }
-		});
-	}
 	deleteField(event: any){
 		var element:HTMLElement=event.target;
 		ajax({
 			method:"DELETE",
-	        url: `${window.settings.uri}/v1/people/students/${this.props.routeParams.id}/physic/${element.getAttribute("data-id")}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/activities/${element.getAttribute("data-id")}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
-	        success:(data:peoples.students)=>{
-		    	this.setState({
-						student:data
-					});
+	        success:(data:crud.objetive)=>{
+						this.state.objetives=this.state.objetives.filter(function(row){
+							if(row._id==data._id){
+								return false;
+							}
+							return true;
+				    });
+			    	this.setState({
+				      	objetives : this.state.objetives
+				    });
 	        }
 		});
 	}

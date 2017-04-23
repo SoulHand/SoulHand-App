@@ -55,17 +55,22 @@ export class TeacherView extends React.Component<Props.TeacherView,states.Teache
 	      teacher : teacher,
 	      grades:grades
 	    });
-	    let p3=ajax({
-			method:"GET",
-	        url: `${window.settings.uri}/v1/activities/${data[0].grade.name}/${this.props.routeParams.id}/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
-	        dataType: "json",
-	        data:null
+			if(!data[0].grade){
+				return null;
+			}
+			let p3=ajax({
+				method:"GET",
+				url: `${window.settings.uri}/v1/activities/${data[0].grade.name}/${this.props.routeParams.id}/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+				dataType: "json",
+				data:null
 			});
 			return p3.done();
 		}).then((data:Array<crud.activity>)=>{
-			this.setState({
-				activities:data
-			});
+			if(data){
+				this.setState({
+					activities:data
+				});
+			}
 		});
 	}
 	edit(event:any){
@@ -117,9 +122,9 @@ export class TeacherView extends React.Component<Props.TeacherView,states.Teache
 		}
 		ajax({
 			method:"PUT",
-	        url: `${window.settings.uri}/v1/people/teachers/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/people/teachers/${this.props.routeParams.id}/grade/${data.grade}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:data,
+	        data:null,
 	        success:(data:peoples.teachers)=>{
 	        	this.setState({
 							teacher:data

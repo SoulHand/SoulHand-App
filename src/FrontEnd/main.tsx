@@ -51,8 +51,9 @@ import {DomainObjetiveView} from './templates/domain/domainobjetiveview';
 import {DomainObjetive} from './templates/domain/domainobjetive';
 
 //import {Activities} from './templates/activities';
-//import {ActivitiesCreate} from './templates/activities/activitiescreate';
-//import {ActivitieView} from './templates/activities/activitieview';
+import {ActivitiesCreate} from './templates/activities/activitiescreate';
+import {ActivitieView} from './templates/activities/activitieview';
+import {ObjetiveCreate} from './templates/objetives/objetivecreate';
 //import {ListActivities} from './templates/activities/listactivities';
 
 //import {Cognitive} from './templates/cognitive';
@@ -62,7 +63,6 @@ import {DomainObjetive} from './templates/domain/domainobjetive';
 
 //import {Cognitive} from './templates/cognitive';
 //import {ListCognitive} from './templates/cognitive/listcognitive';
-//import {ObjetiveCreate} from './templates/objetives/objetivecreate';
 //import {CognitiveView} from './templates/cognitive/cognitiveview';
 
 import {Login} from './templates/login';
@@ -119,6 +119,12 @@ window.addEventListener("load",()=>{
 		    	<Route path="get/:id" component={MatterView}/>
 		    	<Route path="create" component={MatterCreate}/>
 		    </Route>
+				<Route path="/activities" component={Teachers} onEnter={Auth}>
+					<Route path=":id/:grade/create" component={ActivitiesCreate}/>
+					<Route path="get/:id" component={ActivitieView}/>
+					<Route path="get/:id/objetive/get/:objetive/" component={ActivitieView}/>
+					<Route path="objetive/create/:activity" component={ObjetiveCreate}/>
+				</Route>
 	  	</Router>
 	  ), document.body
 	);
@@ -128,9 +134,7 @@ window.addEventListener("load",()=>{
 
 	<Route path="/activities" component={Teachers} onEnter={Auth}>
 		<Route path=":id/:grade/create" component={ActivitiesCreate}/>
-		<Route path="get/:id" component={ActivitieView}/>
 		<Route path="objetive/create/:id" component={ObjetiveCreate}/>
-		<Route path="get/:id/objetive/get/:objetive/" component={ActivitieView}/>
 	</Route>
 	<Route path="/cognitive" component={Cognitive} onEnter={Auth}>
 	 <IndexRoute component={ListCognitive}/>
