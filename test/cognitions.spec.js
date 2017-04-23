@@ -15,14 +15,14 @@ describe("Test route knowedge cognitions",function(){
 			description:"mensaje",
 			cognitions:[find]
 		});
-		Promise.all([utils.insertSession(self.db), category.save()]).then(function(data){	
+		Promise.all([utils.insertSession(self.db), category.save()]).then(function(data){
 			user=data[0]
 			done();
 		}).catch(function(error){
 			expect(error).toBeNull();
 			done();
 		})
-	});	
+	});
 	it("GET /v1/knowedge/:domain/cognitions",function(done){
 		utils.runApp("GET",`/v1/knowedge/${category.name}/cognitions/`).then(function(response){
 			response=JSON.parse(response);
@@ -33,7 +33,7 @@ describe("Test route knowedge cognitions",function(){
 			done();
 		});
 	});
-	
+
 	it("GET /v1/knowedge/:domain/cognitions/:id",function(done){
 		utils.runApp("GET",`/v1/knowedge/${category.name}/cognitions/${find._id}`).then(function(response){
 			response=JSON.parse(response);
@@ -42,9 +42,9 @@ describe("Test route knowedge cognitions",function(){
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();
 			done();
-		});	
+		});
 	});
-	
+
 	it("GET /v1/knowedge/:domain/cognitions/:id (failed)",function(done){
 		utils.runApp("GET",`/v1/knowedge/${category.name}/cognitions/00f0f2dd60e8613875e5e488`).then(function(error){
 			expect(error!=undefined).toBe(true);
@@ -52,7 +52,7 @@ describe("Test route knowedge cognitions",function(){
 		}).catch(function(error){
 			expect(error).toBeNull();
 			done();
-		});	
+		});
 	});
 	it("PUT /v1/knowedge/:domain/cognitions/:id",function(done){
 		utils.runApp("PUT",`/v1/knowedge/${category.name}/cognitions/${find._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
@@ -72,7 +72,7 @@ describe("Test route knowedge cognitions",function(){
 		}).catch(function(error){
 			expect(error).toBeNull();
 			done();
-		});	
+		});
 	});
 	it("POST /v1/knowedge/:domain/cognitions/:id",function(done){
 		utils.runApp("POST",`/v1/knowedge/${category.name}/cognitions/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
@@ -93,7 +93,7 @@ describe("Test route knowedge cognitions",function(){
 		}).catch(function(error){
 			expect(error).toBeNull();
 			done();
-		});	
+		});
 	});
 	it("DELETE /v1/knowedge/:domain/cognitions/:id",function(done){
 		utils.runApp("DEL",`/v1/knowedge/${category.name}/cognitions/${find._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){

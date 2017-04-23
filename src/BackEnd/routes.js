@@ -364,7 +364,7 @@ module.exports=function(app,express,server,__DIR__){
 			throw new ValidatorException("Solo se aceptan dominios validos");
 		}
 		app.container.database.Schema.domainsLearning.findOne({name:request.params.domain.toUpperCase()}).then(function(row){
-			if(!data){
+			if(!row){
 				throw new ValidatorException("No existe el dominio!");
 			}
 			response.send(row.cognitions);
@@ -629,7 +629,7 @@ module.exports=function(app,express,server,__DIR__){
 			throw new ValidatorException("El id es invalido!");
 		}
 		app.container.database.Schema.LearningObjetive.findOne({"domain.name":request.params.domain.toString(),"level.name":request.params.level.toString(), _id:request.params.id }).then(function(rows){
-			if(!row){
+			if(!rows){
 				throw new Validator("No existe el objetivo de aprendizaje");
 			}
 			response.send(rows);
@@ -2008,7 +2008,7 @@ module.exports=function(app,express,server,__DIR__){
 			throw new ValidatorException("Solo se aceptan dominios validos");
 		}
 		app.container.database.Schema.events.findOne({name:request.params.event.toUpperCase()}).then(function(row){
-			if(!data){
+			if(!row){
 				throw new ValidatorException("No existe el evento!");
 			}
 			response.send(row.premises);
