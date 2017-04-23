@@ -72,16 +72,16 @@ describe("Test route knowedge cognitions",function(){
 			},
 			cognitions:[]
 		});
-		Promise.all([utils.insertSession(self.db), self.course.save(),self.grade.save(),self.people2.save(),self.teacher.save(),self.activity.save(),self.people.save(),self.student.save(),category.save(),self.objetive.save()]).then(function(data){	
+		Promise.all([utils.insertSession(self.db), self.course.save(),self.grade.save(),self.people2.save(),self.teacher.save(),self.activity.save(),self.people.save(),self.student.save(),category.save(),self.objetive.save()]).then(function(data){
 			user=data[0]
 			done();
 		}).catch(function(error){
 			expect(error).toBeNull();
 			done();
 		})
-	});	
-	it("GET /v1/activities/:grade/:course/",function(done){
-		utils.runApp("GET",`/v1/activities/${self.grade.name}/${self.course.name}/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
+	});
+	it("GET /v1/activities/:grade/:teacher/:course/",function(done){
+		utils.runApp("GET",`/v1/activities/${self.grade.name}/${self.teacher._id}/${self.course.name}/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
 			response=JSON.parse(response);
 			expect(response[0].name).toBe(self.activity.name);
 			done();
@@ -90,28 +90,37 @@ describe("Test route knowedge cognitions",function(){
 			done();
 		});
 	});
-	
-	it("GET/v1/activities/:grade/:course/:id",function(done){
-		utils.runApp("GET",`/v1/activities/${self.grade.name}/${self.course.name}/${self.activity._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
+	it("GET /v1/activities/:grade/:teacher/",function(done){
+		utils.runApp("GET",`/v1/activities/${self.grade.name}/${self.teacher._id}/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
+			response=JSON.parse(response);
+			expect(response[0].name).toBe(self.activity.name);
+			done();
+		}).catch(function(error){
+			expect(error).toBeNull();
+			done();
+		});
+	});
+	it("GET/v1/activities/:id",function(done){
+		utils.runApp("GET",`/v1/activities/${self.activity._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
 			response=JSON.parse(response);
 			expect(response.name).toBe(self.activity.name);
 			done();
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();
 			done();
-		});	
+		});
 	});
-	
-	it("GET/v1/activities/:grade/:course/:id (failed)",function(done){
-		utils.runApp("GET",`/v1/activities/${self.grade.name}/${self.course.name}/00f0f2dd60e8613875e5e488?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(error){
+
+	it("GET/v1/activities/:id (failed)",function(done){
+		utils.runApp("GET",`/v1/activities/00f0f2dd60e8613875e5e488?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(error){
 			expect(error!=undefined).toBe(true);
 			done();
 		}).catch(function(error){
 			expect(error).toBeNull();
 			done();
-		});	
+		});
 	});
-	it("POST /v1/activities/:grade/:course/:id",function(done){
+	it("POST /v1/activities/:grade/:course/",function(done){
 		utils.runApp("POST",`/v1/activities/${self.grade.name}/${self.course.name}/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
 			form:{
 				name:"hola",
@@ -126,10 +135,10 @@ describe("Test route knowedge cognitions",function(){
 		}).catch(function(error){
 			expect(error).toBeNull();
 			done();
-		});	
+		});
 	});
-	it("DELETE/v1/activities/:grade/:course/:id",function(done){
-		utils.runApp("DEL",`/v1/activities/${self.grade.name}/${self.course.name}/${self.activity._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
+	it("DELETE/v1/activities/:id",function(done){
+		utils.runApp("DEL",`/v1/activities/${self.activity._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
 			response=JSON.parse(response);
 			expect(response._id).toBe(self.activity._id.toString());
 			done();
@@ -162,6 +171,6 @@ describe("Test route knowedge cognitions",function(){
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();
 			done();
-		});	
+		});
 	});
 });

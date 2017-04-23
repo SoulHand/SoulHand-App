@@ -2203,7 +2203,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
 	activityURI.get("/:grade/:teacher/:course",function(request, response,next) {
-		app.container.database.Schema.Activities.find({"grade.name":request.params.grade.toUpperCase(),"course.name":request.params.course.toUpperCase()}).then(function(rows){
+		app.container.database.Schema.Activities.find({"grade.name":request.params.grade.toUpperCase(),"course.name":request.params.course.toUpperCase(),teacher:request.params.teacher}).then(function(rows){
 			response.send(rows);
 		}).catch(function(error){
 			next(error);
