@@ -54,6 +54,10 @@ import {DomainObjetive} from './templates/domain/domainobjetive';
 import {ActivitiesCreate} from './templates/activities/activitiescreate';
 import {ActivitieView} from './templates/activities/activitieview';
 import {ObjetiveCreate} from './templates/objetives/objetivecreate';
+
+
+import * as AsistObject from './templates/objetives/asistents/objetiveasist';
+
 //import {ListActivities} from './templates/activities/listactivities';
 
 //import {Cognitive} from './templates/cognitive';
@@ -124,6 +128,9 @@ window.addEventListener("load",()=>{
 					<Route path="get/:id" component={ActivitieView}/>
 					<Route path="get/:id/objetive/get/:objetive/" component={ActivitieView}/>
 					<Route path="objetive/create/:activity" component={ObjetiveCreate}/>
+				</Route>
+				<Route path="/objetive" component={AsistObject.Asist} onEnter={Auth}>
+					<Route path=":create/:domain/:level" component={AsistObject.step1}/>
 				</Route>
 	  	</Router>
 	  ), document.body

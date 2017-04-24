@@ -1,21 +1,13 @@
 import * as React from 'react';
 import 'string-validator'
 import {ajax} from 'jquery'
-import {withRouter} from 'react-router';
+import {withRouter, Link} from 'react-router';
+import {TableObjectivesAdd} from './tableobjetivesadd';
 
 @withRouter
-export class ObjetiveCreate extends React.Component<Props.GenericRouter, states.MatterCreate> {
+export class ObjetiveCreate extends React.Component<Props.GenericRouter, states.ObjetiveSelect> {
 	public session:users.sessions;
-	public PrivateKeyId:string;
-	public PublicKeyId:string;
 	public fields:compat.Map={
-		name:{
-			match:(fn:string)=>{
-				return !validator.isNull()(fn);
-			},
-			value:null,
-			required:true
-		},
 		level:{
 			value:null,
 			required:true
@@ -30,13 +22,17 @@ export class ObjetiveCreate extends React.Component<Props.GenericRouter, states.
 			required:true
 		}
 	};
-	public state:states.MatterCreate={
+	public state:states.ObjetiveSelect={
 		error:{
 			name:false,
 			level:false,
 			domain:false,
 			server:null
-		}
+		},
+		domains:[],
+		levels:[],
+		objetives:[],
+		isAdd:false
 	}
 	constructor(props:Props.GenericRouter) {
 			super(props);
@@ -48,6 +44,9 @@ export class ObjetiveCreate extends React.Component<Props.GenericRouter, states.
 	}
 	public getFields(event:any){
 		this.fields[event.target.id].value=event.target.value;
+		this.setState({
+			isAdd:(this.fields.domain.value && this.fields.level.value)
+		});
 	}
 	public validate(){
 		var value=true;
@@ -75,8 +74,44 @@ export class ObjetiveCreate extends React.Component<Props.GenericRouter, states.
 		}
 		return data;
 	}
-
-	componentDidMount(){}
+	changeDomain(event:any){
+		this.getFields(event);
+		this.state.domains.forEach(row => {
+				if(row.name==event.target.value){
+					this.setState({
+						levels:row.levels
+					});
+				}
+		});
+	}
+	changeLevel(event:any){
+		this.getFields(event);
+		this.fields.level.value=null;
+		ajax({
+			method:"GET",
+	        url: `${window.settings.uri}/v1/knowedge/${this.fields.domain.value}/objetives/${this.fields.level.value}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        dataType: "json",
+	        data:null,
+	        success:(data:Array<crud.objetive>)=>{
+				    this.setState({
+				      objetives : data
+				    });
+	        }
+		});
+	}
+	componentDidMount(){
+		ajax({
+			method:"GET",
+	        url: `${window.settings.uri}/v1/learning/domain/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        dataType: "json",
+	        data:null,
+	        success:(data:Array<crud.domain>)=>{
+				    this.setState({
+				      domains : data
+				    });
+	        }
+		});
+	}
 	send(event:any){
 		event.preventDefault();
 		var data=this.validate();
@@ -103,9 +138,43 @@ export class ObjetiveCreate extends React.Component<Props.GenericRouter, states.
 	render () {
     return (
     	<div className="container">
-    		<form method="POST" className="formulario" onSubmit={(e:any)=>{this.send(e)}}>
-
-				</form>
+					<h1>Asignar objetivos</h1>
+					<p>Seleccione de la lista los mejores objetivos que considere el alumno desarrollará con la actividad</p>
+					<div className="flex row align-items-center justify-content-sm-center">
+							<div className="flex column">
+								<label htmlFor="domain"><b>Dominio del aprendizaje*</b></label>
+								<select id="domain" required onChange={(e:any)=>{this.changeDomain(e)}}>
+								<option value="">Seleccione una opción</option>
+								{
+									this.state.domains.map((row)=>{
+										return (
+											<option key={row._id} value={row.name}>{row.name}</option>
+										);
+									})
+								}
+								</select>
+							</div>
+							<div className="flex column">
+								<label htmlFor="level"><b>Nivel de aprendizaje*</b></label>
+								<select id="level" required onChange={(e:any)=>{this.changeLevel(e)}}>
+								<option value="">Seleccione una opción</option>
+								{
+									this.state.levels.map((row)=>{
+										return (
+											<option key={row._id} value={row.name}>{row.name} (Nivel {row.level})</option>
+										);
+									})
+								}
+								</select>
+							</div>
+					</div>
+					<br/>
+					{this.state.isAdd && (
+						<div className="flex column align-items-stretch">
+							<Link to={`/objetive/create/${this.fields.domain.value}/${this.fields.level.value}`} className="btn btn-success">Crear un objetivo</Link>
+						</div>
+					)}
+					<TableObjectivesAdd objetives={this.state.objetives} session={this.session} callback={(e:any)=>{console.log(e)}}/>
     	</div>
     );
   }

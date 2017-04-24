@@ -179,6 +179,11 @@ declare namespace Props{
 		session?:users.sessions
 		delete:Function
 	}
+	interface tableaddobjetive{
+		objetives:Array<crud.objetive>
+		session?:users.sessions
+		callback:Function
+	}
 	interface tableactivities{
 		activities:Array<crud.activity>
 		delete:Function
@@ -282,6 +287,13 @@ declare namespace states{
 	interface MatterCreate{
 		error: any
 	}
+	interface ObjetiveSelect{
+		error: any
+		domains:Array<crud.domain>
+		levels:Array<crud.level>
+		objetives:Array<crud.objetive>
+		isAdd:boolean
+	}
 	interface TeacherView {
 		teacher:peoples.teachers
 		error:string
@@ -293,6 +305,7 @@ declare namespace states{
 		grades:Array<crud.grade>
 		activity:crud.activity
 		objetives:Array<crud.objetive>
+		sugessObjetive:Array<crud.objetive>
 	}
 	interface MatterList{
 		matters:Array<crud.courses>

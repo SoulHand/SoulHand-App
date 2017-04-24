@@ -3,6 +3,7 @@ import 'string-validator'
 import {Link} from 'react-router'
 import {ajax} from 'jquery'
 import {LineChart} from '../linechart'
+import {TableObjectivesAdd} from '../objetives/tableobjetivesadd'
 
 export class ActivitieView extends React.Component<Props.GenericRouter, states.ActivityView >{
 	public session:users.sessions;
@@ -13,7 +14,8 @@ export class ActivitieView extends React.Component<Props.GenericRouter, states.A
 		activity:null,
 		error:null,
 		grades:[],
-		objetives:[]
+		objetives:[],
+		sugessObjetive:[]
 	};
 	constructor(props:Props.GenericRouter) {
 			super(props);
@@ -40,11 +42,21 @@ export class ActivitieView extends React.Component<Props.GenericRouter, states.A
 	        url: `${window.settings.uri}/v1/activities/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null
-		}).done((data:any)=>{
+		}).done((data:crud.activity)=>{
 			this.setState({
 		      activity:data
 		    });
 		    //activitys.profile
+		});
+		ajax({
+			method:"GET",
+	        url: `${window.settings.uri}/v1/helps/activity/objetives/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        dataType: "json",
+	        data:null
+		}).done((data:Array<crud.objetive>)=>{
+			this.setState({
+		      sugessObjetive:data
+		    });
 		});
 	}
 	edit(event:any){
@@ -197,6 +209,13 @@ export class ActivitieView extends React.Component<Props.GenericRouter, states.A
 				}
 				</tbody>
 			</table>
+			{this.state.sugessObjetive.length>0 && (
+				<div>
+					<h3>Sugerencias</h3>
+					<p className="text-align justify">Te recomiendo los siguientes objetivos para la siguiente actividad</p>
+					<TableObjectivesAdd objetives={this.state.sugessObjetive} session={this.session} callback={(e:any)=>{console.log(e)}}/>					
+				</div>
+			)}
     	</div>
     );
   }

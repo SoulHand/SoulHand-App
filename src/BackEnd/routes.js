@@ -2294,7 +2294,6 @@ module.exports=function(app,express,server,__DIR__){
 			}
 			var event=data[0];
 			var objetives=data[1].objetives.map((row)=>{
-				console.log(row);
 				return row.name + " | " + row.description;
 			});
 			var querys=Events.ChainGetAll(event.premises,{
