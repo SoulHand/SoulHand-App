@@ -2344,7 +2344,7 @@ module.exports=function(app,express,server,__DIR__){
 				return {_id:row.q1};
 			});
 			querys=querys.filter((row)=>{
-				for(var i in data[1].objetives){
+				for(var i=0,n=data[1].objetives.length;i<n;i++){
 					if(data[1].objetives[i]._id.toString()==row._id.toString()){
 						return false;
 					}
@@ -2352,6 +2352,67 @@ module.exports=function(app,express,server,__DIR__){
 				return true;
 			});
 			return app.container.database.Schema.LearningObjetive.find({$or:querys});
+		}).then((rows)=>{
+			response.send(rows);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {get} / Obtener todas las categorias cognitivas
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	helpsURI.get("/objetives/:objetive/cognitions",function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.objetive)){
+			throw new ValidatorException("No es valido el id");
+		}
+		app.container.database.Schema.LearningObjetive.findOne({_id:request.params.objetive}).then(function(row){
+			if(!row){
+				throw new ValidatorException("No existe el objetivo!");
+			}
+			return Promise.all([Events.get("OBJETIVES-HELP-COGNITIONS"),row,app.container.database.Schema.domainsLearning.findOne({_id:row.domain._id})]);
+		}).then((data)=>{
+			if(!data[0]){
+				throw new ValidatorException("No tengo inferencia sobre esta acción. Solicite a un gestor del conocimiento añadir un nuevo conocimiento!");
+			}
+			if(!data[2]){
+				throw new ValidatorException("No existe el dominio del objetivo!");
+			}
+			var event=data[0];
+			var cognitions=data[2].cognitions.map((row)=>{
+				return row.name;
+			});
+			var addcognitions=data[1].cognitions.map((row)=>{
+				return row.name;
+			});
+			var querys=Events.ChainGetAll(event.premises,{
+				p1:data[1].name,
+				p2:data[1].description,
+				p3:data[1].level.level,
+				p4:data[1].domain.name,
+				p5:cognitions,
+				p6:addcognitions
+			});
+			if(querys.length==0){
+				return querys;
+			}
+			querys=querys.map((row)=>{
+				return data[2].cognitions.filter((row2)=>{
+					return row2._id.toString()==row.q1;
+				})[0];
+			});
+			querys=querys.filter((row)=>{
+				for(var i=0,n=data[1].cognitions.length;i<n;i++){
+					if(row._id.toString()==data[1].cognitions[i]._id.toString()){
+						return false;
+					}
+				}
+				return true;
+			});
+			return querys;
 		}).then((rows)=>{
 			response.send(rows);
 		}).catch(function(error){

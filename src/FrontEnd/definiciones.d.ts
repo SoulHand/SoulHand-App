@@ -187,6 +187,14 @@ declare namespace Props{
 		callback:Function
 		activity:string
 	}
+	interface tableaddcognitions{
+		cognitions:Array<crud.cognition>
+		session?:users.sessions
+		callback:Function
+		objetive:string
+		domain:string
+		level:string
+	}
 	interface tableactivities{
 		activities:Array<crud.activity>
 		delete:Function
@@ -281,6 +289,10 @@ declare namespace states{
 	}
 	interface ViewParent{
 		parent:peoples.parents
+		error:any
+	}
+	interface SetCognitions{
+		cognitions:Array<crud.cognition>
 		error:any
 	}
 	interface TeacherCreate{

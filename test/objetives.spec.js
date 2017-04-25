@@ -14,31 +14,55 @@ describe("Test route knowedge cognitions",function(){
 			name:faker.name.findName(),
 			description:"mensaje"
 		});
+		self.cognition2=new  self.db.schema.Cognitions({
+			name:faker.name.findName(),
+			description:"mensaje"
+		});
 		category=new self.db.schema.domainsLearning({
 			name:faker.name.findName(),
 			description:"mensaje",
 			levels:[find],
-			cognitions:[self.cognition]
+			cognitions:[self.cognition,self.cognition2]
 		});
 		self.objetive=new self.db.schema.LearningObjetive({
 			name:faker.name.findName(),
 			description:"hola",
 			domain:{
+				_id:category._id,
 				name:category.name
 			},
 			level:{
-				name:find.name
+				_id:find._id,
+				name:find.name,
+				level:1
 			},
-			cognitions:[]
+			cognitions:[self.cognition2]
 		});
-		Promise.all([utils.insertSession(self.db), category.save(),self.objetive.save()]).then(function(data){	
+		self.event=new self.db.schema.events({
+			name:"OBJETIVES-HELP-COGNITIONS",
+			objects:{
+				p1:"name",
+				p2:"description",
+				p3:"level",
+				p4:"domain.name",
+				p5:"cognitions",
+				p6:"addcognitions"
+			},
+			premises:[
+				{
+					premise:`(p1 =="${self.objetive.name}" && p3 == "${self.objetive.level.level}")`,
+					consecuent:`q1="${self.cognition._id}"`
+				}
+			]
+		});
+		Promise.all([utils.insertSession(self.db), category.save(),self.objetive.save(),self.event.save()]).then(function(data){
 			user=data[0]
 			done();
 		}).catch(function(error){
 			expect(error).toBeNull();
 			done();
 		})
-	});	
+	});
 	it("GET /v1/knowedge/:domain/objetives/:level",function(done){
 		utils.runApp("GET",`/v1/knowedge/${category.name}/objetives/${find.name}`).then(function(response){
 			response=JSON.parse(response);
@@ -49,7 +73,7 @@ describe("Test route knowedge cognitions",function(){
 			done();
 		});
 	});
-	
+
 	it("GET /v1/knowedge/:domain/objetives/:level",function(done){
 		utils.runApp("GET",`/v1/knowedge/${category.name}/objetives/${find.name}/${self.objetive._id}`).then(function(response){
 			response=JSON.parse(response);
@@ -58,9 +82,9 @@ describe("Test route knowedge cognitions",function(){
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();
 			done();
-		});	
+		});
 	});
-	
+
 	it("GET /v1/knowedge/:domain/objetives/:level (failed)",function(done){
 		utils.runApp("GET",`/v1/knowedge/${category.name}/objetives/${find.name}/00f0f2dd60e8613875e5e488`).then(function(error){
 			expect(error!=undefined).toBe(true);
@@ -68,7 +92,7 @@ describe("Test route knowedge cognitions",function(){
 		}).catch(function(error){
 			expect(error).toBeNull();
 			done();
-		});	
+		});
 	});
 	it("POST /v1/knowedge/:domain/objetives/:level",function(done){
 		utils.runApp("POST",`/v1/knowedge/${category.name}/objetives/${find.name}/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
@@ -83,18 +107,29 @@ describe("Test route knowedge cognitions",function(){
 		}).catch(function(error){
 			expect(error).toBeNull();
 			done();
-		});	
+		});
+	});
+	it("GET /v1/helps/objetives/:objetive/cognitions",function(done){
+		utils.runApp("GET",`/v1/helps/objetives/${self.objetive._id}/cognitions?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
+			response=JSON.parse(response);
+			expect(response.length).toBe(1);
+			expect(response[0].name).toBe(self.cognition.name);
+			done();
+		}).catch(function(error){
+			expect(error.toString()).toBeNull();
+			done();
+		});
 	});
 	it("PUT /v1/knowedge/:domain/objetives/:level/:id/cognitions/:cognition",function(done){
 		utils.runApp("PUT",`/v1/knowedge/${category.name}/objetives/${find.name}/${self.objetive._id}/cognitions/${self.cognition._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
 			response=JSON.parse(response);
-			expect(response.cognitions.length).toBe(1);
-			expect(response.cognitions[0].name).toBe(self.cognition.name);
+			expect(response.cognitions.length).toBe(2);
+			expect(response.cognitions[1].name).toBe(self.cognition.name);
 			done();
 		}).catch(function(error){
 			expect(error).toBeNull();
 			done();
-		});	
+		});
 	});
 	it("DELETE /v1/knowedge/:domain/objetives/:level",function(done){
 		utils.runApp("DEL",`/v1/knowedge/${category.name}/objetives/${find.name}/${self.objetive._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){

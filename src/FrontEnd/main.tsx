@@ -133,6 +133,8 @@ window.addEventListener("load",()=>{
 					<Route path=":domain/:level/step1" component={AsistObject.step1}/>
 					<Route path=":domain/:level/step2" component={AsistObject.step2}/>
 					<Route path=":domain/:level/step3" component={AsistObject.step3}/>
+					<Route path=":domain/:level/step4/:objetive" component={AsistObject.step4}/>
+					<Route path=":domain/:level/step5/:objetive" component={AsistObject.step5}/>
 				</Route>
 	  	</Router>
 	  ), document.body

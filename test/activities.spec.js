@@ -72,11 +72,6 @@ describe("Test route knowedge cognitions",function(){
 			},
 			cognitions:[]
 		});
-		find=new  self.db.schema.inferences({
-			premise:"p1==\"hola\"",
-			consecuent:"q1=\"saludo\"",
-			h:0.85
-		});
 		self.event=new self.db.schema.events({
 			name:"ACTIVITY-HELP-OBJETIVES",
 			objects:{

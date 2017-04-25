@@ -81,8 +81,8 @@ export class Step3 extends React.Component<Props.GenericRouter, states.StudentCr
       url: `${window.settings.uri}/v1/knowedge/${this.props.routeParams.domain}/objetives/${this.props.routeParams.level}/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
       dataType: "json",
       data:data,
-      success:(data:any)=>{
-      	this.props.router.replace('/teacher');
+      success:(data:crud.activity)=>{
+      	this.props.router.replace(`/objetive/create/${this.props.routeParams.domain}/${this.props.routeParams.level}/step4/${data._id}`);
       },
       error:(data:any)=>{
       	var state=this.state.error;
