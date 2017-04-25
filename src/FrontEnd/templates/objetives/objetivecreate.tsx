@@ -7,6 +7,7 @@ import {TableObjectivesAdd} from './tableobjetivesadd';
 @withRouter
 export class ObjetiveCreate extends React.Component<Props.GenericRouter, states.ObjetiveSelect> {
 	public session:users.sessions;
+	public activity:crud.activity;
 	public fields:compat.Map={
 		level:{
 			value:null,
@@ -43,7 +44,9 @@ export class ObjetiveCreate extends React.Component<Props.GenericRouter, states.
     	}
 	}
 	public getFields(event:any){
-		this.fields[event.target.id].value=event.target.value;
+		let value:{id:string, value:string}=JSON.parse(event.target.value);
+		this.fields[event.target.id].value=value.value;
+		this.fields[event.target.id].id=value.id;
 		this.setState({
 			isAdd:(this.fields.domain.value && this.fields.level.value)
 		});
@@ -76,8 +79,9 @@ export class ObjetiveCreate extends React.Component<Props.GenericRouter, states.
 	}
 	changeDomain(event:any){
 		this.getFields(event);
+		this.fields.level.value=null;
 		this.state.domains.forEach(row => {
-				if(row.name==event.target.value){
+				if(row._id==this.fields.domain.id){
 					this.setState({
 						levels:row.levels
 					});
@@ -86,30 +90,44 @@ export class ObjetiveCreate extends React.Component<Props.GenericRouter, states.
 	}
 	changeLevel(event:any){
 		this.getFields(event);
-		this.fields.level.value=null;
 		ajax({
-			method:"GET",
+					method:"GET",
 	        url: `${window.settings.uri}/v1/knowedge/${this.fields.domain.value}/objetives/${this.fields.level.value}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        success:(data:Array<crud.objetive>)=>{
+						let objetives:Array<crud.objetive>=data.filter((row)=>{
+							for(var i in this.activity.objetives){
+								if(this.activity.objetives[i]._id==row._id){
+									return false;
+								}
+							}
+							return true;
+						});
 				    this.setState({
-				      objetives : data
+				      objetives : objetives
 				    });
 	        }
 		});
 	}
 	componentDidMount(){
-		ajax({
+		let p1=ajax({
 			method:"GET",
 	        url: `${window.settings.uri}/v1/learning/domain/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:null,
-	        success:(data:Array<crud.domain>)=>{
-				    this.setState({
-				      domains : data
-				    });
-	        }
+	        data:null
+		}),p2=ajax({
+			method:"GET",
+	        url: `${window.settings.uri}/v1/activities/${this.props.routeParams.activity}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        dataType: "json",
+	        data:null
+		});
+		window.Promise.all([p1.done(),p2.done()]).then((data:compat.Map)=>{
+			let domain:Array<crud.domain> =data[0];
+			this.activity=data[1];
+			this.setState({
+				domains :domain
+			});
 		});
 	}
 	send(event:any){
@@ -130,10 +148,21 @@ export class ObjetiveCreate extends React.Component<Props.GenericRouter, states.
 	        	var state=this.state.error;
 	        	state.server=data.responseJSON;
 	        	this.setState({
-					error:state
-				});
+							error:state
+						});
 	        }
 		});
+	}
+	delete(id:string){
+			this.state.objetives=this.state.objetives.filter((row)=>{
+				if(row._id==id){
+					return false;
+				}
+				return true;
+	    });
+	  	this.setState({
+	      	objetives : this.state.objetives
+	    });
 	}
 	render () {
     return (
@@ -148,7 +177,7 @@ export class ObjetiveCreate extends React.Component<Props.GenericRouter, states.
 								{
 									this.state.domains.map((row)=>{
 										return (
-											<option key={row._id} value={row.name}>{row.name}</option>
+											<option key={row._id} value={`{"id":"${row._id}","value":"${row.name}"}`}>{row.name}</option>
 										);
 									})
 								}
@@ -161,7 +190,7 @@ export class ObjetiveCreate extends React.Component<Props.GenericRouter, states.
 								{
 									this.state.levels.map((row)=>{
 										return (
-											<option key={row._id} value={row.name}>{row.name} (Nivel {row.level})</option>
+											<option key={row._id} value={`{"id":"${row._id}","value":"${row.name}"}`}>{row.name} (Nivel {row.level})</option>
 										);
 									})
 								}
@@ -171,10 +200,10 @@ export class ObjetiveCreate extends React.Component<Props.GenericRouter, states.
 					<br/>
 					{this.state.isAdd && (
 						<div className="flex column align-items-stretch">
-							<Link to={`/objetive/create/${this.fields.domain.value}/${this.fields.level.value}`} className="btn btn-success">Crear un objetivo</Link>
+							<Link to={`/objetive/create/${this.fields.domain.id}/${this.fields.level.id}/step1`} className="btn btn-success">Crear un objetivo</Link>
 						</div>
 					)}
-					<TableObjectivesAdd objetives={this.state.objetives} session={this.session} callback={(e:any)=>{console.log(e)}}/>
+					<TableObjectivesAdd activity={this.props.routeParams.activity} objetives={this.state.objetives} session={this.session} callback={this.delete.bind(this)}/>
     	</div>
     );
   }

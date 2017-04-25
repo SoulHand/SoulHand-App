@@ -3,6 +3,9 @@ import 'string-validator'
 import {ajax} from 'jquery'
 import {withRouter, Link} from 'react-router';
 import {Step1} from './step1';
+import {Step2} from './step2';
+import {Step3} from './step3';
+import {Step4} from './step4';
 
 @withRouter
 export class Asist extends React.Component<Props.GenericRouter, {}> {
@@ -13,7 +16,7 @@ export class Asist extends React.Component<Props.GenericRouter, {}> {
           <div className="container">
             <section className="page">
               <div className="container-body">
-								{this.props.children}                
+								{this.props.children}
               </div>
             </section>
           </div>
@@ -24,3 +27,6 @@ export class Asist extends React.Component<Props.GenericRouter, {}> {
 }
 
 export let step1= Step1;
+export let step2= Step2;
+export let step3= Step3;
+export let step4= Step4;

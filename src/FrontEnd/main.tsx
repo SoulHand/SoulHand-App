@@ -129,8 +129,10 @@ window.addEventListener("load",()=>{
 					<Route path="get/:id/objetive/get/:objetive/" component={ActivitieView}/>
 					<Route path="objetive/create/:activity" component={ObjetiveCreate}/>
 				</Route>
-				<Route path="/objetive" component={AsistObject.Asist} onEnter={Auth}>
-					<Route path=":create/:domain/:level" component={AsistObject.step1}/>
+				<Route path="/objetive/create" component={AsistObject.Asist} onEnter={Auth}>
+					<Route path=":domain/:level/step1" component={AsistObject.step1}/>
+					<Route path=":domain/:level/step2" component={AsistObject.step2}/>
+					<Route path=":domain/:level/step3" component={AsistObject.step3}/>
 				</Route>
 	  	</Router>
 	  ), document.body

@@ -126,7 +126,6 @@ export class TeacherCreate extends React.Component<Props.TeacherCreate, states.T
 		});
 	}
 	render () {
-		console.log(this, this.state);
     return (
     	<div className="container">
     		<form method="POST" className="formulario" onSubmit={(e:any)=>{this.send(e)}}>

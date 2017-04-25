@@ -44,7 +44,8 @@ export class ActivitieView extends React.Component<Props.GenericRouter, states.A
 	        data:null
 		}).done((data:crud.activity)=>{
 			this.setState({
-		      activity:data
+		      activity:data,
+					objetives:data.objetives
 		    });
 		    //activitys.profile
 		});
@@ -94,19 +95,13 @@ export class ActivitieView extends React.Component<Props.GenericRouter, states.A
 		var element:HTMLElement=event.target;
 		ajax({
 			method:"DELETE",
-	        url: `${window.settings.uri}/v1/activities/${element.getAttribute("data-id")}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/activities/${this.props.routeParams.id}/objetives/${event.target.getAttribute("data-id")}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
-	        success:(data:crud.objetive)=>{
-						this.state.objetives=this.state.objetives.filter(function(row){
-							if(row._id==data._id){
-								return false;
-							}
-							return true;
-				    });
+	        success:(data:crud.activity)=>{
 			    	this.setState({
-				      	objetives : this.state.objetives
+				      	objetives : data.objetives
 				    });
 	        }
 		});
@@ -198,7 +193,7 @@ export class ActivitieView extends React.Component<Props.GenericRouter, states.A
 				</thead>
 				<tbody>
 				{
-					this.state.activity.objetives.map((row:any)=>{
+					this.state.objetives.map((row:any)=>{
 						return (
 							<tr key={row._id}>
 								<td><Link to={`/activities/get/${this.state.activity._id}/objetive/get/${row._id}`}>{row.name}</Link></td>
@@ -213,7 +208,7 @@ export class ActivitieView extends React.Component<Props.GenericRouter, states.A
 				<div>
 					<h3>Sugerencias</h3>
 					<p className="text-align justify">Te recomiendo los siguientes objetivos para la siguiente actividad</p>
-					<TableObjectivesAdd objetives={this.state.sugessObjetive} session={this.session} callback={(e:any)=>{console.log(e)}}/>					
+					<TableObjectivesAdd activity={this.props.routeParams.activity} objetives={this.state.sugessObjetive} session={this.session} callback={(e:any)=>{console.log(e)}}/>
 				</div>
 			)}
     	</div>

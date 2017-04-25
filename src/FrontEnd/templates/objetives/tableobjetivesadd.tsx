@@ -5,14 +5,15 @@ import {Link} from 'react-router'
 
 export class TableObjectivesAdd extends React.Component<Props.tableaddobjetive, {}>{
 	addObjetive(event: any){
+		let id:string=event.target.getAttribute("data-id");
 		ajax({
 			method:"PUT",
-	        url: `${window.settings.uri}/v1/people/teachers/${event.target.dataset.id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/activities/${this.props.activity}/objetives/${id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
 	        success:(data:peoples.teachers)=>{
-	        	this.props.callback(data);
+	        	this.props.callback(id);
 	        }
 		});
 	}

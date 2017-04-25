@@ -388,7 +388,7 @@ module.exports=function(app,express,server,__DIR__){
 				throw new ValidatorException("No existe el dominio!");
 			}
 			for (var i=0,n=data.cognitions.length;i<n;i++){
-				if(data.cognitions[i]._id==request.params.id){
+				if(data.cognitions[i]._id.toString()==request.params.id.toString()){
 					response.send(data.cognitions[i]);
 					return;
 				}
@@ -447,7 +447,7 @@ module.exports=function(app,express,server,__DIR__){
 		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
 		category.update({name:request.params.domain.toUpperCase()},function(obj){
 			for(i in obj.cognitions){
-				if(obj.cognitions[i]._id==request.params.id){
+				if(obj.cognitions[i]._id.toString()==request.params.id.toString()){
 					obj.cognitions[i].remove();
 					break;
 				}
@@ -524,7 +524,7 @@ module.exports=function(app,express,server,__DIR__){
 		}
 		domain.find({name:request.params.domain.toUpperCase()}).then(function(data){
 			for (var i=0,n=data.levels.length;i<n;i++){
-				if(data.levels[i]._id==request.params.id){
+				if(data.levels[i]._id.toString()==request.params.id.toString()){
 					response.send(data.levels[i]);
 					return;
 				}
@@ -545,7 +545,7 @@ module.exports=function(app,express,server,__DIR__){
 		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
 		category.update({name:request.params.domain.toUpperCase()},function(obj){
 			for(i in obj.levels){
-				if(obj.levels[i]._id==request.params.id){
+				if(obj.levels[i]._id.toString()==request.params.id.toString()){
 					obj.levels[i].remove();
 					break;
 				}
@@ -681,7 +681,7 @@ module.exports=function(app,express,server,__DIR__){
 				throw new ValidatorException("No existe el dominio!");
 			}
 			for(var i in row[1].cognitions){
-				if(row[1].cognitions[i]._id==request.params.cognition){
+				if(row[1].cognitions[i]._id.toString()==request.params.cognition.toString()){
 					row[0].cognitions.push(row[1].cognitions[i]);
 					return row[0].save();
 				}
@@ -1092,7 +1092,7 @@ module.exports=function(app,express,server,__DIR__){
 			if(!row){
 				throw new VoidException("No existe el registro");
 			}
-			if(request.user.isAdmin!=true && data._id!=request.user._id){
+			if(request.user.isAdmin!=true && data._id.toString()!=request.user._id.toString()){
 				throw new ValidatorException("No tiene permisos para editar este registro");
 			}
 			for(var i=0,keys=Object.keys(row.schema.obj),n=keys.length;i<n;i++){
@@ -1632,7 +1632,7 @@ module.exports=function(app,express,server,__DIR__){
 		}
 		app.container.database.Schema.Students.findOne({_id:request.params.id}).then(function(data){
 			for (i in data.physics){
-				if(data.physics[i]._id==request.params.del){
+				if(data.physics[i]._id.toString()==request.params.del.toString()){
 					data.physics[i].remove();
 					break;
 				}
@@ -2032,7 +2032,7 @@ module.exports=function(app,express,server,__DIR__){
 				throw new ValidatorException("No existe el evento!");
 			}
 			for (var i=0,n=data.premises.length;i<n;i++){
-				if(data.premises[i]._id==request.params.id){
+				if(data.premises[i]._id.toString()==request.params.id.toString()){
 					response.send(data.premises[i]);
 					return;
 				}
@@ -2088,7 +2088,7 @@ module.exports=function(app,express,server,__DIR__){
 		var category=new CategoryCoginitions(app.container.database.Schema.events);
 		category.update({name:request.params.event.toUpperCase()},function(obj){
 			for(i in obj.premises){
-				if(obj.premises[i]._id==request.params.id){
+				if(obj.premises[i]._id.toString()==request.params.id.toString()){
 					obj.premises[i].remove();
 					break;
 				}
@@ -2175,7 +2175,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions> objeto CRUD
 	*/
-	activityURI.put("/:id/:domain/objetives/:level/:objetive",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	activityURI.put("/:id/objetives/:objetive",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var dm;
 		if(!Validator.isMongoId()(request.params.objetive)){
 			throw new ValidatorException("El objetivo no es un id valido!");
@@ -2187,8 +2187,42 @@ module.exports=function(app,express,server,__DIR__){
 			if(!data[1]){
 				throw new ValidatorException("No existe la actividad!");
 			}
+			data[1].objetives.forEach((row)=>{
+					if(row._id.toString()==data[0]._id.toString()){
+						throw new ValidatorException("El objetivo ya existe en la actividad!");
+					}
+			});
 			data[1].objetives.push(data[0]);
 			return data[1].save();
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {post} /:domain/activities/:type Crear Categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion
+	* @var category<CategoryCoginitions> objeto CRUD
+	*/
+	activityURI.delete("/:id/objetives/:objetive",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		var dm;
+		if(!Validator.isMongoId()(request.params.objetive)){
+			throw new ValidatorException("El objetivo no es un id valido!");
+		}
+		app.container.database.Schema.Activities.findOne({_id:request.params.id}).then((data)=>{
+			if(!data){
+				throw new ValidatorException("No existe la actividad!");
+			}
+			for(var i in data.objetives){
+				if(data.objetives[i]._id.toString()==request.params.objetive){
+					data.objetives[i].remove();
+					return data.save();
+				}
+			}
+			throw new ValidatorException("No existe el objetivo!");
 		}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -2308,6 +2342,14 @@ module.exports=function(app,express,server,__DIR__){
 			}
 			querys=querys.map((row)=>{
 				return {_id:row.q1};
+			});
+			querys=querys.filter((row)=>{
+				for(var i in data[1].objetives){
+					if(data[1].objetives[i]._id.toString()==row._id.toString()){
+						return false;
+					}
+				}
+				return true;
 			});
 			return app.container.database.Schema.LearningObjetive.find({$or:querys});
 		}).then((rows)=>{

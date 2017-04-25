@@ -194,8 +194,8 @@ describe("Test route knowedge cognitions",function(){
 			done();
 		});
 	});
-	it("PUT /v1/activities/:id/:domain/objetives/:level/:objetive",function(done){
-		utils.runApp("PUT",`/v1/activities/${self.activity._id}/${category.name}/objetives/${find.name}/${self.objetive._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
+	it("PUT /v1/activities/:id/objetives/:objetive",function(done){
+		utils.runApp("PUT",`/v1/activities/${self.activity._id}/objetives/${self.objetive._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
 			response=JSON.parse(response);
 			expect(response.objetives.length).toBe(1);
 			expect(response.objetives[0]._id).toBe(self.objetive._id.toString());

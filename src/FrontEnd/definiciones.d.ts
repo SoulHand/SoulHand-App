@@ -43,6 +43,7 @@ declare namespace crud{
 	interface domain{
 		_id:string
 		name:string
+		description:string
 		_v:number
 		levels: Array<level>
 		cognitions:Array<cognition>
@@ -50,6 +51,7 @@ declare namespace crud{
 	interface level{
 		_id:string
 		name:string
+		description:string
 		level:number
 		_v:number
 	}
@@ -183,6 +185,7 @@ declare namespace Props{
 		objetives:Array<crud.objetive>
 		session?:users.sessions
 		callback:Function
+		activity:string
 	}
 	interface tableactivities{
 		activities:Array<crud.activity>
