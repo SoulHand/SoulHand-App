@@ -64,7 +64,7 @@ declare namespace crud{
       dateCreated: string
       cognitions: Array<cognition>
       level: level
-      domain: Array<domain>
+      domain: domain
   	}
 	interface activity{
 		name: string

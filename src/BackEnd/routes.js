@@ -624,11 +624,11 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	cognitions.get("/:domain/objetives/:level/:id",function(request, response,next) {
+	cognitions.get("/objetives/:id",function(request, response,next) {
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
-		app.container.database.Schema.LearningObjetive.findOne({"domain.name":request.params.domain.toString(),"level.name":request.params.level.toString(), _id:request.params.id }).then(function(rows){
+		app.container.database.Schema.LearningObjetive.findOne({_id:request.params.id }).then(function(rows){
 			if(!rows){
 				throw new Validator("No existe el objetivo de aprendizaje");
 			}
@@ -2375,11 +2375,23 @@ module.exports=function(app,express,server,__DIR__){
 			}
 			return Promise.all([Events.get("OBJETIVES-HELP-COGNITIONS"),row,app.container.database.Schema.domainsLearning.findOne({_id:row.domain._id})]);
 		}).then((data)=>{
-			if(!data[0]){
-				throw new ValidatorException("No tengo inferencia sobre esta acción. Solicite a un gestor del conocimiento añadir un nuevo conocimiento!");
-			}
 			if(!data[2]){
 				throw new ValidatorException("No existe el dominio del objetivo!");
+			}
+			if(!data[0]){
+				var helpEvent=new app.container.database.Schema.events({
+					name:"OBJETIVES-HELP-COGNITIONS",
+					objects:{
+						p1:"data[1].name",
+						p2:"data[1].description",
+						p3:"data[1].level.level",
+						p4:"data[1].domain.name",
+						p5:"cognitions",
+						p6:"addcognitions"
+					}
+				});
+				helpEvent.save();
+				return [];
 			}
 			var event=data[0];
 			var cognitions=data[2].cognitions.map((row)=>{

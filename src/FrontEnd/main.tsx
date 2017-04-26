@@ -57,6 +57,7 @@ import {ObjetiveCreate} from './templates/objetives/objetivecreate';
 
 
 import * as AsistObject from './templates/objetives/asistents/objetiveasist';
+import * as Error from './templates/error';
 
 //import {ListActivities} from './templates/activities/listactivities';
 
@@ -135,6 +136,12 @@ window.addEventListener("load",()=>{
 					<Route path=":domain/:level/step3" component={AsistObject.step3}/>
 					<Route path=":domain/:level/step4/:objetive" component={AsistObject.step4}/>
 					<Route path=":domain/:level/step5/:objetive" component={AsistObject.step5}/>
+				</Route>
+				<Route path="/error" onEnter={Auth}>
+					<Route path="resolve" component={Error.Objectives.Asist}>
+						<Route path="objetive/:objetive/cognition/step1" component={Error.Objectives.Page.Step1}/>
+						<Route path="objetive/:objetive/cognition/step2" component={Error.Objectives.Page.Step2}/>
+					</Route>
 				</Route>
 	  	</Router>
 	  ), document.body

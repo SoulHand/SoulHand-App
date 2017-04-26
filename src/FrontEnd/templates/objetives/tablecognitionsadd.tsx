@@ -33,7 +33,7 @@ export class TableCognitionsAdd extends React.Component<Props.tableaddcognitions
 			{
 				this.props.cognitions.map((row)=>{
 					return (
-						<tr key={row._id}>
+						<tr key={row._id} title={row.description}>
 						<td>{row.name}</td>
 						<td><button type="button" className="btn btn-success" data-id={row._id} onClick={(e:any)=>{this.addObjetive(e)}}>Añadir</button></td>
 						</tr>

@@ -74,8 +74,8 @@ describe("Test route knowedge cognitions",function(){
 		});
 	});
 
-	it("GET /v1/knowedge/:domain/objetives/:level",function(done){
-		utils.runApp("GET",`/v1/knowedge/${category.name}/objetives/${find.name}/${self.objetive._id}`).then(function(response){
+	it("GET /v1/knowedge/objetives/:id",function(done){
+		utils.runApp("GET",`/v1/knowedge/objetives/${self.objetive._id}`).then(function(response){
 			response=JSON.parse(response);
 			expect(response.name).toBe(self.objetive.name);
 			done();
