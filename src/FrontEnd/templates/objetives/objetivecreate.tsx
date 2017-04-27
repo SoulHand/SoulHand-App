@@ -198,11 +198,9 @@ export class ObjetiveCreate extends React.Component<Props.GenericRouter, states.
 							</div>
 					</div>
 					<br/>
-					{this.state.isAdd && (
-						<div className="flex column align-items-stretch">
-							<Link to={`/objetive/create/${this.fields.domain.id}/${this.fields.level.id}/step1`} className="btn btn-success">Crear un objetivo</Link>
-						</div>
-					)}
+					<div className="flex column align-items-stretch">
+						<Link to={`/objetive/create/step1`} className="btn btn-success">Crear un objetivo</Link>
+					</div>
 					<TableObjectivesAdd activity={this.props.routeParams.activity} objetives={this.state.objetives} session={this.session} callback={this.delete.bind(this)}/>
     	</div>
     );

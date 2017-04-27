@@ -13,7 +13,7 @@ export class Step1 extends React.Component<Props.GenericRouter, {}> {
 				<p className="text-align justify">Es necesario que te enfoques en tus metas a futuro dentro del salon de clases y que deseas que tus alumnos adquieran durante su proceso de aprendizaje</p>
 				<p><b>Te ayudaremos a crear un objetivo adecuado juntos</b></p>
 				<button className="button btn-warning" onClick={(e:any)=>{window.history.back()}}>Volver</button>
-				<Link to={`/objetive/create/${this.props.routeParams.domain}/${this.props.routeParams.level}/step2`} className="button btn-success">Continuar</Link>
+				<Link to={`/objetive/create/step2`} className="button btn-success">Continuar</Link>
 			</div>
     );
   }

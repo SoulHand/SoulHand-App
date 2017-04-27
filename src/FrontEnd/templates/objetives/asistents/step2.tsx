@@ -4,12 +4,31 @@ import {ajax} from 'jquery'
 import {withRouter, Link} from 'react-router';
 
 @withRouter
-export class Step2 extends React.Component<Props.GenericRouter, {error:any, domain:crud.domain}> {
+export class Step2 extends React.Component<Props.GenericRouter, states.StudentCreate> {
 	public session:users.sessions;
-  public state:{error:any, domain:crud.domain}={
-    domain:null,
-    error:null
+  public state:states.StudentCreate={
+    error:{
+			server:null,
+			name:null,
+			description:null
+		}
   }
+	public fields:compat.Map={
+		name:{
+			match:(fn:string)=>{
+				return !validator.isNull()(fn);
+			},
+			value:null,
+			required:true
+		},
+		description:{
+			match:(fn:string)=>{
+				return !validator.isNull()(fn);
+			},
+			value:null,
+			required:true
+		}
+	};
 	constructor(props:Props.GenericRouter) {
 			super(props);
 			let str: string=localStorage.getItem("session");
@@ -18,48 +37,96 @@ export class Step2 extends React.Component<Props.GenericRouter, {error:any, doma
 	    	this.session=session;
     	}
 	}
-	componentDidMount(){
+	public getFields(event:any){
+		let fields:compat.Map=this.fields;
+		fields[event.target.id].value=event.target.value;
+	}
+	public validate(){
+		let fields:compat.Map=this.fields;
+		var value=true;
+		var state:compat.Map=this.state.error;
+		var data:compat.Map={
+			dni:null,
+			name:null,
+			phone:null,
+			email:null,
+			birthdate:null
+		};
+		for (var i in fields){
+			if( (fields[i].require && !fields[i].value) || (fields[i].match && !fields[i].match(fields[i].value))){
+				value=false;
+				state[i]=true;
+				continue;
+			}
+				data[i]=fields[i].value;
+				state[i]=false;
+		}
+		state.server=null;
+		if(!value){
+			this.setState({
+				error:state
+			});
+			return false;
+		}
+		return data;
+	}
+	send(event:any){
+		event.preventDefault();
+		var data=this.validate();
+		if(!data){
+			return;
+		}
 		ajax({
-			method:"GET",
-	        url: `${window.settings.uri}/v1/learning/domain/${this.props.routeParams.domain}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
-	        dataType: "json",
-	        data:null,
-	        success:(data:crud.domain)=>{
-				    this.setState({
-				      domain : data
-				    });
-	        }
+			method:"POST",
+      url: `${window.settings.uri}/v1/knowedge/objetives/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+      dataType: "json",
+      data:data,
+      success:(data:crud.objetive)=>{
+      	this.props.router.replace(`/objetive/create/step3/${data._id}`);
+      },
+      error:(data:any)=>{
+      	var state=this.state.error;
+      	state.server=data.responseJSON;
+      	this.setState({
+					error:state
+				});
+	    }
 		});
 	}
 	render () {
-    if(!this.state.domain){
-      return (
-        <div className="card card-container" style={{marginTop:"5px"}}>
-          {this.state.error && (
-            <div className="alert alert-danger" role="alert">
-              <strong>Error!</strong>{this.state.error}
-            </div>
-          )}
-          <div className="loadding"></div>
-        </div>
-      );
-    }
-    var level=this.state.domain.levels.filter((row)=>{
-        if(row._id==this.props.routeParams.level){
-          return true;
-        }
-        return false;
-    });
     return (
 			<div className="card card-container" style={{marginTop:"5px"}}>
 				<h1>Crear un objetivos de aprendizaje</h1>
-        <p>Esta a punto de crear un objetivo en el dominio <b>{this.state.domain.name.toLocaleLowerCase()}</b></p>
-        <p><b>Descripción</b>: {this.state.domain.description.toLocaleLowerCase()}</p>
-        <p><b>Nivel de aprendizaje</b>: {level[0].level}</p>
-        <p><b>Nombre</b>: {level[0].name.toLocaleLowerCase()}</p>
-        <p>El nivel determina la etapa en el aprendizaje que adquirirá nuevos conocimientos el alumno</p>
-				<button className="button btn-warning" onClick={(e:any)=>{window.history.back()}}>Volver</button>
-				<Link to={`/objetive/create/${this.state.domain.name}/${level[0].name}/step3`} className="button btn-success">Continuar</Link>
+				<form method="POST" className="formulario" onSubmit={(e:any)=>{this.send(e)}}>
+					<div className="form-group">
+					<label htmlFor="name"><b>Nombre del objetivo*</b></label>
+					<input type="texto" className="form-control" id="name" aria-describedby="name" placeholder="Nombre del objetivo"required autoFocus onChange={(e:any)=>{this.getFields(e)}}/>
+					<p className="small">Seleccione un nombre con al menos un verbo infinitivo que represente la habilidad o actitud del alumno</p>
+					{this.state.error.name && (
+						<div className="alert alert-danger" role="alert">
+						<strong>Error!</strong> El campo es obligatorio.
+						</div>
+					)}
+					</div>
+					<div className="form-group">
+					<label htmlFor="description"><b>Descripción del objetivo*</b></label>
+					<textarea className="form-control" id="description" aria-describedby="description" placeholder="Descripción del objetivo"required onChange={(e:any)=>{this.getFields(e)}}/>
+					{this.state.error.description && (
+						<div className="alert alert-danger" role="alert">
+						<strong>Error!</strong> El campo es obligatorio.
+						</div>
+					)}
+					</div>
+					{this.state.error.server && (
+						<div className="alert alert-danger" role="alert">
+							{this.state.error.server}
+						</div>
+					)}
+					<div className="flex column align-items-stretch">
+						<button className="button btn-warning" onClick={(e:any)=>{window.history.back()}}>Volver</button>
+						<button className="button btn-success" type="submit">Continuar</button>
+					</div>
+				</form>
 			</div>
     );
   }

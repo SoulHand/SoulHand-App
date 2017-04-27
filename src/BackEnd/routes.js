@@ -565,7 +565,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions> objeto CRUD
 	*/
-	cognitions.post("/:domain/objetives/:level",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	cognitions.post("/objetives/",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
 		var dm;
 		if(Validator.isNull()(request.body.name)){
@@ -574,7 +574,6 @@ module.exports=function(app,express,server,__DIR__){
 		if(Validator.isNull()(request.body.description)){
 			throw new ValidatorException("Es necesaria una description");
 		}
-		request.params.level=request.params.level.toUpperCase();
 		Events.get("OBJETIVES-ADD").then((data)=>{
 			if(!data){
 				var helpEvent=new app.container.database.Schema.events({

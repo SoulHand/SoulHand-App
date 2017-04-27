@@ -131,11 +131,11 @@ window.addEventListener("load",()=>{
 					<Route path="objetive/create/:activity" component={ObjetiveCreate}/>
 				</Route>
 				<Route path="/objetive/create" component={AsistObject.Asist} onEnter={Auth}>
-					<Route path=":domain/:level/step1" component={AsistObject.step1}/>
-					<Route path=":domain/:level/step2" component={AsistObject.step2}/>
-					<Route path=":domain/:level/step3" component={AsistObject.step3}/>
-					<Route path=":domain/:level/step4/:objetive" component={AsistObject.step4}/>
-					<Route path=":domain/:level/step5/:objetive" component={AsistObject.step5}/>
+					<Route path="step1" component={AsistObject.step1}/>
+					<Route path="step2" component={AsistObject.step2}/>
+					<Route path="step3/:objetive" component={AsistObject.step3}/>
+					<Route path="step4/:objetive" component={AsistObject.step4}/>
+					<Route path="step5/:objetive" component={AsistObject.step5}/>
 				</Route>
 				<Route path="/error" onEnter={Auth}>
 					<Route path="resolve" component={Error.Objectives.Asist}>
