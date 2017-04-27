@@ -74,7 +74,7 @@ export class Step2 extends React.Component<Props.GenericRouter, {error:any, cogn
 				<p>Seleccione las funciones cognitivas que representan su objetivo, así ayudara a evitar errores</p>
 				<TableCognitionsAdd domain={this.objetive.domain.name} level={this.objetive.level.name} objetive={this.props.routeParams.objetive} cognitions={this.state.cognitions} session={this.session} callback={this.delete.bind(this)}/>
 				<button className="button btn-warning" onClick={(e:any)=>{window.history.back()}}>Volver</button>
-				<Link to={`/error/resolve/objetive/${this.props.routeParams.objetive}/cognition/step3`} className="button btn-success">Continuar</Link>
+				<Link to={`/teacher`} className="button btn-success">Finalizar</Link>
 			</div>
     );
   }

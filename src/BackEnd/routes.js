@@ -575,6 +575,62 @@ module.exports=function(app,express,server,__DIR__){
 			throw new ValidatorException("Es necesaria una description");
 		}
 		request.params.level=request.params.level.toUpperCase();
+		Events.get("OBJETIVES-ADD").then((data)=>{
+			if(!data){
+				var helpEvent=new app.container.database.Schema.events({
+					name:"OBJETIVES-ADD",
+					objects:{
+						p1:"request.body.name",
+						p2:"request.body.description"
+					}
+				});
+				helpEvent.save();
+				return false;
+			}
+			var querys=Events.ChainGetAll(data.premises,{
+				p1:request.body.name,
+				p2:request.body.description
+			});
+			if(querys.length==0){
+				return false;
+			}
+			var value={};
+			querys=querys.forEach((row)=>{
+				for(var i in row){
+					value[i]=row[i];
+				}
+			});
+			if(!value.q1 || !value.q2){
+				return false;
+			}
+			return Promise.all([domain.find({name:value.q1}),value.q2]);
+		}).then((row)=>{
+			if(!row || !row[0]){
+				throw new ValidatorException("No existe el dominio en la base de hechos!");
+			}
+			for(var i in row[0].levels){
+				if(row[0].levels[i].name ==row[1]){
+					return Promise.all([row[0],row[0].levels[i]]);
+				}
+			}
+			throw new ValidatorException("No existe el nivel de aprendizaje");
+		}).then((row)=>{
+			var p1=new app.container.database.Schema.LearningObjetive({
+				name:request.body.name,
+				description:request.body.description,
+				domain:row[0],
+				level:row[1]
+			});
+			return p1.save();
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+
+
+
+		/*
 		domain.find({name:request.params.domain.toUpperCase()}).then(function(row){
 			dm=row;
 			for(var i in row.levels){
@@ -601,7 +657,7 @@ module.exports=function(app,express,server,__DIR__){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
-		});
+		});*/
 	});
 	/*
 	* @api {get} / Obtener todas las categorias cognitivas

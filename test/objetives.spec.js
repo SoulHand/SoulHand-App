@@ -55,7 +55,24 @@ describe("Test route knowedge cognitions",function(){
 				}
 			]
 		});
-		Promise.all([utils.insertSession(self.db), category.save(),self.objetive.save(),self.event.save()]).then(function(data){
+		self.event2=new self.db.schema.events({
+			name:"OBJETIVES-ADD",
+			objects:{
+				p1:"request.body.name",
+				p2:"request.body.description"
+			},
+			premises:[
+				{
+					premise:`this.isContaint(p1,["alcanzar"]) || this.isContaint(p2,["Alcanzar"])`,
+					consecuent:`q1="${category.name}"`
+				},
+				{
+					premise:`this.isContaint(p1,["alcanzar","parar"]) || this.isContaint(p2,["Alcanzar","parar"])`,
+					consecuent:`q2="${find.name}"`
+				}
+			]
+		});
+		Promise.all([utils.insertSession(self.db), category.save(),self.objetive.save(),self.event.save(),self.event2.save()]).then(function(data){
 			user=data[0]
 			done();
 		}).catch(function(error){
@@ -103,6 +120,8 @@ describe("Test route knowedge cognitions",function(){
 		}).then(function(response){
 			response=JSON.parse(response);
 			expect(response.name).toBe("CORRER 200 MTS");
+			expect(response.domain.name).toBe(category.name);
+			expect(response.level.name).toBe(find.name);
 			done();
 		}).catch(function(error){
 			expect(error).toBeNull();
