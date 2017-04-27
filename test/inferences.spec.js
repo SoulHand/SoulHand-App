@@ -80,8 +80,8 @@ describe("Test route knowedge cognitions",function(){
 	it("POST /:event/inferences/:id",function(done){
 		utils.runApp("POST",`/v1/events/${category.name}/inferences/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
 			form:{
-				premise:"hola",
-				consecuent:"proceso de hola"
+				premise:"p1 ==\"hola\"",
+				consecuent:"q1=2"
 			}
 		}).then(function(response){
 			response=JSON.parse(response);
@@ -91,7 +91,7 @@ describe("Test route knowedge cognitions",function(){
 				}
 				return true;
 			});
-			expect(cognition[0].premise).toBe("hola");
+			expect(cognition[0].premise).toBe("p1 ==\"hola\"");
 			done();
 		}).catch(function(error){
 			expect(error).toBeNull();

@@ -627,37 +627,6 @@ module.exports=function(app,express,server,__DIR__){
 		}).catch(function(error){
 			next(error);
 		});
-
-
-
-		/*
-		domain.find({name:request.params.domain.toUpperCase()}).then(function(row){
-			dm=row;
-			for(var i in row.levels){
-				if(row.levels[i].name ==request.params.level){
-					return row.levels[i];
-				}
-			}
-			throw new ValidatorException("No existe el nivel de aprendizaje");
-		}).then(function(data){
-			var p1=new app.container.database.Schema.LearningObjetive({
-				name:request.body.name,
-				description:request.body.description,
-				domain:{
-					_id:dm._id,
-					name:dm.name
-				},
-				level:{
-					_id:data._id,
-					name:data.name
-				}
-			});
-			return p1.save();
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});*/
 	});
 	/*
 	* @api {get} / Obtener todas las categorias cognitivas
@@ -2041,14 +2010,27 @@ module.exports=function(app,express,server,__DIR__){
 			throw new ValidatorException("Solo se aceptan dominios validos");
 		}
 		domain.find({name:request.params.event.toUpperCase()}).then(function(row){
-			row.premises.push(app.container.database.Schema.inferences({
+			var exp=new RegExp(`([xp-t][0-9]+)`,'g');
+			var var_dump={};
+			var matchs=request.body.premise.match(exp);
+			var matchs=request.body.premise.match(exp);
+			if(!matchs || !request.body.consecuent.match(exp)){
+				throw new ValidatorException("las inferencias deben poseer variables de inferencias desde p hasta t o x");
+			}
+			var inference= new app.container.database.Schema.inferences({
 				premise:request.body.premise,
 				consecuent:request.body.consecuent
-			}));
+			});
+			matchs.forEach((row)=>{
+				var_dump[row]=[1,2,3];
+			});
+			Events.ChainGetAll([inference],var_dump);
+			row.premises.push(inference);
 			return row.save();
 		}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
+			console.log(error.toString());
 			next(error);
 		});
 	});
