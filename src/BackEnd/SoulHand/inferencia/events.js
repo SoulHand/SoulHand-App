@@ -8,11 +8,18 @@ module.exports=function(db){
 	Inference.on('physic-add', (physic,people) => {
 		Inference.get("PHYSIC").then((data)=>{
 			if(!data){
-				throw new VoidException("No existe el evento");
+				var helpEvent=new app.container.database.Schema.events({
+					name:"PHYSIC",
+					objects:{
+						p1:"physic.height",
+						p2:"people.data.genero",
+						p3:"physic.weight",
+						p4:"physic.age"
+					}
+				});
+				helpEvent.save();
+				return false;
 			}
-			/*for(var i=0 in data.objects){
-				data.objects[i]=physic[data.objects[i]];
-			}*/
 			var result=Inference.ChainGetOne(data.premises,{
 				p1:physic.height,
 				p2:people.data.genero,
@@ -20,10 +27,13 @@ module.exports=function(db){
 				p4:physic.age
 			});
 			if(!result){
-				throw new VoidException("No hay premisa valida!");
+				return false;
 			}
 			return Promise.all([result.q1,people._id]);
 		}).then((result)=>{
+			if(!result){
+				throw new ValidatorException("No existe un conocimiento!");
+			}
 			Inference.emit('history-students',result[0],result[1]);
 		})/*.catch((error)=>{
 			console.log(error.toString());

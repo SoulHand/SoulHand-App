@@ -620,7 +620,69 @@ module.exports=function(app,express,server,__DIR__){
 				domain:row[0],
 				level:row[1]
 			});
-			return p1.save();
+			return Promise.all([p1,Events.get("OBJETIVES-COGNITION"),row[0]]);
+			//return p1.save();
+		}).then((row)=>{
+			if(!row[1]){
+				var helpEvent=new app.container.database.Schema.events({
+					name:"OBJETIVES-COGNITION",
+					objects:{
+						p1:"data[1].name",
+						p2:"data[1].description",
+						p3:"data[1].domain.name",
+						p4:"data[1].level.name",
+						p5:"addcognitions"
+					}
+				});
+				helpEvent.save();
+				return row[0].save();
+			}
+			var event=row[1];
+			while(true){
+				var addcognitions=row[0].cognitions.map((row)=>{
+					return row.name;
+				});
+				var querys=Events.ChainGetAllBucle(event.premises,{
+					p1:row[0].name,
+					p2:row[0].description,
+					p3:row[0].domain.name,
+					p4:row[0].level.name,
+					p5:addcognitions
+				});
+				console.log(querys);
+				if(!querys){
+					return row[0].save();
+				}
+				querys.forEach((data)=>{
+					if(/ADD\:/ig.test(data.q1)){
+						var str=data.q1.replace(/ADD\:/ig,'');
+						console.log(str);
+						for(var i=0,n=row[2].cognitions.length;i<n;i++){
+							if(row[2].cognitions[i].name==str){
+								var add=true;
+								row[0].cognitions.forEach((row2)=>{
+									if(row2._id==str){
+										add=false;
+										return;
+									}
+								});
+								if(!add){
+									continue;
+								}
+								row[0].cognitions.push(row[2].cognitions[i]);
+							}
+						}
+					}
+					if(/DELETE\:/ig.test(data.q1)){
+						var str=data.q1.replace(/DELETE\:/ig);
+						row[0].cognitions.forEach((row2)=>{
+							if(row2._id.toString()==str){
+								row2.remove();
+							}
+						});
+					}
+				});
+			}
 		}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -693,10 +755,100 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	cognitions.put("/:domain/objetives/:level/:id/cognitions/:cognition",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	cognitions.put("/objetives/:id/cognitions/:cognition",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		if(!Validator.isMongoId()(request.params.id)|| !Validator.isMongoId()(request.params.cognition)){
 			throw new ValidatorException("El id es invalido!");
 		}
+		app.container.database.Schema.LearningObjetive.findOne({_id:request.params.id }).then(function(row){
+			if(!row){
+				throw new ValidatorException("No existe el objetivo!");
+			}
+			return Promise.all([Events.get("OBJETIVES-ADD-COGNITIONS"),row,app.container.database.Schema.domainsLearning.findOne({_id:row.domain._id})]);
+		}).then((row)=>{
+			if(!row[2]){
+				throw new ValidatorException("No existe el dominio del objetivo!");
+			}
+			for(var i=0,n=row[2].cognitions.length;i<n;i++){
+				if(row[2].cognitions[i]._id.toString()==request.params.cognition){
+					return Promise.all([row[0],row[1],row[2].cognitions[i],row[2].cognitions]);
+				}
+			}
+			throw new ValidatorException("No existe la funcion cognitiva!");
+		}).then((data)=>{
+			if(!data[0]){
+				var helpEvent=new app.container.database.Schema.events({
+					name:"OBJETIVES-ADD-COGNITIONS",
+					objects:{
+						p1:"data[1].name",
+						p2:"data[1].description",
+						p3:"data[1].level.level",
+						p4:"data[1].domain.name",
+						p5:"cognitions",
+						p6:"addcognitions"
+					}
+				});
+				helpEvent.save();
+				throw new ValidatorException("No existe inferencias!");
+			}
+			var event=data[0];
+			var addcognitions=data[1].cognitions.map((row)=>{
+				return row.name;
+			});
+			var querys=Events.ChainGetAll(event.premises,{
+				p1:data[1].name,
+				p2:data[1].description,
+				p3:data[1].level.level,
+				p4:data[1].domain.name,
+				p5:cognitions,
+				p6:addcognitions,
+				p7:data[2].name
+			});
+			data[1].cognitions.forEach((row)=>{
+				if(row._id==data[0]._id){
+					throw new ValidatorException("ya existe el registro")
+				}
+			});
+			data[1].cognitions.push(data[2]);
+			querys.forEach((row)=>{
+				if(/Error\:/ig.test(row.q1)){
+					throw new ValidatorException(row.q1);
+				}
+				if(/ADD\:/ig.test(row.q1)){
+					var str=row.q1.replace(/ADD\:/ig);
+					for(var i=0,n=data[3].cognitions.length;i<n;i++){
+						if(data[3].cognitions[i]._id.toString()==str){
+							var add=true;
+							data[1].cognitions.forEach((row2)=>{
+								if(row2._id==str){
+									add=false;
+									return;
+								}
+							});
+							if(!add){
+								continue;
+							}
+							data[1].cognitions.push(data[3].cognitions[i]);
+						}
+					}
+				}
+				if(/DELETE\:/ig.test(row.q1)){
+					var str=row.q1.replace(/DELETE\:/ig);
+					data[1].cognitions.forEach((row2)=>{
+						if(row2._id.toString()==str){
+							row2.remove();
+						}
+					});
+				}
+			});
+			return data[1].save();
+		}).then((rows)=>{
+			response.send(rows);
+		}).catch(function(error){
+			next(error);
+		});
+
+
+		/*
 		Promise.all([app.container.database.Schema.LearningObjetive.findOne({"domain.name":request.params.domain.toString(),"level.name":request.params.level.toString(), _id:request.params.id }),app.container.database.Schema.domainsLearning.findOne({name:request.params.domain.toUpperCase()})]).then(function(row){
 			if(!row[0]){
 				throw new ValidatorException("No existe el objetivo!");
@@ -715,7 +867,7 @@ module.exports=function(app,express,server,__DIR__){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
-		});
+		});*/
 	});
 
 	/*
@@ -2191,14 +2343,24 @@ module.exports=function(app,express,server,__DIR__){
 					p1:request.body.name,
 					p2:request.body.description,
 					p3:activity.dateExpire.getTime(),
-					p4:Date.now(),
+					p4:Date.now()
 				});
 				if(result.q1 && /Error\:/ig.test(result.q1)){
 					throw new ValidatorException(result.q1);
 				}
+			}else{
+				var helpEvent=new app.container.database.Schema.events({
+					name:"ACTIVITY-ADD",
+					objects:{
+						p1:"request.body.name",
+						p2:"request.body.description",
+						p3:"activity.dateExpire.getTime()",
+						p4:"Date.now()"
+					}
+				});
+				helpEvent.save();
 			}
 			return activity.save();
-			return "Hola";
 		}).then(function(data){
 			response.send(data);
 		}).catch(function(error){

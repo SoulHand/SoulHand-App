@@ -7,7 +7,7 @@ export class TableCognitionsAdd extends React.Component<Props.tableaddcognitions
 		let id:string=event.target.getAttribute("data-id");
 		ajax({
 			method:"PUT",
-	        url: `${window.settings.uri}/v1/knowedge/${this.props.domain}/objetives/${this.props.level}/${this.props.objetive}/cognitions/${id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/knowedge/objetives/${this.props.objetive}/cognitions/${id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,

@@ -2,6 +2,7 @@ import * as React from 'react';
 import 'string-validator'
 import {ajax} from 'jquery'
 import {Link} from 'react-router'
+import {TableCognitions} from "./tablecognitions"
 
 export class DomainView extends React.Component<Props.GenericRouter, states.DomainView> {
 	public session:users.sessions;
@@ -142,33 +143,13 @@ export class DomainView extends React.Component<Props.GenericRouter, states.Doma
 				</div>
 			</div>
 			<h3>Funciones cognitivas</h3>
-			<table className="table table-striped">
-				<thead>
-					<tr>
-						<th>Nombre</th>
-                 		<th>Acción</th>
-					</tr>
-				</thead>
-				<tbody>
-				{
-					this.state.domain.cognitions.map((row:crud.cognition)=>{
-						return (
-							<tr key={row._id}>
-								<td><b>{row.name}</b></td>
-								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e:any)=>{this.deleteField(e)}}>Eliminar</button></td>
-							</tr>
-						);
-					})
-				}
-				</tbody>
-			</table>
+			<TableCognitions cognitions={this.state.domain.cognitions}/>
 			<h3>Niveles de aprendizaje</h3>
 			<table className="table table-striped">
 				<thead>
 					<tr>
 						<th>Nivel</th>
 						<th>Nombre</th>
-            <th>Acción</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -176,9 +157,8 @@ export class DomainView extends React.Component<Props.GenericRouter, states.Doma
 					this.state.domain.levels.map((row:crud.level)=>{
 						return (
 							<tr key={row._id}>
-								<td>{row.level}</td>
+								<td><b>{row.level}</b></td>
 								<td><Link to={`/domain/get/${this.state.domain.name}/objetive/${row.name}`}>{row.name}</Link></td>
-								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e:any)=>{this.deleteField(e)}}>Eliminar</button></td>
 							</tr>
 						);
 					})

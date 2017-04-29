@@ -49,6 +49,28 @@ class Inferences extends EventEmitter{
 		});
 		return matchs;
 	}
+	ChainGetAllBucle(premises,var_globals){
+		var exp=new RegExp('([p-t][0-9]+)','g');
+		var matchs=[];
+		var i=0;
+		while(i<premises.length){
+			var premise=premises[i];
+			var condition=premise.premise.replace(exp,"var_globals.$1");
+			var p1=eval(condition);
+			if(p1){
+				var vars={};
+				var consecuent=premise.consecuent.replace(exp,"vars.$1");
+				eval(consecuent);
+				matchs.push(vars);
+				premises=premises.splice(i,1);
+			}
+			i++;
+		}
+		if(matchs.length==0){
+			return false;
+		}
+		return matchs;
+	}
 	ChainGetOne(premises,var_globals){
 		var exp=new RegExp('([p-t][0-9]+)','g');
 		var matchs=[],premise;

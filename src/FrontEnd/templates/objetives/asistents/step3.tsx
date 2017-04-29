@@ -2,6 +2,8 @@ import * as React from 'react';
 import 'string-validator'
 import {ajax} from 'jquery'
 import {withRouter, Link} from 'react-router';
+import {TableCognitions} from "../../domain/tablecognitions"
+
 
 @withRouter
 export class Step3 extends React.Component<Props.GenericRouter, {objetive:crud.objetive}> {
@@ -46,7 +48,18 @@ export class Step3 extends React.Component<Props.GenericRouter, {objetive:crud.o
 				<h1>El objetivo ha sido creado</h1>
 				<p className="text-align justify">El objetivo se clasifico en el dominio <b>{this.state.objetive.domain.name}</b>, nivel <b>{this.state.objetive.level.name}</b></p>
 				<p className="text-align justify">Este objetivo ayudara a incrementar el nivel de evaluación del conocimiento en sus alumnos</p>
-				<Link to={`/objetive/create/step4/${this.props.routeParams.objetive}`} className="button btn-success">Continuar</Link>
+				{(this.state.objetive.cognitions.length>0) && (
+					<h3>Funciones cognitivas</h3>
+				)}
+				{(this.state.objetive.cognitions.length>0) && (
+					<TableCognitions cognitions={this.state.objetive.cognitions}/>
+				)}
+				{(this.state.objetive.cognitions.length>0) && (
+					<Link to={`/teacher`} className="button btn-success">Finalizar</Link>
+				)}
+				{(this.state.objetive.cognitions.length==0) && (
+					<Link to={`/error/resolve/objetive/${this.props.routeParams.objetive}/cognition/step1`} className="button btn-success">Continuar</Link>
+				)}
 			</div>
     );
   }
