@@ -574,7 +574,14 @@ module.exports=function(app,express,server,__DIR__){
 		if(Validator.isNull()(request.body.description)){
 			throw new ValidatorException("Es necesaria una description");
 		}
-		Events.get("OBJETIVES-ADD").then((data)=>{
+		request.body.name=request.body.name.toUpperCase();
+		request.body.description=request.body.description.toUpperCase();
+		app.container.database.Schema.LearningObjetive.findOne({name:request.body.name}).then((row)=>{
+			if(row){
+				throw new ValidatorException("Ya existe un objetivo con el mismo nombre!");
+			}
+			return Events.get("OBJETIVES-ADD");
+		}).then((data)=>{
 			if(!data){
 				var helpEvent=new app.container.database.Schema.events({
 					name:"OBJETIVES-ADD",
@@ -656,7 +663,6 @@ module.exports=function(app,express,server,__DIR__){
 				querys.forEach((data)=>{
 					if(/ADD\:/ig.test(data.q1)){
 						var str=data.q1.replace(/ADD\:/ig,'');
-						console.log(str);
 						for(var i=0,n=row[2].cognitions.length;i<n;i++){
 							if(row[2].cognitions[i].name==str){
 								var add=true;
@@ -2339,7 +2345,7 @@ module.exports=function(app,express,server,__DIR__){
 				course:data[1]
 			});
 			if(data[3]){
-				var result=Inference.apareamiento(data.premises,{
+				var result=Events.ChainGetOne(data[3].premises,{
 					p1:request.body.name,
 					p2:request.body.description,
 					p3:activity.dateExpire.getTime(),
@@ -2360,10 +2366,70 @@ module.exports=function(app,express,server,__DIR__){
 				});
 				helpEvent.save();
 			}
-			return activity.save();
-		}).then(function(data){
+			return Promise.all([activity,Events.get("ACTIVITY-OBJETIVES"),app.container.database.Schema.LearningObjetive.find()]);
+		}).then((row)=>{
+			if(!row[1]){
+				var helpEvent=new app.container.database.Schema.events({
+					name:"ACTIVITY-OBJETIVES",
+					objects:{
+						p1:"row[0].name",
+						p2:"row[0].description",
+						p3:"row[0].grade.name",
+						p4:"row[0].course.name",
+						p5:"objetives"
+					}
+				});
+				helpEvent.save();
+				return row[0].save();
+			}
+			var event=row[1];
+			while(true){
+				var objetives=row[0].objetives.map((row)=>{
+					return row.name+"|"+row.description;
+				});
+				var querys=Events.ChainGetAllBucle(event.premises,{
+					p1:row[0].name,
+					p2:row[0].description,
+					p3:row[0].grade.name,
+					p4:row[0].course.name,
+					p5:objetives
+				});
+				if(!querys){
+					return row[0].save();
+				}
+				querys.forEach((data)=>{
+					if(/ADD\:/ig.test(data.q1)){
+						var str=data.q1.replace(/ADD\:/ig,'');
+						for(var i=0,n=row[2].length;i<n;i++){
+							if(row[2][i].name==str){
+								var add=true;
+								row[0].objetives.forEach((row2)=>{
+									if(row2._id==str){
+										add=false;
+										return;
+									}
+								});
+								if(!add){
+									continue;
+								}
+								row[0].objetives.push(row[2][i]);
+							}
+						}
+					}
+					if(/DELETE\:/ig.test(data.q1)){
+						var str=data.q1.replace(/DELETE\:/ig);
+						row[0].objetives.forEach((row2)=>{
+							if(row2._id.toString()==str){
+								row2.remove();
+							}
+						});
+					}
+				});
+			}
+		}).then((data)=>{
 			response.send(data);
 		}).catch(function(error){
+			console.log(error)
 			next(error);
 		});
 	});
