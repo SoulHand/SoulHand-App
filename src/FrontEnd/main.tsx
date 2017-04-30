@@ -54,6 +54,7 @@ import {DomainObjetive} from './templates/domain/domainobjetive';
 import {ActivitiesCreate} from './templates/activities/activitiescreate';
 import {ActivitieView} from './templates/activities/activitieview';
 import {ObjetiveCreate} from './templates/objetives/objetivecreate';
+import {ObjetiveView} from './templates/objetives/objetiveview';
 
 
 import * as AsistObject from './templates/objetives/asistents/objetiveasist';
@@ -112,6 +113,7 @@ window.addEventListener("load",()=>{
 		    	<IndexRoute component={ListDomain}/>
 		    	<Route path="get/:id" component={DomainView}/>
 		    	<Route path="get/:domain/objetive/:level" component={DomainObjetiveView}/>
+		    	<Route path="get/objetive/:objetive" component={ObjetiveView}/>
 		    	<Route path="create" component={DomainCreate}/>
 		    </Route>
 		    <Route path="/users" component={Home}>
@@ -127,15 +129,13 @@ window.addEventListener("load",()=>{
 				<Route path="/activities" component={Teachers} onEnter={Auth}>
 					<Route path=":id/:grade/create" component={ActivitiesCreate}/>
 					<Route path="get/:id" component={ActivitieView}/>
-					<Route path="get/:id/objetive/get/:objetive/" component={ActivitieView}/>
+					<Route path="get/:id/objetive/get/:objetive" component={ActivitieView}/>
 					<Route path="objetive/create/:activity" component={ObjetiveCreate}/>
 				</Route>
 				<Route path="/objetive/create" component={AsistObject.Asist} onEnter={Auth}>
 					<Route path="step1" component={AsistObject.step1}/>
 					<Route path="step2" component={AsistObject.step2}/>
 					<Route path="step3/:objetive" component={AsistObject.step3}/>
-					<Route path="step4/:objetive" component={AsistObject.step4}/>
-					<Route path="step5/:objetive" component={AsistObject.step5}/>
 				</Route>
 				<Route path="/error" onEnter={Auth}>
 					<Route path="resolve" component={Error.Objectives.Asist}>

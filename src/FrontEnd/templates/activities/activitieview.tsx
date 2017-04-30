@@ -196,7 +196,7 @@ export class ActivitieView extends React.Component<Props.GenericRouter, states.A
 					this.state.objetives.map((row:any)=>{
 						return (
 							<tr key={row._id}>
-								<td><Link to={`/activities/get/${this.state.activity._id}/objetive/get/${row._id}`}>{row.name}</Link></td>
+								<td><Link to={`/domain/get/objetive/${row._id}`}>{row.name}</Link></td>
 								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e:any)=>{this.deleteField(e)}}>Eliminar</button></td>
 							</tr>
 						);
