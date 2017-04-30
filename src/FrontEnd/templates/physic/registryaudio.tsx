@@ -1,7 +1,7 @@
 import * as React from 'react';
 import 'string-validator'
 import {ajax} from 'jquery'
-import {withRouter} from 'react-router';
+import {withRouter,Link} from 'react-router';
 
 @withRouter
 export class RegistryAudio extends React.Component<Props.StudentCreate, states.StudentCreate> {
@@ -83,32 +83,66 @@ export class RegistryAudio extends React.Component<Props.StudentCreate, states.S
 	}
 	render () {
     return (
-    	<div className="container">
-    		<form method="POST" className="formulario" onSubmit={(e:any)=>{this.send(e)}}>
-    			<label className="title">Seleccione la escala de perdida de audicación considerada</label>
-				    <div className="form-group">
-					    <select id="discapacityLevel" onChange={(e:any)=>{this.getFields(e)}} required>
-					    	<option value="">Seleccione una opción</option>
-					    	<option value="33">LEVE</option>
-					    	<option value="55">MODERADA</option>
-					    	<option value="80">SEVERA</option>
-					    	<option value="105">PROFUNDA</option>
-					    </select>
-						<div className="small">Puede guiarse con un resultado de una prueba de audición médica para ser mas exacto</div>
-					</div>
-				  	{this.state.error.discapacityLevel && (
-				    	<div className="alert alert-danger" role="alert">
-						  <strong>Error</strong> es necesario el campo
+			<div className="card card-container" style={{marginTop:"5px"}}>
+				<h1>Audiometria</h1>
+				<p className="text-align justify">Seleccione las escala de perdida auditiva, si no comprende los resultados puede tomar la opcion <Link to={`/students/get/${this.props.routeParams.id}/physic/sound/asistent`}>evaluar</Link></p>
+				<form method="POST" className="formulario" onSubmit={(e:any)=>{this.send(e)}}>
+						<label className="title">Seleccione la escala de perdida de audicación considerada</label>
+							<div className="form-group">
+								<select id="discapacityLevel" onChange={(e:any)=>{this.getFields(e)}} required>
+									<option value="">Seleccione una opción</option>
+									<option value="33">LEVE</option>
+									<option value="55">MODERADA</option>
+									<option value="80">SEVERA</option>
+									<option value="105">PROFUNDA</option>
+								</select>
+							<div className="small">Puede guiarse con un resultado de una prueba de audición médica para ser mas exacto</div>
 						</div>
-				    )}
-				    {this.state.error.server && (
-				    	<div className="alert alert-danger" role="alert">
-						  {this.state.error.server.message}
-						</div>
-				    )}
-				  <button type="submit" className="btn btn-primary">Guardar</button>
-			</form>
-    	</div>
+							{this.state.error.discapacityLevel && (
+								<div className="alert alert-danger" role="alert">
+								<strong>Error</strong> es necesario el campo
+							</div>
+							)}
+							{this.state.error.server && (
+								<div className="alert alert-danger" role="alert">
+								{this.state.error.server.message}
+							</div>
+							)}
+							<div className="flex column">
+							<button className="button btn-warning" onClick={(e:any)=>{window.history.back()}}>Volver</button>
+							<button className="button btn-success" type="submit">Continuar</button>
+							</div>
+				</form>
+			</div>
     );
   }
 }
+
+/*
+<div className="container">
+	<form method="POST" className="formulario" onSubmit={(e:any)=>{this.send(e)}}>
+		<label className="title">Seleccione la escala de perdida de audicación considerada</label>
+			<div className="form-group">
+				<select id="discapacityLevel" onChange={(e:any)=>{this.getFields(e)}} required>
+					<option value="">Seleccione una opción</option>
+					<option value="33">LEVE</option>
+					<option value="55">MODERADA</option>
+					<option value="80">SEVERA</option>
+					<option value="105">PROFUNDA</option>
+				</select>
+			<div className="small">Puede guiarse con un resultado de una prueba de audición médica para ser mas exacto</div>
+		</div>
+			{this.state.error.discapacityLevel && (
+				<div className="alert alert-danger" role="alert">
+				<strong>Error</strong> es necesario el campo
+			</div>
+			)}
+			{this.state.error.server && (
+				<div className="alert alert-danger" role="alert">
+				{this.state.error.server.message}
+			</div>
+			)}
+		<button type="submit" className="btn btn-primary">Guardar</button>
+</form>
+</div>
+*/

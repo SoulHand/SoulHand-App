@@ -11,7 +11,7 @@ interface codeError{
 	code:string
 	message:string
 }
-declare namespace crud{
+declare namespace crud{	
 	interface physics{
 		height: number
 		weight:number

@@ -25,6 +25,8 @@ import {PhysicCreate} from './templates/physic/physiccreate';
 import {WelcomeAudio} from './templates/physic/welcomeaudio';
 import {RegistryAudio} from './templates/physic/registryaudio';
 import {AsistAudio} from './templates/physic/asistaudio';
+import {Several} from './templates/physic/several';
+import {Trans} from './templates/physic/trans';
 import {StudentCreate} from './templates/students/studentcreate';
 import {StudentView} from './templates/students/studentview';
 
@@ -97,6 +99,8 @@ window.addEventListener("load",()=>{
 		    	<Route path="get/:id/physic/sound" component={WelcomeAudio} />
 		    	<Route path="get/:id/physic/sound/registry" component={RegistryAudio}/>
 		    	<Route path="get/:id/physic/sound/asistent" component={AsistAudio}/>
+		    	<Route path="get/:id/physic/sound/asistent/step2" component={Several}/>
+		    	<Route path="get/:id/physic/sound/asistent/step3" component={Trans}/>
 		    	<Route path="create/:id" component={StudentCreate}/>
 		    </Route>
 		    <Route path="/grades" component={Grades} onEnter={Auth}>
