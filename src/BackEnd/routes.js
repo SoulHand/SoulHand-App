@@ -2486,6 +2486,9 @@ module.exports=function(app,express,server,__DIR__){
 			if(!data[1]){
 				throw new ValidatorException("No existe el estudiante!");
 			}
+			if(data[1].grade.name!=data[0].grade.name){
+				throw new ValidatorException("No coinciden los grados!");
+			}
 			data[0].students.forEach((row)=>{
 					if(row._id.toString()==data[1]._id.toString()){
 						throw new ValidatorException("El estudiante ya existe!");

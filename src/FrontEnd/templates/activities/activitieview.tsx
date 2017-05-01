@@ -181,6 +181,32 @@ export class ActivitieView extends React.Component<Props.GenericRouter, states.A
 			<div className="fieldset v-align middle">
 				{Items}
 			</div>
+			<h3 className="text-align center">Alumnos asignados</h3>
+			<div className="flex row">
+				<Link to={`/activities/objetive/create/${this.state.activity._id}`} className="button circle icons x16 add white"></Link>
+			</div>
+			<table className="table table-striped">
+				<thead>
+					<tr>
+						<th>Cedula Escolar</th>
+						<th>Nombre y Apellido</th>
+						<th>grados</th>
+						<th>Acción</th>
+					</tr>
+				</thead>
+				<tbody>
+				{
+					this.state.students.map((row:any)=>{
+						return (
+							<tr key={row._id}>
+								<td><Link to={`/domain/get/objetive/${row._id}`}>{row.name}</Link></td>
+								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e:any)=>{this.deleteField(e)}}>Eliminar</button></td>
+							</tr>
+						);
+					})
+				}
+				</tbody>
+			</table>
 			<h3 className="text-align center">Objetivos de aprendizaje</h3>
 			<div className="flex row">
 				<Link to={`/activities/objetive/create/${this.state.activity._id}`} className="button circle icons x16 add white"></Link>
