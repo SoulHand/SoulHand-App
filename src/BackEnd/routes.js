@@ -2472,6 +2472,40 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions> objeto CRUD
 	*/
+	activityURI.put("/:id/student/:student",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("La actividad no es un id valido!");
+		}
+		if(!Validator.isMongoId()(request.params.student)){
+			throw new ValidatorException("El estudiante no es un id valido!");
+		}
+		Promise.all([app.container.database.Schema.Activities.findOne({_id:request.params.id}),app.container.database.Schema.Students.findOne({_id:request.params.student})]).then((data)=>{
+			if(!data[0]){
+				throw new ValidatorException("No existe la actividad!");
+			}
+			if(!data[1]){
+				throw new ValidatorException("No existe el estudiante!");
+			}
+			data[0].students.forEach((row)=>{
+					if(row._id.toString()==data[1]._id.toString()){
+						throw new ValidatorException("El estudiante ya existe!");
+					}
+			});
+			data[0].students.push(data[1]);
+			return data[0].save();
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {post} /:domain/activities/:type Crear Categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion
+	* @var category<CategoryCoginitions> objeto CRUD
+	*/
 	activityURI.delete("/:id/objetives/:objetive",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var dm;
 		if(!Validator.isMongoId()(request.params.objetive)){
@@ -2536,7 +2570,7 @@ module.exports=function(app,express,server,__DIR__){
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
-		app.container.database.Schema.Activities.findOne({_id:request.params.id}).then(function(rows){
+		app.container.database.Schema.Activities.findOne({_id:request.params.id}).populate("students").then(function(rows){
 			if(!rows){
 				throw new ValidatorException("No existe la actividad!");
 			}
