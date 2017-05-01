@@ -21,6 +21,7 @@ export class Trans extends React.Component<Props.StudentCreate, {error:any,radio
       description:"Es comun que los ruidos del transito terrestre son molestos"
     }
   ];
+	public n:number=this.questions.length;
 	state:{error:any,radio:any,question:{name:string,description:string}}={
 		error:{
 			name:false,
@@ -49,7 +50,7 @@ export class Trans extends React.Component<Props.StudentCreate, {error:any,radio
       if(!this.audition[1]){
         this.audition[1]=0;
       }
-      this.audition[1]+=(num/2);
+      this.audition[1]+=(num/this.n);
       let aud=this.questions.shift();
         this.setState({
           question:aud,

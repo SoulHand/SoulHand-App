@@ -4,17 +4,17 @@ import {ajax} from 'jquery'
 import {withRouter,Link} from 'react-router';
 
 @withRouter
-export class Several extends React.Component<Props.StudentCreate, {error:any,radio:any,question:{name:string,description:string}}>{
+export class Glomery extends React.Component<Props.StudentCreate, {error:any,radio:any,question:{name:string,description:string}}>{
 	public session:users.sessions;
 	public audition:Array<number>=[];
   public questions=[
     {
-      name:"¿Reacciona al tono de un celular?",
-      description:"¿Haz observado en algun momento reaccionar al alumno involuntariamente cuando suena un celular o telefóno?, estos movimientos involuntarios pueden ser producto de un estimulo al sonido producido"
+      name:"¿Canta al compas el himno junto a otras personas?",
+      description:"Canta lo mas coordinado posible a su edad junto a grupos de personas"
     },
     {
-      name:"¿Reacciona al sonido de herramientas electricas?",
-      description:"Una aspiradora, sacapuntas electrico, una podadora o cualquier instrumento electrico que emita un sonido, puede atraer a ciertos niños de su aula"
+      name:"¿Reacciona mientras otros cantan el himno?",
+      description:"Si el alumno observa a otros compañeros mientras canta es posible una ligera reacción del oido"
     }
   ];
 	public n:number=this.questions.length;
@@ -49,16 +49,16 @@ export class Several extends React.Component<Props.StudentCreate, {error:any,rad
     if(str2){
       let audition:Array<number> = JSON.parse(str2);
       this.audition=audition;
-      if(this.audition[1]!=undefined){
-        this.props.router.replace(`/students/get/${this.props.routeParams.id}/physic/sound/asistent/step3`);
+      if(this.audition[3]!=undefined){
+        this.props.router.replace(`/students/get/${this.props.routeParams.id}/physic/sound/asistent/step5`);
       }
     }
 	}
   calValue(num:number){
-      if(!this.audition[0]){
-        this.audition[0]=0;
+      if(!this.audition[2]){
+        this.audition[2]=0;
       }
-      this.audition[0]+=(num/this.n);
+      this.audition[2]+=(num/this.n);
       let aud=this.questions.shift();
         this.setState({
           question:aud,
@@ -66,17 +66,16 @@ export class Several extends React.Component<Props.StudentCreate, {error:any,rad
         });
   }
   completed(){
-		console.log(this.audition);
-    this.audition[0]*=10;
-    this.audition[1]=0;
+    this.audition[2]*=10;
+    this.audition[3]=0;
     sessionStorage.setItem("audition-test",JSON.stringify(this.audition));
-    this.props.router.replace(`/students/get/${this.props.routeParams.id}/physic/sound/asistent/step3`);
+    this.props.router.replace(`/students/get/${this.props.routeParams.id}/physic/sound/asistent/step5`);
   }
 	render () {
     if(this.state.question){
       return (
         <div className="card card-container" style={{marginTop:"5px"}}>
-          <h1>Aparatos electricos</h1>
+          <h1>Ruidos en espacios públicos</h1>
           <p>En esta etapa nos enfocaremos en observar aparatos electricos y como reacciona el alumno ante ciertos sonidos</p>
           <h2>{this.state.question.name}</h2>
           <p className="text-align justify">{this.state.question.description}</p>
@@ -97,7 +96,7 @@ export class Several extends React.Component<Props.StudentCreate, {error:any,rad
     }
     return (
       <div className="card card-container" style={{marginTop:"5px"}}>
-        <h1>Aparatos electricos</h1>
+        <h1>Ruidos en espacios públicos</h1>
         <p>Ya ha sido evaluado aparatos electricos, presione continuar para seguir la evaluación</p>
         <button className="button btn-success" onClick={this.completed.bind(this)}>Continuar</button>
       </div>
