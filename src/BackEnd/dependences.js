@@ -11,9 +11,10 @@ module.exports=function (app){
 	return {
 		database:{
 			db:db,
-			Schema:Schema			
+			Schema:Schema
 		},
 		ErrorHandler:function(error,request,response,next){
+			console.log(error)
 			var body={
 				code:500,
 				message:null
@@ -70,5 +71,5 @@ module.exports=function (app){
 		}),
 		Cognitions:mongoose.Schema({
 			name:{ type : String, trim : true, unique:true},
-		   	code : { type : Number, trim : false, index : true , unique:true }		   	
+		   	code : { type : Number, trim : false, index : true , unique:true }
 		})*/

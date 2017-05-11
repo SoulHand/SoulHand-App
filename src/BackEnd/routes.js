@@ -1720,6 +1720,7 @@ module.exports=function(app,express,server,__DIR__){
 			data.discapacityLevel=140-H;
 			return data.save();
 		}).then(function(data){
+			Events.emit("history-students",`Se ha evaluado la prueba de audición con una perdida de  ${data.discapacityLevel} dB`,data._id);
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -2308,7 +2309,8 @@ module.exports=function(app,express,server,__DIR__){
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions> objeto CRUD
 	*/
-	activityURI.post("/:grade/:course",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	activityURI.post("/:grade/:course",Auth.isTeacherOrNot.bind(app.container),function(request, response,next) {
+		console.log(request)
 		var dm;
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Es requerido un nombre");

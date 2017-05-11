@@ -8,7 +8,7 @@ module.exports.isAdmin=function(request,response,next){
 	}
 	var user=new Token(this.database.Schema.Sessions);
 	var address=request.connection.address() || request.socket.address();
-	var navigator=request.headers['user-agent'];	
+	var navigator=request.headers['user-agent'];
 	user.find({
 		$and:[
 			{publicKeyId:request.query.PublicKeyId},
@@ -18,13 +18,16 @@ module.exports.isAdmin=function(request,response,next){
 			{dateDeleted:null}
 		]
 	}).then(function(data){
+		if(!data){
+			throw new UserException("Credenciales Invalidas!");
+		}
 		if(!data || data.user.isAdmin!=true){
-			throw new UserException('No posee permisos administrativos');			
+			throw new UserException('No posee permisos administrativos');
 		}
 		request.user=data.user;
 		next();
 	}).catch(function(error){
-		next(error);		
+		next(error);
 	})
 }
 module.exports.isUser=function(request,response,next){
@@ -42,11 +45,11 @@ module.exports.isUser=function(request,response,next){
 			{navigator:navigator},
 			{dateDeleted:null}
 		]
-	}).then(function(data){		
+	}).then(function(data){
 		request.user=data.user;
 		next();
 	}).catch(function(error){
-		next(error);		
+		next(error);
 	})
 }
 module.exports.isTeacherOrNot=function(request,response,next){
@@ -65,13 +68,16 @@ module.exports.isTeacherOrNot=function(request,response,next){
 			{dateDeleted:null}
 		]
 	}).then(function(data){
+		if(!data){
+			throw new UserException("Credenciales Invalidas!");
+		}
 		if(data.user.isAdmin!=true && data.user.people.mode!="TEACHER"){
-			throw new UserException('No posee permisos de docente');			
-		}		
+			throw new UserException('No posee permisos de docente');
+		}
 		request.user=data.user;
 		next();
 	}).catch(function(error){
-		next(error);		
+		next(error);
 	})
 }
 module.exports.isTeacher=function(request,response,next){
@@ -91,15 +97,18 @@ module.exports.isTeacher=function(request,response,next){
 			{dateDeleted:null}
 		]
 	}).then(function(data){
+		if(!data){
+			throw new UserException("Credenciales Invalidas!");
+		}
 		if(data.user.people.mode!="TEACHER"){
-			throw new UserException('No posee permisos de docente');			
+			throw new UserException('No posee permisos de docente');
 		}
 		request.user=data.user;
 		return Schema.Teachers.findOne({"data._id":data.user.people._id});
 	}).then(function(data){
 		request.people=data;
-		next();		
+		next();
 	}).catch(function(error){
-		next(error);		
+		next(error);
 	})
 }
