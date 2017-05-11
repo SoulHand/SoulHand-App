@@ -2495,10 +2495,47 @@ module.exports=function(app,express,server,__DIR__){
 					}
 			});
 			data[0].students.push(data[1]);
+			Events.emit("history-students",`ha sido asignada la actividad ${data[0].name}`,data[1]._id);
 			return data[0].save();
 		}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {post} /:domain/activities/:type Crear Categoria cognitiva
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion
+	* @var category<CategoryCoginitions> objeto CRUD
+	*/
+	activityURI.delete("/:id/student/:student",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("La actividad no es un id valido!");
+		}
+		if(!Validator.isMongoId()(request.params.student)){
+			throw new ValidatorException("El estudiante no es un id valido!");
+		}
+		app.container.database.Schema.Activities.findOne({_id:request.params.id}).then((data)=>{
+			if(!data){
+				throw new ValidatorException("No existe la actividad!");
+			}
+			for(var i=0,n=data.students.length;i<n;i++){
+				var row=data.students[i];
+				if(row.toString()==request.params.student){
+					data.students.splice(i,1);
+					Events.emit("history-students",`removida activida ${data.name}`,row);
+					return data.save();
+				}
+			}
+			throw new ValidatorException("No existe el estudiante!");
+		}).then((data)=>{
+			return data.populate("students");
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			console.log(error);
 			next(error);
 		});
 	});

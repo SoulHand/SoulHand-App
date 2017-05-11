@@ -7,6 +7,7 @@ import 'bootstrap';
 
 import './settings';
 import {Home} from './templates/home';
+import {SetActivity} from './templates/setactivity';
 import {Index} from './templates/home/index';
 
 import {Teachers} from './templates/teachers';
@@ -58,6 +59,7 @@ import {DomainObjetive} from './templates/domain/domainobjetive';
 //import {Activities} from './templates/activities';
 import {ActivitiesCreate} from './templates/activities/activitiescreate';
 import {ActivitieView} from './templates/activities/activitieview';
+import {setStudent} from './templates/activities/setstudent';
 import {ObjetiveCreate} from './templates/objetives/objetivecreate';
 import {ObjetiveView} from './templates/objetives/objetiveview';
 
@@ -113,6 +115,9 @@ window.addEventListener("load",()=>{
 		    	<IndexRoute component={ListGrade}/>
 		    	<Route path="get/:id" component={GradeView}/>
 		    	<Route path="create" component={GradeCreate}/>
+		    </Route>
+		    <Route path="/set" component={SetActivity} onEnter={Auth}>
+		    	<Route path="activities/:id/students" component={setStudent}/>
 		    </Route>
 		    <Route path="/parents" component={Parents} onEnter={Auth}>
 		    	<IndexRoute component={ListParent}/>

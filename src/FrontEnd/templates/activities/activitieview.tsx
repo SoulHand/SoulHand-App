@@ -7,15 +7,14 @@ import {TableObjectivesAdd} from '../objetives/tableobjetivesadd'
 
 export class ActivitieView extends React.Component<Props.GenericRouter, states.ActivityView >{
 	public session:users.sessions;
-	public PrivateKeyId:string;
-	public PublicKeyId:string;
 	public fields:compat.Map={};
 	state: states.ActivityView = {
 		activity:null,
 		error:null,
 		grades:[],
 		objetives:[],
-		sugessObjetive:[]
+		sugessObjetive:[],
+		students:[]
 	};
 	constructor(props:Props.GenericRouter) {
 			super(props);
@@ -45,7 +44,8 @@ export class ActivitieView extends React.Component<Props.GenericRouter, states.A
 		}).done((data:crud.activity)=>{
 			this.setState({
 		      activity:data,
-					objetives:data.objetives
+					objetives:data.objetives,
+					students:data.students
 		    });
 		    //activitys.profile
 		});
@@ -102,6 +102,22 @@ export class ActivitieView extends React.Component<Props.GenericRouter, states.A
 	        success:(data:crud.activity)=>{
 			    	this.setState({
 				      	objetives : data.objetives
+				    });
+	        }
+		});
+	}
+	removeStudent(event: any){
+		var element:HTMLElement=event.target;
+		let id:string=element.getAttribute("data-id");
+		ajax({
+			method:"DELETE",
+	        url: `${window.settings.uri}/v1/activities/${this.props.routeParams.id}/student/${id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        dataType: "json",
+	        data:null,
+	        crossDomain:true,
+	        success:(data:crud.activity)=>{
+			    	this.setState({
+				      	students : data.students
 				    });
 	        }
 		});
@@ -183,7 +199,7 @@ export class ActivitieView extends React.Component<Props.GenericRouter, states.A
 			</div>
 			<h3 className="text-align center">Alumnos asignados</h3>
 			<div className="flex row">
-				<Link to={`/activities/objetive/create/${this.state.activity._id}`} className="button circle icons x16 add white"></Link>
+				<Link to={`/set/activities/${this.state.activity._id}/students`} className="button circle icons x16 add white"></Link>
 			</div>
 			<table className="table table-striped">
 				<thead>
@@ -199,8 +215,10 @@ export class ActivitieView extends React.Component<Props.GenericRouter, states.A
 					this.state.students.map((row:any)=>{
 						return (
 							<tr key={row._id}>
-								<td><Link to={`/domain/get/objetive/${row._id}`}>{row.name}</Link></td>
-								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e:any)=>{this.deleteField(e)}}>Eliminar</button></td>
+								<td>{row.data.dni}</td>
+								<td><Link to={`/students/get/${row._id}`}>{row.data.name}</Link></td>
+								<td>{row.grade.name}</td>
+								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e:any)=>{this.removeStudent(e)}}>Eliminar</button></td>
 							</tr>
 						);
 					})

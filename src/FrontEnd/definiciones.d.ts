@@ -11,7 +11,7 @@ interface codeError{
 	code:string
 	message:string
 }
-declare namespace crud{	
+declare namespace crud{
 	interface physics{
 		height: number
 		weight:number
@@ -74,7 +74,7 @@ declare namespace crud{
 		grade:grade
 		course: grade
   		_id: string
-  		student: Array<peoples.students>
+  		students: Array<peoples.students>
   		dateCreated: string
   		isCompleted: Boolean
   		objetives: Array<objetive>
@@ -183,6 +183,12 @@ declare namespace Props{
 	}
 	interface tableaddobjetive{
 		objetives:Array<crud.objetive>
+		session?:users.sessions
+		callback:Function
+		activity:string
+	}
+	interface tableaddstudent{
+		students:Array<peoples.students>
 		session?:users.sessions
 		callback:Function
 		activity:string
@@ -321,6 +327,7 @@ declare namespace states{
 		activity:crud.activity
 		objetives:Array<crud.objetive>
 		sugessObjetive:Array<crud.objetive>
+		students:Array<peoples.students>
 	}
 	interface MatterList{
 		matters:Array<crud.courses>

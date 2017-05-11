@@ -6,8 +6,6 @@ import {withRouter} from 'react-router';
 @withRouter
 export class ActivitiesCreate extends React.Component<Props.GenericRouter, states.MatterList> {
 	public session:users.sessions;
-	public PrivateKeyId:string;
-	public PublicKeyId:string;
 	public fields:compat.Map={
 		name:{
 			match:(fn:string)=>{
@@ -92,7 +90,7 @@ export class ActivitiesCreate extends React.Component<Props.GenericRouter, state
 		      matters:data
 		    });
 		})
-	}	
+	}
 	send(event:any){
 		event.preventDefault();
 		var data=this.validate();
