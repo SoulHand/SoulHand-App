@@ -22,6 +22,8 @@ module.exports=function (app){
 			if(error instanceof Exception){
 				body.code=error.code;
 				status=error.status;
+			}else{
+				console.log(error);
 			}
 			body.message=error.toString();
 			logger.error(body);
