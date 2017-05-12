@@ -1,11 +1,22 @@
-var express = require('express');  
-var app = express();  
+var express = require('express');
+const logger = require('winston');
+var app = express();
 var path = require('path');
+const fs = require('fs');
 var server = require('http').Server(app);
 var bodyParser = require('body-parser');
 var multer = require('multer'); // v1.0.5
 var upload = multer(); // for parsing multipart/form-data
 //Global Config
+try {
+	fs.accessSync( __dirname+'/logs');
+} catch (e) {
+	fs.mkdirSync( __dirname+'/logs');
+}
+
+logger.level = 'debug';
+logger.add(logger.transports.File, { filename: __dirname+'/logs/server.log' });
+
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(upload.array()); // for parsing application/x-www-form-urlencoded
@@ -24,7 +35,7 @@ require('./src/BackEnd/testInit.js')(app,express,server,__dirname);
 
 server.listen(app.settings.port || 8080, function() {
 	var addr = server.address();
-	console.log("Chat server listening at", addr.address + ":" + addr.port);
+	logger.debug("Chat server listening at", addr.address + ":" + addr.port)
 });
 
 if(app.container.ErrorHandler){

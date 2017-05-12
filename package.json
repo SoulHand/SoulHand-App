@@ -64,7 +64,8 @@
     "string-validator": "^1.0.5",
     "typings": "^2.1.0",
     "uuid": "^3.0.1",
-    "validator": "^7.0.0"
+    "validator": "^7.0.0",
+    "winston": "^2.3.1"
   },
   "keywords": [
     "LVS",

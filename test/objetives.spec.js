@@ -22,7 +22,7 @@ describe("Test route knowedge cognitions",function(){
 			name:faker.name.findName(),
 			description:"mensaje",
 			levels:[find],
-			cognitions:[self.cognition,self.cognition2]
+			cognitions:[self.cognition, self.cognition2]
 		});
 		self.objetive=new self.db.schema.LearningObjetive({
 			name:faker.name.findName(),
@@ -72,7 +72,24 @@ describe("Test route knowedge cognitions",function(){
 				}
 			]
 		});
-		Promise.all([utils.insertSession(self.db), category.save(),self.objetive.save(),self.event.save(),self.event2.save()]).then(function(data){
+		self.event3 = new self.db.schema.events({
+			name:"OBJETIVES-ADD-COGNITIONS",
+			objects:{
+				p1:"data[1].name",
+				p2:"data[1].description",
+				p3:"data[1].level.level",
+				p4:"data[1].domain.name",
+				p5:"cognitions",
+				p6:"addcognitions"
+			},
+			premises:[
+				{
+					premise:`this.isContaint(p1,["alcanzar"]) || this.isContaint(p2,["Alcanzar"])`,
+					consecuent:`q1="ADD: ${self.cognition._id}"`
+				}
+			]
+		});
+		Promise.all([utils.insertSession(self.db), category.save(),self.objetive.save(),self.event.save(),self.event2.save(), self.event3.save()]).then(function(data){
 			user=data[0]
 			done();
 		}).catch(function(error){
@@ -111,8 +128,8 @@ describe("Test route knowedge cognitions",function(){
 			done();
 		});
 	});
-	it("POST /v1/knowedge/:domain/objetives/:level",function(done){
-		utils.runApp("POST",`/v1/knowedge/${category.name}/objetives/${find.name}/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
+	it("POST /v1/knowedge/objetives/",function(done){
+		utils.runApp("POST",`/v1/knowedge/objetives/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
 			form:{
 				name:"correr 200 mts",
 				description:"Alcanzar los 200mts sin parar"
@@ -139,8 +156,8 @@ describe("Test route knowedge cognitions",function(){
 			done();
 		});
 	});
-	it("PUT /v1/knowedge/:domain/objetives/:level/:id/cognitions/:cognition",function(done){
-		utils.runApp("PUT",`/v1/knowedge/${category.name}/objetives/${find.name}/${self.objetive._id}/cognitions/${self.cognition._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
+	it("PUT /v1/knowedge/:domain/objetives/:id/cognitions/:cognition",function(done){
+		utils.runApp("PUT",`/v1/knowedge/objetives/${self.objetive._id}/cognitions/${self.cognition._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
 			response=JSON.parse(response);
 			expect(response.cognitions.length).toBe(2);
 			expect(response.cognitions[1].name).toBe(self.cognition.name);

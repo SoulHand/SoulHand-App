@@ -1,5 +1,6 @@
 var User=require("./SoulHand/User.js");
 var VoidException=require("./SoulHand/Exceptions/VoidException.js");
+const logger = require('winston');
 
 module.exports=function(app,express,server,__DIR__){
 	const uuidV4 = require('uuid/v4');
@@ -21,7 +22,7 @@ module.exports=function(app,express,server,__DIR__){
 					people:people
 				});
 			}).then(function(data){
-				console.log("No existe usuario root, el sistema ha insertado un usuario\nUsuario:"+data.username+"\npassword:"+password)
+				logger.debug("No existe usuario root, el sistema ha insertado un usuario\nUsuario:"+data.username+"\npassword:"+password);
 			})
 		}
 	});

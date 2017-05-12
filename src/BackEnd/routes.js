@@ -17,6 +17,8 @@ var VoidException=require('./SoulHand/Exceptions/VoidException.js');
 var UserException=require('./SoulHand/Exceptions/UserException.js');
 var basicAuth = require('basic-auth-connect');
 var Auth = require('./SoulHand/Auth.js');
+const logger = require('winston');
+
 
 module.exports=function(app,express,server,__DIR__){
 	var Events = require('./SoulHand/inferencia/events.js')(app.container.database.Schema);
@@ -308,7 +310,7 @@ module.exports=function(app,express,server,__DIR__){
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
 	learningURI.delete("/domain/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
+		var category = new CategoryCoginitions(app.container.database.Schema.domainsLearning);
 		category.remove({_id:request.params.id}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -656,7 +658,6 @@ module.exports=function(app,express,server,__DIR__){
 					p4:row[0].level.name,
 					p5:addcognitions
 				});
-				console.log(querys);
 				if(!querys){
 					return row[0].save();
 				}
@@ -2188,7 +2189,6 @@ module.exports=function(app,express,server,__DIR__){
 		}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
-			console.log(error.toString());
 			next(error);
 		});
 	});
@@ -2310,7 +2310,6 @@ module.exports=function(app,express,server,__DIR__){
 	* @var category<CategoryCoginitions> objeto CRUD
 	*/
 	activityURI.post("/:grade/:course",Auth.isTeacherOrNot.bind(app.container),function(request, response,next) {
-		console.log(request)
 		var dm;
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Es requerido un nombre");
@@ -2431,7 +2430,6 @@ module.exports=function(app,express,server,__DIR__){
 		}).then((data)=>{
 			response.send(data);
 		}).catch(function(error){
-			console.log(error)
 			next(error);
 		});
 	});
@@ -2537,7 +2535,6 @@ module.exports=function(app,express,server,__DIR__){
 		}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
-			console.log(error);
 			next(error);
 		});
 	});

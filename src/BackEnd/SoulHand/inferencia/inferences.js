@@ -97,11 +97,11 @@ class Inferences extends EventEmitter{
 		eval(consecuent);
 		return vars;
 	}
-	propagation(premises,var_globals){
+	propagation(premises, var_globals){
 		var results=var_globals.map((row)=>{
 			return this.ChainGetOne(premises,row);
 		});
 		return results;
 	}
 }
-module.exports=Inferences;
+module.exports = Inferences;

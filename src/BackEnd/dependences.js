@@ -1,5 +1,6 @@
 var mongoose= require('mongoose');
 var Exception=require("./SoulHand/Exceptions/Exception.js");
+const logger = require('winston');
 
 module.exports=function (app){
 	var db = mongoose.createConnection(app.settings.database.dns);
@@ -14,7 +15,6 @@ module.exports=function (app){
 			Schema:Schema
 		},
 		ErrorHandler:function(error,request,response,next){
-			console.log(error)
 			var body={
 				code:500,
 				message:null
@@ -24,6 +24,7 @@ module.exports=function (app){
 				status=error.status;
 			}
 			body.message=error.toString();
+			logger.error(body);
 			response.status(status).send(body);
 		}
 	};
