@@ -1,9 +1,11 @@
-var Exception=require('./Exception.js');
-function VoidException(message){
-	this.superConstructor = Exception
-	this.superConstructor(message);
-	this.code='100';
-	this.status=204;
+var Exception = require('./Exception.js')
+
+class VoidException extends Exception {
+  constructor (msg) {
+    super(msg)
+    this.code = '100'
+    this.code = 204
+  }
 }
-VoidException.prototype=new Exception();
-module.exports=VoidException;
+
+module.exports = VoidException

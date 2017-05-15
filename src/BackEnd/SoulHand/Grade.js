@@ -1,14 +1,10 @@
-var CRUD=require('./CRUD.js');
+var CRUD = require('./CRUD.js')
 
-function Grade(db){
-	var self=this;
-	this.superConstructor = CRUD;
-	this.superConstructor(db);
-	var add=this.add.bind(this);
-	this.add=function(name){
-		var query={name:name};
-		return add(query,query);
-	}
+class Grade extends CRUD {
+  add (name) {
+    var query = {name: name}
+    return super.add(query, query)
+  }
 }
-Grade.prototype=new CRUD();
-module.exports=Grade;
+
+module.exports = Grade

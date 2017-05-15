@@ -1,242 +1,292 @@
-var Grade=require("./SoulHand/Grade.js");
-var Course=require("./SoulHand/Course.js");
-var Period=require("./SoulHand/Period.js");
-var People=require("./SoulHand/People.js");
-var Activities=require("./SoulHand/Activities.js");
-var SubPeople=require("./SoulHand/SubPeople.js");
-var Cognitions=require("./SoulHand/Cognitions.js");
-var Habilities=require("./SoulHand/Habilities.js");
-var ConflictCognitions=require("./SoulHand/ConflictCognitions.js");
-var CategoryCoginitions=require("./SoulHand/CategoryCoginitions.js");
-var CRUD=require("./SoulHand/CRUD.js");
-var User=require("./SoulHand/User.js");
-var Token=require("./SoulHand/Token.js");
-var Validator=require('string-validator');
-var ValidatorException=require('./SoulHand/Exceptions/ValidatorException.js');
-var VoidException=require('./SoulHand/Exceptions/VoidException.js');
-var UserException=require('./SoulHand/Exceptions/UserException.js');
-var basicAuth = require('basic-auth-connect');
-var Auth = require('./SoulHand/Auth.js');
-const logger = require('winston');
+var Grade = require('./SoulHand/Grade.js')
+// var Period = require('./SoulHand/Period.js')
+var People = require('./SoulHand/People.js')
+var SubPeople = require('./SoulHand/SubPeople.js')
+var CategoryCoginitions = require('./SoulHand/CategoryCoginitions.js')
+var CRUD = require('./SoulHand/CRUD.js')
+var User = require('./SoulHand/User.js')
+var Token = require('./SoulHand/Token.js')
+var Validator = require('string-validator')
+var ValidatorException = require('./SoulHand/Exceptions/ValidatorException.js')
+var VoidException = require('./SoulHand/Exceptions/VoidException.js')
+var UserException = require('./SoulHand/Exceptions/UserException.js')
+// var basicAuth = require('basic-auth-connect')
+// const logger = require('winston')
+var Auth = require('./SoulHand/Auth.js')
 
+module.exports = function (app, express, server, __DIR__) {
+  let Schema = app.container.database.Schema
+  let Events = require('./SoulHand/inferencia/events.js')(Schema)
+  /*
+  * Ruta /v1/grades
+  * @var gradeURI object enrutador para agrupar metodos
+  */
+  let gradeURI = express.Router()
+  /*
+  * @api {post} / Crear grado
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
 
-module.exports=function(app,express,server,__DIR__){
-	var Events = require('./SoulHand/inferencia/events.js')(app.container.database.Schema);
-	/*
-	* Ruta /v1/grades
-	* @var gradeURI object enrutador para agrupar metodos
-	*/
-	var gradeURI = express.Router();
-	/*
-	* @api {post} / Crear grado
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var grade<Grade>	objeto CRUD
-	*/
-	gradeURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var grade=new Grade(app.container.database.Schema.Grades);
-		if(Validator.isNull()(request.body.name)){
-			throw new ValidatorException("El nombre solo debe contener letras");
-		}
-		grade.add(request.body.name.toString()).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} / Obtener todos los grados
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var grade<Grade>	objeto CRUD
-	*/
-	gradeURI.get("/",function(request, response,next) {
-		app.container.database.Schema.Grades.find().then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} /:id Obtener un grado especifico
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var grade<Grade>	objeto CRUD
-	*/
-	gradeURI.get("/:id",function(request, response,next) {
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("El id es invalido!");
-		}
-		app.container.database.Schema.Grades.findOne({_id:request.params.id}).then(function(data){
-			if(!data){
-				throw new ValidatorException("No existe el grado!");
-			}
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {put} /:id Editar un grado
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var grade<Grade>	objeto CRUD
-	*/
-	gradeURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var grade=new Grade(app.container.database.Schema.Grades);
-		if(Validator.isNull()(request.body.name)){
-			throw new ValidatorException("El nombre solo debe contener letras o numeros");
-		}
-		grade.update({_id:request.params.id},function(obj){
-			obj.name=request.body.name;
-			return obj;
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {delete} /:id Eliminar un grado
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var grade<Grade>	objeto CRUD
-	*/
-	gradeURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var grade=new Grade(app.container.database.Schema.Grades);
-		grade.remove({_id:request.params.id}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	app.use("/v1/grades",gradeURI);
+  gradeURI.post('/', Auth.isAdmin.bind(app.container),
+    function (request, response, next) {
+      if (Validator.isNull()(request.body.name)) {
+        throw new ValidatorException('El nombre solo debe contener letras')
+      }
+      Schema.Grades
+        .findOne({name: request.body.name.toString()})
+        .then((data) => {
+          if (data) {
+            throw new ValidatorException('El nombre del grado ya existe!')
+          }
+          let grade = new Schema.Grades({
+            name: request.body.name
+          })
+          return grade.save()
+        })
+        .then((data) => {
+          response.send(data)
+        })
+        .catch((error) => {
+          next(error)
+        })
+    })
 
-	/*
-	* Ruta /v1/courses
-	* @var courseURI object enrutador para agrupar metodos
-	*/
-	var courseURI = express.Router();
-	/*
-	* @api {post} / Crear materia
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var course<Course>	objeto CRUD
-	*/
-	courseURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var course=new Course(app.container.database.Schema.Courses);
-		if(Validator.isNull()(request.body.name)){
-			throw new ValidatorException("El nombre solo debe contener letras");
-		}
-		course.add(request.body.name).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} / Obtener todas las materias
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var course<Course>	objeto CRUD
-	*/
-	courseURI.get("/",function(request, response,next) {
-		app.container.database.Schema.Courses.find().then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} /:id Obtener una materia
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var course<Course>	objeto CRUD
-	*/
-	courseURI.get("/:id",function(request, response,next) {
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("El id es invalido!");
-		}
-		app.container.database.Schema.Courses.findOne({_id:request.params.id}).then(function(data){
-			if(!data){
-				throw new ValidatorException("No existe la materia!");
-			}
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {put} /:id Editar materia
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var course<Course>	objeto CRUD
-	*/
-	courseURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var course=new Course(app.container.database.Schema.Courses);
-		if(Validator.isNull()(request.body.name)){
-			throw new ValidatorException("El nombre solo debe contener letras");
-		}
-		course.update({_id:request.params.id},function(obj){
-			obj.name=request.body.name;
-			return obj;
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {delete} /:id Eliminar una materia
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var course<Course>	objeto CRUD
-	*/
-	courseURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var course=new Course(app.container.database.Schema.Courses);
-		course.remove({_id:request.params.id}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	app.use("/v1/courses",courseURI);
+  /*
+  * @api {get} / Obtener todos los grados
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  gradeURI.get('/', function (request, response, next) {
+    Schema.Grades.find().then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
 
-	/*
-	* Ruta /v1/learning
-	* @var learningURI object enrutador para agrupar metodos
-	*/
-	var learningURI = express.Router();
-	/*
-	* Ruta /v1/learning/domain
+  /*
+  * @api {get} /:id Obtener un grado especifico
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  gradeURI.get('/:id', function (request, response, next) {
+    if (!Validator.isMongoId()(request.params.id)) {
+      throw new ValidatorException('El id es invalido!')
+    }
+    Schema.Grades.findOne({_id: request.params.id}).then((data) => {
+      if (!data) {
+        throw new ValidatorException('No existe el grado!')
+      }
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
 
-	* @api {post} / Crear dominio del aprendizaje
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions> objeto CRUD
-	*/
-	learningURI.post("/domain/",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
-		if(Validator.isNull()(request.body.name)){
-			throw new ValidatorException("Solo se aceptan textos categoricos");
-		}
-		category.add(request.body.name.toUpperCase(),request.body).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
+  /*
+  * @api {put} /:id Editar un grado
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  gradeURI.put('/:id', Auth.isAdmin.bind(app.container),
+    function (request, response, next) {
+      if (Validator.isNull()(request.body.name)) {
+        throw new ValidatorException(
+          'El nombre solo debe contener letras o numeros'
+        )
+      }
+      if (!Validator.isMongoId()(request.params.id)) {
+        throw new ValidatorException('El id es invalido')
+      }
+      Schema.Grades.findOne({_id: request.params.id}).then((data) => {
+        if (!data) {
+          throw new ValidatorException('No existe el grado!')
+        }
+        data.name = request.body.name
+        return data.save()
+      }).then((data) => {
+        response.send(data)
+      }).catch((error) => {
+        next(error)
+      })
+    })
+
+  /*
+  * @api {delete} /:id Eliminar un grado
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  gradeURI.delete('/:id', Auth.isAdmin.bind(app.container),
+    function (request, response, next) {
+      Schema.Grades.findOne({_id: request.params.id}).then((data) => {
+        if (!data) {
+          throw new ValidatorException('No existe el grado!')
+        }
+        return data.remove()
+      }).then((data) => {
+        response.send(data)
+      }).catch((error) => {
+        next(error)
+      })
+    })
+
+  app.use('/v1/grades', gradeURI)
+
+  /*
+  * Ruta /v1/courses
+  * @var courseURI object enrutador para agrupar metodos
+  */
+  var courseURI = express.Router()
+
+  /*
+  * @api {post} / Crear materia
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  courseURI.post('/', Auth.isAdmin.bind(app.container),
+    function (request, response, next) {
+      if (Validator.isNull()(request.body.name)) {
+        throw new ValidatorException('El nombre solo debe contener letras')
+      }
+      Schema.Courses.findOne({name: request.body.name.toUpperCase()})
+      .then((data) => {
+        if (data) {
+          throw new ValidatorException('Ya existe el nombre de la materia')
+        }
+        let course = new Schema.Courses({
+          name: request.body.name
+        })
+        return course.save()
+      }).then((data) => {
+        response.send(data)
+      }).catch((error) => {
+        next(error)
+      })
+    })
+
+  /*
+  * @api {get} / Obtener todas las materias
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  courseURI.get('/', function (request, response, next) {
+    Schema.Courses.find().then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+  /*
+  * @api {get} /:id Obtener una materia
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  courseURI.get('/:id', function (request, response, next) {
+    if (!Validator.isMongoId()(request.params.id)) {
+      throw new ValidatorException('El id es invalido!')
+    }
+    Schema.Courses.findOne({_id: request.params.id}).then((data) => {
+      if (!data) {
+        throw new ValidatorException('No existe la materia!')
+      }
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+  /*
+  * @api {put} /:id Editar materia
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  courseURI.put('/:id', Auth.isAdmin.bind(app.container),
+    function (request, response, next) {
+      if (Validator.isNull()(request.body.name)) {
+        throw new ValidatorException('El nombre solo debe contener letras')
+      }
+      Schema.Courses.findOne({_id: request.params.id}).then((obj) => {
+        if (!obj) {
+          throw new ValidatorException('No existe la materia!')
+        }
+        obj.name = request.body.name
+        return obj.save()
+      }).then((data) => {
+        response.send(data)
+      }).catch((error) => {
+        next(error)
+      })
+    })
+
+  /*
+  * @api {delete} /:id Eliminar una materia
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  courseURI.delete('/:id', Auth.isAdmin.bind(app.container),
+  function (request, response, next) {
+    Schema.Courses.findOne({_id: request.params.id}).then((data) => {
+      if (!data) {
+        throw new ValidatorException('No existe la materia!')
+      }
+      return data.remove()
+    }).then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  app.use('/v1/courses', courseURI)
+
+  /*
+  * Ruta /v1/learning
+  * @var learningURI object enrutador para agrupar metodos
+  */
+  var learningURI = express.Router()
+
+  /*
+  * Ruta /v1/learning/domain
+
+  * @api {post} / Crear dominio del aprendizaje
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  * @var category<CategoryCoginitions> objeto CRUD
+  */
+  learningURI.post('/domain/', Auth.isAdmin.bind(app.container),
+    function (request, response, next) {
+      if (Validator.isNull()(request.body.name)) {
+        throw new ValidatorException('Solo se aceptan textos categoricos')
+      }
+      Schema.domainsLearning.findOne({name: request.body.name.toUpperCase()})
+      .then((data) => {
+        let DomainLearning = Schema.domainsLearning
+        if (data) {
+          throw new ValidatorException('Ya existe ')
+        }
+        let domain = new DomainLearning({
+          name: request.body.name,
+          description: request.body.description
+        })
+        return domain.save()
+      }).then((data) => {
+        response.send(data)
+      }).catch((error) => {
+        next(error)
+      })
+    })
+
 	/*
 	* @api {get} / Obtener todas los dominios del aprendizaje
 	* @params request peticiones del cliente

@@ -1,14 +1,9 @@
-var CRUD=require('./CRUD.js');
+var CRUD = require('./CRUD.js')
 
-function CategoryCoginitions(db){
-	var self=this;
-	this.superConstructor = CRUD;
-	this.superConstructor(db);
-	var add=this.add.bind(this);
-	this.add=function(name,input){
-		var query={name:name};
-		return add(query,input);
-	}
+class CategoryCoginitions extends CRUD {
+  add (name, input) {
+    return super.add({name: name}, input)
+  }
 }
-CategoryCoginitions.prototype=new CRUD();
-module.exports=CategoryCoginitions;
+
+module.exports = CategoryCoginitions

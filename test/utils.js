@@ -18,7 +18,7 @@ module.exports.dropDatabase=function(done){
 	var db=this.db;
 	db.db.dropDatabase(function(){
 		db.db.close(function(){
-			done();				
+			done();
 		});
 	});
 }
@@ -65,8 +65,9 @@ module.exports.insertSession=insertSession;
 
 
 module.exports.runApp=function(method,uri,args){
-	var express = require('express');  
-	var app = express();  
+	var express = require('express');
+  const logger = require('winston')
+	var app = express();
 	var path = require('path');
 	var server = require('http').Server(app);
 	var bodyParser = require('body-parser');
@@ -80,13 +81,13 @@ module.exports.runApp=function(method,uri,args){
 	app.settings.database.dns=app.settings.database.dnsTest;
 	//process.env.NODE_ENV = 'production';
 	/* Dependences */
-	app.container=require('../src/BackEnd/dependences.js')(app);
+	app.container=require('../src/BackEnd/dependences.js')(app, __dirname + '/../');
 
 	//middleware
-	require('../src/BackEnd/middleware.js')(app,express,server,__dirname);
+	require('../src/BackEnd/middleware.js')(app,express,server,  __dirname + '/../');
 
 	/* Routes */
-	require('../src/BackEnd/routes.js')(app,express,server,__dirname);
+	require('../src/BackEnd/routes.js')(app,express,server,  __dirname + '/../');
 
 
 	if(app.container.ErrorHandler){
@@ -107,10 +108,12 @@ module.exports.runApp=function(method,uri,args){
 				if(error){ reject(error)}
 				app.container.database.db.close(function(){
 					server.close(function(){
-						complete(response);
+            logger.remove(logger.transports.File,
+            {filename: path.join(uri, '/server.log')})
+						complete(response)
 					});
 				})
-			})			
+			})
 		})
 		return p2;
 	});

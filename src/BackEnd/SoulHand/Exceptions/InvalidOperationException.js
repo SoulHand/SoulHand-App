@@ -1,9 +1,11 @@
-var Exception=require('./Exception.js');
-function InvalidOperationException(message){
-	this.superConstructor = Exception
-	this.superConstructor(message);
-	this.code='100';
-	this.status=400;
+var Exception = require('./Exception.js')
+
+class InvalidOperationException extends Exception {
+  constructor (msg) {
+    super(msg)
+    this.code = '100'
+    this.code = 400
+  }
 }
-InvalidOperationException.prototype=new Exception();
-module.exports=InvalidOperationException;
+
+module.exports = InvalidOperationException

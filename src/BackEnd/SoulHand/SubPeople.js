@@ -1,13 +1,9 @@
-var CRUD=require('./CRUD.js');
+var CRUD = require('./CRUD.js')
 
-function SubPeople(db){
-	var self=this;
-	this.superConstructor = CRUD;
-	this.superConstructor(db);
-	var add=this.add.bind(this);
-	this.add=function(input){
-		return add({"data.dni":input.data.dni},input);
-	}
+class SubPeople extends CRUD {
+  add (input) {
+    return super.add({'data.dni': input.dni}, input)
+  }
 }
-SubPeople.prototype=new CRUD();
-module.exports=SubPeople;
+
+module.exports = SubPeople

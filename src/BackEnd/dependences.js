@@ -1,78 +1,44 @@
-var mongoose= require('mongoose');
-var Exception=require("./SoulHand/Exceptions/Exception.js");
-const logger = require('winston');
+var mongoose = require('mongoose')
+var Exception = require('./SoulHand/Exceptions/Exception.js')
+const logger = require('winston')
+var path = require('path')
+const fs = require('fs')
 
-module.exports=function (app){
-	var db = mongoose.createConnection(app.settings.database.dns);
-	var structDb=require("./models.js");
-	var Schema={};
-	for( var i in structDb){
-		Schema[i]=db.model(i, structDb[i]);
-	}
-	return {
-		database:{
-			db:db,
-			Schema:Schema
-		},
-		ErrorHandler:function(error,request,response,next){
-			var body={
-				code:500,
-				message:null
-			},status=500;
-			if(error instanceof Exception){
-				body.code=error.code;
-				status=error.status;
-			}else{
-				console.log(error);
-			}
-			body.message=error.toString();
-			logger.error(body);
-			response.status(status).send(body);
-		}
-	};
+module.exports = function (app, __DIR__) {
+  var db = mongoose.createConnection(app.settings.database.dns)
+  var structDb = require('./models.js')
+  var Schema = {}
+  for (var i in structDb) {
+    Schema[i] = db.model(i, structDb[i])
+  }
+  let uri = path.join(__DIR__, '/logs')
+  try {
+    fs.accessSync(uri)
+  } catch (e) {
+    fs.mkdirSync(uri)
+  }
+  logger.level = 'debug'
+  logger.add(logger.transports.File,
+  {filename: path.join(uri, '/server.log')})
+
+  return {
+    database: {
+      db: db,
+      Schema: Schema
+    },
+    ErrorHandler: function (error, request, response, next) {
+      var body = {
+        code: 500,
+        message: null
+      }
+      var status = 500
+      if (error instanceof Exception) {
+        body.code = error.code
+        status = error.status
+      }
+      body.message = error.toString()
+      logger.error(error)
+      response.status(status).send(body)
+    }
+  }
 }
-		/*
-		Account:mongoose.Schema({
-			name:{ type : String, trim : true , unique:true},
-		   	code : { type : Number, trim : false, index : true , unique:true },
-		   	admin:Boolean,
-		   	read:Boolean,
-		   	create:Boolean,
-		   	update:Boolean,
-		   	delete:Boolean,
-		   	developer:Boolean
-		}),
-		User:mongoose.Schema({
-			username:{ type : String, trim : true, index : true , unique:true},
-		   	password : { type : String, trim : false },
-		   	typeAccount:Object,
-		   	sessions:Array,
-		   	data:Object
-		}),
-		Sessions:mongoose.Schema({
-			privateKey:{ type : String, trim : true, index : true , unique:true},
-		   	ip : { type : String, trim : false },
-		   	navigator : { type : String, trim : false },
-		   	User:Object
-		}),
-		Themes:mongoose.Schema({
-			name:{ type : String, trim : true, unique:true},
-		   	code : { type : Number, trim : false, index : true , unique:true },
-		   	idCourse:String
-		}),
-		Activities:mongoose.Schema({
-			name:{ type : String, trim : true, unique:true},
-		   	code : { type : Number, trim : false, index : true , unique:true },
-		   	course:Object,
-		   	theme:Object,
-		   	cognitions:Array
-		}),
-		Course:mongoose.Schema({
-			name:{ type : String, trim : true, unique:true},
-		   	code : { type : Number, trim : false, index : true , unique:true },
-		   	Themes:Object
-		}),
-		Cognitions:mongoose.Schema({
-			name:{ type : String, trim : true, unique:true},
-		   	code : { type : Number, trim : false, index : true , unique:true }
-		})*/

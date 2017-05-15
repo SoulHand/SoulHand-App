@@ -1,48 +1,57 @@
-var InsertException=require("./Exceptions/InsertException.js");
-var Exception=require("./Exceptions/Exception.js");
-var VoidException=require("./Exceptions/VoidException.js");
+var InsertException = require('./Exceptions/InsertException.js')
+var Exception = require('./Exceptions/Exception.js')
 
-function CRUD(db){
-	this.add=function(query,input){
-		var p1=db.findOne(query).exec().then(function(data){
-			if(data){
-				throw new InsertException("No se puede insertar un registro duplicado");
-			}
-			var grade= new db(input);
-			return grade.save();
-		});
-		return p1;
-	};
-	this.find=function(query){
-		var p1=db.findOne(query).then(function(data){
-			if(!data){
-				throw new Exception("No existe un registro de este tipo");
-			}
-			return data;
-		});
-		return p1;
-	};
-	this.get=function(query){
-		var p1=db.find(query).then(function(data){
-			if(data.length==0){
-				throw new VoidException("No existe un resultado de busqueda");
-			}
-			return data;
-		});
-		return p1;
-	};
-	this.update=function(query,callback){
-		var p1=this.find(query).then(function(data){
-			var replace=callback(data);
-			return replace.save();
-		});
-		return p1;
-	};
-	this.remove=function(query){
-		var p1=this.find(query).then(function(data){
-			return data.remove();
-		});
-		return p1;
-	};
+class CRUD {
+
+  constructor (db) {
+    this._db = db
+  }
+
+  add (query, input) {
+    let p1 = this._db.findOne(query).exec().then((data) => {
+      if (data) {
+        throw new InsertException('No se puede insertar un registro duplicado')
+      }
+      let addValue = new this._db(input)
+      return addValue.save()
+    })
+    return p1
+  }
+
+  find (query) {
+    let p1 = this._db.findOne(query).exec().then((data) => {
+      if (!data) {
+        throw new Exception('No existe un registro de este tipo')
+      }
+      return data
+    })
+    return p1
+  }
+
+  get (query) {
+    let p1 = this._db.find(query).exec().then((data) => {
+      if (data.length === 0) {
+        throw new Exception('No existe un registro de este tipo')
+      }
+      return data
+    })
+    return p1
+  }
+
+  update (query, callback) {
+    let p1 = this.find(query).then((data) => {
+      let replace = callback(data)
+      return replace.save()
+    })
+    return p1
+  }
+
+  remove (query) {
+    let p1 = this.find(query).then((data) => {
+      return data.remove()
+    })
+    return p1
+  }
 }
-module.exports=CRUD;
+
+module.exports = CRUD

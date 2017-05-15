@@ -1,12 +1,15 @@
-function Exception(msg){
-	var message=msg;
-	this.code='000';
-	this.status=500;
-	this.setMessage=function(txt){
-		message=txt;
-	}
-	this.toString=function(){
-		return message;
-	}
+class Exception extends Error {
+
+  constructor (msg) {
+    super(msg)
+    this.code = '000'
+    this.status = 500
+    this.message = msg
+  }
+
+  toString () {
+    return this.message
+  }
 }
-module.exports=Exception;
+
+module.exports = Exception

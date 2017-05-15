@@ -1,9 +1,11 @@
-var Exception=require('./Exception.js');
-function ValidatorException(message){
-	this.superConstructor = Exception
-	this.superConstructor(message);
-	this.code='130';
-	this.status=400;
+var Exception = require('./Exception.js')
+
+class ValidatorException extends Exception {
+  constructor (msg) {
+    super(msg)
+    this.code = '130'
+    this.code = 400
+  }
 }
-ValidatorException.prototype=new Exception();
-module.exports=ValidatorException;
+
+module.exports = ValidatorException

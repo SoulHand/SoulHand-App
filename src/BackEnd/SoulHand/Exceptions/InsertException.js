@@ -1,9 +1,11 @@
-var Exception=require('./Exception.js');
-function InsertException(message){
-	this.superConstructor = Exception
-	this.superConstructor(message);
-	this.code='110';
-	this.status=400;
+var Exception = require('./Exception.js')
+
+class InsertException extends Exception {
+  constructor (msg) {
+    super(msg)
+    this.code = '110'
+    this.code = 400
+  }
 }
-InsertException.prototype=new Exception();
-module.exports=InsertException;
+
+module.exports = InsertException

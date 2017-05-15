@@ -1,9 +1,10 @@
-var Exception=require('./Exception.js');
-function GradeException(message){
-	this.superConstructor = Exception
-	this.superConstructor(message);
-	this.code='101';
-	this.status=400;
+var Exception = require('./Exception.js')
+
+class GradeException extends Exception {
+  constructor (msg) {
+    super(msg)
+    this.code = '101'
+    this.code = 400
+  }
 }
-GradeException.prototype=new Exception();
-module.exports=GradeException;
+module.exports = GradeException
