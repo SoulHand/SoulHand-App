@@ -428,97 +428,103 @@ module.exports = function (app, express, server, __DIR__) {
     })
   })
 
-	/*
-	* @api {get} / Obtener todas las categorias cognitivas
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	cognitions.get("/:domain/cognitions",function(request, response,next) {
-		if(Validator.isNull()(request.params.domain)){
-			throw new ValidatorException("Solo se aceptan dominios validos");
-		}
-		app.container.database.Schema.domainsLearning.findOne({name:request.params.domain.toUpperCase()}).then(function(row){
-			if(!row){
-				throw new ValidatorException("No existe el dominio!");
-			}
-			response.send(row.cognitions);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} /:name Obtener una categoria cognitiva
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	cognitions.get("/:domain/cognitions/:id",function(request, response,next) {
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("El id no es valido!");
-		}
-		app.container.database.Schema.domainsLearning.findOne({name:request.params.domain.toUpperCase()}).then(function(data){
-			if(!data){
-				throw new ValidatorException("No existe el dominio!");
-			}
-			for (var i=0,n=data.cognitions.length;i<n;i++){
-				if(data.cognitions[i]._id.toString()==request.params.id.toString()){
-					response.send(data.cognitions[i]);
-					return;
-				}
-			}
-			throw new VoidException("No existe la función cognitiva!");
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {put} /:id Editar categoria cognitiva
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	cognitions.put("/:domain/cognitions/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("El id es invalido!");
-		}
-		if(!Validator.isNull()(request.body.words)){
-			throw new ValidatorException("Este campo no es valido!");
-		}
-		category.update({name:request.params.domain.toUpperCase()},function(obj){
-			var findElement=false;
-			obj.cognitions=obj.cognitions.map(function(row){
-				if(request.params.id==row._id){
-					findElement=true;
-					for(var i=0,keys=Object.keys(row.schema.obj),n=keys.length;i<n;i++){
-						if(request.body[keys[i]]){
-							row[keys[i]]=request.body[keys[i]];
-						}
-					}
-				}
-				return row;
-			});
-			if(!findElement){
-				throw VoidException("No existe el registro!");
-			}
-			return obj;
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {delete} /:id Eliminar una categoria cognitiva
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
+  /*
+  * @api {get} / Obtener todas las categorias cognitivas
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  cognitions.get('/:domain/cognitions',
+  function (request, response, next) {
+    if (Validator.isNull()(request.params.domain)) {
+      throw new ValidatorException('Solo se aceptan dominios validos')
+    }
+    app.container.database.Schema.domainsLearning
+    .findOne({name: request.params.domain.toUpperCase()}).then((row) => {
+      if (!row) {
+        throw new ValidatorException('No existe el dominio!')
+      }
+      response.send(row.cognitions)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  /*
+  * @api {get} /:name Obtener funcion cognitiva
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  cognitions.get('/:domain/cognitions/:id', function (request, response, next) {
+    if (!Validator.isMongoId()(request.params.id)) {
+      throw new ValidatorException('El id no es valido!')
+    }
+    app.container.database.Schema.domainsLearning
+    .findOne({name: request.params.domain.toUpperCase()}).then((data) => {
+      if (!data) {
+        throw new ValidatorException('No existe el dominio!')
+      }
+      for (var i = 0, n = data.cognitions.length; i < n; i++) {
+        if (data.cognitions[i]._id.toString() === request.params.id.toString()) {
+          response.send(data.cognitions[i])
+          return
+        }
+      }
+      throw new VoidException('No existe la función cognitiva!')
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  /*
+  * @api {put} /:id Editar categoria cognitiva
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  cognitions.put('/:domain/cognitions/:id', Auth.isAdmin.bind(app.container),
+  function (request, response, next) {
+    if (!Validator.isMongoId()(request.params.id)) {
+      throw new ValidatorException('El id es invalido!')
+    }
+    if (!Validator.isNull()(request.body.words)) {
+      throw new ValidatorException('Este campo no es valido!')
+    }
+    Schema.domainsLearning.findOne({name: request.params.domain.toUpperCase()})
+    .then((data) => {
+      if (!data) {
+        throw new ValidatorException('No existe el dominio!')
+      }
+      let add = true
+      data.cognitions = data.cognitions.map((row) => {
+        if (request.params.id === row._id.toString()) {
+          add = false
+          for (var i in row.schema.obj) {
+            if (request.body[i]) {
+              row[i] = request.body[i]
+            }
+          }
+        }
+        return row
+      })
+      if (add) {
+        throw new ValidatorException('Ya existe una funcion cognitiva igual!')
+      }
+      return data.save()
+    }).then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  /*
+  * @api {delete} /:id Eliminar una categoria cognitiva
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
 	cognitions.delete("/:domain/cognitions/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
 		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
 		category.update({name:request.params.domain.toUpperCase()},function(obj){
