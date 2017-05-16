@@ -380,41 +380,54 @@ module.exports = function (app, express, server, __DIR__) {
 
   app.use('/v1/learning/domain', learningURI)
 
-	/*
-	* Ruta /v1/knowedge
-	* @var cognitions object enrutador para agrupar metodos
-	*/
-	var cognitions = express.Router();
-	/*
-	* @api {post} / Crear Categoria cognitiva
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions> objeto CRUD
-	*/
-	cognitions.post("/:domain/cognitions",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
-		if(Validator.isNull()(request.body.name)){
-			throw new ValidatorException("Solo se aceptan textos categoricos");
-		}
-		if(Validator.isNull()(request.body.description)){
-			throw new ValidatorException("Es necesario una breve descripción");
-		}
-		if(Validator.isNull()(request.params.domain)){
-			throw new ValidatorException("Solo se aceptan dominios validos");
-		}
-		domain.find({name:request.params.domain.toUpperCase()}).then(function(row){
-			row.cognitions.push(app.container.database.Schema.Cognitions({
-				name:request.body.name.toUpperCase(),
-				description:request.body.description.toUpperCase()
-			}));
-			return row.save();
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
+  /*
+  * Ruta /v1/knowedge/:domain/cognitions
+  * @var cognitions object enrutador para agrupar metodos
+  */
+  var cognitions = express.Router()
+
+  /*
+  * @api {post} / Crear Categoria cognitiva
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  * @var category<CategoryCoginitions> objeto CRUD
+  */
+  cognitions.post('/:domain/cognitions', Auth.isAdmin.bind(app.container),
+  function (request, response, next) {
+    if (Validator.isNull()(request.body.name)) {
+      throw new ValidatorException('Solo se aceptan textos categoricos!')
+    }
+    if (Validator.isNull()(request.body.description)) {
+      throw new ValidatorException('Es necesario una breve descripción!')
+    }
+    if (Validator.isNull()(request.params.domain)) {
+      throw new ValidatorException('Solo se aceptan dominios validos!')
+    }
+    Schema.domainsLearning.findOne({
+      name: request.params.domain.toUpperCase()
+    }).then((data) => {
+      if (!data) {
+        throw new ValidatorException('No existe el dominio!')
+      }
+      let cognition = new Schema.Cognitions({
+        name: request.body.name.toUpperCase(),
+        description: request.body.description.toUpperCase()
+      })
+      data.cognitions.forEach((row) => {
+        if (row.name === cognition.name) {
+          throw new ValidatorException('Ya existe una funcion cognitiva igual!')
+        }
+      })
+      data.cognitions.push(cognition)
+      return data.save()
+    }).then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
 	/*
 	* @api {get} / Obtener todas las categorias cognitivas
 	* @params request peticiones del cliente
