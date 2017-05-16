@@ -264,7 +264,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params next middleware dispara la proxima funcion
   * @var category<CategoryCoginitions> objeto CRUD
   */
-  learningURI.post('/domain/', Auth.isAdmin.bind(app.container),
+  learningURI.post('/', Auth.isAdmin.bind(app.container),
     function (request, response, next) {
       if (Validator.isNull()(request.body.name)) {
         throw new ValidatorException('Solo se aceptan textos categoricos')
@@ -287,87 +287,98 @@ module.exports = function (app, express, server, __DIR__) {
       })
     })
 
-	/*
-	* @api {get} / Obtener todas los dominios del aprendizaje
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	learningURI.get("/domain/",function(request, response,next) {
-		app.container.database.Schema.domainsLearning.find().then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} /:name Obtener un dominio del aprendizaje
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	learningURI.get("/domain/:id",function(request, response,next) {
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("El id es invalido!");
-		}
-		app.container.database.Schema.domainsLearning.findOne({_id:request.params.id}).then(function(data){
-			if(!data){
-				throw new ValidatorException("No existe el dominio!");
-			}
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {put} /:id Editar categoria cognitiva
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	learningURI.put("/domain/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("El id es invalido!");
-		}
-		if(request.body.name && Validator.isNull()(request.body.name)){
-			throw new ValidatorException("Solo se aceptan textos categoricos");
-		}
-		if(request.body.description && Validator.isNull()(request.body.description)){
-			throw new ValidatorException("Solo se aceptan textos categoricos");
-		}
-		category.update({_id:request.params.id},function(row){
-			for(var i=0,keys=Object.keys(row.schema.obj),n=keys.length;i<n;i++){
-				if(request.body[keys[i]]){
-					row[keys[i]]=request.body[keys[i]];
-				}
-			}
-			return row;
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {delete} /:id Eliminar una categoria cognitiva
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	learningURI.delete("/domain/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category = new CategoryCoginitions(app.container.database.Schema.domainsLearning);
-		category.remove({_id:request.params.id}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	app.use("/v1/learning",learningURI);
+  /*
+  * @api {get} / Obtener todas los dominios del aprendizaje
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  learningURI.get('/', function (request, response, next) {
+    Schema.domainsLearning.find().then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  /*
+  * @api {get} /:name Obtener un dominio del aprendizaje
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  learningURI.get('/:id', function (request, response, next) {
+    if (!Validator.isMongoId()(request.params.id)) {
+      throw new ValidatorException('El id es invalido!')
+    }
+    Schema.domainsLearning.findOne({_id: request.params.id}).then((data) => {
+      if (!data) {
+        throw new ValidatorException('No existe el dominio!')
+      }
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  /*
+  * @api {put} /:id Editar un dominio del aprendizaje
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  learningURI.put('/:id', Auth.isAdmin.bind(app.container),
+  function (request, response, next) {
+    if (!Validator.isMongoId()(request.params.id)) {
+      throw new ValidatorException('El id es invalido!')
+    }
+    if (request.body.name && Validator.isNull()(request.body.name)) {
+      throw new ValidatorException('Solo se aceptan textos categoricos')
+    }
+    if (request.body.description &&
+    Validator.isNull()(request.body.description)) {
+      throw new ValidatorException('Solo se aceptan textos categoricos')
+    }
+    Schema.domainsLearning.findOne({_id: request.params.id}).then((row) => {
+      if (!row) {
+        throw new ValidatorException('No existe el dominio!')
+      }
+      for (var i in row.schema.obj) {
+        if (request.body[i]) {
+          row[i] = request.body[i]
+        }
+      }
+      return row.save()
+    }).then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+  /*
+  * @api {delete} /:id Eliminar una categoria cognitiva
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  learningURI.delete('/:id', Auth.isAdmin.bind(app.container),
+  function (request, response, next) {
+    if (!Validator.isMongoId()(request.params.id)) {
+      throw new ValidatorException('El id es invalido!')
+    }
+    Schema.domainsLearning.findOne({_id: request.params.id}).then((data) => {
+      if (!data) {
+        throw new ValidatorException('No existe el dominio!')
+      }
+      return data.remove()
+    }).then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  app.use('/v1/learning/domain', learningURI)
 
 	/*
 	* Ruta /v1/knowedge
