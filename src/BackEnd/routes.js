@@ -525,80 +525,89 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-	cognitions.delete("/:domain/cognitions/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
-		category.update({name:request.params.domain.toUpperCase()},function(obj){
-			for(i in obj.cognitions){
-				if(obj.cognitions[i]._id.toString()==request.params.id.toString()){
-					obj.cognitions[i].remove();
-					break;
-				}
-			}
-			return obj;
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {post} / Crear Categoria cognitiva
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions> objeto CRUD
-	*/
-	cognitions.post("/:domain/level/",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
-		if(Validator.isNull()(request.body.name)){
-			throw new ValidatorException("Solo se aceptan textos categoricos");
-		}
-		if(!Validator.isNumeric()(request.body.level)){
-			throw new ValidatorException("El nivel es numerico");
-		}
-		domain.find({name:request.params.domain.toUpperCase()}).then(function(row){
-			var level= new app.container.database.Schema.nivelDomain({
-				name:request.body.name.toUpperCase(),
-				level:request.body.level
-			});
-			row.levels.forEach((row)=>{
-				if(row.level==level.level || row.name == level.name){
-					throw new ValidatorException("ya existe un registro con similares descripciones!");
-				}
-			});
-			row.levels.push(level);
-			return row.save();
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} / Obtener todas las categorias cognitivas
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	cognitions.get("/:domain/level/",function(request, response,next) {
-		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
-		if(Validator.isNull()(request.params.domain)){
-			throw new ValidatorException("Solo se aceptan dominios validos");
-		}
-		domain.find({name:request.params.domain.toUpperCase()}).then(function(row){
-			response.send(row.levels);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} /:name Obtener una categoria cognitiva
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
+  cognitions.delete('/:domain/cognitions/:id', Auth.isAdmin.bind(app.container),
+    function (request, response, next) {
+      Schema.domainsLearning.findOne({
+        name: request.params.domain.toUpperCase()
+      }).then((obj) => {
+        if (!obj) {
+          throw new ValidatorException('No existe el dominio')
+        }
+        for (var i in obj.cognitions) {
+          if (obj.cognitions[i]._id.toString() === request.params.id.toString()) {
+            obj.cognitions[i].remove()
+            break
+          }
+        }
+        return obj.save()
+      }).then((data) => {
+        response.send(data)
+      }).catch((error) => {
+        next(error)
+      })
+    })
+
+  /*
+  * @api {post} / Crear un nivel de aprendizaje
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  cognitions.post('/:domain/level/', Auth.isAdmin.bind(app.container),
+    function (request, response, next) {
+      if (Validator.isNull()(request.body.name)) {
+        throw new ValidatorException('Solo se aceptan textos categoricos')
+      }
+      if (!Validator.isNumeric()(request.body.level)) {
+        throw new ValidatorException('El nivel es numerico')
+      }
+      Schema.domainsLearning.findOne({name: request.params.domain.toUpperCase()})
+      .then((row) => {
+        let Domain = Schema.nivelDomain
+        var level = new Domain({
+          name: request.body.name.toUpperCase(),
+          level: request.body.level
+        })
+        row.levels.forEach((level2) => {
+          if (level2.level === level.level || level2.name === level.name) {
+            throw new ValidatorException('Ya existe un nivel similar!')
+          }
+        })
+        row.levels.push(level)
+        return row.save()
+      }).then((data) => {
+        response.send(data)
+      }).catch((error) => {
+        next(error)
+      })
+    })
+
+  /*
+  * @api {get} / Obtener todas los niveles de aprendizaje de un dominio
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  cognitions.get('/:domain/level/',
+    function (request, response, next) {
+      if (Validator.isNull()(request.params.domain)) {
+        throw new ValidatorException('Solo se aceptan dominios validos')
+      }
+      Schema.domainsLearning.findOne({name: request.params.domain.toUpperCase()})
+      .then((data) => {
+        response.send(data.levels)
+      }).catch((error) => {
+        next(error)
+      })
+    })
+
+  /*
+  * @api {get} /:name Obtener una categoria cognitiva
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  * @var category<CategoryCoginitions>	objeto CRUD
+  */
 	cognitions.get("/:domain/level/:id",function(request, response,next) {
 		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
 		if(!Validator.isMongoId()(request.params.id)){
