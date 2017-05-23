@@ -5,7 +5,6 @@ import 'jquery';
 import 'tether';
 import 'bootstrap';
 
-import './settings';
 import {Home} from './templates/home';
 import {SetActivity} from './templates/setactivity';
 import {Index} from './templates/home/index';

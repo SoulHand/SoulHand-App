@@ -1,4 +1,5 @@
-var webpack = require('webpack');
+var webpack = require('webpack')
+var path = require('path')
 
 module.exports = {
   entry: {
@@ -34,7 +35,8 @@ module.exports = {
        Tether:"tether",
        React: "react",
        ReactDOM: "react-dom",
-       ReactRouter: "react-router"
+       ReactRouter: "react-router",
+       'window.settings': path.join(__dirname, 'src/FrontEnd/settings.js')
     }),
     // new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js'),
     /*new webpack.optimize.UglifyJsPlugin({
