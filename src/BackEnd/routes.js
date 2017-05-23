@@ -3,7 +3,6 @@ var Grade = require('./SoulHand/Grade.js')
 var People = require('./SoulHand/People.js')
 var SubPeople = require('./SoulHand/SubPeople.js')
 var CategoryCoginitions = require('./SoulHand/CategoryCoginitions.js')
-var CRUD = require('./SoulHand/CRUD.js')
 var User = require('./SoulHand/User.js')
 var Token = require('./SoulHand/Token.js')
 var Validator = require('string-validator')
@@ -35,7 +34,7 @@ module.exports = function (app, express, server, __DIR__) {
         throw new ValidatorException('El nombre solo debe contener letras')
       }
       Schema.Grades
-        .findOne({name: request.body.name.toString()})
+        .findOne({name: request.body.name.toUpperCase()})
         .then((data) => {
           if (data) {
             throw new ValidatorException('El nombre del grado ya existe!')
@@ -381,13 +380,13 @@ module.exports = function (app, express, server, __DIR__) {
   app.use('/v1/learning/domain', learningURI)
 
   /*
-  * Ruta /v1/knowedge/:domain/cognitions
+  * Ruta /v1/knowedge
   * @var cognitions object enrutador para agrupar metodos
   */
   var cognitions = express.Router()
 
   /*
-  * @api {post} / Crear Categoria cognitiva
+  * @api {post} /:domain/cognitions Crear funcion cognitiva
   * @params request peticiones del cliente
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
@@ -429,7 +428,7 @@ module.exports = function (app, express, server, __DIR__) {
   })
 
   /*
-  * @api {get} / Obtener todas las categorias cognitivas
+  * @api {get} /:domain/cognitions Obtener todas las funcion cognitiva
   * @params request peticiones del cliente
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
@@ -451,7 +450,7 @@ module.exports = function (app, express, server, __DIR__) {
   })
 
   /*
-  * @api {get} /:name Obtener funcion cognitiva
+  * @api {get} /:domain/cognitions/:id Obtener funcion cognitiva
   * @params request peticiones del cliente
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
@@ -478,7 +477,7 @@ module.exports = function (app, express, server, __DIR__) {
   })
 
   /*
-  * @api {put} /:id Editar categoria cognitiva
+  * @api {put} /:domain/cognitions/:id Editar funcion cognitiva
   * @params request peticiones del cliente
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
@@ -520,7 +519,7 @@ module.exports = function (app, express, server, __DIR__) {
   })
 
   /*
-  * @api {delete} /:id Eliminar una categoria cognitiva
+  * @api {delete} /:domain/cognitions/:id Eliminar una funcion cognitiva
   * @params request peticiones del cliente
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
@@ -606,877 +605,932 @@ module.exports = function (app, express, server, __DIR__) {
   * @params request peticiones del cliente
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
-  * @var category<CategoryCoginitions>	objeto CRUD
   */
-	cognitions.get("/:domain/level/:id",function(request, response,next) {
-		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("El id no es valido!");
-		}
-		domain.find({name:request.params.domain.toUpperCase()}).then(function(data){
-			for (var i=0,n=data.levels.length;i<n;i++){
-				if(data.levels[i]._id.toString()==request.params.id.toString()){
-					response.send(data.levels[i]);
-					return;
-				}
-			}
-			throw new VoidException("No existe un resultado!");
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {delete} /:id Eliminar una categoria cognitiva
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	cognitions.delete("/:domain/level/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
-		category.update({name:request.params.domain.toUpperCase()},function(obj){
-			for(i in obj.levels){
-				if(obj.levels[i]._id.toString()==request.params.id.toString()){
-					obj.levels[i].remove();
-					break;
-				}
-			}
-			return obj;
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
+  cognitions.get('/:domain/level/:id', function (request, response, next) {
+    if (!Validator.isMongoId()(request.params.id)) {
+      throw new ValidatorException('El id no es valido!')
+    }
+    Schema.domainsLearning.findOne({name: request.params.domain.toUpperCase()})
+    .then((data) => {
+      for (var i = 0, n = data.levels.length; i < n; i++) {
+        if (data.levels[i]._id.toString() === request.params.id.toString()) {
+          return data.levels[i]
+        }
+      }
+      throw new VoidException('No existe un resultado')
+    }).then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
 
-	/*
-	* @api {post} /:domain/objetives/:type Crear Categoria cognitiva
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions> objeto CRUD
-	*/
-	cognitions.post("/objetives/",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var domain=new CategoryCoginitions(app.container.database.Schema.domainsLearning);
-		var dm;
-		if(Validator.isNull()(request.body.name)){
-			throw new ValidatorException("Es requerido un nombre");
-		}
-		if(Validator.isNull()(request.body.description)){
-			throw new ValidatorException("Es necesaria una description");
-		}
-		request.body.name=request.body.name.toUpperCase();
-		request.body.description=request.body.description.toUpperCase();
-		app.container.database.Schema.LearningObjetive.findOne({name:request.body.name}).then((row)=>{
-			if(row){
-				throw new ValidatorException("Ya existe un objetivo con el mismo nombre!");
-			}
-			return Events.get("OBJETIVES-ADD");
-		}).then((data)=>{
-			if(!data){
-				var helpEvent=new app.container.database.Schema.events({
-					name:"OBJETIVES-ADD",
-					objects:{
-						p1:"request.body.name",
-						p2:"request.body.description"
-					}
-				});
-				helpEvent.save();
-				return false;
-			}
-			var querys=Events.ChainGetAll(data.premises,{
-				p1:request.body.name,
-				p2:request.body.description
-			});
-			if(querys.length==0){
-				return false;
-			}
-			var value={};
-			querys=querys.forEach((row)=>{
-				for(var i in row){
-					value[i]=row[i];
-				}
-			});
-			if(!value.q1 || !value.q2){
-				return false;
-			}
-			return Promise.all([domain.find({name:value.q1}),value.q2]);
-		}).then((row)=>{
-			if(!row || !row[0]){
-				throw new ValidatorException("No existe el dominio en la base de hechos!");
-			}
-			for(var i in row[0].levels){
-				if(row[0].levels[i].name ==row[1]){
-					return Promise.all([row[0],row[0].levels[i]]);
-				}
-			}
-			throw new ValidatorException("No existe el nivel de aprendizaje");
-		}).then((row)=>{
-			var p1=new app.container.database.Schema.LearningObjetive({
-				name:request.body.name,
-				description:request.body.description,
-				domain:row[0],
-				level:row[1]
-			});
-			return Promise.all([p1,Events.get("OBJETIVES-COGNITION"),row[0]]);
-			//return p1.save();
-		}).then((row)=>{
-			if(!row[1]){
-				var helpEvent=new app.container.database.Schema.events({
-					name:"OBJETIVES-COGNITION",
-					objects:{
-						p1:"data[1].name",
-						p2:"data[1].description",
-						p3:"data[1].domain.name",
-						p4:"data[1].level.name",
-						p5:"addcognitions"
-					}
-				});
-				helpEvent.save();
-				return row[0].save();
-			}
-			var event=row[1];
-			while(true){
-				var addcognitions=row[0].cognitions.map((row)=>{
-					return row.name;
-				});
-				var querys=Events.ChainGetAllBucle(event.premises,{
-					p1:row[0].name,
-					p2:row[0].description,
-					p3:row[0].domain.name,
-					p4:row[0].level.name,
-					p5:addcognitions
-				});
-				if(!querys){
-					return row[0].save();
-				}
-				querys.forEach((data)=>{
-					if(/ADD\:/ig.test(data.q1)){
-						var str=data.q1.replace(/ADD\:/ig,'');
-						for(var i=0,n=row[2].cognitions.length;i<n;i++){
-							if(row[2].cognitions[i].name==str){
-								var add=true;
-								row[0].cognitions.forEach((row2)=>{
-									if(row2._id==str){
-										add=false;
-										return;
-									}
-								});
-								if(!add){
-									continue;
-								}
-								row[0].cognitions.push(row[2].cognitions[i]);
-							}
-						}
-					}
-					if(/DELETE\:/ig.test(data.q1)){
-						var str=data.q1.replace(/DELETE\:/ig);
-						row[0].cognitions.forEach((row2)=>{
-							if(row2._id.toString()==str){
-								row2.remove();
-							}
-						});
-					}
-				});
-			}
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} / Obtener todas las categorias cognitivas
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	cognitions.get("/:domain/objetives/:level",function(request, response,next) {
-		app.container.database.Schema.LearningObjetive.find({"domain.name":request.params.domain.toString(),"level.name":request.params.level.toString()}).then(function(rows){
-			response.send(rows);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} / Obtener todas las categorias cognitivas
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	cognitions.get("/objetives/:id",function(request, response,next) {
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("El id es invalido!");
-		}
-		app.container.database.Schema.LearningObjetive.findOne({_id:request.params.id }).then(function(rows){
-			if(!rows){
-				throw new Validator("No existe el objetivo de aprendizaje");
-			}
-			response.send(rows);
-		}).catch(function(error){
-			next(error);
-		});
-	});
+  /*
+  * @api {delete} /:id Eliminar un nivel de aprendizaje
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  cognitions.delete('/:domain/level/:id', Auth.isAdmin.bind(app.container),
+    function (request, response, next) {
+      if (!Validator.isMongoId()(request.params.id)) {
+        throw new ValidatorException('EL id no es valido!')
+      }
+      Schema.domainsLearning.findOne({name: request.params.domain.toUpperCase()})
+      .then((data) => {
+        if (!data) {
+          throw new ValidatorException('No existe el dominio!')
+        }
+        for (var i in data.levels) {
+          if (data.levels[i]._id.toString() === request.params.id.toString()) {
+            data.levels[i].remove()
+            break
+          }
+        }
+        return data.save()
+      }).catch((error) => {
+        next(error)
+      })
+    })
 
-	/*
-	* @api {put} /:id Editar categoria cognitiva
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	cognitions.put("/:domain/objetives/:level/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("El id es invalido!");
-		}
-		app.container.database.Schema.LearningObjetive.findOne({"domain.name":request.params.domain.toString(),"level.name":request.params.level.toString(), _id:request.params.id }).then(function(rows){
-			for(var i=0,keys=Object.keys(row.schema.obj),n=keys.length;i<n;i++){
-				if(request.body[keys[i]]){
-					row[keys[i]]=request.body[keys[i]];
-				}
-			}
-			return row.save();
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {put} /:id Editar categoria cognitiva
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	cognitions.put("/objetives/:id/cognitions/:cognition",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		if(!Validator.isMongoId()(request.params.id)|| !Validator.isMongoId()(request.params.cognition)){
-			throw new ValidatorException("El id es invalido!");
-		}
-		app.container.database.Schema.LearningObjetive.findOne({_id:request.params.id }).then(function(row){
-			if(!row){
-				throw new ValidatorException("No existe el objetivo!");
-			}
-			return Promise.all([Events.get("OBJETIVES-ADD-COGNITIONS"),row,app.container.database.Schema.domainsLearning.findOne({_id:row.domain._id})]);
-		}).then((row)=>{
-			if(!row[2]){
-				throw new ValidatorException("No existe el dominio del objetivo!");
-			}
-			for(var i=0,n=row[2].cognitions.length;i<n;i++){
-				if(row[2].cognitions[i]._id.toString()==request.params.cognition){
-					return Promise.all([row[0],row[1],row[2].cognitions[i],row[2].cognitions]);
-				}
-			}
-			throw new ValidatorException("No existe la funcion cognitiva!");
-		}).then((data)=>{
-			if(!data[0]){
-				var helpEvent=new app.container.database.Schema.events({
-					name:"OBJETIVES-ADD-COGNITIONS",
-					objects:{
-						p1:"data[1].name",
-						p2:"data[1].description",
-						p3:"data[1].level.level",
-						p4:"data[1].domain.name",
-						p5:"cognitions",
-						p6:"addcognitions"
-					}
-				});
-				helpEvent.save();
-				throw new ValidatorException("No existe inferencias!");
-			}
-			var event=data[0];
-			var addcognitions=data[1].cognitions.map((row)=>{
-				return row.name;
-			});
-			var querys=Events.ChainGetAll(event.premises,{
-				p1:data[1].name,
-				p2:data[1].description,
-				p3:data[1].level.level,
-				p4:data[1].domain.name,
-				p5:cognitions,
-				p6:addcognitions,
-				p7:data[2].name
-			});
-			data[1].cognitions.forEach((row)=>{
-				if(row._id==data[0]._id){
-					throw new ValidatorException("ya existe el registro")
-				}
-			});
-			data[1].cognitions.push(data[2]);
-			querys.forEach((row)=>{
-				if(/Error\:/ig.test(row.q1)){
-					throw new ValidatorException(row.q1);
-				}
-				if(/ADD\:/ig.test(row.q1)){
-					var str=row.q1.replace(/ADD\:/ig);
-					for(var i=0,n=data[3].cognitions.length;i<n;i++){
-						if(data[3].cognitions[i]._id.toString()==str){
-							var add=true;
-							data[1].cognitions.forEach((row2)=>{
-								if(row2._id==str){
-									add=false;
-									return;
-								}
-							});
-							if(!add){
-								continue;
-							}
-							data[1].cognitions.push(data[3].cognitions[i]);
-						}
-					}
-				}
-				if(/DELETE\:/ig.test(row.q1)){
-					var str=row.q1.replace(/DELETE\:/ig);
-					data[1].cognitions.forEach((row2)=>{
-						if(row2._id.toString()==str){
-							row2.remove();
-						}
-					});
-				}
-			});
-			return data[1].save();
-		}).then((rows)=>{
-			response.send(rows);
-		}).catch(function(error){
-			next(error);
-		});
+  /*
+  * @api {post} /objetives/ Crear objetivo de aprendizaje
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  * @var category<CategoryCoginitions> objeto CRUD
+  */
+  cognitions.post('/objetives/', Auth.isAdmin.bind(app.container),
+  function (request, response, next) {
+    if (Validator.isNull()(request.body.name)) {
+      throw new ValidatorException('Es requerido un nombre')
+    }
+    if (Validator.isNull()(request.body.description)) {
+      throw new ValidatorException('Es necesaria una description')
+    }
+    request.body.name = request.body.name.toUpperCase()
+    request.body.description = request.body.description.toUpperCase()
 
+    Schema.LearningObjetive.findOne({name: request.body.name}).then((row) => {
+      if (row) {
+        throw new ValidatorException('Ya existe un objetivo con el mismo nombre!')
+      }
+      return Events.get('OBJETIVES-ADD')
+    }).then((data) => {
+      if (!data) {
+        var EventClass = Schema.events
+        var helpEvent = new EventClass({
+          name: 'OBJETIVES-ADD',
+          objects: {
+            p1: 'request.body.name',
+            p2: 'request.body.description'
+          }
+        })
+        helpEvent.save()
+        return false
+      }
+      var querys = Events.ChainGetAll(data.premises, {
+        p1: request.body.name,
+        p2: request.body.description
+      })
+      if (querys.length === 0) {
+        return false
+      }
+      var value = {}
+      querys = querys.forEach((row) => {
+        for (var i in row) {
+          value[i] = row[i]
+        }
+      })
+      if (!value.q1 || !value.q2) {
+        return false
+      }
+      return Promise.all([
+        Schema.domainsLearning.findOne({name: value.q1}),
+        value.q2
+      ])
+    }).then((row) => {
+      if (!row || !row[0]) {
+        throw new ValidatorException(
+          'No existe el dominio en la base de hechos!'
+        )
+      }
+      for (var i in row[0].levels) {
+        if (row[0].levels[i].name === row[1]) {
+          return Promise.all([row[0], row[0].levels[i]])
+        }
+      }
+      throw new ValidatorException('No existe el nivel de aprendizaje')
+    }).then((row) => {
+      var p1 = new Schema.LearningObjetive({
+        name: request.body.name,
+        description: request.body.description,
+        domain: row[0],
+        level: row[1]
+      })
+      return Promise.all([p1, Events.get('OBJETIVES-COGNITION'), row[0]])
+    }).then((row) => {
+      if (!row[1]) {
+        var EventClass = Schema.events
+        var helpEvent = new EventClass({
+          name: 'OBJETIVES-COGNITION',
+          objects: {
+            p1: 'data[1].name',
+            p2: 'data[1].description',
+            p3: 'data[1].domain.name',
+            p4: 'data[1].level.name',
+            p5: 'addcognitions'
+          }
+        })
+        helpEvent.save()
+        return row[0].save()
+      }
+      var event = row[1]
+      while (true) {
+        var addcognitions = row[0].cognitions.map((row) => {
+          return row.name
+        })
+        var querys = Events.ChainGetAllBucle(event.premises, {
+          p1: row[0].name,
+          p2: row[0].description,
+          p3: row[0].domain.name,
+          p4: row[0].level.name,
+          p5: addcognitions
+        })
+        if (!querys) {
+          return row[0].save()
+        }
+        querys.forEach((data) => {
+          if (/ADD:/ig.test(data.q1)) {
+            let str = data.q1.replace(/ADD:/ig, '')
+            for (var i = 0, n = row[2].cognitions.length; i < n; i++) {
+              if (row[2].cognitions[i].name === str) {
+                var add = true
+                row[0].cognitions.forEach((row2) => {
+                  if (row2._id === str) {
+                    add = false
+                    return
+                  }
+                })
+                if (!add) {
+                  continue
+                }
+                row[0].cognitions.push(row[2].cognitions[i])
+              }
+            }
+          }
+          if (/DELETE:/ig.test(data.q1)) {
+            let str = data.q1.replace(/DELETE:/ig)
+            row[0].cognitions.forEach((row2) => {
+              if (row2._id.toString() === str) {
+                row2.remove()
+              }
+            })
+          }
+        })
+      }
+    }).then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
 
-		/*
-		Promise.all([app.container.database.Schema.LearningObjetive.findOne({"domain.name":request.params.domain.toString(),"level.name":request.params.level.toString(), _id:request.params.id }),app.container.database.Schema.domainsLearning.findOne({name:request.params.domain.toUpperCase()})]).then(function(row){
-			if(!row[0]){
-				throw new ValidatorException("No existe el objetivo!");
-			}
-			if(!row[1]){
-				throw new ValidatorException("No existe el dominio!");
-			}
-			for(var i in row[1].cognitions){
-				if(row[1].cognitions[i]._id.toString()==request.params.cognition.toString()){
-					row[0].cognitions.push(row[1].cognitions[i]);
-					return row[0].save();
-				}
-			}
-			throw new ValidatorException("No existe la funcion cognitiva!");
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});*/
-	});
+/*
+* @api {get} /:domain/objetives/:level Obtener todos los objetivos de un nivel
+* y dominio valido
+* @params request peticiones del cliente
+* @params response respuesta del servidor
+* @params next middleware dispara la proxima funcion
+*/
+  cognitions.get('/:domain/objetives/:level',
+  function (request, response, next) {
+    app.container.database.Schema.LearningObjetive.find({
+      'domain.name': request.params.domain.toString(),
+      'level.name': request.params.level.toString()
+    }).then((rows) => {
+      response.send(rows)
+    }).catch((error) => {
+      next(error)
+    })
+  })
 
-	/*
-	* @api {delete} /:id Eliminar una categoria cognitiva
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	cognitions.delete("/:domain/objetives/:level/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("El id es invalido!");
-		}
-		app.container.database.Schema.LearningObjetive.findOne({"domain.name":request.params.domain.toString(),"level.name":request.params.level.toString(), _id:request.params.id }).then(function(obj){
-			return obj.remove();
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	app.use("/v1/knowedge",cognitions);
+  /*
+  * @api {get} / Obtener un objetivo de aprendizaje
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  cognitions.get('/objetives/:id',
+  function (request, response, next) {
+    if (!Validator.isMongoId()(request.params.id)) {
+      throw new ValidatorException('El id es invalido!')
+    }
+    Schema.LearningObjetive.findOne({_id: request.params.id}).then((rows) => {
+      if (!rows) {
+        throw new Validator('No existe el objetivo de aprendizaje')
+      }
+      response.send(rows)
+    }).catch((error) => {
+      next(error)
+    })
+  })
 
-	var weightURI = express.Router();
-	/*
-	* Ruta /v1/physic/static/weight
+  /*
+  * @api {put} /objetives/:id Editar un objetivo
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  cognitions.put('/objetives/:id',
+  Auth.isAdmin.bind(app.container), function (request, response, next) {
+    if (!Validator.isMongoId()(request.params.id)) {
+      throw new ValidatorException('El id es invalido!')
+    }
+    app.container.database.Schema.LearningObjetive.findOne({
+      _id: request.params.id
+    }).then((row) => {
+      for (var i in row.schema.obj) {
+        if (request.body[i]) {
+          row[i] = request.body[i]
+        }
+      }
+      return row.save()
+    }).then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
 
-	* @api {post} / Crear dominio del aprendizaje
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions> objeto CRUD
-	*/
-	weightURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CRUD(app.container.database.Schema.weights);
-		if(!Validator.isFloat()(request.body.height) || !Validator.isFloat()(request.body.min) || !Validator.isFloat()(request.body.max)){
-			throw new ValidatorException("Solo se aceptan numeros");
-		}
-		if((request.body.max-request.body.min)<=0 || request.body.min==0 || request.body.max==0){
-			throw new ValidatorException("El rango de pesos es invalido");
-		}
-		if(request.body.genero && request.body.genero.toUpperCase()!="MASCULINO" && request.body.genero.toUpperCase()!="FEMENINO" ){
-			throw new ValidatorException("El genero es invalido");
-		}
-		var genero=request.body.genero.toUpperCase();
-		category.add({height:request.body.height,genero:genero},{
-			height:request.body.height,
-			min:request.body.min,
-			max:request.body.max,
-			genero:genero
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} / Obtener todas los dominios del aprendizaje
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	weightURI.get("/",function(request, response,next) {
-		app.container.database.Schema.weights.find().then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} /:name Obtener un dominio del aprendizaje
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	weightURI.get("/:id",function(request, response,next) {
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("EL id no es valido");
-		}
-		app.container.database.Schema.weights.findOne({_id:request.params.id}).then(function(data){
-			if(!data){
-				throw new ValidatorException("No existe el peso!");
-			}
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {put} /:id Editar categoria cognitiva
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	weightURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.weights);
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("EL id no es valido");
-		}
-		if((request.body.height && !Validator.isFloat()(request.body.height)) || (request.body.min && !Validator.isFloat()(request.body.min)) || (request.body.max && !Validator.isFloat()(request.body.max))){
-			throw new ValidatorException("Solo se aceptan numeros");
-		}
-		if(request.body.genero && request.body.genero.toUpperCase()!="MASCULINO" && request.body.genero.toUpperCase()!="FEMENINO" ){
-			throw new ValidatorException("El genero es invalido");
-		}
-		category.update({_id:request.params.id},function(row){
-			if(request.body.max && request.body.min && ((request.body.max-request.body.min)<=0 || request.body.min==0 || request.body.max==0)){
-				throw new ValidatorException("El rango de pesos es invalido");
-			}
-			if(request.body.max && ((request.body.max-row.min)<=0 || row.min==0 || request.body.max==0)){
-				throw new ValidatorException("El rango máximo no es valido con el minimo existente!");
-			}
-			if(request.body.max && ((row.max-request.body.min)<=0 || request.body.min==0 || row.max==0)){
-				throw new ValidatorException("El rango mínimo no es valido con el máximo existente!");
-			}
-			for(var i=0,keys=Object.keys(row.schema.obj),n=keys.length;i<n;i++){
-				if(request.body[keys[i]]){
-					row[keys[i]]=request.body[keys[i]];
-				}
-			}
-			return row;
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {delete} /:id Eliminar una categoria cognitiva
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	weightURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.weights);
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("EL id no es valido");
-		}
-		category.remove({_id:request.params.id}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	app.use("/v1/physic/static/weight",weightURI);
+  /*
+  * @api {put} /:id Editar categoria cognitiva
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  cognitions.put('/objetives/:id/cognitions/:cognition',
+  Auth.isAdmin.bind(app.container),
+  function (request, response, next) {
+    if (!Validator.isMongoId()(request.params.id) || !Validator.isMongoId()(request.params.cognition)) {
+      throw new ValidatorException('El id es invalido!')
+    }
+    app.container.database.Schema.LearningObjetive.findOne({_id: request.params.id})
+    .then((row) => {
+      if (!row) {
+        throw new ValidatorException('No existe el objetivo!')
+      }
+      return Promise.all([
+        Events.get('OBJETIVES-ADD-COGNITIONS'),
+        row, app.container.database.Schema.domainsLearning.findOne({_id: row.domain._id})
+      ])
+    }).then((row) => {
+      if (!row[2]) {
+        throw new ValidatorException('No existe el dominio del objetivo!')
+      }
+      for (var i = 0, n = row[2].cognitions.length; i < n; i++) {
+        if (row[2].cognitions[i]._id.toString() === request.params.cognition) {
+          return Promise.all([
+            row[0],
+            row[1],
+            row[2].cognitions[i],
+            row[2].cognitions
+          ])
+        }
+      }
+      throw new ValidatorException('No existe la funcion cognitiva!')
+    }).then((data) => {
+      if (!data[0]) {
+        var EventClass = Schema.events
+        var helpEvent = new EventClass({
+          name: 'OBJETIVES-ADD-COGNITIONS',
+          objects: {
+            p1: 'data[1].name',
+            p2: 'data[1].description',
+            p3: 'data[1].level.level',
+            p4: 'data[1].domain.name',
+            p5: 'cognitions',
+            p6: 'addcognitions'
+          }
+        })
+        helpEvent.save()
+        throw new ValidatorException('No existe inferencias!')
+      }
+      var event = data[0]
+      var addcognitions = data[1].cognitions.map((row) => {
+        return row.name
+      })
+      var querys = Events.ChainGetAll(event.premises, {
+        p1: data[1].name,
+        p2: data[1].description,
+        p3: data[1].level.level,
+        p4: data[1].domain.name,
+        p5: cognitions,
+        p6: addcognitions,
+        p7: data[2].name
+      })
+      data[1].cognitions.forEach((row) => {
+        if (row._id === data[0]._id) {
+          throw new ValidatorException('ya existe el registro')
+        }
+      })
+      data[1].cognitions.push(data[2])
+      querys.forEach((row) => {
+        if (/Error:/ig.test(row.q1)) {
+          throw new ValidatorException(row.q1)
+        }
+        if (/ADD:/ig.test(row.q1)) {
+          let str = row.q1.replace(/ADD:/ig)
+          for (var i = 0, n = data[3].cognitions.length; i < n; i++) {
+            if (data[3].cognitions[i]._id.toString() === str) {
+              var add = true
+              data[1].cognitions.forEach((row2) => {
+                if (row2._id === str) {
+                  add = false
+                  return
+                }
+              })
+              if (!add) {
+                continue
+              }
+              data[1].cognitions.push(data[3].cognitions[i])
+            }
+          }
+        }
+        if (/DELETE:/ig.test(row.q1)) {
+          let str = row.q1.replace(/DELETE:/ig)
+          data[1].cognitions.forEach((row2) => {
+            if (row2._id.toString() === str) {
+              row2.remove()
+            }
+          })
+        }
+      })
+      return data[1].save()
+    }).then((rows) => {
+      response.send(rows)
+    }).catch((error) => {
+      next(error)
+    })
+  })
 
-	var heightURI = express.Router();
-	/*
-	* Ruta /v1/physic/static/height
+  /*
+  * @api {delete} /:id Eliminar una categoria cognitiva
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  cognitions.delete('/:domain/objetives/:level/:id', Auth.isAdmin.bind(app.container),
+  function (request, response, next) {
+    if (!Validator.isMongoId()(request.params.id)) {
+      throw new ValidatorException('El id es invalido!')
+    }
+    app.container.database.Schema.LearningObjetive.findOne({
+      'domain.name': request.params.domain.toString(),
+      'level.name': request.params.level.toString(),
+      _id: request.params.id
+    }).then((obj) => {
+      if (!obj) {
+        throw new ValidatorException('No existe el objetivo')
+      }
+      return obj.remove()
+    }).then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
 
-	* @api {post} / Crear dominio del aprendizaje
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions> objeto CRUD
-	*/
-	heightURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CRUD(app.container.database.Schema.heights);
-		if(!Validator.isFloat()(request.body.age) || !Validator.isFloat()(request.body.min) || !Validator.isFloat()(request.body.max)){
-			throw new ValidatorException("Solo se aceptan numeros");
-		}
-		if((request.body.max-request.body.min)<=0 || request.body.min==0 || request.body.max==0){
-			throw new ValidatorException("El rango de pesos es invalido");
-		}
-		if(request.body.genero.toUpperCase()!="MASCULINO" && request.body.genero.toUpperCase()!="FEMENINO" ){
-			throw new ValidatorException("El genero es invalido");
-		}
-		var genero=request.body.genero.toUpperCase();
-		category.add({age:request.body.age,genero:genero},{
-			age:request.body.age,
-			min:request.body.min,
-			max:request.body.max,
-			genero:genero
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} / Obtener todas los dominios del aprendizaje
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	heightURI.get("/",function(request, response,next) {
-		app.container.database.Schema.heights.find().then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} /:name Obtener un dominio del aprendizaje
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	heightURI.get("/:id",function(request, response,next) {
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("EL id no es valido");
-		}
-		app.container.database.Schema.heights.findOne({_id:request.params.id}).then(function(data){
-			if(!data){
-				throw new ValidatorException("No existe la altura!");
-			}
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {put} /:id Editar categoria cognitiva
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	heightURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.heights);
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("EL id no es valido");
-		}
-		if((request.body.age && !Validator.isFloat()(request.body.age)) || (request.body.min && !Validator.isFloat()(request.body.min)) || (request.body.max && !Validator.isFloat()(request.body.max))){
-			throw new ValidatorException("Solo se aceptan numeros");
-		}
-		if(request.body.genero && request.body.genero.toUpperCase()!="MASCULINO" && request.body.genero.toUpperCase()!="FEMENINO" ){
-			throw new ValidatorException("El genero es invalido");
-		}
-		category.update({_id:request.params.id},function(row){
-			if(request.body.max && request.body.min && ((request.body.max-request.body.min)<=0 || request.body.min==0 || request.body.max==0)){
-				throw new ValidatorException("El rango de pesos es invalido");
-			}
-			if(request.body.max && ((request.body.max-row.min)<=0 || row.min==0 || request.body.max==0)){
-				throw new ValidatorException("El rango máximo no es valido con el minimo existente!");
-			}
-			if(request.body.max && ((row.max-request.body.min)<=0 || request.body.min==0 || row.max==0)){
-				throw new ValidatorException("El rango mínimo no es valido con el máximo existente!");
-			}
-			for(var i=0,keys=Object.keys(row.schema.obj),n=keys.length;i<n;i++){
-				if(request.body[keys[i]]){
-					row[keys[i]]=request.body[keys[i]];
-				}
-			}
-			return row;
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {delete} /:id Eliminar una categoria cognitiva
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var category<CategoryCoginitions>	objeto CRUD
-	*/
-	heightURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.heights);
-		if(!Validator.isMongoId()(request.params.id)){
-			throw new ValidatorException("EL id no es valido");
-		}
-		category.remove({_id:request.params.id}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	app.use("/v1/physic/static/height",heightURI);
+  app.use('/v1/knowedge', cognitions)
 
-	/*
-	* Ruta /v1/users
-	* @var UsersURI object enrutador para agrupar metodos
-	*/
-	var UsersURI = express.Router();
-	/*
-	* @api {post} / Crear representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var user<User>	objeto CRUD
-	* @var people<SubPeople> objeto CRUD
-	*/
-	UsersURI.post("/",function(request, response,next) {
-		var user=new User(app.container.database.Schema.User);
-		var people=new People(app.container.database.Schema.Peoples);
-		request.body.dni=request.body.dni.toUpperCase();
-		if(!Validator.matches(/^[VE][0-9]{6,9}$/)(request.body.dni)){
-			throw new ValidatorException("Solo se aceptan documentos de identidad");
-		}
-		if(Validator.isNull()(request.body.username)){
-			throw new ValidatorException("Es necesario un nombre de usuario valido");
-		}
-		if(!Validator.isEmail()(request.body.email)){
-			throw new ValidatorException("Es necesario un email valido");
-		}
-		if(!Validator.isLength(5,14)(request.body.password)){
-			throw new ValidatorException("Es necesario una contraseña de por lo menos 5 caracteres");
-		}
-		var fields={
-			username:request.body.username,
-			email:request.body.email,
-			password:request.body.password,
-			people:null
-		};
-		people.find({dni:request.body.dni}).then(function(data){
-			fields.people=data;
-			return user.add(fields);
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			if(error.code=="100"){
-				error.setMessage("No existe en el registro del personal");
-			}
-			next(error);
-		});
-	});
-	/*
-	* @api {get} / Obtener todos los representantes
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var user<User>	objeto CRUD
-	*/
-	UsersURI.get("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		app.container.database.Schema.User.find().then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {get} /:id Obtener un representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var user<User>	objeto CRUD
-	*/
-	UsersURI.get("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		app.container.database.Schema.User.findOne({_id:request.params.id}).then(function(data){
-			if(!data){
-				throw new ValidatorException("No existe el usuario!");
-			}
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {put} /:id Editar representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var user<User>	objeto CRUD
-	*/
-	UsersURI.put("/root/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var user=new User(app.container.database.Schema.User);
-		user.update({_id:request.params.id},function(data){
-			data.isAdmin=(!request.body.isAdmin || request.body.isAdmin=="false") ? false : true;
-			return data;
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
+  var weightURI = express.Router()
+  /*
+  * Ruta /v1/physic/static/weight
 
-	UsersURI.put("/:id",Auth.isUser.bind(app.container),function(request, response,next) {
-		if(request.body.isAdmin){
-			throw new ValidatorException("no puede realizar un cambio de administración");
-		}
-		if(request.body.dni){
-			throw new ValidatorException("No puede alterar un documento de identidad");
-		}
-		if(request.body.username && !Validator.isAlphanumeric()(request.body.username)){
-			throw new ValidatorException("Es necesario un nombre de usuario valido");
-		}
-		if(request.body.email && !Validator.isEmail()(request.body.email)){
-			throw new ValidatorException("Es necesario un email valido");
-		}
-		if(request.body.password && !Validator.isLength(5,14)(request.body.password)){
-			throw new ValidatorException("Es necesario una contraseña de por lo menos 5 caracteres");
-		}
-		if(request.body.password){
-			const base64=require('base-64');
-			request.body.password=base64.encode(request.body.password);
-		}
-		var USER;
-		var user=new User(app.container.database.Schema.User);
-		app.container.database.Schema.User.findOne({_id:request.params.id}).then(function(row){
-			if(!row){
-				throw new VoidException("No existe el registro");
-			}
-			if(request.user.isAdmin!=true && data._id.toString()!=request.user._id.toString()){
-				throw new ValidatorException("No tiene permisos para editar este registro");
-			}
-			for(var i=0,keys=Object.keys(row.schema.obj),n=keys.length;i<n;i++){
-				if(request.body[keys[i]] && keys[i]!="dni"){
-					row[keys[i]]=request.body[keys[i]];
-				}
-			}
-			return row.save();
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	/*
-	* @api {delete} /:id Eliminar un representante
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var user<User>	objeto CRUD
-	*/
-	UsersURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var user=new User(app.container.database.Schema.User);
-		user.remove({_id:request.params.id}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
-	app.use("/v1/users",UsersURI);
-	/*
-	* @api {get} /v1/auth/ Obtener todos los representantes
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var user<User>	objeto CRUD
-	* Authorization: Basic base64(username:pass)
-	*/
-	app.post('/v1/auth',function(request,response,next){
-		const base64=require('base-64');
-		var username=request.body.username;
-		var pass=base64.encode(request.body.password);
-		app.container.database.Schema.User.findOne({$or:[{username:username},{email:username}]}).then(function(data){
-			if(!data || pass!=data.password){
-				throw new UserException("usuario invalido!");
-			}
-			request.user = request.remoteUser = data;
-			next();
-		}).catch(function(error){
-			next(error);
-		});
-	},function(request,response,next){
-		var user=new Token(app.container.database.Schema.Sessions);
-		var address=request.connection.address() || request.socket.address();
-		var navigator=request.headers['user-agent'];
-		user.add(request.user,address.address,navigator).then(function(token){
-			response.send(token);
-		}).catch(function(error){
-			next(error);
-		});
-	});
+  * @api {post} / Crear un peso estatico
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  weightURI.post('/', Auth.isAdmin.bind(app.container),
+  function (request, response, next) {
+    if (!Validator.isFloat()(request.body.height) || !Validator.isFloat()(request.body.min) || !Validator.isFloat()(request.body.max)) {
+      throw new ValidatorException('Solo se aceptan numeros')
+    }
+    if ((request.body.max - request.body.min) <= 0 || request.body.min === 0 || request.body.max === 0) {
+      throw new ValidatorException('El rango de pesos es invalido')
+    }
+    if (request.body.genero && request.body.genero.toUpperCase() !== 'MASCULINO' && request.body.genero.toUpperCase() !== 'FEMENINO') {
+      throw new ValidatorException('El genero es invalido')
+    }
+    var genero = request.body.genero.toUpperCase()
+    Schema.weights.findOne({height: request.body.height, genero: genero})
+    .then((data) => {
+      if (data) {
+        throw new ValidatorException('Ya existe un registro similar!')
+      }
+      let Weights = Schema.weights
+      let weight = new Weights({
+        height: request.body.height,
+        min: request.body.min,
+        max: request.body.max,
+        genero: genero
+      })
+      return weight.save()
+    }).then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
 
-	/*
-	* Ruta /v1/teachers
-	* @var PeopleURI object enrutador para agrupar metodos
-	*/
-	var PeopleURI = express.Router();
-	/*
-	* @api {post} / Crear profesor
-	* @params request peticiones del cliente
-	* @params response respuesta del servidor
-	* @params next middleware dispara la proxima funcion
-	* @var people<SubPeople> objeto CRUD
-	* @var people2<People> objeto CRUD
-	*/
-	PeopleURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Teachers);
-		var people2=new People(app.container.database.Schema.Peoples);
-		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
-			throw new ValidatorException("Solo se aceptan documentos de identidad");
-		}
-		if(Validator.matches(/[0-9]/)(request.body.name)){
-			throw new ValidatorException("Solo se aceptan nombres validos");
-		}
-		if(!Validator.isDate()(request.body.birthdate)){
-			throw new ValidatorException("La fecha de nacimiento no es valida");
-		}
-		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
-			throw new ValidatorException("El telefono no tiene un formato valido");
-		}
-		if(Validator.isNull()(request.body.genero)){
-			throw new ValidatorException("Es necesario un genero");
-		}
-		if(request.body.genero.toUpperCase()!="MASCULINO" && request.body.genero.toUpperCase()!="FEMENINO" ){
-			throw new ValidatorException("El genero es invalido");
-		}
-		request.body.dni=request.body.dni.toUpperCase();
-		var fields={
-			data:JSON.parse(JSON.stringify(request.body)),
-			interprete:(request.body.interprete!=undefined)
-		};
-		fields.data.mode="TEACHER";
-		delete(fields.data.interprete);
-		people2.add(fields.data).then(function(data){
-			fields.data=data;
-			return people.add(fields);
-		}).then(function(data){
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
+  /*
+  * @api {get} / Obtener todas los pesos estaticos
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  weightURI.get('/', function (request, response, next) {
+    app.container.database.Schema.weights.find().then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  /*
+  * @api {get} /:name Obtener un peso estatico
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  weightURI.get('/:id', function (request, response, next) {
+    if (!Validator.isMongoId()(request.params.id)) {
+      throw new ValidatorException('EL id no es valido')
+    }
+    app.container.database.Schema.weights.findOne({_id: request.params.id})
+    .then((data) => {
+      if (!data) {
+        throw new ValidatorException('No existe el peso!')
+      }
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  /*
+  * @api {put} /:id Editar peso estatico
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  weightURI.put('/:id', Auth.isAdmin.bind(app.container),
+  function (request, response, next) {
+    if (!Validator.isMongoId()(request.params.id)) {
+      throw new ValidatorException('EL id no es valido')
+    }
+    if ((request.body.height && !Validator.isFloat()(request.body.height)) || (request.body.min && !Validator.isFloat()(request.body.min)) || (request.body.max && !Validator.isFloat()(request.body.max))) {
+      throw new ValidatorException('Solo se aceptan numeros')
+    }
+    if (request.body.genero && request.body.genero.toUpperCase() !== 'MASCULINO' && request.body.genero.toUpperCase() !== 'FEMENINO') {
+      throw new ValidatorException('El genero es invalido')
+    }
+    Schema.weights.findOne({_id: request.params.id}).then((row) => {
+      if (!row) {
+        throw new ValidatorException('No existe el peso!')
+      }
+      if (request.body.max && request.body.min && ((request.body.max - request.body.min) <= 0 || request.body.min === 0 || request.body.max === 0)) {
+        throw new ValidatorException('El rango de pesos es invalido')
+      }
+      if (request.body.max && ((request.body.max - row.min) <= 0 || row.min === 0 || request.body.max === 0)) {
+        throw new ValidatorException('El rango máximo no es valido con el minimo existente!')
+      }
+      if (request.body.max && ((row.max - request.body.min) <= 0 || request.body.min === 0 || row.max === 0)) {
+        throw new ValidatorException('El rango mínimo no es valido con el máximo existente!')
+      }
+      for (var i = 0, keys = Object.keys(row.schema.obj), n = keys.length; i < n; i++) {
+        if (request.body[keys[i]]) {
+          row[keys[i]] = request.body[keys[i]]
+        }
+      }
+      return row.save()
+    }).then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  /*
+  * @api {delete} /:id Eliminar una peso estatico
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  weightURI.delete('/:id', Auth.isAdmin.bind(app.container),
+  function (request, response, next) {
+    if (!Validator.isMongoId()(request.params.id)) {
+      throw new ValidatorException('EL id no es valido')
+    }
+    Schema.weights.findOne().then((data) => {
+      if (!data) {
+        throw new ValidatorException('No existe el peso!')
+      }
+      return data.remove()
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  app.use('/v1/physic/static/weight', weightURI)
+
+  var heightURI = express.Router()
+  /*
+  * Ruta /v1/physic/static/height
+
+  * @api {post} / Crear altura estatico
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  heightURI.post('/', Auth.isAdmin.bind(app.container),
+  function (request, response, next) {
+    if (!Validator.isFloat()(request.body.age) || !Validator.isFloat()(request.body.min) || !Validator.isFloat()(request.body.max)) {
+      throw new ValidatorException('Solo se aceptan numeros')
+    }
+    if ((request.body.max - request.body.min) <= 0 || request.body.min === 0 || request.body.max === 0) {
+      throw new ValidatorException('El rango de pesos es invalido')
+    }
+    if (request.body.genero.toUpperCase() !== 'MASCULINO' && request.body.genero.toUpperCase() !== 'FEMENINO') {
+      throw new ValidatorException('El genero es invalido')
+    }
+    var genero = request.body.genero.toUpperCase()
+    let Heights = Schema.heights
+    Heights.findOne({age: request.body.age, genero: genero}).then((data) => {
+      if (data) {
+        throw new ValidatorException('Ya existe un registro similar!')
+      }
+      let height = new Heights({
+        age: request.body.age,
+        min: request.body.min,
+        max: request.body.max,
+        genero: genero
+      })
+      return height.save()
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  /*
+  * @api {get} / Obtener todas los altura estatico
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  heightURI.get('/', function (request, response, next) {
+    Schema.heights.find().then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  /*
+  * @api {get} /:name Obtener un altura estatico
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  heightURI.get('/:id', function (request, response, next) {
+    if (!Validator.isMongoId()(request.params.id)) {
+      throw new ValidatorException('EL id no es valido')
+    }
+    Schema.heights.findOne({_id: request.params.id}).then((data) => {
+      if (!data) {
+        throw new ValidatorException('No existe la altura!')
+      }
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  /*
+  * @api {put} /:id Editar altura estatico
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  heightURI.put('/:id', Auth.isAdmin.bind(app.container),
+  function (request, response, next) {
+    if (!Validator.isMongoId()(request.params.id)) {
+      throw new ValidatorException('EL id no es valido')
+    }
+    if ((request.body.age && !Validator.isFloat()(request.body.age)) || (request.body.min && !Validator.isFloat()(request.body.min)) || (request.body.max && !Validator.isFloat()(request.body.max))) {
+      throw new ValidatorException('Solo se aceptan numeros')
+    }
+    if (request.body.genero && request.body.genero.toUpperCase() !== 'MASCULINO' && request.body.genero.toUpperCase() !== 'FEMENINO') {
+      throw new ValidatorException('El genero es invalido')
+    }
+    Schema.heights.findOne({_id: request.params.id}).then((row) => {
+      if (request.body.max && request.body.min && ((request.body.max - request.body.min) <= 0 || request.body.min === 0 || request.body.max === 0)) {
+        throw new ValidatorException('El rango de pesos es invalido')
+      }
+      if (request.body.max && ((request.body.max - row.min) <= 0 || row.min === 0 || request.body.max === 0)) {
+        throw new ValidatorException('El rango máximo no es valido con el minimo existente!')
+      }
+      if (request.body.max && ((row.max - request.body.min) <= 0 || request.body.min === 0 || row.max === 0)) {
+        throw new ValidatorException('El rango mínimo no es valido con el máximo existente!')
+      }
+      for (var i in row.schema.obj) {
+        if (request.body[i]) {
+          row[i] = request.body[i]
+        }
+      }
+      return row.save()
+    }).then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  /*
+  * @api {delete} /:id Eliminar una altura estatico
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  heightURI.delete('/:id', Auth.isAdmin.bind(app.container),
+  function (request, response, next) {
+    if (!Validator.isMongoId()(request.params.id)) {
+      throw new ValidatorException('EL id no es valido')
+    }
+    Schema.heights.findOne({_id: request.params.id}).then((data) => {
+      if (!data) {
+        throw new ValidatorException('No existe el registro')
+      }
+      return data.remove()
+    }).then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  app.use('/v1/physic/static/height', heightURI)
+
+  /*
+  * Ruta /v1/users
+  * @var UsersURI object enrutador para agrupar metodos
+  */
+  var UsersURI = express.Router()
+
+  /*
+  * @api {post} / Crear usuario docente
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  UsersURI.post('/', function (request, response, next) {
+    var user = new User(app.container.database.Schema.User)
+    var people = new People(app.container.database.Schema.Peoples)
+    request.body.dni = request.body.dni.toUpperCase()
+    if (!Validator.matches(/^[VE][0-9]{6,9}$/)(request.body.dni)) {
+      throw new ValidatorException('Solo se aceptan documentos de identidad')
+    }
+    if (Validator.isNull()(request.body.username)) {
+      throw new ValidatorException('Es necesario un nombre de usuario valido')
+    }
+    if (!Validator.isEmail()(request.body.email)) {
+      throw new ValidatorException('Es necesario un email valido')
+    }
+    if (!Validator.isLength(5, 14)(request.body.password)) {
+      throw new ValidatorException('Es necesario una contraseña de por lo menos 5 caracteres')
+    }
+    var fields = {
+      username: request.body.username,
+      email: request.body.email,
+      password: request.body.password,
+      people: null
+    }
+    people.find({dni: request.body.dni}).then((data) => {
+      fields.people = data
+      return user.add(fields)
+    }).then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      if (error.code === '100') {
+        error.setMessage('No existe en el registro del personal')
+      }
+      next(error)
+    })
+  })
+
+  /*
+  * @api {get} / Obtener todos los  usuario docente
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  UsersURI.get('/', Auth.isAdmin.bind(app.container), function (request, response, next) {
+    Schema.User.find().then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  /*
+  * @api {get} /:id Obtener un usuario docente
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  UsersURI.get('/:id', Auth.isAdmin.bind(app.container), function (request, response, next) {
+    Schema.User.findOne({_id: request.params.id}).then((data) => {
+      if (!data) {
+        throw new ValidatorException('No existe el usuario!')
+      }
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  /*
+  * @api {put} /root/:id Editar permiso usuario docente
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  UsersURI.put('/root/:id', Auth.isAdmin.bind(app.container), function (request, response, next) {
+    Schema.User.findOne({_id: request.params.id}).then((data) => {
+      data.isAdmin = (request.body.isAdmin && request.body.isAdmin === 'true')
+    }).then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  /*
+  * @api {put} /:id Editar usuario docente
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  UsersURI.put('/:id', Auth.isUser.bind(app.container), function (request, response, next) {
+    if (request.body.isAdmin) {
+      throw new ValidatorException('no puede realizar un cambio de administración')
+    }
+    if (request.body.dni) {
+      throw new ValidatorException('No puede alterar un documento de identidad')
+    }
+    if (request.body.username && !Validator.isAlphanumeric()(request.body.username)) {
+      throw new ValidatorException('Es necesario un nombre de usuario valido')
+    }
+    if (request.body.email && !Validator.isEmail()(request.body.email)) {
+      throw new ValidatorException('Es necesario un email valido')
+    }
+    if (request.body.password && !Validator.isLength(5, 14)(request.body.password)) {
+      throw new ValidatorException('Es necesario una contraseña de por lo menos 5 caracteres')
+    }
+    if (request.body.password) {
+      const base64 = require('base-64')
+      request.body.password = base64.encode(request.body.password)
+    }
+    Schema.User.findOne({_id: request.params.id}).then((row) => {
+      if (!row) {
+        throw new VoidException('No existe el registro')
+      }
+      if (request.user.isAdmin !== true && row._id.toString() !== request.user._id.toString()) {
+        throw new ValidatorException('No tiene permisos para editar este registro')
+      }
+      for (var i in row.schema.obj) {
+        if (i !== 'dni') {
+          row[i] = request.body[i]
+        }
+      }
+      return row.save()
+    }).then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  /*
+  * @api {delete} /:id Eliminar un usuario docente
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  UsersURI.delete('/:id', Auth.isAdmin.bind(app.container), function (request, response, next) {
+    Schema.User.findOne({_id: request.params.id}).then((data) => {
+      if (!data) {
+        throw new ValidatorException('No existe el usuario')
+      }
+      return data.remove()
+    }).then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  app.use('/v1/users', UsersURI)
+
+  /*
+  * @api {get} /v1/auth/ Obtener todos los representantes
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  * Authorization: Basic base64(username:pass)
+  */
+  app.post('/v1/auth', function (request, response, next) {
+    const base64 = require('base-64')
+    var username = request.body.username
+    var pass = base64.encode(request.body.password)
+    app.container.database.Schema.User.findOne({
+      $or: [
+        {username: username},
+        {email: username}
+      ]
+    }).then((data) => {
+      if (!data || pass !== data.password) {
+        throw new UserException('usuario invalido!')
+      }
+      request.user = request.remoteUser = data
+      next()
+    }).catch((error) => {
+      next(error)
+    })
+  }, function (request, response, next) {
+    var user = new Token(Schema.Sessions)
+    var address = request.connection.address() || request.socket.address()
+    var navigator = request.headers['user-agent']
+    user.add(request.user, address.address, navigator).then((token) => {
+      response.send(token)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  /*
+  * Ruta /v1/teachers
+  * @var PeopleURI object enrutador para agrupar metodos
+  */
+  var PeopleURI = express.Router()
+
+  /*
+  * @api {post} / Crear profesor
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  * @var people<SubPeople> objeto CRUD
+  * @var people2<People> objeto CRUD
+  */
+  PeopleURI.post('/', Auth.isAdmin.bind(app.container),
+  function (request, response, next) {
+    var people = new SubPeople(app.container.database.Schema.Teachers)
+    var people2 = new People(app.container.database.Schema.Peoples)
+    if (!Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)) {
+      throw new ValidatorException('Solo se aceptan documentos de identidad')
+    }
+    if (Validator.matches(/[0-9]/)(request.body.name)) {
+      throw new ValidatorException('Solo se aceptan nombres validos')
+    }
+    if (!Validator.isDate()(request.body.birthdate)) {
+      throw new ValidatorException('La fecha de nacimiento no es valida')
+    }
+    if (request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)) {
+      throw new ValidatorException('El telefono no tiene un formato valido')
+    }
+    if (Validator.isNull()(request.body.genero)) {
+      throw new ValidatorException('Es necesario un genero')
+    }
+    if (request.body.genero.toUpperCase() !== 'MASCULINO' && request.body.genero.toUpperCase() !== 'FEMENINO') {
+      throw new ValidatorException('El genero es invalido')
+    }
+    request.body.dni = request.body.dni.toUpperCase()
+    var fields = {
+      data: JSON.parse(JSON.stringify(request.body)),
+      interprete: (request.body.interprete !== undefined)
+    }
+    fields.data.mode = 'TEACHER'
+    delete (fields.data.interprete)
+    people2.add(fields.data).then((data) => {
+      fields.data = data
+      return people.add(fields)
+    }).then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+  })
 	/*
 	* @api {get} / Obtener todos los docentes
 	* @params request peticiones del cliente
