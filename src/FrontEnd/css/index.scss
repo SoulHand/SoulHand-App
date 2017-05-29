@@ -1,0 +1,19 @@
+@import "material.css";
+@import "material-icons.css";
+@import "article.css";
+@import "panel.css";
+@import "box-only.css";
+
+img{
+  margin:5px;
+  display:block;
+  &.flex{
+    max-width: 96%;
+  }
+  &.align{
+    &-center{
+      margin-left:auto;
+      margin-right:auto;
+    }
+  }
+}

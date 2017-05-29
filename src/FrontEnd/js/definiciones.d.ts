@@ -7,11 +7,12 @@ interface Window{
 	}
 }
 declare let validator: any;
+declare let componentHandler: any;
 interface codeError{
 	code:string
 	message:string
 }
-declare namespace crud{
+declare namespace CRUD{
 	interface physics{
 		height: number
 		weight:number
@@ -115,18 +116,18 @@ declare namespace peoples{
 		_id:string
 		data:peoples.people
 		interprete:boolean
-		grade?: crud.grade
+		grade?: CRUD.grade
 		_v:number
 	}
 	interface students{
 		_id:string
 		_v:number
 		data:peoples.people
-		grade?: crud.grade
-		activities?:Array<crud.activity>
-		physics?:Array<crud.physics>
+		grade?: CRUD.grade
+		activities?:Array<CRUD.activity>
+		physics?:Array<CRUD.physics>
 		discapacityLevel?:number
-		history?:Array<crud.historys>
+		history?:Array<CRUD.historys>
 	}
 	interface parents{
 		_id:string
@@ -182,7 +183,7 @@ declare namespace Props{
 		delete:Function
 	}
 	interface tableaddobjetive{
-		objetives:Array<crud.objetive>
+		objetives:Array<CRUD.objetive>
 		session?:users.sessions
 		callback:Function
 		activity:string
@@ -194,7 +195,7 @@ declare namespace Props{
 		activity:string
 	}
 	interface tableaddcognitions{
-		cognitions:Array<crud.cognition>
+		cognitions:Array<CRUD.cognition>
 		session?:users.sessions
 		callback:Function
 		objetive:string
@@ -202,7 +203,7 @@ declare namespace Props{
 		level:string
 	}
 	interface tableactivities{
-		activities:Array<crud.activity>
+		activities:Array<CRUD.activity>
 		delete:Function
 		session:users.sessions
 	}
@@ -221,7 +222,7 @@ declare namespace Props{
 		router?:ReactRouter.InjectedRouter
 	}
 	interface promiseTeacherView{
-		[k:string] :  | Array<crud.grade>
+		[k:string] :  | Array<CRUD.grade>
 	}
 	interface TeacherURI{
 		id:string
@@ -243,7 +244,7 @@ declare namespace Props{
 		server?:codeError
 	}
 	interface MatterItem{
-		matter:crud.courses
+		matter:CRUD.courses
 		session:users.sessions
 		delete:Function
 	}
@@ -298,7 +299,7 @@ declare namespace states{
 		error:any
 	}
 	interface SetCognitions{
-		cognitions:Array<crud.cognition>
+		cognitions:Array<CRUD.cognition>
 		error:any
 	}
 	interface TeacherCreate{
@@ -310,42 +311,42 @@ declare namespace states{
 	}
 	interface ObjetiveSelect{
 		error: any
-		domains:Array<crud.domain>
-		levels:Array<crud.level>
-		objetives:Array<crud.objetive>
+		domains:Array<CRUD.domain>
+		levels:Array<CRUD.level>
+		objetives:Array<CRUD.objetive>
 		isAdd:boolean
 	}
 	interface TeacherView {
 		teacher:peoples.teachers
 		error:string
-		grades:Array<crud.grade>
-		activities:Array<crud.activity>
+		grades:Array<CRUD.grade>
+		activities:Array<CRUD.activity>
 	}
 	interface ActivityView {
 		error:string
-		grades:Array<crud.grade>
-		activity:crud.activity
-		objetives:Array<crud.objetive>
-		sugessObjetive:Array<crud.objetive>
+		grades:Array<CRUD.grade>
+		activity:CRUD.activity
+		objetives:Array<CRUD.objetive>
+		sugessObjetive:Array<CRUD.objetive>
 		students:Array<peoples.students>
 	}
 	interface MatterList{
-		matters:Array<crud.courses>
+		matters:Array<CRUD.courses>
 		error?:any
 	}
 	interface MatterView{
-		matter:crud.courses
+		matter:CRUD.courses
 	}
 	interface StudentList{
 		students:Array<peoples.students>
 		search:string
 	}
 	interface DomainList{
-		domains:Array<crud.domain>
+		domains:Array<CRUD.domain>
 		search:string
 	}
 	interface DomainView{
-		domain:crud.domain
+		domain:CRUD.domain
 		error:any
 	}
 	interface StudentCreate{
@@ -354,12 +355,12 @@ declare namespace states{
 	interface StudentView{
 		student:peoples.students
 		error:any
-		grades:Array<crud.grade>
-		weights:Array<crud.weights>
-		heights:Array<crud.heights>
+		grades:Array<CRUD.grade>
+		weights:Array<CRUD.weights>
+		heights:Array<CRUD.heights>
 	}
 	interface GradeList{
-		grades:Array<crud.grade>
+		grades:Array<CRUD.grade>
 		students?:Array<peoples.students>
 		error?:any
 	}
@@ -378,12 +379,12 @@ declare namespace states{
 		icon?:string
 	}
 	interface GradeView{
-		grade:crud.grade
+		grade:CRUD.grade
 		students:Array<peoples.students>
 		error:any
 	}
 	interface DomainObjetiveView{
-		objetives:Array<crud.objetive>
+		objetives:Array<CRUD.objetive>
 		error:any
 	}
 }

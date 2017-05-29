@@ -11,5 +11,10 @@
     "experimentalDecorators": true,
     "outDir": "build"
   },
-  "include": ["src/FrontEnd/**.ts","src/FrontEnd/**.tsx"]
+  "include": [
+    "src/FrontEnd/js/**.ts",
+    "src/FrontEnd/js/**.tsx",
+    "src/FrontEnd/components/**.tsx",
+    "src/FrontEnd/components/**/**.tsx"
+  ]
 }

@@ -3,11 +3,11 @@ var path = require('path')
 
 module.exports = {
   entry: {
-    app: './src/FrontEnd/main.tsx',
-    style: './src/FrontEnd/scss/soulhand.scss'
+    app: './src/FrontEnd/js/main.tsx',
+    style: './src/FrontEnd/css/index.scss'
   },
   output: {
-    path: path.join(__dirname, '/public/js/'),
+    path: path.join(__dirname, '/public/'),
     filename: '[name].js'
   },
   resolve: {
@@ -19,7 +19,19 @@ module.exports = {
     loaders: [
       {test: /\.tsx?$/, loader: 'ts-loader'},
       {test: /\.scss$/, loader: 'style-loader!css-loader!sass-loader'},
-      {test: /\.css$/, loader: 'style-loader!css-loader'}
+      {test: /\.css$/, loader: 'style-loader!css-loader'},
+      {
+        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: "url-loader?mimetype=application/font-woff"
+      },
+      {
+        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: "file-loader?name=[name].[ext]"
+      },
+      {
+        test: /\.(gif|png|jpeg|jpg)$/,
+        loader: "file-loader?name=[name].[ext]"
+      }
     ]
   },
   plugins: [
