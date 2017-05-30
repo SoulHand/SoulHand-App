@@ -8812,7 +8812,7 @@ _:-ms-input-placeholder, :root .mdl-slider.mdl-slider.is-upgraded {
 
 .mdl-textfield__label {
   bottom: 0;
-  color: rgba(0,0,0, 0.26);
+  color: rgba(0, 0, 0, 0.6);
   font-size: 16px;
   left: 0;
   right: 0;

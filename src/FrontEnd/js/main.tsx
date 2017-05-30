@@ -18,8 +18,8 @@ window.addEventListener("load",()=>{
 		    </Route>
         <Route path="/teachers" component={Teacher.Teacher} onEnter={Auth}>
           <IndexRoute component={Teacher.Teachers}/>
-          <Route path="create" component={Teacher.Add}/>
         </Route>
+        <Route path="/teachers/create" component={Teacher.Add} onEnter={Auth}/>
         <Route path="/auth" component={Login}/>
 	  	</Router>
 	  ), document.body);

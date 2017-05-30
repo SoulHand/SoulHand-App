@@ -37,3 +37,10 @@ img{
   margin-bottom: 40px;
   z-index: 900;
 }
+.label.static{
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.mdl-layout__drawer-button a{
+  color: rgb(117,117,117) !important;
+}
