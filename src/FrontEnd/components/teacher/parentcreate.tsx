@@ -2,9 +2,10 @@ import * as React from 'react'
 import {withRouter} from 'react-router'
 import {Link} from 'react-router'
 import {FormUtils} from '../formutils'
+import {ajax} from 'jquery'
 
 @withRouter
- export class ParentCreate extends FormUtils<{}, {}>{
+ export class ParentCreate extends FormUtils<{router: any}, {}>{
    public fields:compat.Map={
  		dni:{
  			match:validator.matches(/^[VE][0-9]+$/i),
@@ -60,7 +61,19 @@ import {FormUtils} from '../formutils'
     if (error) {
       return;
     }
-    console.log("aprovado!");
+    ajax({
+			method:"POST",
+	        url: `${window.settings.uri}/v1/people/teachers/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        dataType: "json",
+	        data:values,
+	        success:(data:any)=>{
+	        	this.props.router.replace('/teachers');
+	        },
+	        error:(data:any)=>{
+	        	var state: CRUD.codeError = data.responseJSON;
+	        	console.log(state);
+	        }
+		});
   }
    componentDidMount(){
      componentHandler.upgradeAllRegistered();
