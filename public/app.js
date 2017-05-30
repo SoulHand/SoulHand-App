@@ -44723,7 +44723,11 @@
 	                value: null
 	            },
 	            genero: {
-	                value: null
+	                value: null,
+	                required: true,
+	                match: function (str) {
+	                    return !validator.isNull()(str);
+	                }
 	            }
 	        };
 	        _this.state = {
@@ -44738,8 +44742,10 @@
 	            this.state.error[i] = !_super.prototype.validate.call(this, this.fields[i].value, i);
 	            values[i] = this.fields[i].value;
 	            error = error || this.state.error[i];
+	            console.log(i, this.state.error[i]);
 	        }
 	        this.setState(this.state);
+	        console.log(this.state, values);
 	        if (error) {
 	            return;
 	        }
@@ -44773,9 +44779,9 @@
 	                            React.createElement("label", { className: "mdl-textfield__label", htmlFor: "name" }, "Nombre y Apellido*"),
 	                            React.createElement("span", { className: "mdl-textfield__error" }, "Es necesaria un nombre valido"))),
 	                    React.createElement("div", { className: "mdl-cell mdl-cell--6-col" },
-	                        React.createElement("div", { className: "mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.tel) ? 'is-invalid' : '') },
-	                            React.createElement("input", { className: "mdl-textfield__input", type: "tel", id: "tel", pattern: "^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$", onChange: function (e) { _this.getFields(e); } }),
-	                            React.createElement("label", { className: "mdl-textfield__label", htmlFor: "tel" }, "Telefono*"),
+	                        React.createElement("div", { className: "mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.phone) ? 'is-invalid' : '') },
+	                            React.createElement("input", { className: "mdl-textfield__input", type: "tel", id: "phone", pattern: "^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$", onChange: function (e) { _this.getFields(e); } }),
+	                            React.createElement("label", { className: "mdl-textfield__label", htmlFor: "phone" }, "Telefono*"),
 	                            React.createElement("span", { className: "mdl-textfield__error" }, "Es necesaria un telefono"))),
 	                    React.createElement("div", { className: "mdl-cell mdl-cell--6-col" },
 	                        React.createElement("div", { className: "mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.email) ? 'is-invalid' : '') },
@@ -44793,7 +44799,7 @@
 	                            React.createElement("option", { value: "" }, "Seleccione una opci\u00F3n"),
 	                            React.createElement("option", { value: "MASCULINO" }, "MASCULINO"),
 	                            React.createElement("option", { value: "FEMENINO" }, "FEMENINO")),
-	                        React.createElement("span", { className: "mdl-textfield__error" }, "Seleccione un genero"))))));
+	                        (this.state.error.genero) && (React.createElement("span", { style: { color: "rgb(222, 50, 38)" } }, "Seleccione un genero")))))));
 	    };
 	    return ParentCreate;
 	}(formutils_1.FormUtils));

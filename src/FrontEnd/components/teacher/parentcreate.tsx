@@ -38,7 +38,11 @@ import {FormUtils} from '../formutils'
  			value:null
  		},
  		genero:{
- 			value:null
+ 			value:null,
+      required:true,
+      match: (str: string) => {
+        return !validator.isNull()(str);
+      }
  		}
  	};
   state: {error: compat.Map} = {
@@ -92,9 +96,9 @@ import {FormUtils} from '../formutils'
                  </div>
                </div>
                <div className="mdl-cell mdl-cell--6-col">
-               <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.tel) ? 'is-invalid' :'')}>
-                   <input className="mdl-textfield__input" type="tel" id="tel" pattern="^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$" onChange={(e:any)=>{this.getFields(e)}}/>
-                   <label className="mdl-textfield__label" htmlFor="tel">Telefono*</label>
+               <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.phone) ? 'is-invalid' :'')}>
+                   <input className="mdl-textfield__input" type="tel" id="phone" pattern="^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$" onChange={(e:any)=>{this.getFields(e)}}/>
+                   <label className="mdl-textfield__label" htmlFor="phone">Telefono*</label>
                    <span className="mdl-textfield__error">Es necesaria un telefono</span>
                  </div>
                </div>
@@ -119,7 +123,9 @@ import {FormUtils} from '../formutils'
                    <option value="MASCULINO">MASCULINO</option>
                    <option value="FEMENINO">FEMENINO</option>
                  </select>
-                 <span className="mdl-textfield__error">Seleccione un genero</span>
+                 {(this.state.error.genero) && (
+                   <span style={{color: "rgb(222, 50, 38)"}}>Seleccione un genero</span>
+                 )}
                </div>
              </div>
           </main>
