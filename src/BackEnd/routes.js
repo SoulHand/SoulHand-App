@@ -1503,7 +1503,7 @@ module.exports = function (app, express, server, __DIR__) {
     if (Validator.matches(/[0-9]/)(request.body.name)) {
       throw new ValidatorException('Solo se aceptan nombres validos')
     }
-    if (!Validator.isDate()(request.body.birthdate)) {
+    if (!Validator.matches(/^[0-9]{2}\-[0-9]{2}-[0-9]{4}$/)(request.body.birthdate)) {
       throw new ValidatorException('La fecha de nacimiento no es valida')
     }
     if (request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)) {

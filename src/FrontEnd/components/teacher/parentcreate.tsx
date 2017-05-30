@@ -31,7 +31,9 @@ import {ajax} from 'jquery'
  			required:true
  		},
  		birthdate:{
- 			match:validator.isDate(),
+ 			match:(str: string) => {
+        return /^[0-9]{2}\-[0-9]{2}-[0-9]{4}$/.test(str);
+      },
  			value:null,
  			required:true
  		},

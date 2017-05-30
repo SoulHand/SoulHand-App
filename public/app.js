@@ -44664,7 +44664,7 @@
 /* 266 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(validator) {"use strict";
+	/* WEBPACK VAR INJECTION */(function(validator, __webpack_provided_window_dot_settings) {"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
 	        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -44686,6 +44686,7 @@
 	var react_router_1 = __webpack_require__(184);
 	var react_router_2 = __webpack_require__(184);
 	var formutils_1 = __webpack_require__(270);
+	var jquery_1 = __webpack_require__(261);
 	var ParentCreate = (function (_super) {
 	    __extends(ParentCreate, _super);
 	    function ParentCreate() {
@@ -44715,7 +44716,9 @@
 	                required: true
 	            },
 	            birthdate: {
-	                match: validator.isDate(),
+	                match: function (str) {
+	                    return /^[0-9]{2}\-[0-9]{2}-[0-9]{4}$/.test(str);
+	                },
 	                value: null,
 	                required: true
 	            },
@@ -44736,20 +44739,31 @@
 	        return _this;
 	    }
 	    ParentCreate.prototype.send = function (event) {
+	        var _this = this;
 	        var values = {};
 	        var error = false;
 	        for (var i in this.fields) {
 	            this.state.error[i] = !_super.prototype.validate.call(this, this.fields[i].value, i);
 	            values[i] = this.fields[i].value;
 	            error = error || this.state.error[i];
-	            console.log(i, this.state.error[i]);
 	        }
 	        this.setState(this.state);
-	        console.log(this.state, values);
 	        if (error) {
 	            return;
 	        }
-	        console.log("aprovado!");
+	        jquery_1.ajax({
+	            method: "POST",
+	            url: __webpack_provided_window_dot_settings.uri + "/v1/people/teachers/?PublicKeyId=" + this.session.publicKeyId + "&PrivateKeyId=" + this.session.privateKeyId,
+	            dataType: "json",
+	            data: values,
+	            success: function (data) {
+	                _this.props.router.replace('/teachers');
+	            },
+	            error: function (data) {
+	                var state = data.responseJSON;
+	                console.log(state);
+	            }
+	        });
 	    };
 	    ParentCreate.prototype.componentDidMount = function () {
 	        componentHandler.upgradeAllRegistered();
@@ -44808,7 +44822,7 @@
 	], ParentCreate);
 	exports.ParentCreate = ParentCreate;
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(267)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(267), __webpack_require__(253)))
 
 /***/ }),
 /* 267 */
