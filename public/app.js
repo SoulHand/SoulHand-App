@@ -44761,7 +44761,12 @@
 	            },
 	            error: function (data) {
 	                var state = data.responseJSON;
-	                console.log(state);
+	                var config = {
+	                    message: state.message,
+	                    timeout: 2000
+	                };
+	                var message = document.getElementById("message");
+	                message.MaterialSnackbar.showSnackbar(config);
 	            }
 	        });
 	    };
@@ -44813,7 +44818,10 @@
 	                            React.createElement("option", { value: "" }, "Seleccione una opci\u00F3n"),
 	                            React.createElement("option", { value: "MASCULINO" }, "MASCULINO"),
 	                            React.createElement("option", { value: "FEMENINO" }, "FEMENINO")),
-	                        (this.state.error.genero) && (React.createElement("span", { style: { color: "rgb(222, 50, 38)" } }, "Seleccione un genero")))))));
+	                        (this.state.error.genero) && (React.createElement("span", { style: { color: "rgb(222, 50, 38)" } }, "Seleccione un genero")))),
+	                React.createElement("div", { id: "message", className: "mdl-js-snackbar mdl-snackbar" },
+	                    React.createElement("div", { className: "mdl-snackbar__text" }),
+	                    React.createElement("button", { className: "mdl-snackbar__action", type: "button" })))));
 	    };
 	    return ParentCreate;
 	}(formutils_1.FormUtils));

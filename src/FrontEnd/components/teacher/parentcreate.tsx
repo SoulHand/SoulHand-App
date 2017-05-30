@@ -73,7 +73,12 @@ import {ajax} from 'jquery'
 	        },
 	        error:(data:any)=>{
 	        	var state: CRUD.codeError = data.responseJSON;
-	        	console.log(state);
+            var config = {
+              message: state.message,
+              timeout: 2000
+            };
+            var message: any = document.getElementById("message")
+            message.MaterialSnackbar.showSnackbar(config);
 	        }
 		});
   }
@@ -143,6 +148,10 @@ import {ajax} from 'jquery'
                  )}
                </div>
              </div>
+             <div id="message" className="mdl-js-snackbar mdl-snackbar">
+              <div className="mdl-snackbar__text"></div>
+              <button className="mdl-snackbar__action" type="button"></button>
+            </div>
           </main>
        </div>
      );
