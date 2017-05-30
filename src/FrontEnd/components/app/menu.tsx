@@ -1,7 +1,8 @@
 import * as React from 'react'
+import {Link} from 'react-router'
 import {UserBox} from './userbox'
 
- export class Menu extends React.Component <{}, CRUD.session>{
+ export class Menu extends React.Component <{}, Obj.session>{
    constructor(props:{}){
      super(props)
      let str = localStorage.getItem("session");
@@ -14,9 +15,11 @@ import {UserBox} from './userbox'
        <div className="demo-drawer mdl-layout__drawer mdl-color--blue-grey-900 mdl-color-text--blue-grey-50">
           <UserBox session={this.state.session}/>
           <nav className="demo-navigation mdl-navigation mdl-color--blue-grey-800">
-            <a className="mdl-navigation__link" href=""><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i>Inicio</a>
+          <Link to="/" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i>Inicio</Link>
             <div className="mdl-layout-spacer"></div>
-            <a className="mdl-navigation__link" href=""><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">people</i>Docentes</a>
+            <Link to="/teachers" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">people</i>Docentes</Link>
+
+
             <a className="mdl-navigation__link" href=""><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">people</i>Alumnos</a>
             <a className="mdl-navigation__link" href=""><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">people</i>Representantes</a>
             <div className="mdl-layout-spacer"></div>

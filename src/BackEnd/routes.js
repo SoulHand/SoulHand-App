@@ -1553,7 +1553,15 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people<People>	objeto CRUD
 	*/
 	PeopleURI.get("/:id",function(request, response,next) {
-		app.container.database.Schema.Teachers.findOne({_id:request.params.id}).then(function(data){
+     var field = {
+       'data.dni': request.params.id
+     }
+    if (Validator.isMongoId()(request.params.id)) {
+      field = {
+        '_id': request.params.id
+      }
+    }
+		app.container.database.Schema.Teachers.findOne(field).then(function(data){
 			if(!data){
 				throw new ValidatorException("No existe el docente!");
 			}

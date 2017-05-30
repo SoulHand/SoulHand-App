@@ -17,3 +17,23 @@ img{
     }
   }
 }
+
+.demo-updates .mdl-card__title.dog{
+  background-image: url('images/dog.png');
+}
+
+.mdl-card__title .mdl-button{
+  align-self: flex-start;
+  right: 0.5%;
+  position: absolute;
+}
+
+.fixed {
+  position: fixed;
+  display: block;
+  right: 0;
+  bottom: 0;
+  margin-right: 40px;
+  margin-bottom: 40px;
+  z-index: 900;
+}

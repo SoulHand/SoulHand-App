@@ -8,11 +8,94 @@ interface Window{
 }
 declare let validator: any;
 declare let componentHandler: any;
-interface codeError{
-	code:string
-	message:string
+
+/*
+  People
+*/
+declare namespace People {
+  interface people{
+		_id:string
+		dni:string
+		name:string
+		birthdate:string
+		mode:string
+		createDate:string
+		_v:number
+	}
+  interface teacher{
+		_id:string
+		data:people
+		interprete:boolean
+		grade?: CRUD.grade
+		_v:number
+	}
+	interface student{
+		_id:string
+		_v:number
+		data:people
+		grade?: CRUD.grade
+		activities?:Array<CRUD.activity>
+		physics?:Array<CRUD.physics>
+		discapacityLevel?:number
+		history?:Array<CRUD.historys>
+	}
+	interface parent{
+		_id:string
+		data:people
+		_v:number
+		students?: Array<student>
+	}
 }
+/*
+  User
+*/
+declare namespace User {
+  interface profile{
+		_id:string
+		username:string
+		password?:string
+		_v:number
+		isAdmin:boolean
+		dateCreated:string
+		people:People.people
+		email:string
+	}
+	interface session{
+		_id:string
+		privateKeyId:string
+		publicKeyId:string
+		ip:string
+		navigator:string
+		dateLastConnect:string
+		dateCreated:string
+		_v:number
+		user:profile
+	}
+  interface sessions{
+    sessions: Array<session>
+  }
+}
+/*
+  Obj
+*/
+declare namespace Obj {
+  interface session {
+    session: User.session
+  }
+}
+
+
+
+
+
+
+
 declare namespace CRUD{
+  interface codeError{
+  	code:string
+  	message:string
+  }
+
 	interface physics{
 		height: number
 		weight:number
@@ -75,7 +158,7 @@ declare namespace CRUD{
 		grade:grade
 		course: grade
   		_id: string
-  		students: Array<peoples.students>
+  		students: Array<People.student>
   		dateCreated: string
   		isCompleted: Boolean
   		objetives: Array<objetive>
@@ -102,63 +185,8 @@ declare namespace compat {
     [k:string] : any
   }
 }
-declare namespace peoples{
-	interface people{
-		_id:string
-		dni:string
-		name:string
-		birthdate:string
-		mode:string
-		createDate:string
-		_v:number
-	}
-	interface teachers{
-		_id:string
-		data:peoples.people
-		interprete:boolean
-		grade?: CRUD.grade
-		_v:number
-	}
-	interface students{
-		_id:string
-		_v:number
-		data:peoples.people
-		grade?: CRUD.grade
-		activities?:Array<CRUD.activity>
-		physics?:Array<CRUD.physics>
-		discapacityLevel?:number
-		history?:Array<CRUD.historys>
-	}
-	interface parents{
-		_id:string
-		data:peoples.people
-		_v:number
-		students?: Array<students>
-	}
-}
-declare namespace users{
-	interface profile{
-		_id:string
-		username:string
-		password?:string
-		_v:number
-		isAdmin:boolean
-		dateCreated:string
-		people:peoples.people
-		email:string
-	}
-	interface sessions{
-		_id:string
-		privateKeyId:string
-		publicKeyId:string
-		ip:string
-		navigator:string
-		dateLastConnect:string
-		dateCreated:string
-		_v:number
-		user:profile
-	}
-}
+
+
 
 declare namespace Props{
 	interface LineChart{
@@ -175,28 +203,28 @@ declare namespace Props{
 	interface profilebox{
     	router?:ReactRouter.InjectedRouter
     	callback:Function
-    	session:users.sessions
+    	session:User.session
 	}
 	interface tableteacher{
-		teachers:Array<peoples.teachers>
-		session?:users.sessions
+		teachers:Array<People.teacher>
+		session?:User.session
 		delete:Function
 	}
 	interface tableaddobjetive{
 		objetives:Array<CRUD.objetive>
-		session?:users.sessions
+		session?:User.session
 		callback:Function
 		activity:string
 	}
 	interface tableaddstudent{
-		students:Array<peoples.students>
-		session?:users.sessions
+		students:Array<People.student>
+		session?:User.session
 		callback:Function
 		activity:string
 	}
 	interface tableaddcognitions{
 		cognitions:Array<CRUD.cognition>
-		session?:users.sessions
+		session?:User.session
 		callback:Function
 		objetive:string
 		domain:string
@@ -205,12 +233,12 @@ declare namespace Props{
 	interface tableactivities{
 		activities:Array<CRUD.activity>
 		delete:Function
-		session:users.sessions
+		session:User.session
 	}
 	interface teacherItem{
-		people?:peoples.teachers
+		people?:People.teacher
 		delete?:Function
-		session?:users.sessions
+		session?:User.session
     	routeParams ?: {
 				id:string
 			}
@@ -234,6 +262,7 @@ declare namespace Props{
 	interface GenericRouter{
 		router?:ReactRouter.InjectedRouter
 		routeParams?: any
+    location:ReactRouter.LocationDescriptor
 	}
 	interface ErrorMatter{
 		dni?:boolean
@@ -241,11 +270,11 @@ declare namespace Props{
 		phone?:boolean
 		email?:boolean
 		birthdate?:boolean
-		server?:codeError
+		server?:CRUD.codeError
 	}
 	interface MatterItem{
 		matter:CRUD.courses
-		session:users.sessions
+		session:User.session
 		delete:Function
 	}
 	interface MatterView{
@@ -267,35 +296,35 @@ declare namespace Props{
 	}
 	interface StudentTable {
 		delete:Function
-		students:Array<peoples.students>
-		session:users.sessions
+		students:Array<People.student>
+		session:User.session
 	}
 	interface ParentTable {
 		delete:Function
-		parent:peoples.parents
-		session:users.sessions
+		parent:People.parent
+		session:User.session
 	}
 	interface ItemUser {
 		delete:Function
-		user:users.profile
-		session:users.sessions
+		user:User.profile
+		session:User.session
 	}
 }
 
 declare namespace states{
 	interface menu{
-		session: users.sessions
+		session: User.session
 	}
 	interface ListTeachers{
-		teachers:Array<peoples.teachers>
+		teachers:Array<People.teacher>
 		search:string
 	}
 	interface ListParent{
-		parents:Array<peoples.parents>
+		parents:Array<People.parent>
 		search:string
 	}
 	interface ViewParent{
-		parent:peoples.parents
+		parent:People.parent
 		error:any
 	}
 	interface SetCognitions{
@@ -317,7 +346,7 @@ declare namespace states{
 		isAdd:boolean
 	}
 	interface TeacherView {
-		teacher:peoples.teachers
+		teacher:People.teacher
 		error:string
 		grades:Array<CRUD.grade>
 		activities:Array<CRUD.activity>
@@ -328,7 +357,7 @@ declare namespace states{
 		activity:CRUD.activity
 		objetives:Array<CRUD.objetive>
 		sugessObjetive:Array<CRUD.objetive>
-		students:Array<peoples.students>
+		students:Array<People.student>
 	}
 	interface MatterList{
 		matters:Array<CRUD.courses>
@@ -338,7 +367,7 @@ declare namespace states{
 		matter:CRUD.courses
 	}
 	interface StudentList{
-		students:Array<peoples.students>
+		students:Array<People.student>
 		search:string
 	}
 	interface DomainList{
@@ -353,7 +382,7 @@ declare namespace states{
 		error:any
 	}
 	interface StudentView{
-		student:peoples.students
+		student:People.student
 		error:any
 		grades:Array<CRUD.grade>
 		weights:Array<CRUD.weights>
@@ -361,26 +390,26 @@ declare namespace states{
 	}
 	interface GradeList{
 		grades:Array<CRUD.grade>
-		students?:Array<peoples.students>
+		students?:Array<People.student>
 		error?:any
 	}
 	interface UserList{
-		users:Array<users.profile>
+		User:Array<User.profile>
 		error?:any
 	}
 	interface UserView{
-		user:users.profile
+		user:User.profile
 		error:any
 		icon?:string
 	}
 	interface SessionLogin{
-		user:users.sessions
+		user:User.session
 		error:any
 		icon?:string
 	}
 	interface GradeView{
 		grade:CRUD.grade
-		students:Array<peoples.students>
+		students:Array<People.student>
 		error:any
 	}
 	interface DomainObjetiveView{
@@ -445,14 +474,14 @@ interface ValidInput{
 		birthdate?:boolean
 	}
 	interface stateUser{
-		user:users.profile
+		user:User.profile
 	}
 	interface teachersParams{
 		id:string
 	}
 	interface teacherState{
-		teacher?: peoples.teachers
-		teachers?: Array<peoples.teachers>
+		teacher?: People.teachers
+		teachers?: Array<People.teachers>
 		error?:errorState
 		user?:compat.Map
 	}
@@ -461,34 +490,34 @@ interface ValidInput{
 		radio?:string
 	}
 	interface parentItem{
-		people?:peoples.parents
+		people?:People.parents
 		delete?:Function
-		session?:users.sessions
+		session?:User.sessions
     	routeParams ?: teachersParams
     	router?:ReactRouter.InjectedRouter
     	location?: any
     	children?: any
 	}
 	interface studentsItem{
-		people?:peoples.parents
+		people?:People.parents
 		delete?:Function
-		session?:users.sessions
+		session?:User.sessions
     	routeParams ?: teachersParams
     	router?:ReactRouter.InjectedRouter
     	location?: any
     	children?: any
 	}
-	interface usersItem{
-		people?:users.profile
+	interface UserItem{
+		people?:User.profile
 		delete?:Function
-		session?:users.sessions
+		session?:User.sessions
     	routeParams ?: teachersParams
     	router?:ReactRouter.InjectedRouter
     	location?: any
     	children?: any
 	}
 	interface basic{
-		session?:users.sessions
+		session?:User.sessions
     	routeParams ?: teachersParams
     	router?:ReactRouter.InjectedRouter
     	location?: any

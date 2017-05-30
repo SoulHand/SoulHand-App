@@ -1,13 +1,13 @@
 import * as React from 'react'
 import "../../images/user.png"
 
- export class UserBox extends React.Component <{session:  CRUD.session}, {}>{
+ export class UserBox extends React.Component <Obj.session, {}>{
    render(){
      return (
        <header className="demo-drawer-header">
          <img src="user.png" className="demo-avatar"/>
          <div className="demo-avatar-dropdown">
-           <span>{this.props.session.username}</span>
+           <span>{this.props.session.user.username}</span>
            <div className="mdl-layout-spacer"></div>
            <button id="accbtn" className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
              <i className="material-icons" role="presentation">arrow_drop_down</i>
