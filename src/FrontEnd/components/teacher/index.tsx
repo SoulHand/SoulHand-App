@@ -2,6 +2,7 @@ import * as React from 'react'
 import {Header} from '../app/header'
 import {Menu} from '../app/menu'
 import {List} from './list'
+import {View} from './view'
 import {ParentCreate} from './parentcreate'
 
  export class Teacher extends React.Component <{}, {}>{
@@ -24,3 +25,4 @@ import {ParentCreate} from './parentcreate'
 
 export let Teachers = List;
 export let Add = ParentCreate;
+export let Get = View;

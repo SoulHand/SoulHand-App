@@ -15,7 +15,6 @@ import {Teacher} from '../cards/teacher'
      this.session = JSON.parse(str);
    }
    componentDidUpdate(){
-     console.log("registrando!");
      componentHandler.upgradeAllRegistered();
    }
    componentDidMount(){
@@ -31,12 +30,21 @@ import {Teacher} from '../cards/teacher'
        })
      });
    }
+   delete(teacher: People.teacher){
+     this.state.teachers = this.state.teachers.filter((row) => {
+       if (row._id === teacher._id) {
+         return false;
+       }
+       return true;
+     })
+     this.setState(this.state);
+   }
    render(){
      return(
        <div className="mdl-grid demo-content">
           {this.state.teachers.map((row) => {
             return (
-            <Teacher key={row._id} teacher={row}/>
+            <Teacher key={row._id} teacher={row} session={this.session} delete={this.delete.bind(this)}/>
             );
           })}
           <Link to="/teachers/create" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>

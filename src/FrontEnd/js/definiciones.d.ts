@@ -82,12 +82,47 @@ declare namespace Obj {
   interface session {
     session: User.session
   }
+  interface teacher {
+    teacher: People.teacher
+  }
+}
+/*
+Card
+*/
+declare namespace Card {
+  interface teacher{
+    teacher: People.teacher
+    session: User.session
+    delete: Function
+  }
+  interface student{
+    student: People.student
+    session: User.session
+    delete: Function
+  }
+  interface parent{
+    parent: People.parent
+    session: User.session
+    delete: Function
+  }
 }
 
-
-
-
-
+/*
+Props
+*/
+declare namespace Props {
+  interface teacherView {
+    routeParams: {
+      id: string
+    }
+    router:ReactRouter.InjectedRouter
+  }
+  interface GenericRouter{
+		router?:ReactRouter.InjectedRouter
+		routeParams?: any
+    location:ReactRouter.LocationDescriptor
+	}
+}
 
 
 declare namespace CRUD{
@@ -187,7 +222,7 @@ declare namespace compat {
 }
 
 
-
+/*
 declare namespace Props{
 	interface LineChart{
 		id:string
@@ -259,11 +294,7 @@ declare namespace Props{
 		router?:ReactRouter.InjectedRouter
 		routeParams: TeacherURI
 	}
-	interface GenericRouter{
-		router?:ReactRouter.InjectedRouter
-		routeParams?: any
-    location:ReactRouter.LocationDescriptor
-	}
+
 	interface ErrorMatter{
 		dni?:boolean
 		name?:boolean
