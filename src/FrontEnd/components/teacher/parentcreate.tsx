@@ -8,7 +8,7 @@ import {ajax} from 'jquery'
  export class ParentCreate extends FormUtils<{router: any}, {}>{
    public fields:compat.Map={
  		dni:{
- 			match:validator.matches(/^[VE][0-9]+$/i),
+ 			match:validator.matches(/^[0-9]{5,11}$/i),
  			value:null,
  			required:true
  		},
@@ -17,6 +17,13 @@ import {ajax} from 'jquery'
  				return !validator.isNull()(fn);
  			},
  			value:null,
+ 			required:true
+ 		},
+ 		nacionality:{
+ 			match:(fn:string)=>{
+ 				return !validator.isNull()(fn);
+ 			},
+ 			value:'V',
  			required:true
  		},
  		phone:{
@@ -63,6 +70,8 @@ import {ajax} from 'jquery'
     if (error) {
       return;
     }
+    values.dni = values.nacionality + values.dni;
+    delete values.nacionality;
     ajax({
 			method:"POST",
 	        url: `${window.settings.uri}/v1/people/teachers/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
@@ -103,11 +112,23 @@ import {ajax} from 'jquery'
           <main className="mdl-layout__content mdl-color--white-100">
           <div className="mdl-grid mdl-color--white demo-content">
                <div className="mdl-cell mdl-cell--6-col">
-                 <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.dni) ? 'is-invalid' :'')}>
-                   <input className="mdl-textfield__input" type="text" id="dni" pattern="^[VE][0-9]{5,11}" onChange={(e:any)=>{this.getFields(e)}}/>
-                   <label className="mdl-textfield__label" htmlFor="dni">Cedula*</label>
-                   <span className="mdl-textfield__error">Es necesaria un cedula valida</span>
-                 </div>
+                <div className="mdl-grid">
+                   <div className="mdl-cell mdl-cell--2-col">
+                   <div className={"mdl-textfield mdl-js-textfield "+((this.state.error.dni) ? 'is-invalid' :'')}>
+                     <select className="mdl-textfield__input" id="nacionality" onChange={(e:any)=>{this.getFields(e)}}>
+                       <option value="V">V</option>
+                       <option value="E">E</option>
+                     </select>
+                    </div>
+                   </div>
+                   <div className="mdl-cell mdl-cell--4-col">
+                     <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.dni) ? 'is-invalid' :'')}>
+                       <input className="mdl-textfield__input" type="text" id="dni" pattern="^[0-9]{5,11}$" onChange={(e:any)=>{this.getFields(e)}}/>
+                       <label className="mdl-textfield__label" htmlFor="dni">Cedula*</label>
+                       <span className="mdl-textfield__error">Es necesaria un cedula valida</span>
+                     </div>
+                   </div>
+                </div>
                </div>
                <div className="mdl-cell mdl-cell--6-col">
                   <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.name) ? 'is-invalid' :'')}>

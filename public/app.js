@@ -40838,7 +40838,7 @@
 	        var _this = _super !== null && _super.apply(this, arguments) || this;
 	        _this.fields = {
 	            dni: {
-	                match: validator.matches(/^[VE][0-9]+$/i),
+	                match: validator.matches(/^[0-9]{5,11}$/i),
 	                value: null,
 	                required: true
 	            },
@@ -40847,6 +40847,13 @@
 	                    return !validator.isNull()(fn);
 	                },
 	                value: null,
+	                required: true
+	            },
+	            nacionality: {
+	                match: function (fn) {
+	                    return !validator.isNull()(fn);
+	                },
+	                value: 'V',
 	                required: true
 	            },
 	            phone: {
@@ -40896,6 +40903,8 @@
 	        if (error) {
 	            return;
 	        }
+	        values.dni = values.nacionality + values.dni;
+	        delete values.nacionality;
 	        jquery_1.ajax({
 	            method: "POST",
 	            url: __webpack_provided_window_dot_settings.uri + "/v1/people/teachers/?PublicKeyId=" + this.session.publicKeyId + "&PrivateKeyId=" + this.session.privateKeyId,
@@ -40934,10 +40943,17 @@
 	            React.createElement("main", { className: "mdl-layout__content mdl-color--white-100" },
 	                React.createElement("div", { className: "mdl-grid mdl-color--white demo-content" },
 	                    React.createElement("div", { className: "mdl-cell mdl-cell--6-col" },
-	                        React.createElement("div", { className: "mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.dni) ? 'is-invalid' : '') },
-	                            React.createElement("input", { className: "mdl-textfield__input", type: "text", id: "dni", pattern: "^[VE][0-9]{5,11}", onChange: function (e) { _this.getFields(e); } }),
-	                            React.createElement("label", { className: "mdl-textfield__label", htmlFor: "dni" }, "Cedula*"),
-	                            React.createElement("span", { className: "mdl-textfield__error" }, "Es necesaria un cedula valida"))),
+	                        React.createElement("div", { className: "mdl-grid" },
+	                            React.createElement("div", { className: "mdl-cell mdl-cell--2-col" },
+	                                React.createElement("div", { className: "mdl-textfield mdl-js-textfield " + ((this.state.error.dni) ? 'is-invalid' : '') },
+	                                    React.createElement("select", { className: "mdl-textfield__input", id: "nacionality", onChange: function (e) { _this.getFields(e); } },
+	                                        React.createElement("option", { value: "V" }, "V"),
+	                                        React.createElement("option", { value: "E" }, "E")))),
+	                            React.createElement("div", { className: "mdl-cell mdl-cell--4-col" },
+	                                React.createElement("div", { className: "mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.dni) ? 'is-invalid' : '') },
+	                                    React.createElement("input", { className: "mdl-textfield__input", type: "text", id: "dni", pattern: "^[0-9]{5,11}$", onChange: function (e) { _this.getFields(e); } }),
+	                                    React.createElement("label", { className: "mdl-textfield__label", htmlFor: "dni" }, "Cedula*"),
+	                                    React.createElement("span", { className: "mdl-textfield__error" }, "Es necesaria un cedula valida"))))),
 	                    React.createElement("div", { className: "mdl-cell mdl-cell--6-col" },
 	                        React.createElement("div", { className: "mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.name) ? 'is-invalid' : '') },
 	                            React.createElement("input", { className: "mdl-textfield__input", type: "text", id: "name", onChange: function (e) { _this.getFields(e); } }),
