@@ -1,6 +1,6 @@
 //import "tether"
 //import "boostrap"
-import "./material"
+import "../vendor/material.min.js"
 import * as React from 'react'
 import {render} from 'react-dom'
 import {Route, Router, hashHistory, IndexRoute} from 'react-router'

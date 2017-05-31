@@ -12,6 +12,9 @@ export class FormUtils<P, S> extends React.Component<P, S> {
   public getFields(event:any){
     this.fields[event.target.id].value = event.target.value;
   }
+  public getRadioButton(event:any){
+    this.fields[event.target.id].value = (event.target.checked == true) ? event.target.value : undefined;
+  }
   public validate(str: string, key:string){
     if((this.fields[key].require && !this.fields[key].value)
        || (this.fields[key].match

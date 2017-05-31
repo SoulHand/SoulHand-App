@@ -14,7 +14,6 @@ module.exports=function(app,express,server,__DIR__){
 	});
   app.container.database.Schema.User.findOne({isAdmin:true}).then((data) => {
     if (data) {
-      console.log(data)
       return data;
     }
     people.save().then(function(){

@@ -77,7 +77,8 @@ import {ajax} from 'jquery'
               message: state.message,
               timeout: 2000
             };
-            var message: any = document.getElementById("message")
+            var message: any = document.querySelector('.mdl-js-snackbar')
+            console.log(message);
             message.MaterialSnackbar.showSnackbar(config);
 	        }
 		});
@@ -130,7 +131,7 @@ import {ajax} from 'jquery'
                  </div>
                </div>
                <div className="mdl-cell mdl-cell--6-col">
-               <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.birthdate) ? 'is-invalid' :'')}>
+                <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.birthdate) ? 'is-invalid' :'')}>
                    <input className="mdl-textfield__input" type="text" id="birthdate" pattern="^[0-9]{2}\-[0-9]{2}-[0-9]{4}$" onChange={(e:any)=>{this.getFields(e)}}/>
                    <label className="mdl-textfield__label" htmlFor="birthdate">Fecha de nacimiento*</label>
                    <span className="mdl-textfield__error">Es necesaria una fecha en formato d-m-Y</span>
@@ -146,6 +147,15 @@ import {ajax} from 'jquery'
                  {(this.state.error.genero) && (
                    <span style={{color: "rgb(222, 50, 38)"}}>Seleccione un genero</span>
                  )}
+               </div>
+               <div className="mdl-cell mdl-cell--6-col">
+                  <label htmlFor="interprete" className="label static">
+                    Interprete
+                  </label>
+                 <label htmlFor="interprete" className="mdl-switch mdl-js-switch">
+                   <input type="checkbox" id="interprete" className="mdl-switch__input" onChange={(e:any)=>{this.getRadioButton(e)}}/>
+                   <span className="mdl-switch__label">No/Si</span>
+                </label>
                </div>
              </div>
              <div id="message" className="mdl-js-snackbar mdl-snackbar">

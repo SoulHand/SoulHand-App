@@ -1,8 +1,11 @@
-@import "material.css";
+@import "../vendor/material.min.css";
+@import "../vendor/material-grid.min.css";
 @import "material-icons.css";
 @import "article.css";
 @import "panel.css";
 @import "box-only.css";
+/*@import "material.css";
+@import "snackbar";*/
 
 img{
   margin:5px;
@@ -37,8 +40,9 @@ img{
   margin-bottom: 40px;
   z-index: 900;
 }
-.label.static{
-  color: rgba(0, 0, 0, 0.6);
+.mdl-textfield__label, .label.static{
+    bottom: 0;
+    color: rgba(0, 0, 0, 0.58);
 }
 
 .mdl-layout__drawer-button a{
