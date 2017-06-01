@@ -37,9 +37,9 @@ declare namespace People {
 		data:people
 		grade?: CRUD.grade
 		activities?:Array<CRUD.activity>
-		physics?:Array<CRUD.physics>
+		physics?:Array<CRUD.physic>
 		discapacityLevel?:number
-		history?:Array<CRUD.historys>
+		history?:Array<CRUD.history>
 	}
 	interface parent{
 		_id:string
@@ -107,6 +107,16 @@ declare namespace Card {
     session: User.session
     delete: Function
   }
+  interface grade{
+    grade: CRUD.grade
+    session: User.session
+    delete: Function
+  }
+  interface matter{
+    matter: CRUD.course
+    session: User.session
+    delete: Function
+  }
 }
 
 /*
@@ -142,14 +152,14 @@ declare namespace CRUD{
   	message:string
   }
 
-	interface physics{
+	interface physic{
 		height: number
 		weight:number
 		age: number
 		_id: string
 		date:string
 	}
-	interface historys{
+	interface history{
 		_id:string
 		description:string
 		dateCreated: string
@@ -159,7 +169,7 @@ declare namespace CRUD{
 		_v:number
 		name:string
 	}
-	interface courses{
+	interface course{
 		_id:string
 		_v:number
 		name:string
@@ -209,7 +219,7 @@ declare namespace CRUD{
   		isCompleted: Boolean
   		objetives: Array<objetive>
 	}
-	interface weights{
+	interface weight{
 		_id:string
 		height:number
 		min:number
@@ -217,7 +227,7 @@ declare namespace CRUD{
 		genero:string
 		__v:number
 	}
-	interface heights{
+	interface height{
 		_id:string
 		age:number
 		min:number

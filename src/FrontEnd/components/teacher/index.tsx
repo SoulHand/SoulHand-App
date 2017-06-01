@@ -50,7 +50,7 @@ import {ParentCreate} from './parentcreate'
      });
    }
    delete(teacher: People.teacher){
-     this.state.teachers = this.state.teachers.filter((row) => {
+     this.state.teachers = this.teachers.filter((row) => {
        if (row._id === teacher._id) {
          return false;
        }

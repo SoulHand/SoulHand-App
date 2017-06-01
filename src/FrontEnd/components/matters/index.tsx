@@ -1,18 +1,18 @@
 import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link} from 'react-router'
-import * as Cards from '../cards/parent'
+import * as Cards from '../cards/matter'
 import {ParentCreate} from './parentcreate'
 import {View} from './view'
 import {Edit} from './edit'
 import {Menu} from '../app/menu'
 
 
- export class Parent extends React.Component <{}, {}>{
+ export class Matter extends React.Component <{}, {}>{
    public session: User.session;
-   public parents: Array<People.parent>=[];
-   state: { parents:  Array<People.parent>} = {
-     parents: []
+   public matters: Array<CRUD.grade>=[];
+   state: { matters:  Array<CRUD.grade>} = {
+     matters: []
    }
    constructor(props:{}){
      super(props)
@@ -20,15 +20,15 @@ import {Menu} from '../app/menu'
      this.session = JSON.parse(str);
    }
    Filter(event:any){
-   		var filter=this.parents.filter((row)=>{
+   		var filter=this.matters.filter((row)=>{
    			var exp=new RegExp(event.target.value,"i");
-   			if(exp.test(row.data.name)==true || exp.test(row.data.dni)==true){
+   			if(exp.test(row.name)==true){
    				return true;
    			}
    			return false;
    		});
    		this.setState({
- 	      	parents : filter
+ 	      	matters : filter
  	    });
    	}
    componentDidUpdate(){
@@ -37,19 +37,19 @@ import {Menu} from '../app/menu'
    componentDidMount(){
      let p1 = ajax({
        method:"GET",
-       url: `${window.settings.uri}/v1/people/parents/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       url: `${window.settings.uri}/v1/courses/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
        data:null
      });
-     p1.done((parents: Array<People.teacher>) => {
-       this.parents = parents;
+     p1.done((matters: Array<CRUD.grade>) => {
+       this.matters = matters;
        this.setState({
-         parents: parents
+         matters: matters
        })
      });
    }
    delete(teacher: People.teacher){
-     this.state.parents = this.parents.filter((row) => {
+     this.state.matters = this.matters.filter((row) => {
        if (row._id === teacher._id) {
          return false;
        }
@@ -86,12 +86,12 @@ import {Menu} from '../app/menu'
           <Menu/>
           <main className="mdl-layout__content mdl-color--white-100">
           <div className="mdl-grid demo-content">
-             {this.state.parents.map((row) => {
+             {this.state.matters.map((row) => {
                return (
-               <Cards.Parent key={row._id} parent={row} session={this.session} delete={this.delete.bind(this)}/>
+               <Cards.Matter key={row._id} matter={row} session={this.session} delete={this.delete.bind(this)}/>
                );
              })}
-             <Link to="/parents/create" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
+             <Link to="/matters/create" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
           </div>
           </main>
        </div>
