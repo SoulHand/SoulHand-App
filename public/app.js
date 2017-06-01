@@ -54,13 +54,20 @@
 	var dashboard_1 = __webpack_require__(252);
 	var login_1 = __webpack_require__(262);
 	var Teacher = __webpack_require__(263);
-	var auth_1 = __webpack_require__(274);
+	var Parent = __webpack_require__(274);
+	var auth_1 = __webpack_require__(276);
 	window.addEventListener("load", function () {
 	    react_dom_1.render((React.createElement(react_router_1.Router, { history: react_router_1.hashHistory },
 	        React.createElement(react_router_1.Route, { path: "/", component: app_1.App, onEnter: auth_1.Auth },
 	            React.createElement(react_router_1.IndexRoute, { component: dashboard_1.DashBoard })),
 	        React.createElement(react_router_1.Route, { path: "/teachers", onEnter: auth_1.Auth },
 	            React.createElement(react_router_1.IndexRoute, { component: Teacher.Teacher }),
+	            React.createElement(react_router_1.Route, { path: "get/:id", component: Teacher.Get }),
+	            React.createElement(react_router_1.Route, { path: "edit/:id", component: Teacher.Modify }),
+	            React.createElement(react_router_1.Route, { path: "grade/edit/:id", component: Teacher.Grade }),
+	            React.createElement(react_router_1.Route, { path: "create", component: Teacher.Add })),
+	        React.createElement(react_router_1.Route, { path: "/parents", onEnter: auth_1.Auth },
+	            React.createElement(react_router_1.IndexRoute, { component: Parent.Parent }),
 	            React.createElement(react_router_1.Route, { path: "get/:id", component: Teacher.Get }),
 	            React.createElement(react_router_1.Route, { path: "edit/:id", component: Teacher.Modify }),
 	            React.createElement(react_router_1.Route, { path: "grade/edit/:id", component: Teacher.Grade }),
@@ -42399,6 +42406,171 @@
 
 /***/ }),
 /* 274 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(__webpack_provided_window_dot_settings) {"use strict";
+	var __extends = (this && this.__extends) || (function () {
+	    var extendStatics = Object.setPrototypeOf ||
+	        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+	        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+	    return function (d, b) {
+	        extendStatics(d, b);
+	        function __() { this.constructor = d; }
+	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	    };
+	})();
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var React = __webpack_require__(2);
+	var jquery_1 = __webpack_require__(261);
+	var react_router_1 = __webpack_require__(184);
+	var Cards = __webpack_require__(275);
+	var menu_1 = __webpack_require__(249);
+	var Parent = (function (_super) {
+	    __extends(Parent, _super);
+	    function Parent(props) {
+	        var _this = _super.call(this, props) || this;
+	        _this.parents = [];
+	        _this.state = {
+	            parents: []
+	        };
+	        var str = localStorage.getItem("session");
+	        _this.session = JSON.parse(str);
+	        return _this;
+	    }
+	    Parent.prototype.Filter = function (event) {
+	        var filter = this.parents.filter(function (row) {
+	            var exp = new RegExp(event.target.value, "i");
+	            if (exp.test(row.data.name) == true || exp.test(row.data.dni) == true) {
+	                return true;
+	            }
+	            return false;
+	        });
+	        this.setState({
+	            parents: filter
+	        });
+	    };
+	    Parent.prototype.componentDidUpdate = function () {
+	        componentHandler.upgradeAllRegistered();
+	    };
+	    Parent.prototype.componentDidMount = function () {
+	        var _this = this;
+	        var p1 = jquery_1.ajax({
+	            method: "GET",
+	            url: __webpack_provided_window_dot_settings.uri + "/v1/people/parents/?PublicKeyId=" + this.session.publicKeyId + "&PrivateKeyId=" + this.session.privateKeyId,
+	            dataType: "json",
+	            data: null
+	        });
+	        p1.done(function (parents) {
+	            _this.parents = parents;
+	            _this.setState({
+	                parents: parents
+	            });
+	        });
+	    };
+	    Parent.prototype.delete = function (teacher) {
+	        this.state.parents = this.state.parents.filter(function (row) {
+	            if (row._id === teacher._id) {
+	                return false;
+	            }
+	            return true;
+	        });
+	        this.setState(this.state);
+	    };
+	    Parent.prototype.render = function () {
+	        var _this = this;
+	        return (React.createElement("div", { className: "demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header" },
+	            React.createElement("header", { className: "demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600" },
+	                React.createElement("div", { className: "mdl-layout__header-row" },
+	                    React.createElement("span", { className: "mdl-layout-title" }, "SoulHand"),
+	                    React.createElement("div", { className: "mdl-layout-spacer" }),
+	                    React.createElement("div", { className: "mdl-textfield mdl-js-textfield mdl-textfield--expandable" },
+	                        React.createElement("label", { className: "mdl-button mdl-js-button mdl-button--icon", htmlFor: "search" },
+	                            React.createElement("i", { className: "material-icons" }, "search")),
+	                        React.createElement("div", { className: "mdl-textfield__expandable-holder" },
+	                            React.createElement("input", { className: "mdl-textfield__input", type: "text", id: "search", onChange: function (e) { _this.Filter(e); } }),
+	                            React.createElement("label", { className: "mdl-textfield__label", htmlFor: "search" }, "Ingrese su consulta..."))),
+	                    React.createElement("button", { className: "mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon", id: "hdrbtn" },
+	                        React.createElement("i", { className: "material-icons" }, "more_vert")),
+	                    React.createElement("ul", { className: "mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right", htmlFor: "hdrbtn" },
+	                        React.createElement("li", { className: "mdl-menu__item" }, "A cerca de"),
+	                        React.createElement("li", { className: "mdl-menu__item" }, "Contacto"),
+	                        React.createElement("li", { className: "mdl-menu__item" }, "Informaci\u00F3n legal")))),
+	            React.createElement(menu_1.Menu, null),
+	            React.createElement("main", { className: "mdl-layout__content mdl-color--white-100" },
+	                React.createElement("div", { className: "mdl-grid demo-content" },
+	                    this.state.parents.map(function (row) {
+	                        return (React.createElement(Cards.Parent, { key: row._id, parent: row, session: _this.session, delete: _this.delete.bind(_this) }));
+	                    }),
+	                    React.createElement(react_router_1.Link, { to: "/parents/create", className: "mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed" },
+	                        React.createElement("i", { className: "mdl-color-text--white-400 material-icons", role: "presentation" }, "add"))))));
+	    };
+	    return Parent;
+	}(React.Component));
+	exports.Parent = Parent;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(253)))
+
+/***/ }),
+/* 275 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(__webpack_provided_window_dot_settings) {"use strict";
+	var __extends = (this && this.__extends) || (function () {
+	    var extendStatics = Object.setPrototypeOf ||
+	        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+	        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+	    return function (d, b) {
+	        extendStatics(d, b);
+	        function __() { this.constructor = d; }
+	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	    };
+	})();
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var React = __webpack_require__(2);
+	var jquery_1 = __webpack_require__(261);
+	var react_router_1 = __webpack_require__(184);
+	var Parent = (function (_super) {
+	    __extends(Parent, _super);
+	    function Parent() {
+	        return _super !== null && _super.apply(this, arguments) || this;
+	    }
+	    Parent.prototype.delete = function () {
+	        var _this = this;
+	        jquery_1.ajax({
+	            method: "DELETE",
+	            url: __webpack_provided_window_dot_settings.uri + "/v1/people/parents/" + this.props.parent._id + "?PublicKeyId=" + this.props.session.publicKeyId + "&PrivateKeyId=" + this.props.session.privateKeyId,
+	            dataType: "json",
+	            data: null,
+	            crossDomain: true,
+	            success: function (data) {
+	                _this.props.delete(data);
+	            }
+	        });
+	    };
+	    Parent.prototype.render = function () {
+	        var _this = this;
+	        return (React.createElement("div", { className: "demo-cards mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing" },
+	            React.createElement("div", { className: "demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop" },
+	                React.createElement("div", { className: "mdl-card__title mdl-card--expand mdl-color--teal-300" },
+	                    React.createElement("h2", { className: "mdl-card__title-text" }, this.props.parent.data.name),
+	                    React.createElement("button", { className: "mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon", id: "button" + this.props.parent._id },
+	                        React.createElement("i", { className: "material-icons" }, "more_vert")),
+	                    React.createElement("ul", { className: "mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right", htmlFor: "button" + this.props.parent._id },
+	                        React.createElement("li", { className: "mdl-menu__item", onClick: function (e) { _this.delete(); } },
+	                            React.createElement("i", { className: "material-icons" }, "cancel"),
+	                            " Eliminar"))),
+	                React.createElement("div", { className: "mdl-card__supporting-text mdl-color-text--grey-600" }, this.props.parent.data.dni),
+	                React.createElement("div", { className: "mdl-card__actions mdl-card--border" },
+	                    React.createElement(react_router_1.Link, { to: "/parents/get/" + this.props.parent._id, className: "mdl-button mdl-js-button mdl-js-ripple-effect" }, "Ver detalles")))));
+	    };
+	    return Parent;
+	}(React.Component));
+	exports.Parent = Parent;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(253)))
+
+/***/ }),
+/* 276 */
 /***/ (function(module, exports) {
 
 	"use strict";

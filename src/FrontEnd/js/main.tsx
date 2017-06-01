@@ -8,6 +8,7 @@ import {App} from '../components/app'
 import {DashBoard} from '../components/dashboard'
 import {Login} from '../components/login'
 import * as Teacher from '../components/teacher'
+import * as Parent from '../components/parent'
 import {Auth} from './auth'
 
 window.addEventListener("load",()=>{
@@ -18,6 +19,13 @@ window.addEventListener("load",()=>{
 		    </Route>
         <Route path="/teachers" onEnter={Auth}>
           <IndexRoute component={Teacher.Teacher}/>
+          <Route path="get/:id" component={Teacher.Get}/>
+          <Route path="edit/:id" component={Teacher.Modify}/>
+          <Route path="grade/edit/:id" component={Teacher.Grade}/>
+          <Route path="create" component={Teacher.Add}/>
+        </Route>
+        <Route path="/parents" onEnter={Auth}>
+          <IndexRoute component={Parent.Parent}/>
           <Route path="get/:id" component={Teacher.Get}/>
           <Route path="edit/:id" component={Teacher.Modify}/>
           <Route path="grade/edit/:id" component={Teacher.Grade}/>
