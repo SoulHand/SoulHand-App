@@ -26,7 +26,7 @@ import {ajax} from 'jquery'
  			value:'V',
  			required:true
  		},
- 		phone:{
+ 		tel:{
  			match:(fn:string)=>{
  				return /^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/.test(fn);
  			},
@@ -138,17 +138,10 @@ import {ajax} from 'jquery'
                  </div>
                </div>
                <div className="mdl-cell mdl-cell--6-col">
-               <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.phone) ? 'is-invalid' :'')}>
-                   <input className="mdl-textfield__input" type="tel" id="phone" pattern="^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$" onChange={(e:any)=>{this.getFields(e)}}/>
-                   <label className="mdl-textfield__label" htmlFor="phone">Telefono*</label>
+                <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.tel) ? 'is-invalid' :'')}>
+                   <input className="mdl-textfield__input" type="tel" id="tel" pattern="^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$" onChange={(e:any)=>{this.getFields(e)}}/>
+                   <label className="mdl-textfield__label" htmlFor="tel">Telefono*</label>
                    <span className="mdl-textfield__error">Es necesaria un telefono</span>
-                 </div>
-               </div>
-               <div className="mdl-cell mdl-cell--6-col">
-               <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.email) ? 'is-invalid' :'')}>
-                   <input className="mdl-textfield__input" type="email" id="email" onChange={(e:any)=>{this.getFields(e)}}/>
-                   <label className="mdl-textfield__label" htmlFor="email">Email*</label>
-                   <span className="mdl-textfield__error">Es necesaria un correo valido</span>
                  </div>
                </div>
                <div className="mdl-cell mdl-cell--6-col">
@@ -178,11 +171,7 @@ import {ajax} from 'jquery'
                    <span className="mdl-switch__label">No/Si</span>
                 </label>
                </div>
-             </div>
-             <div id="message" className="mdl-js-snackbar mdl-snackbar">
-              <div className="mdl-snackbar__text"></div>
-              <button className="mdl-snackbar__action" type="button"></button>
-            </div>
+             </div>             
           </main>
        </div>
      );

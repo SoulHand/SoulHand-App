@@ -20,6 +20,8 @@ declare namespace People {
 		birthdate:string
 		mode:string
 		createDate:string
+    tel: string
+    genero: string
 		_v:number
 	}
   interface teacher{
@@ -123,7 +125,16 @@ declare namespace Props {
     location:ReactRouter.LocationDescriptor
 	}
 }
-
+/*
+  State
+*/
+declare namespace State {
+  interface teacherEdit {
+    teacher: People.teacher
+    error: any
+    grades: Array<CRUD.grade>
+  }
+}
 
 declare namespace CRUD{
   interface codeError{

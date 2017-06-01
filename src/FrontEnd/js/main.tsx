@@ -16,11 +16,13 @@ window.addEventListener("load",()=>{
 		    <Route path="/" component={App} onEnter={Auth}>
           <IndexRoute component={DashBoard}/>
 		    </Route>
-        <Route path="/teachers" component={Teacher.Teacher} onEnter={Auth}>
-          <IndexRoute component={Teacher.Teachers}/>
+        <Route path="/teachers" onEnter={Auth}>
+          <IndexRoute component={Teacher.Teacher}/>
+          <Route path="get/:id" component={Teacher.Get}/>
+          <Route path="edit/:id" component={Teacher.Modify}/>
+          <Route path="grade/edit/:id" component={Teacher.Grade}/>
+          <Route path="create" component={Teacher.Add}/>
         </Route>
-        <Route path="/teachers/get/:id" component={Teacher.Get} onEnter={Auth}/>
-        <Route path="/teachers/create" component={Teacher.Add} onEnter={Auth}/>
         <Route path="/auth" component={Login}/>
 	  	</Router>
 	  ), document.body);
