@@ -46,6 +46,7 @@ window.addEventListener("load",()=>{
         <Route path="/domains" onEnter={Auth}>
           <IndexRoute component={Domain.Domain}/>
           <Route path="get/:id" component={Domain.Get}/>
+          <Route path=":domain/objetives/:level" component={Domain.Objetive}/>
         </Route>
         <Route path="/auth" component={Login}/>
 	  	</Router>

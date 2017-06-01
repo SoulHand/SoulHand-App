@@ -3,6 +3,7 @@ import {ajax} from 'jquery'
 import {Link} from 'react-router'
 import * as Cards from '../cards/domain'
 import {View} from './view'
+import {Objetives} from './objetives'
 import {Menu} from '../app/menu'
 
 
@@ -97,3 +98,4 @@ import {Menu} from '../app/menu'
  }
 
  export let Get = View;
+ export let Objetive = Objetives;

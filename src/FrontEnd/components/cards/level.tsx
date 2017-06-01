@@ -14,7 +14,7 @@ import {Link} from 'react-router'
             {this.props.level._id}
           </div>
           <div className="mdl-card__actions mdl-card--border">
-            <Link to={`/levels/${this.props.level._id}/levels`} className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver Objetivos</Link>
+            <Link to={`/domains/${this.props.domain}/objetives/${this.props.level.name}`} className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver Objetivos</Link>
           </div>
         </div>
       </div>

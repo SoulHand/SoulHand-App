@@ -124,6 +124,14 @@ declare namespace Card {
   interface level{
     level: CRUD.level
     session: User.session
+    domain: string
+  }
+  interface objetive{
+    objetive: CRUD.objetive
+    session: User.session
+    delete: Function
+    domain: string
+    level: string
   }
 }
 
@@ -134,6 +142,14 @@ declare namespace Props {
   interface teacherView {
     routeParams: {
       id: string
+    }
+    router:ReactRouter.InjectedRouter
+  }
+  interface objetiveView {
+    routeParams: {
+      id: string
+      domain:string
+      level: string
     }
     router:ReactRouter.InjectedRouter
   }

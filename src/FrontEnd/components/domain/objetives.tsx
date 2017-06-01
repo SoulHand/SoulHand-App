@@ -1,34 +1,45 @@
 import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link, withRouter} from 'react-router'
-import {Level} from '../cards/level'
+import {Objetive} from '../cards/objetive'
 
 @withRouter
- export class View extends React.Component <Props.teacherView, {levels: Array<CRUD.level>, domain: string}>{
+ export class Objetives extends React.Component <Props.objetiveView, {objetives: Array<CRUD.objetive>}>{
    public session: User.session;
-   constructor(props:Props.teacherView){
+   public objetives: Array<CRUD.objetive> = [];
+   constructor(props:Props.objetiveView){
      super(props)
      let str = localStorage.getItem("session");
      this.session = JSON.parse(str);
      this.state = {
-       levels: null,
-       domain: null
+       objetives: null
      };
    }
    componentDidUpdate(){
      componentHandler.upgradeAllRegistered();
    }
+   delete(objetive: CRUD.objetive){
+     let obj = this.objetives.filter((row) => {
+       if (row._id === objetive._id) {
+         return false;
+       }
+       return true;
+     })
+     this.setState({
+       objetives: obj
+     });
+   }
    componentDidMount(){
      let p1 = ajax({
        method:"GET",
-       url: `${window.settings.uri}/v1/learning/domain/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       url: `${window.settings.uri}/v1/knowedge/${this.props.routeParams.domain}/objetives/${this.props.routeParams.level}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
        data:null
      });
-     p1.done((domain: CRUD.domain) => {
+     p1.done((objetives: Array<CRUD.objetive>) => {
+       this.objetives = objetives;
        this.setState({
-         levels: domain.levels,
-         domain:domain.name
+         objetives: objetives
        })
      });
    }
@@ -38,10 +49,10 @@ import {Level} from '../cards/level'
           <div className="mdl-spinner mdl-js-spinner is-active"></div>
        </div>
      );
-     if(this.state.levels){
-       body = this.state.levels.map((row) => {
+     if(this.state.objetives){
+       body = this.state.objetives.map((row) => {
          return (
-           <Level session={this.session} level={row} key={row._id} domain={this.state.domain}/>
+           <Objetive session={this.session} objetive={row} key={row._id} delete={this.delete.bind(this)} domain={this.props.routeParams.domain} level={this.props.routeParams.level}/>
          );
        })
      }
