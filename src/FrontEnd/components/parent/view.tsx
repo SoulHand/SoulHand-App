@@ -1,18 +1,18 @@
 import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link, withRouter} from 'react-router'
-import {Teacher} from '../cards/teacher'
-import * as List from '../profiles/teacher'
+import {Parent} from '../cards/parent'
+import * as List from '../profiles/parent'
 
 @withRouter
- export class View extends React.Component <Props.teacherView, Obj.teacher>{
+ export class View extends React.Component <Props.teacherView, {parent: People.parent}>{
    public session: User.session;
    constructor(props:Props.teacherView){
      super(props)
      let str = localStorage.getItem("session");
      this.session = JSON.parse(str);
      this.state = {
-       teacher: null
+       parent: null
      };
    }
    componentDidUpdate(){
@@ -25,7 +25,7 @@ import * as List from '../profiles/teacher'
  	        dataType: "json",
  	        data:null,
  	        crossDomain:true,
- 	        success:(data: People.teacher)=>{
+ 	        success:(data: People.parent)=>{
             this.props.router.replace('/parents');
  	        }
  		});
@@ -37,9 +37,9 @@ import * as List from '../profiles/teacher'
        dataType: "json",
        data:null
      });
-     p1.done((teacher: People.teacher) => {
+     p1.done((parent: People.teacher) => {
        this.setState({
-         teacher: teacher
+         parent: parent
        })
      });
    }
@@ -49,8 +49,8 @@ import * as List from '../profiles/teacher'
           <div className="mdl-spinner mdl-js-spinner is-active"></div>
        </div>
      );
-     if(this.state.teacher){
-       body = (<List.Teacher teacher={this.state.teacher}/>);
+     if(this.state.parent){
+       body = (<List.Parent parent={this.state.parent}/>);
      }
      return(
        <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
@@ -59,13 +59,14 @@ import * as List from '../profiles/teacher'
          <div className="mdl-layout__header-row">
            <span className="mdl-layout-title">SoulHand</span>
            <div className="mdl-layout-spacer"></div>
-           {this.state.teacher && (
+           {this.state.parent && (
              <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
                <i className="material-icons">more_vert</i>
              </button>
            )}
            <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
              <li className="mdl-menu__item"><Link to={`/parents/edit/${this.props.routeParams.id}`}>Editar</Link></li>
+             <li className="mdl-menu__item"><Link to={`/parents/grade/edit/${this.props.routeParams.id}`}>Asignar grado</Link></li>
              <li className="mdl-menu__item" onClick={(e)=>{this.delete()}}>Eliminar</li>
            </ul>
          </div>

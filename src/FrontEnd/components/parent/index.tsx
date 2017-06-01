@@ -2,6 +2,9 @@ import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link} from 'react-router'
 import * as Cards from '../cards/parent'
+import {ParentCreate} from './parentcreate'
+import {View} from './view'
+import {Edit} from './edit'
 import {Menu} from '../app/menu'
 
 
@@ -95,3 +98,7 @@ import {Menu} from '../app/menu'
      );
    }
  }
+
+ export let Add = ParentCreate;
+ export let Get = View;
+ export let Modify = Edit;

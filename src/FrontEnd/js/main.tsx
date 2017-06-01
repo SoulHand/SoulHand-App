@@ -26,10 +26,9 @@ window.addEventListener("load",()=>{
         </Route>
         <Route path="/parents" onEnter={Auth}>
           <IndexRoute component={Parent.Parent}/>
-          <Route path="get/:id" component={Teacher.Get}/>
-          <Route path="edit/:id" component={Teacher.Modify}/>
-          <Route path="grade/edit/:id" component={Teacher.Grade}/>
-          <Route path="create" component={Teacher.Add}/>
+          <Route path="get/:id" component={Parent.Get}/>
+          <Route path="edit/:id" component={Parent.Modify}/>
+          <Route path="create" component={Parent.Add}/>
         </Route>
         <Route path="/auth" component={Login}/>
 	  	</Router>

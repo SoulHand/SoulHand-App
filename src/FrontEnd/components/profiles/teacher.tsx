@@ -26,6 +26,14 @@ import {Link, withRouter} from 'react-router'
         </div>
         <div className="mdl-cell--6-col mdl-cell--middle">
           <div className="mdl-textfield">
+            <label className="mdl-input__expandable-holder">Telefono</label>
+            <div className="mdl-textfield__input">
+              {this.props.teacher.data.tel}
+            </div>
+          </div>
+        </div>
+        <div className="mdl-cell--6-col mdl-cell--middle">
+          <div className="mdl-textfield">
             <label className="mdl-input__expandable-holder">Fecha de nacimiento</label>
             <div className="mdl-textfield__input">
               {this.props.teacher.data.birthdate}

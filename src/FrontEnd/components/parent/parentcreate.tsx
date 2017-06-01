@@ -31,16 +31,13 @@ import {ajax} from 'jquery'
  				return /^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/.test(fn);
  			},
  			value:null
- 		},
+ 		}, 		
  		birthdate:{
  			match:(str: string) => {
         return /^[0-9]{2}\-[0-9]{2}-[0-9]{4}$/.test(str);
       },
  			value:null,
  			required:true
- 		},
- 		interprete:{
- 			value:null
  		},
  		genero:{
  			value:null,
@@ -69,11 +66,11 @@ import {ajax} from 'jquery'
     delete values.nacionality;
     ajax({
 			method:"POST",
-	        url: `${window.settings.uri}/v1/people/teachers/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window.settings.uri}/v1/people/parents/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:values,
 	        success:(data:any)=>{
-	        	this.props.router.replace('/teachers');
+	        	this.props.router.replace('/parents');
 	        },
 	        error:(data:any)=>{
 	        	var state: CRUD.codeError = data.responseJSON;
@@ -94,7 +91,7 @@ import {ajax} from 'jquery'
      return(
        <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
        <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-        <div className="mdl-layout__drawer-button"><Link to="/teachers"><i className="material-icons">&#xE5C4;</i></Link></div>
+        <div className="mdl-layout__drawer-button"><Link to="/parents"><i className="material-icons">&#xE5C4;</i></Link></div>
          <div className="mdl-layout__header-row">
            <span className="mdl-layout-title">SoulHand</span>
            <div className="mdl-layout-spacer"></div>
@@ -156,15 +153,6 @@ import {ajax} from 'jquery'
                  {(this.state.error.genero) && (
                    <span style={{color: "rgb(222, 50, 38)"}}>Seleccione un genero</span>
                  )}
-               </div>
-               <div className="mdl-cell mdl-cell--6-col">
-                  <label htmlFor="interprete" className="label static">
-                    Interprete
-                  </label>
-                 <label htmlFor="interprete" className="mdl-switch mdl-js-switch">
-                   <input type="checkbox" id="interprete" className="mdl-switch__input" onChange={(e:any)=>{this.getRadioButton(e)}}/>
-                   <span className="mdl-switch__label">No/Si</span>
-                </label>
                </div>
              </div>
           </main>

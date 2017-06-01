@@ -55,7 +55,7 @@
 	var login_1 = __webpack_require__(262);
 	var Teacher = __webpack_require__(263);
 	var Parent = __webpack_require__(274);
-	var auth_1 = __webpack_require__(276);
+	var auth_1 = __webpack_require__(280);
 	window.addEventListener("load", function () {
 	    react_dom_1.render((React.createElement(react_router_1.Router, { history: react_router_1.hashHistory },
 	        React.createElement(react_router_1.Route, { path: "/", component: app_1.App, onEnter: auth_1.Auth },
@@ -68,10 +68,9 @@
 	            React.createElement(react_router_1.Route, { path: "create", component: Teacher.Add })),
 	        React.createElement(react_router_1.Route, { path: "/parents", onEnter: auth_1.Auth },
 	            React.createElement(react_router_1.IndexRoute, { component: Parent.Parent }),
-	            React.createElement(react_router_1.Route, { path: "get/:id", component: Teacher.Get }),
-	            React.createElement(react_router_1.Route, { path: "edit/:id", component: Teacher.Modify }),
-	            React.createElement(react_router_1.Route, { path: "grade/edit/:id", component: Teacher.Grade }),
-	            React.createElement(react_router_1.Route, { path: "create", component: Teacher.Add })),
+	            React.createElement(react_router_1.Route, { path: "get/:id", component: Parent.Get }),
+	            React.createElement(react_router_1.Route, { path: "edit/:id", component: Parent.Modify }),
+	            React.createElement(react_router_1.Route, { path: "create", component: Parent.Add })),
 	        React.createElement(react_router_1.Route, { path: "/auth", component: login_1.Login }))), document.body);
 	});
 
@@ -40883,12 +40882,12 @@
 	        var _this = this;
 	        jquery_1.ajax({
 	            method: "DELETE",
-	            url: __webpack_provided_window_dot_settings.uri + "/v1/people/teachers/" + this.props.routeParams.id + "?PublicKeyId=" + this.session.publicKeyId + "&PrivateKeyId=" + this.session.privateKeyId,
+	            url: __webpack_provided_window_dot_settings.uri + "/v1/people/parents/" + this.props.routeParams.id + "?PublicKeyId=" + this.session.publicKeyId + "&PrivateKeyId=" + this.session.privateKeyId,
 	            dataType: "json",
 	            data: null,
 	            crossDomain: true,
 	            success: function (data) {
-	                _this.props.router.replace('/teachers');
+	                _this.props.router.replace('/parents');
 	            }
 	        });
 	    };
@@ -40896,7 +40895,7 @@
 	        var _this = this;
 	        var p1 = jquery_1.ajax({
 	            method: "GET",
-	            url: __webpack_provided_window_dot_settings.uri + "/v1/people/teachers/" + this.props.routeParams.id + "?PublicKeyId=" + this.session.publicKeyId + "&PrivateKeyId=" + this.session.privateKeyId,
+	            url: __webpack_provided_window_dot_settings.uri + "/v1/people/parents/" + this.props.routeParams.id + "?PublicKeyId=" + this.session.publicKeyId + "&PrivateKeyId=" + this.session.privateKeyId,
 	            dataType: "json",
 	            data: null
 	        });
@@ -40916,7 +40915,7 @@
 	        return (React.createElement("div", { className: "demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header" },
 	            React.createElement("header", { className: "demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600" },
 	                React.createElement("div", { className: "mdl-layout__drawer-button" },
-	                    React.createElement(react_router_1.Link, { to: "/teachers" },
+	                    React.createElement(react_router_1.Link, { to: "/parents" },
 	                        React.createElement("i", { className: "material-icons" }, "\uE5C4"))),
 	                React.createElement("div", { className: "mdl-layout__header-row" },
 	                    React.createElement("span", { className: "mdl-layout-title" }, "SoulHand"),
@@ -40925,9 +40924,7 @@
 	                        React.createElement("i", { className: "material-icons" }, "more_vert"))),
 	                    React.createElement("ul", { className: "mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right", htmlFor: "hdrbtn" },
 	                        React.createElement("li", { className: "mdl-menu__item" },
-	                            React.createElement(react_router_1.Link, { to: "/teachers/edit/" + this.props.routeParams.id }, "Editar")),
-	                        React.createElement("li", { className: "mdl-menu__item" },
-	                            React.createElement(react_router_1.Link, { to: "/teachers/grade/edit/" + this.props.routeParams.id }, "Asignar grado")),
+	                            React.createElement(react_router_1.Link, { to: "/parents/edit/" + this.props.routeParams.id }, "Editar")),
 	                        React.createElement("li", { className: "mdl-menu__item", onClick: function (e) { _this.delete(); } }, "Eliminar")))),
 	            React.createElement("main", { className: "mdl-layout__content mdl-color--white-100" }, body)));
 	    };
@@ -40979,6 +40976,10 @@
 	                React.createElement("div", { className: "mdl-textfield" },
 	                    React.createElement("label", { className: "mdl-input__expandable-holder" }, "Documento de identidad"),
 	                    React.createElement("div", { className: "mdl-textfield__input" }, this.props.teacher.data.dni))),
+	            React.createElement("div", { className: "mdl-cell--6-col mdl-cell--middle" },
+	                React.createElement("div", { className: "mdl-textfield" },
+	                    React.createElement("label", { className: "mdl-input__expandable-holder" }, "Telefono"),
+	                    React.createElement("div", { className: "mdl-textfield__input" }, this.props.teacher.data.tel))),
 	            React.createElement("div", { className: "mdl-cell--6-col mdl-cell--middle" },
 	                React.createElement("div", { className: "mdl-textfield" },
 	                    React.createElement("label", { className: "mdl-input__expandable-holder" }, "Fecha de nacimiento"),
@@ -42275,11 +42276,6 @@
 	                },
 	                value: null
 	            },
-	            email: {
-	                match: validator.isEmail(),
-	                value: null,
-	                required: true
-	            },
 	            birthdate: {
 	                match: function (str) {
 	                    return /^[0-9]{2}\-[0-9]{2}-[0-9]{4}$/.test(str);
@@ -42424,6 +42420,9 @@
 	var jquery_1 = __webpack_require__(261);
 	var react_router_1 = __webpack_require__(184);
 	var Cards = __webpack_require__(275);
+	var parentcreate_1 = __webpack_require__(276);
+	var view_1 = __webpack_require__(277);
+	var edit_1 = __webpack_require__(279);
 	var menu_1 = __webpack_require__(249);
 	var Parent = (function (_super) {
 	    __extends(Parent, _super);
@@ -42507,6 +42506,9 @@
 	    return Parent;
 	}(React.Component));
 	exports.Parent = Parent;
+	exports.Add = parentcreate_1.ParentCreate;
+	exports.Get = view_1.View;
+	exports.Modify = edit_1.Edit;
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(253)))
 
@@ -42571,6 +42573,525 @@
 
 /***/ }),
 /* 276 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(validator, __webpack_provided_window_dot_settings) {"use strict";
+	var __extends = (this && this.__extends) || (function () {
+	    var extendStatics = Object.setPrototypeOf ||
+	        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+	        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+	    return function (d, b) {
+	        extendStatics(d, b);
+	        function __() { this.constructor = d; }
+	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	    };
+	})();
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var React = __webpack_require__(2);
+	var react_router_1 = __webpack_require__(184);
+	var react_router_2 = __webpack_require__(184);
+	var formutils_1 = __webpack_require__(271);
+	var jquery_1 = __webpack_require__(261);
+	var ParentCreate = (function (_super) {
+	    __extends(ParentCreate, _super);
+	    function ParentCreate() {
+	        var _this = _super !== null && _super.apply(this, arguments) || this;
+	        _this.fields = {
+	            dni: {
+	                match: validator.matches(/^[0-9]{5,11}$/i),
+	                value: null,
+	                required: true
+	            },
+	            name: {
+	                match: function (fn) {
+	                    return !validator.isNull()(fn);
+	                },
+	                value: null,
+	                required: true
+	            },
+	            nacionality: {
+	                match: function (fn) {
+	                    return !validator.isNull()(fn);
+	                },
+	                value: 'V',
+	                required: true
+	            },
+	            tel: {
+	                match: function (fn) {
+	                    return /^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/.test(fn);
+	                },
+	                value: null
+	            },
+	            birthdate: {
+	                match: function (str) {
+	                    return /^[0-9]{2}\-[0-9]{2}-[0-9]{4}$/.test(str);
+	                },
+	                value: null,
+	                required: true
+	            },
+	            genero: {
+	                value: null,
+	                required: true,
+	                match: function (str) {
+	                    return !validator.isNull()(str);
+	                }
+	            }
+	        };
+	        _this.state = {
+	            error: {}
+	        };
+	        return _this;
+	    }
+	    ParentCreate.prototype.send = function (event) {
+	        var _this = this;
+	        var values = {};
+	        var error = false;
+	        for (var i in this.fields) {
+	            this.state.error[i] = !_super.prototype.validate.call(this, this.fields[i].value, i);
+	            values[i] = this.fields[i].value;
+	            error = error || this.state.error[i];
+	        }
+	        this.setState(this.state);
+	        if (error) {
+	            return;
+	        }
+	        values.dni = values.nacionality + values.dni;
+	        delete values.nacionality;
+	        jquery_1.ajax({
+	            method: "POST",
+	            url: __webpack_provided_window_dot_settings.uri + "/v1/people/parents/?PublicKeyId=" + this.session.publicKeyId + "&PrivateKeyId=" + this.session.privateKeyId,
+	            dataType: "json",
+	            data: values,
+	            success: function (data) {
+	                _this.props.router.replace('/parents');
+	            },
+	            error: function (data) {
+	                var state = data.responseJSON;
+	                var config = {
+	                    message: state.message,
+	                    timeout: 2000
+	                };
+	                var message = document.querySelector('.mdl-js-snackbar');
+	                console.log(message);
+	                message.MaterialSnackbar.showSnackbar(config);
+	            }
+	        });
+	    };
+	    ParentCreate.prototype.componentDidMount = function () {
+	        componentHandler.upgradeAllRegistered();
+	    };
+	    ParentCreate.prototype.render = function () {
+	        var _this = this;
+	        return (React.createElement("div", { className: "demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header" },
+	            React.createElement("header", { className: "demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600" },
+	                React.createElement("div", { className: "mdl-layout__drawer-button" },
+	                    React.createElement(react_router_2.Link, { to: "/parents" },
+	                        React.createElement("i", { className: "material-icons" }, "\uE5C4"))),
+	                React.createElement("div", { className: "mdl-layout__header-row" },
+	                    React.createElement("span", { className: "mdl-layout-title" }, "SoulHand"),
+	                    React.createElement("div", { className: "mdl-layout-spacer" }),
+	                    React.createElement("button", { className: "mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon", onClick: function (e) { _this.send(e); } },
+	                        React.createElement("i", { className: "material-icons" }, "check")))),
+	            React.createElement("main", { className: "mdl-layout__content mdl-color--white-100" },
+	                React.createElement("div", { className: "mdl-grid mdl-color--white demo-content" },
+	                    React.createElement("div", { className: "mdl-cell mdl-cell--6-col" },
+	                        React.createElement("div", { className: "mdl-grid" },
+	                            React.createElement("div", { className: "mdl-cell mdl-cell--2-col" },
+	                                React.createElement("div", { className: "mdl-textfield mdl-js-textfield " + ((this.state.error.dni) ? 'is-invalid' : '') },
+	                                    React.createElement("select", { className: "mdl-textfield__input", id: "nacionality", onChange: function (e) { _this.getFields(e); } },
+	                                        React.createElement("option", { value: "V" }, "V"),
+	                                        React.createElement("option", { value: "E" }, "E")))),
+	                            React.createElement("div", { className: "mdl-cell mdl-cell--4-col" },
+	                                React.createElement("div", { className: "mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.dni) ? 'is-invalid' : '') },
+	                                    React.createElement("input", { className: "mdl-textfield__input", type: "text", id: "dni", pattern: "^[0-9]{5,11}$", onChange: function (e) { _this.getFields(e); } }),
+	                                    React.createElement("label", { className: "mdl-textfield__label", htmlFor: "dni" }, "Cedula*"),
+	                                    React.createElement("span", { className: "mdl-textfield__error" }, "Es necesaria un cedula valida"))))),
+	                    React.createElement("div", { className: "mdl-cell mdl-cell--6-col" },
+	                        React.createElement("div", { className: "mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.name) ? 'is-invalid' : '') },
+	                            React.createElement("input", { className: "mdl-textfield__input", type: "text", id: "name", onChange: function (e) { _this.getFields(e); } }),
+	                            React.createElement("label", { className: "mdl-textfield__label", htmlFor: "name" }, "Nombre y Apellido*"),
+	                            React.createElement("span", { className: "mdl-textfield__error" }, "Es necesaria un nombre valido"))),
+	                    React.createElement("div", { className: "mdl-cell mdl-cell--6-col" },
+	                        React.createElement("div", { className: "mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.tel) ? 'is-invalid' : '') },
+	                            React.createElement("input", { className: "mdl-textfield__input", type: "tel", id: "tel", pattern: "^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$", onChange: function (e) { _this.getFields(e); } }),
+	                            React.createElement("label", { className: "mdl-textfield__label", htmlFor: "tel" }, "Telefono*"),
+	                            React.createElement("span", { className: "mdl-textfield__error" }, "Es necesaria un telefono"))),
+	                    React.createElement("div", { className: "mdl-cell mdl-cell--6-col" },
+	                        React.createElement("div", { className: "mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.birthdate) ? 'is-invalid' : '') },
+	                            React.createElement("input", { className: "mdl-textfield__input", type: "text", id: "birthdate", pattern: "^[0-9]{2}\-[0-9]{2}-[0-9]{4}$", onChange: function (e) { _this.getFields(e); } }),
+	                            React.createElement("label", { className: "mdl-textfield__label", htmlFor: "birthdate" }, "Fecha de nacimiento*"),
+	                            React.createElement("span", { className: "mdl-textfield__error" }, "Es necesaria una fecha en formato d-m-Y"))),
+	                    React.createElement("div", { className: "mdl-cell mdl-cell--6-col" },
+	                        React.createElement("label", { className: "label static", htmlFor: "genero" }, "Genero*"),
+	                        React.createElement("select", { className: "mdl-textfield__input", id: "genero", onChange: function (e) { _this.getFields(e); } },
+	                            React.createElement("option", { value: "" }, "Seleccione una opci\u00F3n"),
+	                            React.createElement("option", { value: "MASCULINO" }, "MASCULINO"),
+	                            React.createElement("option", { value: "FEMENINO" }, "FEMENINO")),
+	                        (this.state.error.genero) && (React.createElement("span", { style: { color: "rgb(222, 50, 38)" } }, "Seleccione un genero")))))));
+	    };
+	    return ParentCreate;
+	}(formutils_1.FormUtils));
+	ParentCreate = __decorate([
+	    react_router_1.withRouter
+	], ParentCreate);
+	exports.ParentCreate = ParentCreate;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(268), __webpack_require__(253)))
+
+/***/ }),
+/* 277 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(__webpack_provided_window_dot_settings) {"use strict";
+	var __extends = (this && this.__extends) || (function () {
+	    var extendStatics = Object.setPrototypeOf ||
+	        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+	        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+	    return function (d, b) {
+	        extendStatics(d, b);
+	        function __() { this.constructor = d; }
+	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	    };
+	})();
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var React = __webpack_require__(2);
+	var jquery_1 = __webpack_require__(261);
+	var react_router_1 = __webpack_require__(184);
+	var List = __webpack_require__(278);
+	var View = (function (_super) {
+	    __extends(View, _super);
+	    function View(props) {
+	        var _this = _super.call(this, props) || this;
+	        var str = localStorage.getItem("session");
+	        _this.session = JSON.parse(str);
+	        _this.state = {
+	            parent: null
+	        };
+	        return _this;
+	    }
+	    View.prototype.componentDidUpdate = function () {
+	        componentHandler.upgradeAllRegistered();
+	    };
+	    View.prototype.delete = function () {
+	        var _this = this;
+	        jquery_1.ajax({
+	            method: "DELETE",
+	            url: __webpack_provided_window_dot_settings.uri + "/v1/people/parents/" + this.props.routeParams.id + "?PublicKeyId=" + this.session.publicKeyId + "&PrivateKeyId=" + this.session.privateKeyId,
+	            dataType: "json",
+	            data: null,
+	            crossDomain: true,
+	            success: function (data) {
+	                _this.props.router.replace('/parents');
+	            }
+	        });
+	    };
+	    View.prototype.componentDidMount = function () {
+	        var _this = this;
+	        var p1 = jquery_1.ajax({
+	            method: "GET",
+	            url: __webpack_provided_window_dot_settings.uri + "/v1/people/parents/" + this.props.routeParams.id + "?PublicKeyId=" + this.session.publicKeyId + "&PrivateKeyId=" + this.session.privateKeyId,
+	            dataType: "json",
+	            data: null
+	        });
+	        p1.done(function (parent) {
+	            _this.setState({
+	                parent: parent
+	            });
+	        });
+	    };
+	    View.prototype.render = function () {
+	        var _this = this;
+	        var body = (React.createElement("div", { className: "mdl-grid mdl-color--white demo-content" },
+	            React.createElement("div", { className: "mdl-spinner mdl-js-spinner is-active" })));
+	        if (this.state.parent) {
+	            body = (React.createElement(List.Parent, { parent: this.state.parent }));
+	        }
+	        return (React.createElement("div", { className: "demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header" },
+	            React.createElement("header", { className: "demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600" },
+	                React.createElement("div", { className: "mdl-layout__drawer-button" },
+	                    React.createElement(react_router_1.Link, { to: "/parents" },
+	                        React.createElement("i", { className: "material-icons" }, "\uE5C4"))),
+	                React.createElement("div", { className: "mdl-layout__header-row" },
+	                    React.createElement("span", { className: "mdl-layout-title" }, "SoulHand"),
+	                    React.createElement("div", { className: "mdl-layout-spacer" }),
+	                    this.state.parent && (React.createElement("button", { className: "mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon", id: "hdrbtn" },
+	                        React.createElement("i", { className: "material-icons" }, "more_vert"))),
+	                    React.createElement("ul", { className: "mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right", htmlFor: "hdrbtn" },
+	                        React.createElement("li", { className: "mdl-menu__item" },
+	                            React.createElement(react_router_1.Link, { to: "/parents/edit/" + this.props.routeParams.id }, "Editar")),
+	                        React.createElement("li", { className: "mdl-menu__item" },
+	                            React.createElement(react_router_1.Link, { to: "/parents/grade/edit/" + this.props.routeParams.id }, "Asignar grado")),
+	                        React.createElement("li", { className: "mdl-menu__item", onClick: function (e) { _this.delete(); } }, "Eliminar")))),
+	            React.createElement("main", { className: "mdl-layout__content mdl-color--white-100" }, body)));
+	    };
+	    return View;
+	}(React.Component));
+	View = __decorate([
+	    react_router_1.withRouter
+	], View);
+	exports.View = View;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(253)))
+
+/***/ }),
+/* 278 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || (function () {
+	    var extendStatics = Object.setPrototypeOf ||
+	        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+	        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+	    return function (d, b) {
+	        extendStatics(d, b);
+	        function __() { this.constructor = d; }
+	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	    };
+	})();
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var React = __webpack_require__(2);
+	var react_router_1 = __webpack_require__(184);
+	var Parent = (function (_super) {
+	    __extends(Parent, _super);
+	    function Parent() {
+	        return _super !== null && _super.apply(this, arguments) || this;
+	    }
+	    Parent.prototype.render = function () {
+	        return (React.createElement("div", { className: "mdl-grid mdl-color--white demo-content" },
+	            React.createElement("div", { className: "mdl-cell--6-col mdl-cell--middle" },
+	                React.createElement("div", { className: "mdl-textfield" },
+	                    React.createElement("label", { className: "mdl-input__expandable-holder" }, "Nombre Y Apellido"),
+	                    React.createElement("div", { className: "mdl-textfield__input" }, this.props.parent.data.name))),
+	            React.createElement("div", { className: "mdl-cell--6-col mdl-cell--middle" },
+	                React.createElement("div", { className: "mdl-textfield" },
+	                    React.createElement("label", { className: "mdl-input__expandable-holder" }, "Documento de identidad"),
+	                    React.createElement("div", { className: "mdl-textfield__input" }, this.props.parent.data.dni))),
+	            React.createElement("div", { className: "mdl-cell--6-col mdl-cell--middle" },
+	                React.createElement("div", { className: "mdl-textfield" },
+	                    React.createElement("label", { className: "mdl-input__expandable-holder" }, "Telefono"),
+	                    React.createElement("div", { className: "mdl-textfield__input" }, this.props.parent.data.tel))),
+	            React.createElement("div", { className: "mdl-cell--6-col mdl-cell--middle" },
+	                React.createElement("div", { className: "mdl-textfield" },
+	                    React.createElement("label", { className: "mdl-input__expandable-holder" }, "Fecha de nacimiento"),
+	                    React.createElement("div", { className: "mdl-textfield__input" }, this.props.parent.data.birthdate))),
+	            React.createElement("div", { className: "mdl-cell--6-col mdl-cell--middle" },
+	                React.createElement("div", { className: "mdl-textfield" },
+	                    React.createElement("label", { className: "mdl-input__expandable-holder" }, "Creado en"),
+	                    React.createElement("div", { className: "mdl-textfield__input" }, this.props.parent.data.createDate)))));
+	    };
+	    return Parent;
+	}(React.Component));
+	Parent = __decorate([
+	    react_router_1.withRouter
+	], Parent);
+	exports.Parent = Parent;
+
+
+/***/ }),
+/* 279 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(validator, __webpack_provided_window_dot_settings) {"use strict";
+	var __extends = (this && this.__extends) || (function () {
+	    var extendStatics = Object.setPrototypeOf ||
+	        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+	        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+	    return function (d, b) {
+	        extendStatics(d, b);
+	        function __() { this.constructor = d; }
+	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	    };
+	})();
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var React = __webpack_require__(2);
+	var formutils_1 = __webpack_require__(271);
+	var jquery_1 = __webpack_require__(261);
+	var react_router_1 = __webpack_require__(184);
+	var Edit = (function (_super) {
+	    __extends(Edit, _super);
+	    function Edit() {
+	        var _this = _super !== null && _super.apply(this, arguments) || this;
+	        _this.fields = {
+	            name: {
+	                value: null,
+	                required: false
+	            },
+	            tel: {
+	                match: function (fn) {
+	                    return /^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/.test(fn);
+	                },
+	                value: null
+	            },
+	            birthdate: {
+	                match: function (str) {
+	                    return /^[0-9]{2}\-[0-9]{2}-[0-9]{4}$/.test(str);
+	                },
+	                value: null,
+	                required: false
+	            },
+	            genero: {
+	                value: null,
+	                required: true,
+	                match: function (str) {
+	                    return !validator.isNull()(str);
+	                }
+	            }
+	        };
+	        _this.state = {
+	            parent: null,
+	            name: "",
+	            tel: "",
+	            birthdate: "",
+	            genero: "",
+	            error: {}
+	        };
+	        return _this;
+	    }
+	    Edit.prototype.componentDidUpdate = function () {
+	        componentHandler.upgradeAllRegistered();
+	    };
+	    Edit.prototype.componentDidMount = function () {
+	        var _this = this;
+	        var p1 = jquery_1.ajax({
+	            method: "GET",
+	            url: __webpack_provided_window_dot_settings.uri + "/v1/people/parents/" + this.props.routeParams.id + "?PublicKeyId=" + this.session.publicKeyId + "&PrivateKeyId=" + this.session.privateKeyId,
+	            dataType: "json",
+	            data: null
+	        });
+	        p1.done(function (parent) {
+	            _this.fields.name.value = parent.data.name;
+	            _this.fields.birthdate.value = parent.data.birthdate;
+	            _this.fields.tel.value = parent.data.tel;
+	            _this.fields.genero.value = parent.data.genero;
+	            _this.setState({
+	                parent: parent,
+	                name: parent.data.name,
+	                birthdate: parent.data.birthdate,
+	                tel: parent.data.tel,
+	                genero: parent.data.genero
+	            });
+	        });
+	    };
+	    Edit.prototype.getFields = function (event) {
+	        _super.prototype.getFields.call(this, event);
+	        this.state[event.target.id] = this.fields[event.target.id].value;
+	        this.setState(this.state);
+	    };
+	    Edit.prototype.getRadioButton = function (event) {
+	        _super.prototype.getRadioButton.call(this, event);
+	        this.state[event.target.id] = this.fields[event.target.id].value;
+	        this.setState(this.state);
+	    };
+	    Edit.prototype.send = function (event) {
+	        var _this = this;
+	        var values = {};
+	        var error = false;
+	        for (var i in this.fields) {
+	            this.state.error[i] = !_super.prototype.validate.call(this, this.fields[i].value, i);
+	            values[i] = this.fields[i].value;
+	            error = error || this.state.error[i];
+	        }
+	        this.setState(this.state);
+	        if (error) {
+	            return;
+	        }
+	        delete values.nacionality;
+	        jquery_1.ajax({
+	            method: "PUT",
+	            url: __webpack_provided_window_dot_settings.uri + "/v1/people/parents/" + this.props.routeParams.id + "?PublicKeyId=" + this.session.publicKeyId + "&PrivateKeyId=" + this.session.privateKeyId,
+	            dataType: "json",
+	            data: values,
+	            crossDomain: true,
+	            success: function (data) {
+	                _this.props.router.replace("/parents/get/" + _this.props.routeParams.id);
+	            },
+	            error: function (data) {
+	                var state = data.responseJSON;
+	                var config = {
+	                    message: state.message,
+	                    timeout: 2000
+	                };
+	                var message = document.querySelector('.mdl-js-snackbar');
+	                message.MaterialSnackbar.showSnackbar(config);
+	            }
+	        });
+	    };
+	    Edit.prototype.render = function () {
+	        var _this = this;
+	        var body = (React.createElement("div", { className: "mdl-grid mdl-color--white demo-content" },
+	            React.createElement("div", { className: "mdl-spinner mdl-js-spinner is-active" })));
+	        if (this.state.parent) {
+	            body = (React.createElement("div", { className: "mdl-grid mdl-color--white demo-content" },
+	                React.createElement("div", { className: "mdl-cell--6-col mdl-cell--middle" },
+	                    React.createElement("div", { className: "mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.name) ? 'is-invalid' : '') },
+	                        React.createElement("input", { className: "mdl-textfield__input", type: "text", id: "name", onChange: function (e) { _this.getFields(e); }, value: this.state.name }),
+	                        React.createElement("label", { className: "mdl-textfield__label", htmlFor: "name" }, "Nombre Y Apellido*"),
+	                        React.createElement("span", { className: "mdl-textfield__error" }, "Es necesaria un nombre y apellido"))),
+	                React.createElement("div", { className: "mdl-cell mdl-cell--6-col" },
+	                    React.createElement("div", { className: "mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.tel) ? 'is-invalid' : '') },
+	                        React.createElement("input", { className: "mdl-textfield__input", type: "tel", id: "tel", pattern: "^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$", onChange: function (e) { _this.getFields(e); }, value: this.state.tel }),
+	                        React.createElement("label", { className: "mdl-textfield__label", htmlFor: "tel" }, "Telefono*"),
+	                        React.createElement("span", { className: "mdl-textfield__error" }, "Es necesaria un telefono"))),
+	                React.createElement("div", { className: "mdl-cell--6-col mdl-cell--middle" },
+	                    React.createElement("div", { className: "mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.birthdate) ? 'is-invalid' : '') },
+	                        React.createElement("input", { className: "mdl-textfield__input", type: "text", id: "birthdate", pattern: "^[0-9]{2}\-[0-9]{2}-[0-9]{4}$", onChange: function (e) { _this.getFields(e); }, value: this.state.birthdate }),
+	                        React.createElement("label", { className: "mdl-textfield__label", htmlFor: "birthdate" }, "Fecha de nacimiento*"),
+	                        React.createElement("span", { className: "mdl-textfield__error" }, "Es necesaria una fecha en formato d-m-Y"))),
+	                React.createElement("div", { className: "mdl-cell mdl-cell--6-col" },
+	                    React.createElement("label", { className: "label static", htmlFor: "genero" }, "Genero*"),
+	                    React.createElement("select", { className: "mdl-textfield__input", id: "genero", onChange: function (e) { _this.getFields(e); }, value: this.state.genero },
+	                        React.createElement("option", { value: "" }, "Seleccione una opci\u00F3n"),
+	                        React.createElement("option", { value: "MASCULINO" }, "MASCULINO"),
+	                        React.createElement("option", { value: "FEMENINO" }, "FEMENINO")),
+	                    (this.state.error.genero) && (React.createElement("span", { style: { color: "rgb(222, 50, 38)" } }, "Seleccione un genero")))));
+	        }
+	        return (React.createElement("div", { className: "demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header" },
+	            React.createElement("header", { className: "demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600" },
+	                React.createElement("div", { className: "mdl-layout__drawer-button" },
+	                    React.createElement(react_router_1.Link, { to: "/parents" },
+	                        React.createElement("i", { className: "material-icons" }, "\uE5C4"))),
+	                React.createElement("div", { className: "mdl-layout__header-row" },
+	                    React.createElement("span", { className: "mdl-layout-title" }, "SoulHand"),
+	                    React.createElement("div", { className: "mdl-layout-spacer" }),
+	                    this.state.parent && (React.createElement("button", { className: "mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon", onClick: function (e) { _this.send(e); } },
+	                        React.createElement("i", { className: "material-icons" }, "check"))))),
+	            React.createElement("main", { className: "mdl-layout__content mdl-color--white-100" }, body)));
+	    };
+	    return Edit;
+	}(formutils_1.FormUtils));
+	Edit = __decorate([
+	    react_router_1.withRouter
+	], Edit);
+	exports.Edit = Edit;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(268), __webpack_require__(253)))
+
+/***/ }),
+/* 280 */
 /***/ (function(module, exports) {
 
 	"use strict";
