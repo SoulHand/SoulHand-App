@@ -121,6 +121,10 @@ declare namespace Card {
     domain: CRUD.domain
     session: User.session
   }
+  interface level{
+    level: CRUD.level
+    session: User.session
+  }
 }
 
 /*

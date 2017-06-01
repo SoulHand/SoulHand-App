@@ -1,16 +1,17 @@
 import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link, withRouter} from 'react-router'
+import {Level} from '../cards/level'
 
 @withRouter
- export class View extends React.Component <Props.teacherView, {domain: CRUD.domain}>{
+ export class View extends React.Component <Props.teacherView, {levels: Array<CRUD.level>}>{
    public session: User.session;
    constructor(props:Props.teacherView){
      super(props)
      let str = localStorage.getItem("session");
      this.session = JSON.parse(str);
      this.state = {
-       domain: null
+       levels: null
      };
    }
    componentDidUpdate(){
@@ -25,16 +26,23 @@ import {Link, withRouter} from 'react-router'
      });
      p1.done((domain: CRUD.domain) => {
        this.setState({
-         domain: domain
+         levels: domain.levels
        })
      });
    }
    render(){
-     let body = (
+     let body: any = (
        <div className="mdl-grid mdl-color--white demo-content">
           <div className="mdl-spinner mdl-js-spinner is-active"></div>
        </div>
      );
+     if(this.state.levels){
+       body = this.state.levels.map((row) => {
+         return (
+           <Level session={this.session} level={row} key={row._id}/>
+         );
+       })
+     }
      return(
        <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
        <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
@@ -44,9 +52,11 @@ import {Link, withRouter} from 'react-router'
            <div className="mdl-layout-spacer"></div>
          </div>
        </header>
-          <main className="mdl-layout__content mdl-color--white-100">
-            {body}
-          </main>
+         <main className="mdl-layout__content mdl-color--white-100">
+           <div className="mdl-grid demo-content">
+              {body}
+           </div>
+         </main>
        </div>
      );
    }
