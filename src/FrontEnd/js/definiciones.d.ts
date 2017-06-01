@@ -133,6 +133,13 @@ declare namespace Card {
     domain: string
     level: string
   }
+  interface cognition{
+    cognition: CRUD.cognition
+    session: User.session
+    delete: Function
+    domain: string
+    level: string
+  }
 }
 
 /*

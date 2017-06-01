@@ -48,6 +48,7 @@ window.addEventListener("load",()=>{
           <Route path="get/:id" component={Domain.Get}/>
           <Route path=":domain/objetives/:level" component={Domain.Objetive}/>
         </Route>
+        <Route path="/objetives/get/:id" component={Domain.Cognition} onEnter={Auth}/>
         <Route path="/auth" component={Login}/>
 	  	</Router>
 	  ), document.getElementById("app"));
