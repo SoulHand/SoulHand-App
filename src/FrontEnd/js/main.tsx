@@ -1,5 +1,3 @@
-//import "tether"
-//import "boostrap"
 import "../vendor/material.min.js"
 import * as React from 'react'
 import {render} from 'react-dom'
@@ -32,5 +30,5 @@ window.addEventListener("load",()=>{
         </Route>
         <Route path="/auth" component={Login}/>
 	  	</Router>
-	  ), document.body);
+	  ), document.getElementById("app"));
 });

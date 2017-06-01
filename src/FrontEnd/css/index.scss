@@ -48,3 +48,164 @@ img{
 .mdl-layout__drawer-button a{
   color: rgb(117,117,117) !important;
 }
+
+div[data-app="soulhand-app"]{
+  div.content{
+      display:flex;
+      overflow: hidden;
+      flex-flow: row nowrap;
+      width: 100vw;
+      height: 100vh;
+      margin: 0px auto;
+      padding: 0px;
+  }
+  .transitions{
+    transition-property: all;
+    transition-delay: 0s;
+    transition-duration: 0.5s;
+    &.linear{
+      transition-timing-function: linear;
+    }
+    &.ease-out{
+      transition-timing-function: ease-out;
+    }
+    &.ease-in-out{
+      transition-timing-function: ease-in-out;
+    }
+    &.cubic{
+      transition-timing-function: cubic-bezier(.46,.03,.52,.96);
+    }
+    &.quartic{
+      transition-timing-function: cubic-bezier(.91,-0.18,.18,1);
+    }
+    &.property{
+      &-resize{
+        transition-property: width, height, transform;
+      }
+      &-move{
+        transition-property: transform;
+      }
+      &-background{
+        transition-property: opacity, color, background-color;
+      }
+    }
+  }
+  .animations{
+    &.transitions{
+      &-linear{
+        $linear:linear;
+        animation-timing-function: $linear;
+        -webkit-animation-timing-function: $linear;
+      }
+      &-ease-out{
+        $ease:ease-out;
+        animation-timing-function: $ease;
+        -webkit-animation-timing-function: $ease;
+      }
+      &-ease-in-out{
+        $ease:ease-in-out;
+        animation-timing-function: $ease;
+        -webkit-animation-timing-function: $ease;
+      }
+      &-cubic{
+        $cubic:cubic-bezier(.46,.03,.52,.96);
+        animation-timing-function: $cubic;
+        -webkit-animation-timing-function: $cubic;
+      }
+      &-quartic{
+        $cubic:cubic-bezier(.91,-0.18,.18,1);
+        animation-timing-function: $cubic;
+        -webkit-animation-timing-function: $cubic;
+      }
+    }
+  }
+  .nowrap{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .label{
+    @extend .nowrap;
+    font-size: 1.5em;
+    font-weight: bold;
+  }
+  /*    Flexbox   */
+  .flex{
+    display: flex;
+    &.column{
+      flex-flow: column nowrap;
+    }
+    &.row{
+      flex-flow: row nowrap;
+      width:100%;
+      overflow-x:hidden;
+      position:relative;
+    }
+    /*  Flexbox Vertical Align */
+    &.v-align{
+      &.left{
+        align-items: flex-start !important;
+      }
+      &.middle{
+        align-items: center !important;
+      }
+      &.right{
+        align-items: flex-end !important;
+      }
+    }
+    /*  Flexbox Horizontal Align */
+    &.h-align{
+      &.left{
+        justify-content: flex-start !important;
+      }
+      &.middle{
+        justify-content: center !important;
+      }
+      &.right{
+        justify-content: flex-end !important;
+      }
+    }
+    &.vh-align{
+      &.middle{
+        @extend .flex.h-align.middle;
+        @extend .flex.v-align.middle;
+      }
+      &.left{
+        @extend .flex.h-align.left;
+        @extend .flex.v-align.left;
+      }
+      &.right{
+        @extend .flex.h-align.right;
+        @extend .flex.v-align.right;
+      }
+    }
+  }
+  div.icon{
+    width:256px;
+    height: 256px;
+    background-image: url("../icons/256x256.png");
+    background-size: 100% 100%;
+    background-position: center;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  div.icon.animations{
+    animation-name: animations-icon;
+    -webkit-animation-name: animations-icon;
+    animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;
+    animation-duration: 2.5s;
+    -webkit-animation-duration: 2.5s;
+  }
+}
+@keyframes animations-icon{
+    0%{
+        opacity:0;
+    }
+    50%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+    }
+}

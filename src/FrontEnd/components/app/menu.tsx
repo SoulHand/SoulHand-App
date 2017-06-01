@@ -16,12 +16,12 @@ import {UserBox} from './userbox'
           <UserBox session={this.state.session}/>
           <nav className="demo-navigation mdl-navigation mdl-color--blue-grey-800">
           <Link to="/" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i>Inicio</Link>
-            <div className="mdl-layout-spacer"></div>
-            <Link to="/teachers" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">people</i>Docentes</Link>
+          <div className="mdl-layout-spacer"></div>
+          <Link to="/teachers" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">people</i>Docentes</Link>
+          <Link to="/parents" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">people</i>Representantes</Link>
 
 
             <a className="mdl-navigation__link" href=""><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">people</i>Alumnos</a>
-            <a className="mdl-navigation__link" href=""><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">people</i>Representantes</a>
             <div className="mdl-layout-spacer"></div>
             <a className="mdl-navigation__link" href=""><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">forum</i>Mis Actividades</a>
             <a className="mdl-navigation__link" href=""><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i>Dominios</a>

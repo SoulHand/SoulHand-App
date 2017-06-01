@@ -71,7 +71,7 @@
 	            React.createElement(react_router_1.Route, { path: "get/:id", component: Parent.Get }),
 	            React.createElement(react_router_1.Route, { path: "edit/:id", component: Parent.Modify }),
 	            React.createElement(react_router_1.Route, { path: "create", component: Parent.Add })),
-	        React.createElement(react_router_1.Route, { path: "/auth", component: login_1.Login }))), document.body);
+	        React.createElement(react_router_1.Route, { path: "/auth", component: login_1.Login }))), document.getElementById("app"));
 	});
 
 
@@ -27682,12 +27682,12 @@
 	                React.createElement(react_router_1.Link, { to: "/teachers", className: "mdl-navigation__link" },
 	                    React.createElement("i", { className: "mdl-color-text--blue-grey-400 material-icons", role: "presentation" }, "people"),
 	                    "Docentes"),
+	                React.createElement(react_router_1.Link, { to: "/parents", className: "mdl-navigation__link" },
+	                    React.createElement("i", { className: "mdl-color-text--blue-grey-400 material-icons", role: "presentation" }, "people"),
+	                    "Representantes"),
 	                React.createElement("a", { className: "mdl-navigation__link", href: "" },
 	                    React.createElement("i", { className: "mdl-color-text--blue-grey-400 material-icons", role: "presentation" }, "people"),
 	                    "Alumnos"),
-	                React.createElement("a", { className: "mdl-navigation__link", href: "" },
-	                    React.createElement("i", { className: "mdl-color-text--blue-grey-400 material-icons", role: "presentation" }, "people"),
-	                    "Representantes"),
 	                React.createElement("div", { className: "mdl-layout-spacer" }),
 	                React.createElement("a", { className: "mdl-navigation__link", href: "" },
 	                    React.createElement("i", { className: "mdl-color-text--blue-grey-400 material-icons", role: "presentation" }, "forum"),
