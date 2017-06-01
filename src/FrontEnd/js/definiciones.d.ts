@@ -117,6 +117,10 @@ declare namespace Card {
     session: User.session
     delete: Function
   }
+  interface domain{
+    domain: CRUD.domain
+    session: User.session
+  }
 }
 
 /*

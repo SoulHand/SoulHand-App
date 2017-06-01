@@ -9,6 +9,7 @@ import * as Teacher from '../components/teacher'
 import * as Parent from '../components/parent'
 import * as Grade from '../components/grades'
 import * as Matters from '../components/matters'
+import * as Domain from '../components/domain'
 import {Auth} from './auth'
 
 window.addEventListener("load",()=>{
@@ -41,6 +42,10 @@ window.addEventListener("load",()=>{
           <Route path="get/:id" component={Matters.Get}/>
           <Route path="edit/:id" component={Matters.Modify}/>
           <Route path="create" component={Matters.Add}/>
+        </Route>
+        <Route path="/domains" onEnter={Auth}>
+          <IndexRoute component={Domain.Domain}/>
+          <Route path="get/:id" component={Domain.Get}/>
         </Route>
         <Route path="/auth" component={Login}/>
 	  	</Router>
