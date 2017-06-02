@@ -1,19 +1,19 @@
 import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link} from 'react-router'
-import * as Cards from '../cards/domain'
-import {View} from './view'
-import {Objetives} from './objetives'
-import {CognitionView} from './cognition'
-import {ParentCreate} from './parentcreate'
+import * as Cards from '../cards/student'
+import {Header} from '../app/header'
 import {Menu} from '../app/menu'
+import {View} from './view'
+import {Edit} from './edit'
+import {SetGrade} from './setgrade'
+import {ParentCreate} from './parentcreate'
 
-
- export class Domain extends React.Component <{}, {}>{
+ export class Student extends React.Component <{}, {}>{
    public session: User.session;
-   public domains: Array<CRUD.domain>=[];
-   state: { domains:  Array<CRUD.domain>} = {
-     domains: []
+   public students: Array<People.student>=[];
+   state: { students:  Array<People.student>} = {
+     students: []
    }
    constructor(props:{}){
      super(props)
@@ -21,15 +21,15 @@ import {Menu} from '../app/menu'
      this.session = JSON.parse(str);
    }
    Filter(event:any){
-   		var filter=this.domains.filter((row)=>{
+   		var filter=this.students.filter((row)=>{
    			var exp=new RegExp(event.target.value,"i");
-   			if(exp.test(row.name)==true){
+   			if(exp.test(row.data.name)==true || exp.test(row.data.dni)==true || (row.grade && exp.test(row.grade.name)==true)){
    				return true;
    			}
    			return false;
    		});
    		this.setState({
- 	      	domains : filter
+ 	      	students : filter
  	    });
    	}
    componentDidUpdate(){
@@ -38,20 +38,20 @@ import {Menu} from '../app/menu'
    componentDidMount(){
      let p1 = ajax({
        method:"GET",
-       url: `${window.settings.uri}/v1/learning/domain/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       url: `${window.settings.uri}/v1/people/students/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
        data:null
      });
-     p1.done((domains: Array<CRUD.domain>) => {
-       this.domains = domains;
+     p1.done((students: Array<People.student>) => {
+       this.students = students;
        this.setState({
-         domains: domains
+         students: students
        })
      });
    }
-   delete(teacher: CRUD.domain){
-     this.state.domains = this.domains.filter((row) => {
-       if (row._id === teacher._id) {
+   delete(student: People.student){
+     this.state.students = this.students.filter((row) => {
+       if (row._id === student._id) {
          return false;
        }
        return true;
@@ -87,9 +87,9 @@ import {Menu} from '../app/menu'
           <Menu/>
           <main className="mdl-layout__content mdl-color--white-100">
           <div className="mdl-grid demo-content">
-             {this.state.domains.map((row) => {
+             {this.state.students.map((row) => {
                return (
-               <Cards.Domain key={row._id} domain={row} session={this.session}/>
+               <Cards.Student key={row._id} student={row} session={this.session} delete={this.delete.bind(this)}/>
                );
              })}
           </div>
@@ -99,7 +99,8 @@ import {Menu} from '../app/menu'
    }
  }
 
- export let Get = View;
- export let Objetive = Objetives;
- export let Cognition = CognitionView;
- export let Add = ParentCreate;
+
+export let Add = ParentCreate;
+export let Get = View;
+export let Modify = Edit;
+export let Grade = SetGrade;

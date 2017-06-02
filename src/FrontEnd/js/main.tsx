@@ -6,6 +6,7 @@ import {App} from '../components/app'
 import {DashBoard} from '../components/dashboard'
 import {Login} from '../components/login'
 import * as Teacher from '../components/teacher'
+import * as Student from '../components/student'
 import * as Parent from '../components/parent'
 import * as Grade from '../components/grades'
 import * as Matters from '../components/matters'
@@ -24,6 +25,13 @@ window.addEventListener("load",()=>{
           <Route path="edit/:id" component={Teacher.Modify}/>
           <Route path="grade/edit/:id" component={Teacher.Grade}/>
           <Route path="create" component={Teacher.Add}/>
+        </Route>
+        <Route path="/students" onEnter={Auth}>
+          <IndexRoute component={Student.Student}/>
+          <Route path="get/:id" component={Student.Get}/>
+          <Route path="edit/:id" component={Student.Modify}/>
+          <Route path="grade/edit/:id" component={Student.Grade}/>
+          <Route path="create/:id" component={Student.Add}/>
         </Route>
         <Route path="/parents" onEnter={Auth}>
           <IndexRoute component={Parent.Parent}/>
@@ -48,7 +56,10 @@ window.addEventListener("load",()=>{
           <Route path="get/:id" component={Domain.Get}/>
           <Route path=":domain/objetives/:level" component={Domain.Objetive}/>
         </Route>
-        <Route path="/objetives/get/:id" component={Domain.Cognition} onEnter={Auth}/>
+        <Route path="/objetives" onEnter={Auth}>
+          <Route path="get/:id" component={Domain.Cognition}/>
+          <Route path="create" component={Domain.Add}/>
+        </Route>
         <Route path="/auth" component={Login}/>
 	  	</Router>
 	  ), document.getElementById("app"));

@@ -1,18 +1,17 @@
 import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link, withRouter} from 'react-router'
-import {Parent} from '../cards/parent'
-import * as List from '../profiles/parent'
+import * as List from '../profiles/student'
 
 @withRouter
- export class View extends React.Component <Props.teacherView, {parent: People.parent}>{
+ export class View extends React.Component <Props.teacherView, {student: People.student}>{
    public session: User.session;
    constructor(props:Props.teacherView){
      super(props)
      let str = localStorage.getItem("session");
      this.session = JSON.parse(str);
      this.state = {
-       parent: null
+       student: null
      };
    }
    componentDidUpdate(){
@@ -21,25 +20,25 @@ import * as List from '../profiles/parent'
    delete(){
      ajax({
  			method:"DELETE",
- 	        url: `${window.settings.uri}/v1/people/parents/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+ 	        url: `${window.settings.uri}/v1/people/students/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
  	        dataType: "json",
  	        data:null,
  	        crossDomain:true,
- 	        success:(data: People.parent)=>{
-            this.props.router.replace('/parents');
+ 	        success:(data: People.student)=>{
+            this.props.router.replace('/students');
  	        }
  		});
    }
    componentDidMount(){
      let p1 = ajax({
        method:"GET",
-       url: `${window.settings.uri}/v1/people/parents/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       url: `${window.settings.uri}/v1/people/students/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
        data:null
      });
-     p1.done((parent: People.teacher) => {
+     p1.done((student: People.student) => {
        this.setState({
-         parent: parent
+         student: student
        })
      });
    }
@@ -49,8 +48,8 @@ import * as List from '../profiles/parent'
           <div className="mdl-spinner mdl-js-spinner is-active"></div>
        </div>
      );
-     if(this.state.parent){
-       body = (<List.Parent parent={this.state.parent}/>);
+     if(this.state.student){
+       body = (<List.Student student={this.state.student}/>);
      }
      return(
        <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
@@ -59,18 +58,15 @@ import * as List from '../profiles/parent'
          <div className="mdl-layout__header-row">
            <span className="mdl-layout-title">SoulHand</span>
            <div className="mdl-layout-spacer"></div>
-           {this.state.parent && (
+           {this.state.student && (
              <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
                <i className="material-icons">more_vert</i>
              </button>
            )}
-           {this.state.parent && (
-             <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
-               <li className="mdl-menu__item"><Link to={`/parents/edit/${this.props.routeParams.id}`}>Editar</Link></li>
-               <li className="mdl-menu__item"><Link to={`/students/create/${this.state.parent._id}`}>Asignar alumno</Link></li>
-               <li className="mdl-menu__item" onClick={(e)=>{this.delete()}}>Eliminar</li>
-             </ul>
-           )}
+           <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
+             <li className="mdl-menu__item"><Link to={`/students/edit/${this.props.routeParams.id}`}>Editar</Link></li>
+             <li className="mdl-menu__item" onClick={(e)=>{this.delete()}}>Eliminar</li>
+           </ul>
          </div>
        </header>
           <main className="mdl-layout__content mdl-color--white-100">

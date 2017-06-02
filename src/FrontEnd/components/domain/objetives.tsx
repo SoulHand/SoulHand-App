@@ -18,6 +18,19 @@ import {Objetive} from '../cards/objetive'
    componentDidUpdate(){
      componentHandler.upgradeAllRegistered();
    }
+   Filter(event:any){
+   		var filter=this.objetives.filter((row)=>{
+   			var exp=new RegExp(event.target.value,"i");
+   			if(exp.test(row.name)==true || exp.test(row.level.name)==true ||
+          exp.test(row.description)==true || exp.test(row.domain.name)==true){
+   				return true;
+   			}
+   			return false;
+   		});
+   		this.setState({
+ 	      	objetives : filter
+ 	    });
+   	}
    delete(objetive: CRUD.objetive){
      let obj = this.objetives.filter((row) => {
        if (row._id === objetive._id) {
@@ -63,12 +76,22 @@ import {Objetive} from '../cards/objetive'
          <div className="mdl-layout__header-row">
            <span className="mdl-layout-title">SoulHand</span>
            <div className="mdl-layout-spacer"></div>
+           <div className="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
+             <label className="mdl-button mdl-js-button mdl-button--icon" htmlFor="search">
+               <i className="material-icons">search</i>
+             </label>
+             <div className="mdl-textfield__expandable-holder">
+               <input className="mdl-textfield__input" type="text" id="search" onChange={(e:any)=>{this.Filter(e)}}/>
+               <label className="mdl-textfield__label" htmlFor="search">Ingrese su consulta...</label>
+             </div>
+           </div>
          </div>
        </header>
          <main className="mdl-layout__content mdl-color--white-100">
            <div className="mdl-grid demo-content">
               {body}
            </div>
+           <Link to="/objetives/create" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
          </main>
        </div>
      );
