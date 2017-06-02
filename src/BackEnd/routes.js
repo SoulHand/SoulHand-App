@@ -1692,7 +1692,7 @@ module.exports = function (app, express, server, __DIR__) {
 		if(Validator.matches(/[0-9]/)(request.body.name)){
 			throw new ValidatorException("Solo se aceptan nombres validos");
 		}
-		if(!Validator.isDate()(request.body.birthdate)){
+		if(!Validator.matches(/^[0-9]{2}\-[0-9]{2}-[0-9]{4}$/)(request.body.birthdate)){
 			throw new ValidatorException("La fecha de nacimiento no es valida");
 		}
 		if(Validator.isNull()(request.body.genero)){
@@ -1797,7 +1797,8 @@ module.exports = function (app, express, server, __DIR__) {
 		if(request.body.name && Validator.matches(/[0-9]/)(request.body.name)){
 			throw new ValidatorException("Solo se aceptan nombres validos");
 		}
-		if(request.body.birthdate && !Validator.isDate()(request.body.birthdate)){
+    console.log(Validator.matches(/^[0-9]{2}\-[0-9]{2}-[0-9]{4}$/)(request.body.birthdate), request.body.birthdate);
+		if(request.body.birthdate && !Validator.matches(/^[0-9]{2}\-[0-9]{2}-[0-9]{4}$/)(request.body.birthdate)){
 			throw new ValidatorException("La fecha de nacimiento no es valida");
 		}
 		if(request.body.grade && !Validator.isMongoId()(request.body.grade)){
@@ -1823,9 +1824,10 @@ module.exports = function (app, express, server, __DIR__) {
 			if(gradeData){
 				student.grade=gradeData;
 			}
-			return app.container.database.Schema.Peoples.findOne({_id:student.data._id});
+			return app.container.database.Schema.Peoples.findOne({"dni":student.data.dni});
 		});
 		p1.then(function(data){
+      console.log(data);
 			people=data;
 			var fields=people.toJSON();
 			for (i in fields){
