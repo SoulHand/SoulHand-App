@@ -23,7 +23,6 @@ import {Link} from 'react-router'
        if(length <= 0) {
          str = "expirado"
        }else{
-         console.log(length, expire)
          let day = Math.floor(length);
          if (day > 0) {
            str = day + ((day == 1) ? "día": "días")
@@ -46,7 +45,6 @@ import {Link} from 'react-router'
          }
        }
      }
-     console.log(this.props.activity.dateExpire);
      return(
       <div className="demo-cards mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing">
         <div className="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
@@ -75,7 +73,7 @@ import {Link} from 'react-router'
             </div>
           </div>
           <div className="mdl-card__actions mdl-card--border">
-            <Link to={`/students/get/${this.props.activity._id}`} className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver detalles</Link>
+            <Link to={`/activity/get/${this.props.activity._id}`} className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver detalles</Link>
           </div>
         </div>
       </div>

@@ -4,6 +4,7 @@ import {Link} from 'react-router'
 import * as Cards from '../cards/activity'
 import {Header} from '../app/header'
 import {ParentCreate} from './parentcreate'
+import {View} from './view'
 import {Menu} from '../app/menu'
 
  export class Activity extends React.Component <{}, {}>{
@@ -99,3 +100,4 @@ import {Menu} from '../app/menu'
  }
 
 export let Add = ParentCreate;
+export let Get = View;
