@@ -2471,11 +2471,11 @@ module.exports = function (app, express, server, __DIR__) {
 			throw new ValidatorException("Es necesaria una description");
 		}
 		if(!Validator.isDate()(request.body.expire)){
-			throw new ValidatorException("La fecha es invalida");
+			throw new ValidatorException("Es necesaria una fecha de expiracion");
 		}
     var expire = new Date(request.body.expire.replace(" ","T"))
 		if(expire.getTime() <= Date.now()){
-			throw new ValidatorException("La fecha ya expiró!");
+			throw new ValidatorException("La fecha ya expir");
 		}
 		var dni=request.user.people.dni;
 		if(request.body.teacher && request.user.isAdmin==true){
