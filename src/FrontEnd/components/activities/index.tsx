@@ -3,6 +3,7 @@ import {ajax} from 'jquery'
 import {Link} from 'react-router'
 import * as Cards from '../cards/activity'
 import {Header} from '../app/header'
+import {ParentCreate} from './parentcreate'
 import {Menu} from '../app/menu'
 
  export class Activity extends React.Component <{}, {}>{
@@ -96,3 +97,5 @@ import {Menu} from '../app/menu'
      );
    }
  }
+
+export let Add = ParentCreate;

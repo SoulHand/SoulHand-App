@@ -2462,7 +2462,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions> objeto CRUD
 	*/
-	activityURI.post("/:grade/:course",Auth.isTeacherOrNot.bind(app.container),function(request, response,next) {
+	activityURI.post("/:course",Auth.isTeacherOrNot.bind(app.container),function(request, response,next) {
 		var dm;
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Es requerido un nombre");
@@ -2477,15 +2477,15 @@ module.exports = function (app, express, server, __DIR__) {
 		if(request.body.teacher && request.user.isAdmin==true){
 			dni=request.body.teacher;
 		}
-		Promise.all([app.container.database.Schema.Grades.findOne({name:request.params.grade.toUpperCase()}),app.container.database.Schema.Courses.findOne({name:request.params.course.toUpperCase()}),app.container.database.Schema.Teachers.findOne({"data.dni":dni.toUpperCase()}),Events.get("ACTIVITY-ADD")]).then((data)=>{
+		Promise.all([app.container.database.Schema.Courses.findOne({name:request.params.course.toUpperCase()}),app.container.database.Schema.Teachers.findOne({"data.dni":dni.toUpperCase()}),Events.get("ACTIVITY-ADD")]).then((data)=>{
 			if(!data[0]){
-				throw new ValidatorException("No existe el grado!");
-			}
-			if(!data[1]){
 				throw new ValidatorException("No existe la materia!");
 			}
-			if(!data[2]){
+			if(!data[1]){
 				throw new ValidatorException("No existe el docente!");
+			}
+      if(!data[1].grade){
+				throw new ValidatorException("No existe el grado!");
 			}
 			var activity=new app.container.database.Schema.Activities({
 				name:request.body.name,
@@ -2493,13 +2493,13 @@ module.exports = function (app, express, server, __DIR__) {
 				objetives:[],
 				isCompleted:false,
 			   	dateExpire:new Date(request.body.expire.replace(" ","T")),
-			   	teacher: data[2]._id,
+			   	teacher: data[1]._id,
 				student: [],
-				grade:data[0],
-				course:data[1]
+				grade:data[1].grade,
+				course:data[0]
 			});
-			if(data[3]){
-				var result=Events.ChainGetOne(data[3].premises,{
+			if(data[2]){
+				var result=Events.ChainGetOne(data[2].premises,{
 					p1:request.body.name,
 					p2:request.body.description,
 					p3:activity.dateExpire.getTime(),
