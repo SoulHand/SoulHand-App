@@ -2471,7 +2471,11 @@ module.exports = function (app, express, server, __DIR__) {
 			throw new ValidatorException("Es necesaria una description");
 		}
 		if(!Validator.isDate()(request.body.expire)){
-			throw new ValidatorException("Es necesaria una fecha de expiracion");
+			throw new ValidatorException("La fecha es invalida");
+		}
+    var expire = new Date(request.body.expire.replace(" ","T"))
+		if(expire.getTime() <= Date.now()){
+			throw new ValidatorException("La fecha ya expiró!");
 		}
 		var dni=request.user.people.dni;
 		if(request.body.teacher && request.user.isAdmin==true){
@@ -2492,7 +2496,7 @@ module.exports = function (app, express, server, __DIR__) {
 				description:request.body.description,
 				objetives:[],
 				isCompleted:false,
-			   	dateExpire:new Date(request.body.expire.replace(" ","T")),
+			   	dateExpire: expire,
 			   	teacher: data[1]._id,
 				student: [],
 				grade:data[1].grade,

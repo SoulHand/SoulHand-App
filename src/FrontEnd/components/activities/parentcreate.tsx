@@ -22,7 +22,7 @@ import {ajax} from 'jquery'
  		},
  		expire:{
  			match:(str: string) => {
-        return /^[0-9]{2}\-[0-9]{2}-[0-9]{4}$/.test(str);
+        return /^[0-9]{2}\-[0-9]{2}-[0-9]{4} [0-9]{2}\:[0-9]{2}\:[0-9]{2}$/.test(str);
       },
  			value:null,
  			required:true
@@ -117,7 +117,7 @@ import {ajax} from 'jquery'
                </div>
                <div className="mdl-cell mdl-cell--6-col">
                 <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.expire) ? 'is-invalid' :'')}>
-                   <input className="mdl-textfield__input" type="text" id="expire" pattern="^[0-9]{2}\-[0-9]{2}-[0-9]{4}$" onChange={(e:any)=>{this.getFields(e)}}/>
+                   <input className="mdl-textfield__input" type="text" id="expire" pattern="^[0-9]{2}\-[0-9]{2}-[0-9]{4} [0-9]{2}\:[0-9]{2}\:[0-9]{2}$" onChange={(e:any)=>{this.getFields(e)}}/>
                    <label className="mdl-textfield__label" htmlFor="expire">Fecha de expiración*</label>
                    <span className="mdl-textfield__error">Es necesaria una fecha en formato d-m-Y</span>
                  </div>
