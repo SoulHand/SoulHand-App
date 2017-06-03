@@ -21,19 +21,19 @@ import * as List from '../profiles/teacher'
    delete(){
      ajax({
  			method:"DELETE",
- 	        url: `${window.settings.uri}/v1/people/parents/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+ 	        url: `${window.settings.uri}/v1/people/teachers/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
  	        dataType: "json",
  	        data:null,
  	        crossDomain:true,
  	        success:(data: People.teacher)=>{
-            this.props.router.replace('/parents');
+            this.props.router.replace('/teachers');
  	        }
  		});
    }
    componentDidMount(){
      let p1 = ajax({
        method:"GET",
-       url: `${window.settings.uri}/v1/people/parents/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       url: `${window.settings.uri}/v1/people/teachers/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
        data:null
      });
@@ -55,7 +55,7 @@ import * as List from '../profiles/teacher'
      return(
        <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
        <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-        <div className="mdl-layout__drawer-button"><Link to="/parents"><i className="material-icons">&#xE5C4;</i></Link></div>
+        <div className="mdl-layout__drawer-button"><Link to="/teachers"><i className="material-icons">&#xE5C4;</i></Link></div>
          <div className="mdl-layout__header-row">
            <span className="mdl-layout-title">SoulHand</span>
            <div className="mdl-layout-spacer"></div>
@@ -65,7 +65,8 @@ import * as List from '../profiles/teacher'
              </button>
            )}
            <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
-             <li className="mdl-menu__item"><Link to={`/parents/edit/${this.props.routeParams.id}`}>Editar</Link></li>
+             <li className="mdl-menu__item"><Link to={`/teachers/edit/${this.props.routeParams.id}`}>Editar</Link></li>
+             <li className="mdl-menu__item"><Link to={`/teachers/grade/edit/${this.props.routeParams.id}`}>Asignar grado</Link></li>
              <li className="mdl-menu__item" onClick={(e)=>{this.delete()}}>Eliminar</li>
            </ul>
          </div>

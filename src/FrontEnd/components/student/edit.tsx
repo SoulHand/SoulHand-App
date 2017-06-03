@@ -26,6 +26,13 @@ import * as List from '../profiles/teacher'
       match: (str: string) => {
         return !validator.isNull()(str);
       }
+ 		},
+ 		grade:{
+ 			value:null,
+      required: true,
+      match: (str: string) => {
+        return !validator.isNull()(str);
+      }
  		}
  	};
    state:compat.Map = {
@@ -33,7 +40,9 @@ import * as List from '../profiles/teacher'
       name: "",
       birthdate:"",
       genero: "",
-      error: {}
+      grade:"",
+      error: {},
+      grades:[]
    };
    componentDidUpdate(){
      componentHandler.upgradeAllRegistered();
@@ -45,8 +54,17 @@ import * as List from '../profiles/teacher'
        dataType: "json",
        data:null
      });
+     let p2 = ajax({
+       method:"GET",
+       url: `${window.settings.uri}/v1/grades/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       dataType: "json",
+       data:null
+     });
 
-     p1.done((student: People.student) => {
+     window.Promise.all([p1.done(), p2.done()])
+     .then((data: any) => {
+       let student: People.student = data[0];
+       let grades: Array<CRUD.grade> = data[1];
        this.fields.name.value = student.data.name;
        this.fields.birthdate.value = student.data.birthdate;
        this.fields.genero.value = student.data.genero;
@@ -54,7 +72,8 @@ import * as List from '../profiles/teacher'
          student: student,
          name: student.data.name,
          birthdate: student.data.birthdate,
-         genero: student.data.genero
+         genero: student.data.genero,
+         grades: grades
        })
      });
    }
@@ -133,6 +152,25 @@ import * as List from '../profiles/teacher'
             </select>
             {(this.state.error.genero) && (
               <span style={{color: "rgb(222, 50, 38)"}}>Seleccione un genero</span>
+            )}
+          </div>
+          <div className="mdl-cell mdl-cell--6-col">
+            <label className="label static" htmlFor="grade">Grados*</label>
+            <select className="mdl-textfield__input" id="grade" onChange={(e:any)=>{this.getFields(e)}} value={this.state.grade}>
+                <option value="">Seleccione una opción</option>
+                {this.state.grades.map((row:CRUD.grade) => {
+                  if (this.state.student.grade && this.state.student.grade._id == row._id) {
+                    return (
+                      <option value={row._id} key={row._id} selected>{row.name}</option>
+                    );
+                  }
+                  return (
+                    <option value={row._id} key={row._id}>{row.name}</option>
+                  );
+                })}
+            </select>
+            {(this.state.error.genero) && (
+              <span style={{color: "rgb(222, 50, 38)"}}>Seleccione un grado</span>
             )}
           </div>
          </div>

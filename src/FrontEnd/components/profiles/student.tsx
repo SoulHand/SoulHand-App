@@ -42,6 +42,18 @@ import {Link, withRouter} from 'react-router'
         </div>
         <div className="mdl-cell--6-col mdl-cell--middle">
           <div className="mdl-textfield">
+            <label className="mdl-input__expandable-holder">Grado</label>
+            <div className="mdl-textfield__input">
+              {(this.props.student.grade) ? (
+                this.props.student.grade.name
+              ) : (
+                <span>No asignado</span>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="mdl-cell--6-col mdl-cell--middle">
+          <div className="mdl-textfield">
             <label className="mdl-input__expandable-holder">Creado en</label>
             <div className="mdl-textfield__input">
               {this.props.student.data.createDate}
