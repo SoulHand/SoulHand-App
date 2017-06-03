@@ -32,7 +32,7 @@ module.exports = function (app, __DIR__) {
         message: null
       }
       var status = 500
-      if (error instanceof Exception) {
+      if (error.code && error.status) {
         body.code = error.code
         status = error.status
       }

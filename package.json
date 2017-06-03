@@ -1,6 +1,6 @@
 {
   "name": "soulhand",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Herramienta web basada en inteligencia artificial para la compresión lectora",
   "main": "server.js",
   "scripts": {
@@ -17,6 +17,7 @@
     "bower-webpack-plugin": "^0.1.9",
     "css-loader": "^0.26.2",
     "faker": "3.1.0",
+    "file-loader": "^0.11.1",
     "grunt": "^0.4.5",
     "grunt-cli": "^1.2.0",
     "grunt-contrib-jasmine": "^0.5.3",
