@@ -21,9 +21,7 @@ import {UserBox} from './userbox'
           <Link to="/parents" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">people</i>Representantes</Link>
           <Link to="/students" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">people</i>Alumnos</Link>
           <div className="mdl-layout-spacer"></div>
-
-
-            <a className="mdl-navigation__link" href=""><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">forum</i>Mis Actividades</a>
+          <Link to="/activity" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">forum</i>Mis Actividades</Link>
             <Link to="/domains" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i>Dominios</Link>
             <div className="mdl-layout-spacer"></div>
             <Link to="/matters" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">school</i>Materias</Link>

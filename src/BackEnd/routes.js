@@ -2734,6 +2734,19 @@ module.exports = function (app, express, server, __DIR__) {
 			next(error);
 		});
 	});
+	activityURI.get("/teacher",function(request, response,next) {
+    Schema.Teachers.findOne({'data.dni': request.user.people.dni})
+    .then((row) => {
+      if (!row) {
+        throw new ValidatorException('No existe el docente!')
+      }
+      return Schema.Activities.find({teacher: row._id})
+    }).then(function(rows){
+			response.send(rows);
+		}).catch(function(error){
+			next(error);
+		});
+	});
 	/*
 	* @api {get} / Obtener todas las categorias cognitivas
 	* @params request peticiones del cliente

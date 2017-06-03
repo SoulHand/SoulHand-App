@@ -140,6 +140,11 @@ declare namespace Card {
     domain: string
     level: string
   }
+  interface activity{
+    activity: CRUD.activity
+    session: User.session
+    delete: Function
+  }
 }
 
 /*

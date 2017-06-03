@@ -11,6 +11,7 @@ import * as Parent from '../components/parent'
 import * as Grade from '../components/grades'
 import * as Matters from '../components/matters'
 import * as Domain from '../components/domain'
+import * as Activity from '../components/activities'
 import {Auth} from './auth'
 
 window.addEventListener("load",()=>{
@@ -59,6 +60,11 @@ window.addEventListener("load",()=>{
         <Route path="/objetives" onEnter={Auth}>
           <Route path="get/:id" component={Domain.Cognition}/>
           <Route path="create" component={Domain.Add}/>
+        </Route>
+        <Route path="/activity" onEnter={Auth}>
+          <IndexRoute component={Activity.Activity}/>
+          <Route path="get/:id" component={Domain.Get}/>
+          <Route path=":domain/objetives/:level" component={Domain.Objetive}/>
         </Route>
         <Route path="/auth" component={Login}/>
 	  	</Router>
