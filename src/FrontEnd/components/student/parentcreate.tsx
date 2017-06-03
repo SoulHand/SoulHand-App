@@ -48,7 +48,7 @@ import {ajax} from 'jquery'
     console.log(values, this.props.routeParams);
     ajax({
 			method:"POST",
-	        url: `${window.settings.uri}/v1/people/students/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window._BASE}/v1/people/students/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:values,
 	        success:(data:any)=>{

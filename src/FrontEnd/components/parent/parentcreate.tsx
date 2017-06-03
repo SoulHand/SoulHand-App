@@ -31,7 +31,7 @@ import {ajax} from 'jquery'
  				return /^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/.test(fn);
  			},
  			value:null
- 		}, 		
+ 		},
  		birthdate:{
  			match:(str: string) => {
         return /^[0-9]{2}\-[0-9]{2}-[0-9]{4}$/.test(str);
@@ -66,7 +66,7 @@ import {ajax} from 'jquery'
     delete values.nacionality;
     ajax({
 			method:"POST",
-	        url: `${window.settings.uri}/v1/people/parents/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window._BASE}/v1/people/parents/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:values,
 	        success:(data:any)=>{

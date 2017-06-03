@@ -15,7 +15,7 @@ import {withRouter} from 'react-router'
  	    this.setState({error:null})
  		ajax({
  			method:"POST",
- 	        url: `${window.settings.uri}/v1/auth`,
+ 	        url: `${window._BASE}/v1/auth`,
  	        dataType: "json",
  	        data:$(event.target).serialize(),
  	        success:(data:User.sessions)=>{

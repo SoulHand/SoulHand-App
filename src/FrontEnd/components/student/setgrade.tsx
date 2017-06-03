@@ -28,13 +28,13 @@ import * as List from '../profiles/teacher'
    componentDidMount(){
      let p1 = ajax({
        method:"GET",
-       url: `${window.settings.uri}/v1/people/students/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       url: `${window._BASE}/v1/people/students/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
        data:null
      });
      let p2 = ajax({
        method:"GET",
-       url: `${window.settings.uri}/v1/grades/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       url: `${window._BASE}/v1/grades/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
        data:null
      });
@@ -68,7 +68,7 @@ import * as List from '../profiles/teacher'
      delete values.nacionality;
      ajax({
  			method:"PUT",
- 	        url: `${window.settings.uri}/v1/people/students/${this.props.routeParams.id}/grade/${values.grade}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+ 	        url: `${window._BASE}/v1/people/students/${this.props.routeParams.id}/grade/${values.grade}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
  	        dataType: "json",
  	        data:values,
           crossDomain: true,

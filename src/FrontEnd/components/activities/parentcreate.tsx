@@ -54,7 +54,7 @@ import {ajax} from 'jquery'
     values.expire = values.expire.replace(/([0-9]{2})\-([0-9]{2})\-([0-9]{4})/ig,"$3-$2-$1")
     ajax({
 			method:"POST",
-	        url: `${window.settings.uri}/v1/activities/${values.course}/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window._BASE}/v1/activities/${values.course}/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:values,
 	        success:(data:any)=>{
@@ -74,7 +74,7 @@ import {ajax} from 'jquery'
    componentDidMount(){
      let p2 = ajax({
        method:"GET",
-       url: `${window.settings.uri}/v1/courses/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       url: `${window._BASE}/v1/courses/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
        data:null
      });

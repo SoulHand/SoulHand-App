@@ -79,7 +79,7 @@ export class CognitiveCreate extends React.Component<, {}> {
 		}
 		ajax({
 			method:"POST",
-	        url: `${window.settings.uri}/v1/learning/domain/?PublicKeyId=:publickeyId&PrivateKeyId=:privateKeyId=${this.session.privateKeyId}`,
+	        url: `${window._BASE}/v1/learning/domain/?PublicKeyId=:publickeyId&PrivateKeyId=:privateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:data,
 	        success:(data:any)=>{

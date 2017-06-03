@@ -38,7 +38,7 @@ import {ParentCreate} from './parentcreate'
    componentDidMount(){
      let p1 = ajax({
        method:"GET",
-       url: `${window.settings.uri}/v1/people/teachers/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       url: `${window._BASE}/v1/people/teachers/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
        data:null
      });

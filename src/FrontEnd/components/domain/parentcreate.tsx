@@ -39,7 +39,7 @@ import {ajax} from 'jquery'
     }
     ajax({
 			method:"POST",
-	        url: `${window.settings.uri}/v1/knowedge/objetives/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window._BASE}/v1/knowedge/objetives/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:values,
 	        success:(data: CRUD.objetive)=>{

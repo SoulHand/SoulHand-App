@@ -11,7 +11,7 @@ import {ajax} from 'jquery'
    componentDidMount(){
      let p1 = ajax({
        method:"GET",
-       url: `${window.settings.uri}/v1/people/teachers/${this.session.user.people.dni}/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       url: `${window._BASE}/v1/people/teachers/${this.session.user.people.dni}/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
        data:null
      });
@@ -21,7 +21,7 @@ import {ajax} from 'jquery'
          }
          let p2 = ajax({
            method:"GET",
-           url: `${window.settings.uri}/v1/activities/${teacher.grade.name}/${teacher._id}/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+           url: `${window._BASE}/v1/activities/${teacher.grade.name}/${teacher._id}/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
            dataType: "json",
            data:null
          });

@@ -15,13 +15,13 @@ export class ListCongnitive extends React.Component<{}, {}> {
 		super(props);
     	let str=localStorage.getItem("session");
     	let session=JSON.parse(str);
-		this.session=session;		
+		this.session=session;
 	}
 	deleteField(event: any){
-		var element:EventTarget=event.target;		
+		var element:EventTarget=event.target;
 		ajax({
 			method:"DELETE",
-	        url: `${window.settings.uri}/v1/learning/domain/:id${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window._BASE}/v1/learning/domain/:id${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,
@@ -51,7 +51,7 @@ export class ListCongnitive extends React.Component<{}, {}> {
 	    });
 	}
 	componentDidMount(){
-		getJSON(`${window.settings.uri}/v1/learning/domain/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,(data)=>{
+		getJSON(`${window._BASE}/v1/learning/domain/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,(data)=>{
 			this.domain= data;
 			this.setState({
 		      domain: data
@@ -80,7 +80,7 @@ export class ListCongnitive extends React.Component<{}, {}> {
 							<tr key={row._id}>
 							<td>{row.name}</td>
                             <td>{row.description}</td>
-                                
+
 
 								<td><Link to={`/domain/${row._id}`} className="title">{row.name}</Link></td>
 								<td><button type="button" className="btn btn-danger" data-id={row._id} onClick={(e)=>{this.deleteField(e)}}>Eliminar</button></td>

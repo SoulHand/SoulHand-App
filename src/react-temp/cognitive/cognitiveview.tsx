@@ -33,7 +33,7 @@ export class CognitiveView extends React.Component<props.usersItem, props.stateU
 	componentDidMount(){
 		ajax({
 			method:"GET",
-	        url: `${window.settings.uri}/v1/learning/domain/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window._BASE}/v1/learning/domain/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        success:(data:crud.cognitive)=>{
@@ -57,7 +57,7 @@ export class CognitiveView extends React.Component<props.usersItem, props.stateU
 		data[parent.id]=this.fields[parent.id];
 		ajax({
 			method:"PUT",
-	        url: `${window.settings.uri}/v1/learning/domain/:id${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window._BASE}/v1/learning/domain/:id${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:data,
 	        success:(data:users.profile)=>{
@@ -79,7 +79,7 @@ export class CognitiveView extends React.Component<props.usersItem, props.stateU
 		var element:EventTarget=event.target;
 		ajax({
 			method:"DELETE",
-	        url: `${window.settings.uri}/v1/learning/domain/:id${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window._BASE}/v1/learning/domain/:id${element.dataset.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:null,
 	        crossDomain:true,

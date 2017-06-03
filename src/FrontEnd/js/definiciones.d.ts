@@ -5,6 +5,7 @@ interface Window{
 		all:any
 		race:any
 	}
+  _BASE: string
 }
 declare let validator: any;
 declare let componentHandler: any;

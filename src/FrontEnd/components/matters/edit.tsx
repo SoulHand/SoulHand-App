@@ -27,7 +27,7 @@ import {Link, withRouter} from 'react-router'
    componentDidMount(){
      let p1 = ajax({
        method:"GET",
-       url: `${window.settings.uri}/v1/courses/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       url: `${window._BASE}/v1/courses/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
        data:null
      });
@@ -63,7 +63,7 @@ import {Link, withRouter} from 'react-router'
      }
      ajax({
  			method:"PUT",
- 	        url: `${window.settings.uri}/v1/courses/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+ 	        url: `${window._BASE}/v1/courses/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
  	        dataType: "json",
  	        data:values,
           crossDomain: true,

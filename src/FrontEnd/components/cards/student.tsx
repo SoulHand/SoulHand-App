@@ -6,7 +6,7 @@ import {Link} from 'react-router'
    delete(){
      ajax({
  			method:"DELETE",
- 	        url: `${window.settings.uri}/v1/people/students/${this.props.student._id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
+ 	        url: `${window._BASE}/v1/people/students/${this.props.student._id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
  	        dataType: "json",
  	        data:null,
  	        crossDomain:true,
