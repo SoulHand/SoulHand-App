@@ -4,6 +4,7 @@ public/components/
 public/
 !public/index.html
 vendor/
+!src/FrontEnd/vendor
 typings/
 node_modules/
 logs/
