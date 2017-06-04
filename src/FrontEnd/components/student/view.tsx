@@ -65,12 +65,36 @@ import * as List from '../profiles/student'
            )}
            <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
              <li className="mdl-menu__item"><Link to={`/students/edit/${this.props.routeParams.id}`}>Editar</Link></li>
+             <li className="mdl-menu__item"><Link to={`/students/get/${this.props.routeParams.id}/physic`}>Desarrollo físico</Link></li>
              <li className="mdl-menu__item" onClick={(e)=>{this.delete()}}>Eliminar</li>
            </ul>
          </div>
        </header>
           <main className="mdl-layout__content mdl-color--white-100">
             {body}
+            {this.state.student && (
+              <table className="mdl-data-table mdl-js-data-table resize">
+                <thead>
+                  <tr>
+                    <th className="mdl-data-table__cell--non-numeric">Fecha</th>
+                    <th className="mdl-data-table__cell--non-numeric">Registro</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {
+                  this.state.student.history.map((row) => {
+                    let date = new Date(row.dateCreated);
+                    return (
+                      <tr key={row._id}>
+                        <td className="mdl-data-table__cell--non-numeric"><span>{date.toLocaleString()}</span></td>
+                        <td className="mdl-data-table__cell--non-numeric" title={row.description}><span>{row.description}</span></td>
+                      </tr>
+                    );
+                  })
+                }
+                </tbody>
+              </table>
+            )}
           </main>
        </div>
      );

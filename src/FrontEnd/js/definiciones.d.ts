@@ -174,6 +174,10 @@ declare namespace Props {
 		routeParams?: any
     location:ReactRouter.LocationDescriptor
 	}
+  interface LineChart{
+		id:string
+		config:any
+	}
 }
 /*
   State
@@ -285,10 +289,7 @@ declare namespace compat {
 
 /*
 declare namespace Props{
-	interface LineChart{
-		id:string
-		config:any
-	}
+
 	interface UserLogin {
 		location:ReactRouter.LocationDescriptor
 		router:ReactRouter.InjectedRouter

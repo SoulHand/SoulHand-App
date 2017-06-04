@@ -30,6 +30,8 @@ window.addEventListener("load",()=>{
         <Route path="/students" onEnter={Auth}>
           <IndexRoute component={Student.Student}/>
           <Route path="get/:id" component={Student.Get}/>
+          <Route path="get/:id/physic" component={Student.Physic.Physic}/>
+          <Route path="get/:id/physic/create" component={Student.Physic.Create}/>
           <Route path="edit/:id" component={Student.Modify}/>
           <Route path="grade/edit/:id" component={Student.Grade}/>
           <Route path="create/:id" component={Student.Add}/>
