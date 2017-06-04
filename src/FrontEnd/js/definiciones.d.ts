@@ -97,12 +97,13 @@ declare namespace Card {
   interface teacher{
     teacher: People.teacher
     session: User.session
-    delete: Function
+    delete ?: Function
   }
   interface student{
     student: People.student
     session: User.session
-    delete: Function
+    delete ?: Function
+    activity ?: string
   }
   interface parent{
     parent: People.parent

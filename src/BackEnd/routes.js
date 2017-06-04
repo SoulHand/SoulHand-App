@@ -2716,6 +2716,47 @@ module.exports = function (app, express, server, __DIR__) {
 			next(error);
 		});
 	});
+  /*
+	* @api {post} /:id/student asigna un grupo de alumnos
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion
+	* @var category<CategoryCoginitions> objeto CRUD
+	*/
+	activityURI.put("/:id/student",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		if(!Validator.isJSON()(request.body.data)){
+			throw new ValidatorException("no es valido el contenido!")
+		}
+    var data = JSON.parse(request.body.data).map((row) => {
+      if (!Validator.isMongoId()(row)) {
+        throw new ValidatorException("No es valido el id!")
+      }
+      return Schema.Students.findOne({_id: row})
+    })
+    Promise.all(data).then((students) => {
+      return Promise.all([students, Schema.Activities.findOne({_id:request.params.id}).populate("students")])
+    }).then((data)=>{
+			if(!data[0]){
+				throw new ValidatorException("No existenlos objetivo de aprendizaje!");
+			}
+			if(!data[1]){
+				throw new ValidatorException("No existe la actividad!");
+			}
+      data[0].forEach((student) => {
+        data[1].students.forEach((row)=>{
+          if(row._id.toString() === student._id.toString()){
+            throw new ValidatorException("El alumno ya existe en la actividad!");
+          }
+        });
+        data[1].students.push(student);
+      })
+			return data[1].save();
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
 	/*
 	* @api {post} /:domain/activities/:type Crear Categoria cognitiva
 	* @params request peticiones del cliente

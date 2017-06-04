@@ -3,17 +3,15 @@ import {ajax} from 'jquery'
 import {Link, withRouter} from 'react-router'
 import * as List from '../profiles/activity'
 import {ObjetiveActivity} from '../cards/objetiveactivity'
+import {StudentActivity} from '../cards/studentactivity'
 
 @withRouter
- export class View extends React.Component <Props.teacherView, {activity: CRUD.activity}>{
+ export class View extends React.Component <Props.teacherView, CRUD.activity>{
    public session: User.session;
    constructor(props:Props.teacherView){
      super(props)
      let str = localStorage.getItem("session");
      this.session = JSON.parse(str);
-     this.state = {
-       activity: null
-     };
    }
    componentDidUpdate(){
      componentHandler.upgradeAllRegistered();
@@ -30,6 +28,9 @@ import {ObjetiveActivity} from '../cards/objetiveactivity'
  	        }
  		});
    }
+   remove(activity: CRUD.activity){
+     this.setState(activity);
+   }
    componentDidMount(){
      let p1 = ajax({
        method:"GET",
@@ -38,9 +39,7 @@ import {ObjetiveActivity} from '../cards/objetiveactivity'
        data:null
      });
      p1.done((activity: CRUD.activity) => {
-       this.setState({
-         activity: activity
-       })
+       this.setState(activity)
      });
    }
    render(){
@@ -49,8 +48,8 @@ import {ObjetiveActivity} from '../cards/objetiveactivity'
           <div className="mdl-spinner mdl-js-spinner is-active"></div>
        </div>
      );
-     if(this.state.activity){
-       body = (<List.Activity activity={this.state.activity}/>);
+     if(this.state){
+       body = (<List.Activity activity={this.state}/>);
      }
      return(
        <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
@@ -59,14 +58,15 @@ import {ObjetiveActivity} from '../cards/objetiveactivity'
          <div className="mdl-layout__header-row">
            <span className="mdl-layout-title">SoulHand</span>
            <div className="mdl-layout-spacer"></div>
-           {this.state.activity && (
+           {this.state && (
              <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
                <i className="material-icons">more_vert</i>
              </button>
            )}
            <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
              <li className="mdl-menu__item"><Link to={`/students/edit/${this.props.routeParams.id}`}>Editar</Link></li>
-             <li className="mdl-menu__item"><Link to={`/objetives/create/${this.props.routeParams.id}`}>Añadir un objetivo</Link></li>
+             <li className="mdl-menu__item"><Link to={`/objetives/create/${this.props.routeParams.id}`}>Añadir objetivos</Link></li>
+             <li className="mdl-menu__item"><Link to={`/activity/set/${this.props.routeParams.id}/student`}>Añadir alumnos </Link></li>
              <li className="mdl-menu__item" onClick={(e)=>{this.delete()}}>Eliminar</li>
            </ul>
          </div>
@@ -74,9 +74,16 @@ import {ObjetiveActivity} from '../cards/objetiveactivity'
           <main className="mdl-layout__content mdl-color--white-100">
             {body}
             <div className="mdl-grid mdl-color--white demo-content">
-              {this.state.activity && this.state.activity.objetives.map((row) => {
+              {this.state && this.state.objetives.map((row) => {
                 return (
-                  <ObjetiveActivity key={row._id} objetive={row} session={this.session} delete={this.delete.bind(this)} activity={this.state.activity._id}/>
+                  <ObjetiveActivity key={row._id} objetive={row} session={this.session} delete={this.remove.bind(this)} activity={this.state._id}/>
+                );
+              })}
+            </div>
+            <div className="mdl-grid mdl-color--white demo-content">
+              {this.state && this.state.students.map((row) => {
+                return (
+                  <StudentActivity key={row._id} student={row} session={this.session} delete={this.remove.bind(this)} activity={this.state._id}/>
                 );
               })}
             </div>
