@@ -209,3 +209,30 @@ div[data-app="soulhand-app"]{
         opacity: 0;
     }
 }
+
+table.resize{
+  display: block;
+  width: 100%;
+  td > span{
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: normal;
+  }
+}
+@media screen and (max-width: 480px) {
+  table.resize table.resize td > span{
+    max-width: 15vw;
+  }
+}
+@media screen and (max-width: 640px) {
+  table.resize td > span{
+    max-width: 17vw;
+  }
+}
+@media screen and (min-width: 800px) {
+  table.resize td > span{
+    max-width: 33vw;
+  }
+}

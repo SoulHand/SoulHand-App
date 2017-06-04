@@ -4,6 +4,7 @@ import {Link} from 'react-router'
 import * as Cards from '../cards/activity'
 import {Header} from '../app/header'
 import {ParentCreate} from './parentcreate'
+import * as Objetive from '../objetive/parentcreate'
 import {View} from './view'
 import {Menu} from '../app/menu'
 
@@ -101,3 +102,4 @@ import {Menu} from '../app/menu'
 
 export let Add = ParentCreate;
 export let Get = View;
+export let setObjetive = Objetive.ParentCreate;

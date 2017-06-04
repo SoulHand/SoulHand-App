@@ -837,6 +837,21 @@ module.exports = function (app, express, server, __DIR__) {
   })
 
   /*
+  * @api {get} / Obtener todos los objetivo de aprendizaje
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  cognitions.get('/objetives',
+  function (request, response, next) {
+    Schema.LearningObjetive.find().then((rows) => {
+      response.send(rows)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+  /*
   * @api {put} /objetives/:id Editar un objetivo
   * @params request peticiones del cliente
   * @params response respuesta del servidor
@@ -2615,6 +2630,47 @@ module.exports = function (app, express, server, __DIR__) {
 					}
 			});
 			data[1].objetives.push(data[0]);
+			return data[1].save();
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
+	* @api {post} /:id/objetives asigna un grupo de funciones cognitivas
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion
+	* @var category<CategoryCoginitions> objeto CRUD
+	*/
+	activityURI.put("/:id/objetives",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		if(!Validator.isJSON()(request.body.data)){
+			throw new ValidatorException("no es valido el contenido!")
+		}
+    var data = JSON.parse(request.body.data).map((row) => {
+      if (!Validator.isMongoId()(row)) {
+        throw new ValidatorException("No es valido el id!")
+      }
+      return Schema.LearningObjetive.findOne({_id: row})
+    })
+    Promise.all(data).then((objetives) => {
+      return Promise.all([objetives, Schema.Activities.findOne({_id:request.params.id}).populate("students")])
+    }).then((data)=>{
+			if(!data[0]){
+				throw new ValidatorException("No existenlos objetivo de aprendizaje!");
+			}
+			if(!data[1]){
+				throw new ValidatorException("No existe la actividad!");
+			}
+      data[0].forEach((objetive) => {
+        data[1].objetives.forEach((row)=>{
+          if(row._id.toString() === objetive._id.toString()){
+            throw new ValidatorException("El objetivo ya existe en la actividad!");
+          }
+        });
+        data[1].objetives.push(objetive);
+      })
 			return data[1].save();
 		}).then(function(data){
 			response.send(data);

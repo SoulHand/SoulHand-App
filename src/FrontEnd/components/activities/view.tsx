@@ -66,6 +66,7 @@ import {ObjetiveActivity} from '../cards/objetiveactivity'
            )}
            <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
              <li className="mdl-menu__item"><Link to={`/students/edit/${this.props.routeParams.id}`}>Editar</Link></li>
+             <li className="mdl-menu__item"><Link to={`/objetives/create/${this.props.routeParams.id}`}>Añadir un objetivo</Link></li>
              <li className="mdl-menu__item" onClick={(e)=>{this.delete()}}>Eliminar</li>
            </ul>
          </div>
