@@ -1754,7 +1754,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people<People>	objeto CRUD
 	*/
 	StudentsURI.get("/",function(request, response,next) {
-		app.container.database.Schema.Students.find().then(function(data){
+		app.container.database.Schema.Students.find().populate("activities").then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -1768,7 +1768,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people<SubPeople>	objeto CRUD
 	*/
 	StudentsURI.get("/:id",function(request, response,next) {
-		app.container.database.Schema.Students.findOne({_id:request.params.id}).then(function(data){
+		app.container.database.Schema.Students.findOne({_id:request.params.id}).populate("activities").then(function(data){
 			if(!data){
 				throw new ValidatorException("No existe el alumno!");
 			}
@@ -1785,7 +1785,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people<SubPeople>	objeto CRUD
 	*/
 	StudentsURI.get("/grade/:id",function(request, response,next) {
-		app.container.database.Schema.Students.find({"grade._id":request.params.id}).then(function(data){
+		app.container.database.Schema.Students.find({"grade._id":request.params.id}).populate("activities").then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -1812,7 +1812,6 @@ module.exports = function (app, express, server, __DIR__) {
 		if(request.body.name && Validator.matches(/[0-9]/)(request.body.name)){
 			throw new ValidatorException("Solo se aceptan nombres validos");
 		}
-    console.log(Validator.matches(/^[0-9]{2}\-[0-9]{2}-[0-9]{4}$/)(request.body.birthdate), request.body.birthdate);
 		if(request.body.birthdate && !Validator.matches(/^[0-9]{2}\-[0-9]{2}-[0-9]{4}$/)(request.body.birthdate)){
 			throw new ValidatorException("La fecha de nacimiento no es valida");
 		}

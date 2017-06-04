@@ -9,6 +9,7 @@ import {Edit} from './edit'
 import {SetGrade} from './setgrade'
 import {ParentCreate} from './parentcreate'
 import * as Physics from './physic'
+import * as Activities from './activity'
 
  export class Student extends React.Component <{}, {}>{
    public session: User.session;
@@ -106,3 +107,4 @@ export let Get = View;
 export let Modify = Edit;
 export let Grade = SetGrade;
 export let Physic = Physics;
+export let Activity = Activities;

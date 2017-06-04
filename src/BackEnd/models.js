@@ -136,29 +136,40 @@ structDb.LearningObjetive=mongoose.Schema({
 	words:[structDb.words],
 	completed:{type:Number}
 });
-structDb.Students=mongoose.Schema({
-	data: structDb.Peoples,
-	grade:structDb.Grades,
-	discapacityLevel:{type:Number, required:true, default:0},
-	physics:[structDb.physic],
-	domain:{ type: mongoose.Schema.ObjectId, ref: "domainsLearning" },
-	objetives:[structDb.LearningObjetive],
-	history:[structDb.HistoryLearning]
-});
 
 structDb.Activities=mongoose.Schema({
 	name:{type:String, trim:true, required: true, uppercase: true},
 	description:{type:String, trim:true, required: true, uppercase: true},
 	objetives:[structDb.LearningObjetive],
 	isCompleted:{type:Boolean,default:false},
-   	dateCreated:{ type: Date, default: Date.now },
-   	dateExpire:{ type: Date, required:true },
-   	teacher: { type: mongoose.Schema.ObjectId, ref: "Teachers" },
+ 	dateCreated:{ type: Date, default: Date.now },
+ 	dateExpire:{ type: Date, required:true },
+ 	teacher: { type: mongoose.Schema.ObjectId, ref: "Teachers" },
 	students: [{ type: mongoose.Schema.ObjectId, ref: "Students" }],
 	grade:structDb.Grades,
 	course:structDb.Courses,
+	dateCreated:{ type: Date, default: Date.now },
+  history: []
+});
+
+structDb.ActivitiesMaked = mongoose.Schema({
+	activity: { type: mongoose.Schema.ObjectId, ref: "Activities" },
+  objetive:structDb.LearningObjetive,
+  description: {type:String, trim:true, required: true, uppercase: true},
 	dateCreated:{ type: Date, default: Date.now }
 });
+
+structDb.Students=mongoose.Schema({
+	data: structDb.Peoples,
+	grade:structDb.Grades,
+	discapacityLevel:{type:Number, required:true, default:0},
+	physics:[structDb.physic],
+	domain:{ type: mongoose.Schema.ObjectId, ref: "domainsLearning" },
+	objetives:[{ type: mongoose.Schema.ObjectId, ref: "LearningObjetive" }],
+  activities: [structDb.ActivitiesMaked],
+	history:[structDb.HistoryLearning]
+});
+
 structDb.events=mongoose.Schema({
 	name:{type:String, trim:true,uppercase: true},
 	objects:{type:Object},

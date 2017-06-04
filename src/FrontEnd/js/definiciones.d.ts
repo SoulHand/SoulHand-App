@@ -38,7 +38,7 @@ declare namespace People {
 		_v:number
 		data:people
 		grade?: CRUD.grade
-		activities?:Array<CRUD.activity>
+		activities?:Array<CRUD.ActivityMaked>
 		physics?:Array<CRUD.physic>
 		discapacityLevel?:number
 		history?:Array<CRUD.history>
@@ -191,6 +191,12 @@ declare namespace State {
 }
 
 declare namespace CRUD{
+  interface ActivityMaked{
+    activity: CRUD.activity,
+    objetive: CRUD.objetive,
+    description: string,
+  	dateCreated:string
+  }
   interface codeError{
   	code:string
   	message:string

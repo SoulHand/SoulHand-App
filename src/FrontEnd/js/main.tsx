@@ -66,6 +66,7 @@ window.addEventListener("load",()=>{
         <Route path="/activity" onEnter={Auth}>
           <IndexRoute component={Activity.Activity}/>
           <Route path="get/:id" component={Activity.Get}/>
+          <Route path="get/:activity/student/:student" component={Student.Activity.View}/>
           <Route path="create" component={Activity.Add}/>
           <Route path=":domain/objetives/:level" component={Domain.Objetive}/>
           <Route path="set/:activity/student" component={Activity.setStudent}/>
