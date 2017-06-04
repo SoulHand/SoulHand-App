@@ -2,6 +2,7 @@ import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link, withRouter} from 'react-router'
 import * as List from '../profiles/activity'
+import {ObjetiveActivity} from '../cards/objetiveactivity'
 
 @withRouter
  export class View extends React.Component <Props.teacherView, {activity: CRUD.activity}>{
@@ -20,7 +21,7 @@ import * as List from '../profiles/activity'
    delete(){
      ajax({
  			method:"DELETE",
- 	        url: `${window._BASE}/v1/people/students/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+ 	        url: `${window._BASE}/v1/activities/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
  	        dataType: "json",
  	        data:null,
  	        crossDomain:true,
@@ -71,6 +72,13 @@ import * as List from '../profiles/activity'
        </header>
           <main className="mdl-layout__content mdl-color--white-100">
             {body}
+            <div className="mdl-grid mdl-color--white demo-content">
+              {this.state.activity && this.state.activity.objetives.map((row) => {
+                return (
+                  <ObjetiveActivity key={row._id} objetive={row} session={this.session} delete={this.delete.bind(this)} activity={this.state.activity._id}/>
+                );
+              })}
+            </div>
           </main>
        </div>
      );

@@ -23,6 +23,7 @@
     "grunt-contrib-jasmine": "^0.5.3",
     "grunt-template-jasmine-requirejs": "^0.1.10",
     "jasmine-node": "^1.14.5",
+    "json-loader": "^0.5.4",
     "node-sass": "^4.5.0",
     "raw-loader": "^0.5.1",
     "resolve-url-loader": "^2.0.2",

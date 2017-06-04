@@ -9,6 +9,7 @@ interface Window{
 }
 declare let validator: any;
 declare let componentHandler: any;
+declare let APP: any;
 
 /*
   People
@@ -131,8 +132,9 @@ declare namespace Card {
     objetive: CRUD.objetive
     session: User.session
     delete: Function
-    domain: string
-    level: string
+    domain?: string
+    level?: string
+    activity?: string
   }
   interface cognition{
     cognition: CRUD.cognition

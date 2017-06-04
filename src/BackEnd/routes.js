@@ -2711,12 +2711,14 @@ module.exports = function (app, express, server, __DIR__) {
 			if(!data){
 				throw new ValidatorException("No existe la actividad!");
 			}
-			for(var i in data.objetives){
-				if(data.objetives[i]._id.toString()==request.params.objetive){
-					data.objetives[i].remove();
-					return data.save();
-				}
-			}
+      console.log(data.objetives);
+      for (var i = 0, n=data.objetives.length; i < n; i++) {
+        console.log(data.objetives[i]._id, request.params.objetive);
+        if(data.objetives[i]._id.toString()==request.params.objetive){
+          data.objetives[i].remove();
+          return data.save();
+        }
+      }
 			throw new ValidatorException("No existe el objetivo!");
 		}).then(function(data){
 			response.send(data);
