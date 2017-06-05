@@ -266,6 +266,7 @@ declare namespace CRUD{
 		name: string
   		description: string
   		dateExpire:string
+  		dateCompleted:string
   		teacher: string
 		grade:grade
 		course: grade

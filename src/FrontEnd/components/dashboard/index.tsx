@@ -96,7 +96,7 @@ import {LineChart} from "../linechart"
         },
         title:{
           align: "center",
-          text: "Objetivos de aprendizaje",
+          text: "Actividades realizadas en la semana",
           style:{
             fontFamily: "Roboto",
             fontSize: "1em",
@@ -114,6 +114,56 @@ import {LineChart} from "../linechart"
             data: Object.entries(categoryObjetives)
         }]
       };
+      var series: Array <any> = [];
+      this.state.activities.forEach((activity) => {
+        let add = null;
+        for(var i in series){
+          if(series[i].name === activity.course.name){
+            add = series[i];
+            break;
+          }
+        }
+        if(!add){
+          series.push({
+            name: activity.course.name,
+            data: [0, 0, 0, 0, 0, 0, 0]
+          });
+          add = series[series.length-1]
+        }
+        if(activity.isCompleted == true){
+          var date = new Date(activity.dateCompleted);
+          var days = (Date.now()-date.getTime())/8.64e+7;
+          if(days <= 7){
+            var dayWeek = date.getDay();
+            if(!add.data[dayWeek]){
+              add.data[dayWeek] = 0;
+            }
+            add.data[dayWeek]++;
+          }
+        }
+      })
+     var ObjetivesCompleted = {
+        chart: {
+            type: 'column'
+        },
+        title:{
+          text:"Aceptación de objetivos",
+          x:-20,
+          style: {
+            fontFamily: "Roboto",
+            fontWeight: "bold",
+            color: "#888"
+          }
+        },
+        xAxis:{
+          categories:["dom", "Lun","Mart","Mier","Jue","Vier", "sab"],
+          title:{
+            text:"días de la semana"
+          }
+        },
+        series: series
+      };
+      console.log(series);
      return(
        <div className="mdl-grid demo-content">
          <div className="demo-charts mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
@@ -121,6 +171,7 @@ import {LineChart} from "../linechart"
            <LineChart id="domainobjetive" config={DomainObjetives}/>
          </div>
          <div className="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--8-col">
+         <LineChart id="objetivecompleted" config={ObjetivesCompleted}/>
            <div id="graph1"></div>
          </div>
          <div className="demo-cards mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing">
