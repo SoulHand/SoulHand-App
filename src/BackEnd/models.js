@@ -142,6 +142,7 @@ structDb.Activities=mongoose.Schema({
 	objetives:[structDb.LearningObjetive],
 	isCompleted:{type:Boolean,default:false},
  	dateCreated:{ type: Date, default: Date.now },
+ 	dateCompleted:{ type: Date },
  	dateExpire:{ type: Date, required:true },
  	teacher: { type: mongoose.Schema.ObjectId, ref: "Teachers" },
 	students: [{ type: mongoose.Schema.ObjectId, ref: "Students" }],

@@ -2973,6 +2973,30 @@ module.exports = function (app, express, server, __DIR__) {
 	});
 
 	/*
+	* @api {put} /:id/completed Dar por completada una actividad
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion
+	* @var category<CategoryCoginitions>	objeto CRUD
+	*/
+	activityURI.put("/:id/completed",Auth.isAdmin.bind(app.container),function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("El id es invalido!");
+		}
+		app.container.database.Schema.Activities.findOne({_id:request.params.id }).populate("students").then(function(obj){
+			if(!obj){
+				throw new ValidatorException("No existe el registro");
+			}
+      obj.isCompleted = true;
+      obj.dateCompleted = Date.now();
+			return obj.save();
+		}).then(function(data){
+			response.send(data);
+		}).catch(function(error){
+			next(error);
+		});
+	});
+	/*
 	* @api {delete} /:id Eliminar una categoria cognitiva
 	* @params request peticiones del cliente
 	* @params response respuesta del servidor
@@ -2994,6 +3018,7 @@ module.exports = function (app, express, server, __DIR__) {
 			next(error);
 		});
 	});
+
 	app.use("/v1/activities",activityURI);
 
 	var helpsURI= express.Router();
