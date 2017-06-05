@@ -2,6 +2,7 @@ import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link, withRouter} from 'react-router'
 import {CompleteObjetive} from './completeobjetive'
+import {LineChart} from '../../linechart'
 
 @withRouter
  export class View extends React.Component <Props.GenericRouter, {student: People.student, activity: CRUD.activity}>{
@@ -19,7 +20,6 @@ import {CompleteObjetive} from './completeobjetive'
      componentHandler.upgradeAllRegistered();
    }
    redirect(id: string){
-     console.log(id)
     this.props.router.replace(`/activity/get/${this.props.routeParams.activity}/student/${this.props.routeParams.student}/complete/${id}`);
    }
    componentDidMount(){
@@ -51,7 +51,50 @@ import {CompleteObjetive} from './completeobjetive'
          </div>
        );
      }
-
+     let count = {
+       completed: 0,
+       failed: 0,
+       pending: 0
+     };
+     this.state.student.activities.forEach((row) => {
+       if(row.isAdd == true){
+         count.completed ++;
+       }else{
+         count.failed++;
+       }
+     });
+     count.pending = this.state.activity.objetives.length - (count.completed + count.failed);
+     var graficConfig = {
+        chart: {
+            type: 'pie'
+        },
+        title:{
+          //align: "center",
+          //verticalAlign: "center",
+          text: ((count.completed*100)/this.state.activity.objetives.length) + "%",
+          x: 6,
+          y: 230,
+          style:{
+            fontFamily: "Roboto",
+            fontSize: "4em",
+            fontWeight: "bold",
+            color: "#888"
+          }
+        },
+        plotOptions: {
+            pie: {
+                //borderColor: '#000000',
+                innerSize: '60%'
+            }
+        },
+        series: [{
+            data: [
+                ['Objetivos completados', count.completed],
+                ['Objetivos pendientes', count.pending],
+                ['Objetivos fallidos', count.failed]
+            ]
+        }]
+    };
      return(
        <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
        <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
@@ -68,6 +111,9 @@ import {CompleteObjetive} from './completeobjetive'
        </header>
           <main className="mdl-layout__content mdl-color--white-100">
             <div className="mdl-grid mdl-color--white demo-content">
+            <div className="demo-charts mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+              <LineChart id="container" config={graficConfig}/>
+            </div>
               <div className="mdl-cell--6-col mdl-cell--middle">
                 <div className="mdl-textfield">
                     <label className="mdl-input__expandable-holder">Nombre de la actividad</label>
@@ -144,7 +190,6 @@ import {CompleteObjetive} from './completeobjetive'
                         );
                       }
                     }
-                    console.log(error, error === true, error === false);
                     return (
                       <tr key={row._id} id={row._id} style={(error === true) ? {color: "#d50000"} : ((error === false) ? {color: "rgb(41, 162, 63)"} : {})}>
                         <td className="mdl-data-table__cell--non-numeric" title={row.name}><span>{row.name}</span></td>
