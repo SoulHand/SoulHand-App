@@ -192,10 +192,11 @@ declare namespace State {
 
 declare namespace CRUD{
   interface ActivityMaked{
-    activity: CRUD.activity,
-    objetive: CRUD.objetive,
+    activity: string,
+    objetive: string,
     description: string,
-  	dateCreated:string
+  	dateCreated:string,
+    isAdd: boolean
   }
   interface codeError{
   	code:string

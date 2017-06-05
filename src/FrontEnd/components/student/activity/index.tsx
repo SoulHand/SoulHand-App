@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link, withRouter} from 'react-router'
+import {CompleteObjetive} from './completeobjetive'
 
 @withRouter
  export class View extends React.Component <Props.GenericRouter, {student: People.student, activity: CRUD.activity}>{
@@ -17,8 +18,11 @@ import {Link, withRouter} from 'react-router'
    componentDidUpdate(){
      componentHandler.upgradeAllRegistered();
    }
+   redirect(id: string){
+     console.log(id)
+    this.props.router.replace(`/activity/get/${this.props.routeParams.activity}/student/${this.props.routeParams.student}/complete/${id}`);
+   }
    componentDidMount(){
-
      let p1 = ajax({
        method:"GET",
        url: `${window._BASE}/v1/activities/${this.props.routeParams.activity}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
@@ -102,27 +106,47 @@ import {Link, withRouter} from 'react-router'
                 <tbody>
                 {
                   this.state.activity.objetives.map((row) => {
+                    var error:any = "null";
                     var content = (
-                      <span>hola</span>
+                      <div className="mdl-cell--1">
+                        <div id={`toolp${row._id}`} className="icon material-icons" onClick={this.redirect.bind(this, [row._id])}>delete</div>
+                        <div className="mdl-tooltip" data-mdl-for={`toolp${row._id}`}>
+                          El objetivo esta pendiente
+                        </div>
+                      </div>
                     );
                     let obj = this.state.student.activities.filter((row2) => {
-                      if(row2.objetive._id == row._id && row2.activity._id == this.state.activity._id){
+                      if(row2.objetive == row._id && row2.activity == this.state.activity._id){
                         return true;
                       }
                       return false;
                     });
                     if(obj.length > 0) {
-                      content = (
-                        <div className="mdl-cell--1">
-                          <div id={`toolp${row._id}`} className="icon material-icons">check</div>
-                          <div className="mdl-tooltip" data-mdl-for={`toolp${row._id}`}>
-                            {obj[0].description}
+                      if(obj[0].isAdd == true){
+                        error = false;
+                        content = (
+                          <div className="mdl-cell--1">
+                            <div id={`toolp${row._id}`} className="icon material-icons">check</div>
+                            <div className="mdl-tooltip" data-mdl-for={`toolp${row._id}`}>
+                              Objetivo completado
+                            </div>
                           </div>
-                        </div>
-                      );
+                        );
+                      }else{
+                        error = true;
+                        content = (
+                          <div className="mdl-cell--1">
+                            <div id={`toolp${row._id}`} className="icon material-icons">cancel</div>
+                            <div className="mdl-tooltip" data-mdl-for={`toolp${row._id}`}>
+                              Fallo el objetivo
+                            </div>
+                          </div>
+                        );
+                      }
                     }
+                    console.log(error, error === true, error === false);
                     return (
-                      <tr key={row._id} id={row._id}>
+                      <tr key={row._id} id={row._id} style={(error === true) ? {color: "#d50000"} : ((error === false) ? {color: "rgb(41, 162, 63)"} : {})}>
                         <td className="mdl-data-table__cell--non-numeric" title={row.name}><span>{row.name}</span></td>
                         <td title={row.domain.name}><span>{row.domain.name}</span></td>
                         <td title={row.level.name}><span>{row.level.name}</span></td>
@@ -139,6 +163,7 @@ import {Link, withRouter} from 'react-router'
    }
  }
 
+export let Completed = CompleteObjetive;
 /*
 {this.state.student && (
   <table className="mdl-data-table mdl-js-data-table resize">

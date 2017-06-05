@@ -154,9 +154,10 @@ structDb.Activities=mongoose.Schema({
 
 structDb.ActivitiesMaked = mongoose.Schema({
 	activity: { type: mongoose.Schema.ObjectId, ref: "Activities" },
-  objetive:structDb.LearningObjetive,
+  objetive: { type: mongoose.Schema.ObjectId, ref: "LearningObjetive" },
   description: {type:String, trim:true, required: true, uppercase: true},
-	dateCreated:{ type: Date, default: Date.now }
+	dateCreated:{ type: Date, default: Date.now },
+  isAdd:{ type: Boolean, default: false }
 });
 
 structDb.Students=mongoose.Schema({

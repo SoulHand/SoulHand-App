@@ -1956,8 +1956,7 @@ module.exports = function (app, express, server, __DIR__) {
 	StudentsURI.put("/:id/activity/:activity",function(request, response,next) {
 		var people=new SubPeople(app.container.database.Schema.Students);
 		var people2=new People(app.container.database.Schema.Peoples);
-		var CIWeb=require("ciweb");
-		var data=require("ciweb/data/audiometria.json");
+
 		if(!Validator.isMongoId()(request.params.id)|| !Validator.isMongoId()(request.params.activity)){
 			throw new ValidatorException("El id es invalido");
 		}
@@ -1973,6 +1972,57 @@ module.exports = function (app, express, server, __DIR__) {
 		}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
+			next(error);
+		});
+	});
+  /*
+	* @api {put} /:id Editar alumno
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion
+	* @var people<SubPeople>	objeto CRUD
+	* @var people2<People>	objeto CRUD
+	*/
+	StudentsURI.put("/:id/activity/:activity/objetive/:objetive/complete",
+  function(request, response,next) {
+		if(!Validator.isMongoId()(request.params.id)|| !Validator.isMongoId()(request.params.activity) || !Validator.isMongoId()(request.params.objetive)){
+			throw new ValidatorException("El id es invalido");
+		}
+
+    Schema.Activities.findOne({_id:request.params.activity}).then((activity) => {
+      if(!activity){
+        throw new ValidatorException("No existe la actividad");
+      }
+      for(var i=0, n=activity.objetives.length; i<n; i++){
+        if(activity.objetives[i]._id.toString() === request.params.objetive){
+          return Promise.all([activity.objetives[i], Schema.Students.findOne({
+            "_id": request.params.id
+          }), activity]);
+        }
+      }
+      throw new ValidatorException("No existe el objetivo!");
+    }).then((rows) => {
+      if(!rows[1]){
+        throw new ValidatorException("No existe el alumno!");
+      }
+      var objetive = new Schema.ActivitiesMaked({
+        activity: rows[2]._id,
+        objetive: rows[0]._id,
+        description: request.body.description,
+        isAdd: ((request.body.completed && request.body.completed == "true") ? true : false)
+      });
+      rows[1].activities.push(objetive);
+      if(objetive.isAdd){
+        Events.emit('history-students',
+          `El alumno ha completado el objetivo ${rows[0].name}`, rows[1]._id);
+      }else{
+        Events.emit('history-students',
+        `El alumno ha fallado el objetivo ${rows[0].name}`, rows[1]._id);
+      }
+      return rows[1].save();
+    }).then((data) =>{
+			response.send(data);
+		}).catch((error) => {
 			next(error);
 		});
 	});
