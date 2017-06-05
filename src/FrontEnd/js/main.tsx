@@ -32,6 +32,7 @@ window.addEventListener("load",()=>{
           <Route path="get/:id" component={Student.Get}/>
           <Route path="get/:id/physic" component={Student.Physic.Physic}/>
           <Route path="get/:id/physic/create" component={Student.Physic.Create}/>
+          <Route path="get/:id/objetives" component={Student.Activity.ViewObjetive}/>
           <Route path="edit/:id" component={Student.Modify}/>
           <Route path="grade/edit/:id" component={Student.Grade}/>
           <Route path="create/:id" component={Student.Add}/>

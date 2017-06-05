@@ -132,9 +132,8 @@ structDb.LearningObjetive=mongoose.Schema({
 		level:{type:Number}
 	},
 	cognitions:[structDb.Cognitions],
-   	dateCreated:{ type: Date, default: Date.now },
-	words:[structDb.words],
-	completed:{type:Number}
+ 	dateCreated:{ type: Date, default: Date.now },
+	words:[structDb.words]
 });
 
 structDb.Activities=mongoose.Schema({
@@ -160,13 +159,18 @@ structDb.ActivitiesMaked = mongoose.Schema({
   isAdd:{ type: Boolean, default: false }
 });
 
+structDb.ObjetiveMaked = mongoose.Schema({
+  completed:{type:Number, default: 1, min:1},
+  objetive:structDb.LearningObjetive
+});
+
 structDb.Students=mongoose.Schema({
 	data: structDb.Peoples,
 	grade:structDb.Grades,
 	discapacityLevel:{type:Number, required:true, default:0},
 	physics:[structDb.physic],
 	domain:{ type: mongoose.Schema.ObjectId, ref: "domainsLearning" },
-	objetives:[{ type: mongoose.Schema.ObjectId, ref: "LearningObjetive" }],
+	objetives:[structDb.ObjetiveMaked],
   activities: [structDb.ActivitiesMaked],
 	history:[structDb.HistoryLearning]
 });

@@ -41,7 +41,7 @@ import {ajax} from 'jquery'
 	        dataType: "json",
 	        data:values,
 	        success:(data:any)=>{
-	        	this.props.router.replace(`/activity/get/${this.props.routeParams.student}/student/${this.props.routeParams.student}`);
+	        	this.props.router.replace(`/activity/get/${this.props.routeParams.activity}/student/${this.props.routeParams.student}`);
 	        },
 	        error:(data:any)=>{
 	        	var state: CRUD.codeError = data.responseJSON;
@@ -82,11 +82,11 @@ import {ajax} from 'jquery'
                  </div>
                </div>
                <div className="mdl-cell mdl-cell--6-col">
-                  <label htmlFor="interprete" className="label static">
+                  <label htmlFor="completed" className="label static">
                     Completado
                   </label>
-                 <label htmlFor="interprete" className="mdl-switch mdl-js-switch">
-                   <input type="checkbox" id="interprete" className="mdl-switch__input" onChange={(e:any)=>{this.getRadioButton(e)}}/>
+                 <label htmlFor="completed" className="mdl-switch mdl-js-switch">
+                   <input type="checkbox" id="completed" className="mdl-switch__input" onChange={(e:any)=>{this.getRadioButton(e)}} value="true"/>
                    <span className="mdl-switch__label">No/Si</span>
                 </label>
                </div>

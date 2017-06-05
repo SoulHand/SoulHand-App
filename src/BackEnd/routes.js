@@ -2012,6 +2012,24 @@ module.exports = function (app, express, server, __DIR__) {
         isAdd: ((request.body.completed && request.body.completed == "true") ? true : false)
       });
       rows[1].activities.push(objetive);
+      var add = true;
+      for(var i=0, n=rows[1].objetives.length; i<n;i++){
+        if(rows[1].objetives[i].objetive._id === objetive.objetive) {
+          add = false;
+          rows[1].objetives[i].completed += (objetive.isAdd == true) ? 1 : -1
+          Events.emit('history-students',
+            `El alumno ha reforzado el objetivo "${rows[0].name}" como un conocimiento previo`, rows[1]._id);
+          break;
+        }
+      }
+      if(add){
+        var objetiveMaked = new Schema.ObjetiveMaked({
+          objetive: rows[0]
+        })
+        rows[1].objetives.push(objetiveMaked);
+        Events.emit('history-students',
+          `El alumno ha adquirido el objetivo "${rows[0].name}" como un conocimiento previo`, rows[1]._id);
+      }
       if(objetive.isAdd){
         Events.emit('history-students',
           `El alumno ha completado el objetivo ${rows[0].name}`, rows[1]._id);

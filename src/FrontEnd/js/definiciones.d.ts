@@ -38,6 +38,11 @@ declare namespace People {
 		_v:number
 		data:people
 		grade?: CRUD.grade
+    objetives: Array<{
+      objetive: CRUD.objetive
+      completed: number
+      _id: string
+    }>
 		activities?:Array<CRUD.ActivityMaked>
 		physics?:Array<CRUD.physic>
 		discapacityLevel?:number

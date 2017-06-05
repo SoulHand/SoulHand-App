@@ -66,6 +66,7 @@ import * as List from '../profiles/student'
            <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
              <li className="mdl-menu__item"><Link to={`/students/edit/${this.props.routeParams.id}`}>Editar</Link></li>
              <li className="mdl-menu__item"><Link to={`/students/get/${this.props.routeParams.id}/physic`}>Desarrollo físico</Link></li>
+             <li className="mdl-menu__item"><Link to={`/students/get/${this.props.routeParams.id}/objetives`}>Conocimientos previos</Link></li>
              <li className="mdl-menu__item" onClick={(e)=>{this.delete()}}>Eliminar</li>
            </ul>
          </div>

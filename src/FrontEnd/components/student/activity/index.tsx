@@ -2,6 +2,7 @@ import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link, withRouter} from 'react-router'
 import {CompleteObjetive} from './completeobjetive'
+import {Objetives} from './objetives'
 import {LineChart} from '../../linechart'
 
 @withRouter
@@ -54,16 +55,21 @@ import {LineChart} from '../../linechart'
      let count = {
        completed: 0,
        failed: 0,
-       pending: 0
+       pending: 0,
+       count: 0
      };
      this.state.student.activities.forEach((row) => {
-       if(row.isAdd == true){
-         count.completed ++;
-       }else{
-         count.failed++;
+       if(row.activity == this.state.activity._id){
+         if(row.isAdd == true){
+           count.completed ++;
+         }else{
+           count.failed++;
+         }
+         count.count ++;
        }
      });
-     count.pending = this.state.activity.objetives.length - (count.completed + count.failed);
+     console.log(count);
+     count.pending = this.state.activity.objetives.length - count.count;
      var graficConfig = {
         chart: {
             type: 'pie'
@@ -98,7 +104,7 @@ import {LineChart} from '../../linechart'
      return(
        <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
        <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-        <div className="mdl-layout__drawer-button"><Link to="/parents"><i className="material-icons">&#xE5C4;</i></Link></div>
+        <div className="mdl-layout__drawer-button"><Link to={`/activity/get/${this.props.routeParams.activity}`}><i className="material-icons">&#xE5C4;</i></Link></div>
          <div className="mdl-layout__header-row">
            <span className="mdl-layout-title">SoulHand</span>
            <div className="mdl-layout-spacer"></div>
@@ -209,6 +215,7 @@ import {LineChart} from '../../linechart'
  }
 
 export let Completed = CompleteObjetive;
+export let ViewObjetive = Objetives;
 /*
 {this.state.student && (
   <table className="mdl-data-table mdl-js-data-table resize">
