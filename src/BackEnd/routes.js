@@ -797,6 +797,22 @@ module.exports = function (app, express, server, __DIR__) {
   })
 
 /*
+* @api {get} /objetives Obtener todos los objetivos
+* y dominio valido
+* @params request peticiones del cliente
+* @params response respuesta del servidor
+* @params next middleware dispara la proxima funcion
+*/
+  cognitions.get('/objetives',
+  function (request, response, next) {
+    app.container.database.Schema.LearningObjetive.find().then((rows) => {
+      response.send(rows)
+    }).catch((error) => {
+      next(error)
+    })
+  })
+
+/*
 * @api {get} /:domain/objetives/:level Obtener todos los objetivos de un nivel
 * y dominio valido
 * @params request peticiones del cliente
