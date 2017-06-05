@@ -2014,7 +2014,8 @@ module.exports = function (app, express, server, __DIR__) {
       rows[1].activities.push(objetive);
       var add = true;
       for(var i=0, n=rows[1].objetives.length; i<n;i++){
-        if(rows[1].objetives[i].objetive._id === objetive.objetive) {
+        console.log(rows[1].objetives[i].objetive._id, objetive.objetive, rows[1].objetives[i].objetive._id.toString() === objetive.objetive.toString());
+        if(rows[1].objetives[i].objetive._id.toString() === objetive.objetive.toString()) {
           add = false;
           rows[1].objetives[i].completed += (objetive.isAdd == true) ? 1 : -1
           Events.emit('history-students',

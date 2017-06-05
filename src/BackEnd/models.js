@@ -160,7 +160,7 @@ structDb.ActivitiesMaked = mongoose.Schema({
 });
 
 structDb.ObjetiveMaked = mongoose.Schema({
-  completed:{type:Number, default: 1, min:1},
+  completed:{type:Number, default: 1},
   objetive:structDb.LearningObjetive
 });
 

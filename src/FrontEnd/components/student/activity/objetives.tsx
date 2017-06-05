@@ -41,6 +41,11 @@ import {LineChart} from '../../linechart'
         </div>
       );
      }
+     let max = 0, min = 0;
+     this.state.student.objetives.forEach((row) => {
+       max = Math.max(max, row.completed);
+       min = Math.min(min, row.completed);
+     })
      return(
        <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
        <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
@@ -62,12 +67,17 @@ import {LineChart} from '../../linechart'
                 <tbody>
                 {
                   this.state.student.objetives.map((row) => {
+                    let procent = ((row.completed/max)*100) + "%";
                     return (
                       <tr key={row._id}>
                         <td className="mdl-data-table__cell--non-numeric"><span>{row.objetive.name}</span></td>
                         <td className="mdl-data-table__cell">{row.objetive.domain.name}</td>
                         <td className="mdl-data-table__cell">{row.objetive.level.name}</td>
-                        <td className="mdl-data-table__cell">{row.completed}</td>
+                        <td className="mdl-data-table__cell">
+                          <div style={{width: procent}} className="mdl-progress mdl-js-progress" title={procent}>
+                            <div className="progressbar bar bar1" style={{width: procent}}></div>
+                          </div>
+                        </td>
                       </tr>
                     );
                   })
