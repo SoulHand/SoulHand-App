@@ -77,7 +77,7 @@ import {LineChart} from '../../linechart'
         title:{
           //align: "center",
           //verticalAlign: "center",
-          text: ((count.completed*100)/this.state.activity.objetives.length) + "%",
+          text: ((count.completed*100)/this.state.activity.objetives.length).toFixed(2) + "%",
           x: 6,
           y: 230,
           style:{
