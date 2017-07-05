@@ -1,3 +1,6 @@
+
+process.env.PORT = 8080;
+
 module.exports.settings=function(__DIR__){
 	return {
 		port:8080,

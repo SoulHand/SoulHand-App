@@ -21,7 +21,7 @@ module.exports = function (app, __DIR__) {
     logger.level = 'debug'
     logger.add(logger.transports.File,
       {filename: path.join(uri, '/server.log')});
-      //logger.remove(logger.transports.Console);
+      logger.remove(logger.transports.Console);
   }
   return {
     database: {

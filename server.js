@@ -41,7 +41,6 @@ class App {
   }
   close(){
     this._server.close();
-    console.log("muerto!");
   }
 }
 module.exports = App;
