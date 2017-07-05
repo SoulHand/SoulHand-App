@@ -17,10 +17,12 @@ module.exports = function (app, __DIR__) {
   } catch (e) {
     fs.mkdirSync(uri)
   }
-  logger.level = 'debug'
-  logger.add(logger.transports.File,
-  {filename: path.join(uri, '/server.log')})
-
+  if(process.env.NODE_ENV == "production"){
+    logger.level = 'debug'
+    logger.add(logger.transports.File,
+      {filename: path.join(uri, '/server.log')});
+      //logger.remove(logger.transports.Console);
+  }
   return {
     database: {
       db: db,

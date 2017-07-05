@@ -2,7 +2,7 @@
   "name": "soulhand",
   "version": "1.0.0",
   "description": "Herramienta web basada en inteligencia artificial para la compresión lectora",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "test": "node node_modules/jasmine-node/bin/jasmine-node --verbose test/",
     "compiler": "node node_modules/webpack/bin/webpack.js",

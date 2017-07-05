@@ -65,6 +65,7 @@ module.exports.insertSession=insertSession;
 
 
 module.exports.runApp=function(method,uri,args){
+  process.env.NODE_ENV = "test";
 	var express = require('express');
   const logger = require('winston')
 	var app = express();
@@ -108,8 +109,6 @@ module.exports.runApp=function(method,uri,args){
 				if(error){ reject(error)}
 				app.container.database.db.close(function(){
 					server.close(function(){
-            logger.remove(logger.transports.File,
-            {filename: path.join(uri, '/server.log')})
 						complete(response)
 					});
 				})
