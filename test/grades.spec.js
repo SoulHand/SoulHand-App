@@ -8,8 +8,8 @@ describe("Test route knowedge cognitions",function(){
 		self.db=utils.getDatabase();
 		find=new  self.db.schema.Grades({
 			name:faker.name.findName()
-		});		
-		Promise.all([utils.insertSession(self.db), find.save()]).then(function(data){	
+		});
+		Promise.all([utils.insertSession(self.db), find.save()]).then(function(data){
 			user=data[0]
 			done();
 		}).catch(function(error){
@@ -17,7 +17,7 @@ describe("Test route knowedge cognitions",function(){
 			done();
 		})
 	})
-	
+
 	it("GET /v1/grades/",function(done){
 		utils.runApp("GET",`/v1/grades/`).then(function(response){
 			response=JSON.parse(response);
@@ -28,7 +28,7 @@ describe("Test route knowedge cognitions",function(){
 			done();
 		});
 	});
-	
+
 	it("GET /v1/grades/:id",function(done){
 		utils.runApp("GET",`/v1/grades/${find._id}`).then(function(response){
 			response=JSON.parse(response);
@@ -37,9 +37,9 @@ describe("Test route knowedge cognitions",function(){
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();
 			done();
-		});	
+		});
 	});
-	
+
 	it("GET /v1/grades/:id (failed)",function(done){
 		utils.runApp("GET",`/v1/grades/00f0f2dd60e8613875e5e488`).then(function(error){
 			expect(error!=undefined).toBe(true);
@@ -47,7 +47,7 @@ describe("Test route knowedge cognitions",function(){
 		}).catch(function(error){
 			expect(error).toBeNull();
 			done();
-		});	
+		});
 	});
 	it("PUT /v1/grades/:id",function(done){
 		utils.runApp("PUT",`/v1/grades/${find._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
@@ -61,7 +61,7 @@ describe("Test route knowedge cognitions",function(){
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();
 			done();
-		});	
+		});
 	});
 	it("POST /v1/grades/",function(done){
 		utils.runApp("POST",`/v1/grades/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
@@ -69,13 +69,13 @@ describe("Test route knowedge cognitions",function(){
 				name:"1ro",
 			}
 		}).then(function(response){
-			response=JSON.parse(response);	
+			response=JSON.parse(response);
 			expect(response.name).toBe("1RO");
 			done();
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();
 			done();
-		});	
+		});
 	});
 	it("DELETE /v1/grades/:id",function(done){
 		utils.runApp("DEL",`/v1/grades/${find._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
