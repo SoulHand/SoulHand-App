@@ -1,4 +1,7 @@
 var mongoose= require('mongoose');
+mongoose.Promise = Promise;
+var db = mongoose.createConnection(process.env.DATABASE);
+
 var encode=function(str){
 	const base64=require('base-64');
 	return base64.encode(str);
@@ -180,7 +183,14 @@ structDb.events=mongoose.Schema({
 	name:{type:String, trim:true,uppercase: true},
 	objects:{type:Object},
 	premises:[structDb.inferences]
-})
+});
+
+for (var i in structDb) {
+  structDb[i] = db.model(i, structDb[i])
+}
+
+//module.exports.db = mongoose.connection;
+module.exports = structDb;
 
 /*
 structDb.ConflictCognitions=mongoose.Schema({
@@ -432,4 +442,3 @@ var structDb={
 		test:[structDb.testIntStudent],
 	   	group:structDb.groupsInteligence
 	});*/
-module.exports=structDb;

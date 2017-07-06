@@ -6,7 +6,7 @@ module.exports.isAdmin = function (request, response, next) {
   if (!Validator.isBase64()(request.query.PublicKeyId) || !Validator.isUUID()(request.query.PrivateKeyId)) {
     throw new UserException('Token invalidos')
   }
-  var user = new Token(this.database.Schema.Sessions)
+  var user = new Token(this.Sessions)
   var address = request.connection.address() || request.socket.address()
   var navigator = request.headers['user-agent']
   user.find({
@@ -36,7 +36,7 @@ module.exports.isUser = function (request, response, next) {
     !Validator.isUUID()(request.query.PrivateKeyId)) {
     throw new UserException('Token invalidos')
   }
-  var user = new Token(this.database.Schema.Sessions)
+  var user = new Token(this.Sessions)
   var address = request.connection.address() || request.socket.address()
   var navigator = request.headers['user-agent']
   user.find({
@@ -60,7 +60,7 @@ module.exports.isTeacherOrNot = function (request, response, next) {
     !Validator.isUUID()(request.query.PrivateKeyId)) {
     throw new UserException('Token invalidos')
   }
-  var user = new Token(this.database.Schema.Sessions)
+  var user = new Token(this.Sessions)
   var address = request.connection.address() || request.socket.address()
   var navigator = request.headers['user-agent']
   user.find({
@@ -90,8 +90,8 @@ module.exports.isTeacher = function (request, response, next) {
     !Validator.isUUID()(request.query.PrivateKeyId)) {
     throw new UserException('Token invalidos')
   }
-  var Schema = this.database.Schema
-  var user = new Token(this.database.Schema.Sessions)
+  var Schema = this;
+  var user = new Token(this.Sessions)
   var address = request.connection.address() || request.socket.address()
   var navigator = request.headers['user-agent']
   user.find({

@@ -68,6 +68,7 @@ module.exports.runApp=function(method,uri,args){
 	var p1=new Promise(function(complete,reject){
     var App = require("../server.js");
     process.env.NODE_ENV = "test";
+    process.env.DATABASE = 'mongodb://localhost/soulhand_test';
     var app = new App();
     app.start().then((addr) => {
       request[method.toLowerCase()]("http://0.0.0.0:"+addr.port+uri,args,function(error,request,response){

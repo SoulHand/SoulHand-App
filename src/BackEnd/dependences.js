@@ -5,12 +5,6 @@ var path = require('path')
 const fs = require('fs')
 
 module.exports = function (app, __DIR__) {
-  var db = mongoose.createConnection(app.settings.database.dns)
-  var structDb = require('./models.js')
-  var Schema = {}
-  for (var i in structDb) {
-    Schema[i] = db.model(i, structDb[i])
-  }
   let uri = path.join(__DIR__, '/logs')
   try {
     fs.accessSync(uri)
@@ -24,10 +18,6 @@ module.exports = function (app, __DIR__) {
       logger.remove(logger.transports.Console);
   }
   return {
-    database: {
-      db: db,
-      Schema: Schema
-    },
     ErrorHandler: function (error, request, response, next) {
       var body = {
         code: 500,

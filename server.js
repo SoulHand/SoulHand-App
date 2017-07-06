@@ -3,6 +3,7 @@ const logger = require('winston')
 const bodyParser = require('body-parser')
 var multer = require('multer')
 var upload = multer() // for parsing multipart/form-data
+var mongoose= require('mongoose');
 
 class App {
   constructor(){
@@ -10,17 +11,20 @@ class App {
     this._app.use(bodyParser.json()) // for parsing application/json
     this._app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
     this._app.use(upload.array()) // for parsing application/x-www-form-urlencoded
-    this._app.settings = require('./src/BackEnd/config.js').settings(__dirname)
+    this._settings = require('./src/BackEnd/config.js').settings(__dirname)
+    //this._connect = mongoose.createConnection(process.env.DATABASE.DNS);
+    this._db = require("./src/BackEnd/models.js");
     /* Dependences */
     this._app.container = require('./src/BackEnd/dependences.js')(this._app, __dirname)
 
     // middleware
-    require('./src/BackEnd/middleware.js')(this._app, express, this._server, __dirname)
+    require('./src/BackEnd/middleware.js')(this._app, express, this._db, __dirname)
 
     /* Routes */
-    require('./src/BackEnd/routes.js')(this._app, express, this._server, __dirname)
-
-    require('./src/BackEnd/testInit.js')(this._app, express, this._server, __dirname)
+    require('./src/BackEnd/routes.js')(this._app, express, this._db, __dirname)
+    if(process.env.NODE_ENV == "production"){
+      require('./src/BackEnd/testInit.js')(this._db);
+    }
     if (this._app.container.ErrorHandler) {
       this._app.use(this._app.container.ErrorHandler)
     }

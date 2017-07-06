@@ -13,8 +13,7 @@ var UserException = require('./SoulHand/Exceptions/UserException.js')
 // const logger = require('winston')
 var Auth = require('./SoulHand/Auth.js')
 
-module.exports = function (app, express, server, __DIR__) {
-  let Schema = app.container.database.Schema
+module.exports = function (app, express, Schema, __DIR__) {
   let Events = require('./SoulHand/inferencia/events.js')(Schema)
   /*
   * Ruta /v1/grades
@@ -28,7 +27,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params next middleware dispara la proxima funcion
   */
 
-  gradeURI.post('/', Auth.isAdmin.bind(app.container),
+  gradeURI.post('/', Auth.isAdmin.bind(Schema),
     function (request, response, next) {
       if (Validator.isNull()(request.body.name)) {
         throw new ValidatorException('El nombre solo debe contener letras')
@@ -92,7 +91,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  gradeURI.put('/:id', Auth.isAdmin.bind(app.container),
+  gradeURI.put('/:id', Auth.isAdmin.bind(Schema),
     function (request, response, next) {
       if (Validator.isNull()(request.body.name)) {
         throw new ValidatorException(
@@ -121,7 +120,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  gradeURI.delete('/:id', Auth.isAdmin.bind(app.container),
+  gradeURI.delete('/:id', Auth.isAdmin.bind(Schema),
     function (request, response, next) {
       Schema.Grades.findOne({_id: request.params.id}).then((data) => {
         if (!data) {
@@ -149,7 +148,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  courseURI.post('/', Auth.isAdmin.bind(app.container),
+  courseURI.post('/', Auth.isAdmin.bind(Schema),
     function (request, response, next) {
       if (Validator.isNull()(request.body.name)) {
         throw new ValidatorException('El nombre solo debe contener letras')
@@ -208,7 +207,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  courseURI.put('/:id', Auth.isAdmin.bind(app.container),
+  courseURI.put('/:id', Auth.isAdmin.bind(Schema),
     function (request, response, next) {
       if (Validator.isNull()(request.body.name)) {
         throw new ValidatorException('El nombre solo debe contener letras')
@@ -232,7 +231,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  courseURI.delete('/:id', Auth.isAdmin.bind(app.container),
+  courseURI.delete('/:id', Auth.isAdmin.bind(Schema),
   function (request, response, next) {
     Schema.Courses.findOne({_id: request.params.id}).then((data) => {
       if (!data) {
@@ -263,7 +262,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params next middleware dispara la proxima funcion
   * @var category<CategoryCoginitions> objeto CRUD
   */
-  learningURI.post('/', Auth.isAdmin.bind(app.container),
+  learningURI.post('/', Auth.isAdmin.bind(Schema),
     function (request, response, next) {
       if (Validator.isNull()(request.body.name)) {
         throw new ValidatorException('Solo se aceptan textos categoricos')
@@ -326,7 +325,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  learningURI.put('/:id', Auth.isAdmin.bind(app.container),
+  learningURI.put('/:id', Auth.isAdmin.bind(Schema),
   function (request, response, next) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('El id es invalido!')
@@ -360,7 +359,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  learningURI.delete('/:id', Auth.isAdmin.bind(app.container),
+  learningURI.delete('/:id', Auth.isAdmin.bind(Schema),
   function (request, response, next) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('El id es invalido!')
@@ -392,7 +391,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params next middleware dispara la proxima funcion
   * @var category<CategoryCoginitions> objeto CRUD
   */
-  cognitions.post('/:domain/cognitions', Auth.isAdmin.bind(app.container),
+  cognitions.post('/:domain/cognitions', Auth.isAdmin.bind(Schema),
   function (request, response, next) {
     if (Validator.isNull()(request.body.name)) {
       throw new ValidatorException('Solo se aceptan textos categoricos!')
@@ -438,7 +437,7 @@ module.exports = function (app, express, server, __DIR__) {
     if (Validator.isNull()(request.params.domain)) {
       throw new ValidatorException('Solo se aceptan dominios validos')
     }
-    app.container.database.Schema.domainsLearning
+    Schema.domainsLearning
     .findOne({name: request.params.domain.toUpperCase()}).then((row) => {
       if (!row) {
         throw new ValidatorException('No existe el dominio!')
@@ -459,7 +458,7 @@ module.exports = function (app, express, server, __DIR__) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('El id no es valido!')
     }
-    app.container.database.Schema.domainsLearning
+    Schema.domainsLearning
     .findOne({name: request.params.domain.toUpperCase()}).then((data) => {
       if (!data) {
         throw new ValidatorException('No existe el dominio!')
@@ -482,7 +481,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  cognitions.put('/:domain/cognitions/:id', Auth.isAdmin.bind(app.container),
+  cognitions.put('/:domain/cognitions/:id', Auth.isAdmin.bind(Schema),
   function (request, response, next) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('El id es invalido!')
@@ -524,7 +523,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  cognitions.delete('/:domain/cognitions/:id', Auth.isAdmin.bind(app.container),
+  cognitions.delete('/:domain/cognitions/:id', Auth.isAdmin.bind(Schema),
     function (request, response, next) {
       Schema.domainsLearning.findOne({
         name: request.params.domain.toUpperCase()
@@ -552,7 +551,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  cognitions.post('/:domain/level/', Auth.isAdmin.bind(app.container),
+  cognitions.post('/:domain/level/', Auth.isAdmin.bind(Schema),
     function (request, response, next) {
       if (Validator.isNull()(request.body.name)) {
         throw new ValidatorException('Solo se aceptan textos categoricos')
@@ -631,7 +630,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  cognitions.delete('/:domain/level/:id', Auth.isAdmin.bind(app.container),
+  cognitions.delete('/:domain/level/:id', Auth.isAdmin.bind(Schema),
     function (request, response, next) {
       if (!Validator.isMongoId()(request.params.id)) {
         throw new ValidatorException('EL id no es valido!')
@@ -660,7 +659,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params next middleware dispara la proxima funcion
   * @var category<CategoryCoginitions> objeto CRUD
   */
-  cognitions.post('/objetives/', Auth.isAdmin.bind(app.container),
+  cognitions.post('/objetives/', Auth.isAdmin.bind(this.Schema),
   function (request, response, next) {
     if (Validator.isNull()(request.body.name)) {
       throw new ValidatorException('Es requerido un nombre')
@@ -805,7 +804,7 @@ module.exports = function (app, express, server, __DIR__) {
 */
   cognitions.get('/objetives',
   function (request, response, next) {
-    app.container.database.Schema.LearningObjetive.find().then((rows) => {
+    Schema.LearningObjetive.find().then((rows) => {
       response.send(rows)
     }).catch((error) => {
       next(error)
@@ -821,7 +820,7 @@ module.exports = function (app, express, server, __DIR__) {
 */
   cognitions.get('/:domain/objetives/:level',
   function (request, response, next) {
-    app.container.database.Schema.LearningObjetive.find({
+    Schema.LearningObjetive.find({
       'domain.name': request.params.domain.toString(),
       'level.name': request.params.level.toString()
     }).then((rows) => {
@@ -874,11 +873,11 @@ module.exports = function (app, express, server, __DIR__) {
   * @params next middleware dispara la proxima funcion
   */
   cognitions.put('/objetives/:id',
-  Auth.isAdmin.bind(app.container), function (request, response, next) {
+  Auth.isAdmin.bind(this.Schema), function (request, response, next) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('El id es invalido!')
     }
-    app.container.database.Schema.LearningObjetive.findOne({
+    Schema.LearningObjetive.findOne({
       _id: request.params.id
     }).then((row) => {
       for (var i in row.schema.obj) {
@@ -901,19 +900,19 @@ module.exports = function (app, express, server, __DIR__) {
   * @params next middleware dispara la proxima funcion
   */
   cognitions.put('/objetives/:id/cognitions/:cognition',
-  Auth.isAdmin.bind(app.container),
+  Auth.isAdmin.bind(this.Schema),
   function (request, response, next) {
     if (!Validator.isMongoId()(request.params.id) || !Validator.isMongoId()(request.params.cognition)) {
       throw new ValidatorException('El id es invalido!')
     }
-    app.container.database.Schema.LearningObjetive.findOne({_id: request.params.id})
+    Schema.LearningObjetive.findOne({_id: request.params.id})
     .then((row) => {
       if (!row) {
         throw new ValidatorException('No existe el objetivo!')
       }
       return Promise.all([
         Events.get('OBJETIVES-ADD-COGNITIONS'),
-        row, app.container.database.Schema.domainsLearning.findOne({_id: row.domain._id})
+        row, Schema.domainsLearning.findOne({_id: row.domain._id})
       ])
     }).then((row) => {
       if (!row[2]) {
@@ -1011,12 +1010,12 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  cognitions.delete('/:domain/objetives/:level/:id', Auth.isAdmin.bind(app.container),
+  cognitions.delete('/:domain/objetives/:level/:id', Auth.isAdmin.bind(this.Schema),
   function (request, response, next) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('El id es invalido!')
     }
-    app.container.database.Schema.LearningObjetive.findOne({
+    Schema.LearningObjetive.findOne({
       'domain.name': request.params.domain.toString(),
       'level.name': request.params.level.toString(),
       _id: request.params.id
@@ -1043,7 +1042,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  weightURI.post('/', Auth.isAdmin.bind(app.container),
+  weightURI.post('/', Auth.isAdmin.bind(this.Schema),
   function (request, response, next) {
     if (!Validator.isFloat()(request.body.height) || !Validator.isFloat()(request.body.min) || !Validator.isFloat()(request.body.max)) {
       throw new ValidatorException('Solo se aceptan numeros')
@@ -1082,7 +1081,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params next middleware dispara la proxima funcion
   */
   weightURI.get('/', function (request, response, next) {
-    app.container.database.Schema.weights.find().then((data) => {
+    Schema.weights.find().then((data) => {
       response.send(data)
     }).catch((error) => {
       next(error)
@@ -1099,7 +1098,7 @@ module.exports = function (app, express, server, __DIR__) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('EL id no es valido')
     }
-    app.container.database.Schema.weights.findOne({_id: request.params.id})
+    Schema.weights.findOne({_id: request.params.id})
     .then((data) => {
       if (!data) {
         throw new ValidatorException('No existe el peso!')
@@ -1116,7 +1115,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  weightURI.put('/:id', Auth.isAdmin.bind(app.container),
+  weightURI.put('/:id', Auth.isAdmin.bind(this.Schema),
   function (request, response, next) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('EL id no es valido')
@@ -1159,7 +1158,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  weightURI.delete('/:id', Auth.isAdmin.bind(app.container),
+  weightURI.delete('/:id', Auth.isAdmin.bind(this.Schema),
   function (request, response, next) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('EL id no es valido')
@@ -1185,7 +1184,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  heightURI.post('/', Auth.isAdmin.bind(app.container),
+  heightURI.post('/', Auth.isAdmin.bind(this.Schema),
   function (request, response, next) {
     if (!Validator.isFloat()(request.body.age) || !Validator.isFloat()(request.body.min) || !Validator.isFloat()(request.body.max)) {
       throw new ValidatorException('Solo se aceptan numeros')
@@ -1254,7 +1253,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  heightURI.put('/:id', Auth.isAdmin.bind(app.container),
+  heightURI.put('/:id', Auth.isAdmin.bind(this.Schema),
   function (request, response, next) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('EL id no es valido')
@@ -1294,7 +1293,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  heightURI.delete('/:id', Auth.isAdmin.bind(app.container),
+  heightURI.delete('/:id', Auth.isAdmin.bind(this.Schema),
   function (request, response, next) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('EL id no es valido')
@@ -1326,8 +1325,8 @@ module.exports = function (app, express, server, __DIR__) {
   * @params next middleware dispara la proxima funcion
   */
   UsersURI.post('/', function (request, response, next) {
-    var user = new User(app.container.database.Schema.User)
-    var people = new People(app.container.database.Schema.Peoples)
+    var user = new User(Schema.User)
+    var people = new People(Schema.Peoples)
     request.body.dni = request.body.dni.toUpperCase()
     if (!Validator.matches(/^[VE][0-9]{6,9}$/)(request.body.dni)) {
       throw new ValidatorException('Solo se aceptan documentos de identidad')
@@ -1366,7 +1365,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  UsersURI.get('/', Auth.isAdmin.bind(app.container), function (request, response, next) {
+  UsersURI.get('/', Auth.isAdmin.bind(this.Schema), function (request, response, next) {
     Schema.User.find().then((data) => {
       response.send(data)
     }).catch((error) => {
@@ -1380,7 +1379,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  UsersURI.get('/:id', Auth.isAdmin.bind(app.container), function (request, response, next) {
+  UsersURI.get('/:id', Auth.isAdmin.bind(this.Schema), function (request, response, next) {
     Schema.User.findOne({_id: request.params.id}).then((data) => {
       if (!data) {
         throw new ValidatorException('No existe el usuario!')
@@ -1397,7 +1396,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  UsersURI.put('/root/:id', Auth.isAdmin.bind(app.container), function (request, response, next) {
+  UsersURI.put('/root/:id', Auth.isAdmin.bind(this.Schema), function (request, response, next) {
     Schema.User.findOne({_id: request.params.id}).then((data) => {
       data.isAdmin = (request.body.isAdmin && request.body.isAdmin === 'true')
     }).then((data) => {
@@ -1413,7 +1412,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  UsersURI.put('/:id', Auth.isUser.bind(app.container), function (request, response, next) {
+  UsersURI.put('/:id', Auth.isUser.bind(this.Schema), function (request, response, next) {
     if (request.body.isAdmin) {
       throw new ValidatorException('no puede realizar un cambio de administración')
     }
@@ -1459,7 +1458,7 @@ module.exports = function (app, express, server, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  UsersURI.delete('/:id', Auth.isAdmin.bind(app.container), function (request, response, next) {
+  UsersURI.delete('/:id', Auth.isAdmin.bind(this.Schema), function (request, response, next) {
     Schema.User.findOne({_id: request.params.id}).then((data) => {
       if (!data) {
         throw new ValidatorException('No existe el usuario')
@@ -1485,7 +1484,7 @@ module.exports = function (app, express, server, __DIR__) {
     const base64 = require('base-64')
     var username = request.body.username
     var pass = base64.encode(request.body.password)
-    app.container.database.Schema.User.findOne({
+    Schema.User.findOne({
       $or: [
         {username: username},
         {email: username}
@@ -1524,10 +1523,10 @@ module.exports = function (app, express, server, __DIR__) {
   * @var people<SubPeople> objeto CRUD
   * @var people2<People> objeto CRUD
   */
-  PeopleURI.post('/', Auth.isAdmin.bind(app.container),
+  PeopleURI.post('/', Auth.isAdmin.bind(this.Schema),
   function (request, response, next) {
-    var people = new SubPeople(app.container.database.Schema.Teachers)
-    var people2 = new People(app.container.database.Schema.Peoples)
+    var people = new SubPeople(Schema.Teachers)
+    var people2 = new People(Schema.Peoples)
     if (!Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)) {
       throw new ValidatorException('Solo se aceptan documentos de identidad')
     }
@@ -1570,7 +1569,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people<People>	objeto CRUD
 	*/
 	PeopleURI.get("/",function(request, response,next) {
-		app.container.database.Schema.Teachers.find().then(function(data){
+		Schema.Teachers.find().then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -1592,7 +1591,7 @@ module.exports = function (app, express, server, __DIR__) {
         '_id': request.params.id
       }
     }
-		app.container.database.Schema.Teachers.findOne(field).then(function(data){
+		Schema.Teachers.findOne(field).then(function(data){
 			if(!data){
 				throw new ValidatorException("No existe el docente!");
 			}
@@ -1626,12 +1625,12 @@ module.exports = function (app, express, server, __DIR__) {
 			throw new ValidatorException("El genero es invalido");
 		}
 		var people,teacher;
-		app.container.database.Schema.Teachers.findOne({_id:request.params.id}).then(function(data){
+		Schema.Teachers.findOne({_id:request.params.id}).then(function(data){
 			teacher=data;
 			if(!data){
 				throw new VoidException("No existe un registro de este tipo");
 			}
-			return app.container.database.Schema.Peoples.findOne({_id:teacher.data._id})
+			return Schema.Peoples.findOne({_id:teacher.data._id})
 		}).then(function(data){
 			people=data;
 			if(!data){
@@ -1666,7 +1665,7 @@ module.exports = function (app, express, server, __DIR__) {
 		if(!Validator.isMongoId()(request.params.grade)){
 			throw new ValidatorException("el id no es valido!");
 		}
-		Promise.all([app.container.database.Schema.Teachers.findOne({_id:request.params.id}),app.container.database.Schema.Grades.findOne({_id:request.params.grade})]).then(function(data){
+		Promise.all([Schema.Teachers.findOne({_id:request.params.id}),Schema.Grades.findOne({_id:request.params.grade})]).then(function(data){
 			if(!data[0]){
 				throw new ValidatorException("No existe un registro de este tipo");
 			}
@@ -1690,8 +1689,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people2<People>	objeto CRUD
 	*/
 	PeopleURI.delete("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Teachers);
-		var people2=new People(app.container.database.Schema.Peoples);
+		var people=new SubPeople(Schema.Teachers);
+		var people2=new People(Schema.Peoples);
 		people.remove({_id:request.params.id}).then(function(data){
 			response.send(data);
 			return people2.remove(data.data._id);
@@ -1714,9 +1713,9 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people2<People> objeto CRUD
 	*/
 	StudentsURI.post("/",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		var people2=new People(app.container.database.Schema.Peoples);
-		var grade=new Grade(app.container.database.Schema.Grades);
+		var people=new SubPeople(Schema.Students);
+		var people2=new People(Schema.Peoples);
+		var grade=new Grade(Schema.Grades);
 		if(!Validator.isMongoId()(request.body.parent)){
 			throw new ValidatorException("Es necesario el representante");
 		}
@@ -1742,7 +1741,7 @@ module.exports = function (app, express, server, __DIR__) {
 		delete(fields.data.grade);
 		delete(fields.data.parent);
 		var parentData,responseData;
-		app.container.database.Schema.Representatives.findOne({_id:request.body.parent}).then(function(data){
+		Schema.Representatives.findOne({_id:request.body.parent}).then(function(data){
 			if(!data){
 				throw new ValidatorException("No existe el representante");
 			}
@@ -1770,7 +1769,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people<People>	objeto CRUD
 	*/
 	StudentsURI.get("/",function(request, response,next) {
-		app.container.database.Schema.Students.find().populate("activities").then(function(data){
+		Schema.Students.find().populate("activities").then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -1784,7 +1783,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people<SubPeople>	objeto CRUD
 	*/
 	StudentsURI.get("/:id",function(request, response,next) {
-		app.container.database.Schema.Students.findOne({_id:request.params.id}).populate("activities").then(function(data){
+		Schema.Students.findOne({_id:request.params.id}).populate("activities").then(function(data){
 			if(!data){
 				throw new ValidatorException("No existe el alumno!");
 			}
@@ -1801,7 +1800,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people<SubPeople>	objeto CRUD
 	*/
 	StudentsURI.get("/grade/:id",function(request, response,next) {
-		app.container.database.Schema.Students.find({"grade._id":request.params.id}).populate("activities").then(function(data){
+		Schema.Students.find({"grade._id":request.params.id}).populate("activities").then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -1816,9 +1815,9 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people2<People>	objeto CRUD
 	*/
 	StudentsURI.put("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		var people2=new People(app.container.database.Schema.Peoples);
-		var grade=new Grade(app.container.database.Schema.Grades);
+		var people=new SubPeople(Schema.Students);
+		var people2=new People(Schema.Peoples);
+		var grade=new Grade(Schema.Grades);
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido");
 		}
@@ -1844,17 +1843,17 @@ module.exports = function (app, express, server, __DIR__) {
 		if(request.body.grade){
 			p1=grade.find({_id:request.body.grade}).then(function(data){
 				gradeData=data;
-				return app.container.database.Schema.Students.findOne({_id:request.params.id});
+				return Schema.Students.findOne({_id:request.params.id});
 			});
 		}else{
-			p1=app.container.database.Schema.Students.findOne({_id:request.params.id});
+			p1=Schema.Students.findOne({_id:request.params.id});
 		}
 		p1=p1.then(function(data){
 			student=data;
 			if(gradeData){
 				student.grade=gradeData;
 			}
-			return app.container.database.Schema.Peoples.findOne({"dni":student.data.dni});
+			return Schema.Peoples.findOne({"dni":student.data.dni});
 		});
 		p1.then(function(data){
       console.log(data);
@@ -1888,8 +1887,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people2<People>	objeto CRUD
 	*/
 	StudentsURI.put("/:id/sound/test",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		var people2=new People(app.container.database.Schema.Peoples);
+		var people=new SubPeople(Schema.Students);
+		var people2=new People(Schema.Peoples);
 		var CIWeb=require("ciweb");
 		var data=require("ciweb/data/audiometria.json");
 		if(!Validator.isMongoId()(request.params.id)){
@@ -1900,7 +1899,7 @@ module.exports = function (app, express, server, __DIR__) {
 		}
 		var X=CIWeb.Matrix.Reshape(JSON.parse(request.body.value),1,5);
 		var H=CIWeb.Tbrain.LinealRegression.Propagation(X,data);
-		app.container.database.Schema.Students.findOne({_id:request.params.id}).then(function(data){
+		Schema.Students.findOne({_id:request.params.id}).then(function(data){
 			data.discapacityLevel=140-H;
 			return data.save();
 		}).then(function(data){
@@ -1919,8 +1918,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people2<People>	objeto CRUD
 	*/
 	StudentsURI.delete("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		var people2=new People(app.container.database.Schema.Peoples);
+		var people=new SubPeople(Schema.Students);
+		var people2=new People(Schema.Peoples);
 		people.remove({_id:request.params.id}).then(function(data){
 			response.send(data);
 			return people2.remove(data.data._id);
@@ -1943,11 +1942,11 @@ module.exports = function (app, express, server, __DIR__) {
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
-		app.container.database.Schema.Students.findOne({_id:request.params.id}).then(function(data){
+		Schema.Students.findOne({_id:request.params.id}).then(function(data){
 			var now=Date.now();
 			var last=new Date(`${data.data.birthdate}T00:00:00`);
 			var age=Math.round((now-last.getTime())/31536000000);
-			var element=app.container.database.Schema.physic({
+			var element=Schema.physic({
 				weight:request.body.weight,
 				height:request.body.height,
 				age:age
@@ -1970,13 +1969,13 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people2<People>	objeto CRUD
 	*/
 	StudentsURI.put("/:id/activity/:activity",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		var people2=new People(app.container.database.Schema.Peoples);
+		var people=new SubPeople(Schema.Students);
+		var people2=new People(Schema.Peoples);
 
 		if(!Validator.isMongoId()(request.params.id)|| !Validator.isMongoId()(request.params.activity)){
 			throw new ValidatorException("El id es invalido");
 		}
-		Promise.all([app.container.database.Schema.Students.findOne({_id:request.params.id}),app.container.database.Schema.Activities.findOne({_id:request.params.activity})]).then(function(data){
+		Promise.all([Schema.Students.findOne({_id:request.params.id}),Schema.Activities.findOne({_id:request.params.activity})]).then(function(data){
 			if(!data[0]){
 				throw new ValidatorException("No existe el alumno!");
 			}
@@ -2066,7 +2065,7 @@ module.exports = function (app, express, server, __DIR__) {
 		if(!Validator.isMongoId()(request.params.id) || !Validator.isMongoId()(request.params.del)){
 			throw new ValidatorException("El id es invalido!");
 		}
-		app.container.database.Schema.Students.findOne({_id:request.params.id}).then(function(data){
+		Schema.Students.findOne({_id:request.params.id}).then(function(data){
 			for (i in data.physics){
 				if(data.physics[i]._id.toString()==request.params.del.toString()){
 					data.physics[i].remove();
@@ -2090,8 +2089,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people2<People> objeto CRUD
 	*\/
 	StudentsURI.post("/:dni/test/:test",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Students);
-		var test=new CRUD(app.container.database.Schema.TestInteligence);
+		var people=new SubPeople(Schema.Students);
+		var test=new CRUD(Schema.TestInteligence);
 		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.params.dni)){
 			throw new ValidatorException("Solo se aceptan documentos de identidad");
 		}
@@ -2114,7 +2113,7 @@ module.exports = function (app, express, server, __DIR__) {
 						}
 					}
 				});
-				var test=new app.container.database.Schema.testIntStudent({
+				var test=new Schema.testIntStudent({
 					name:inteligence.name,
 					value:value,
 					percentil:0,
@@ -2147,9 +2146,9 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people2<People> objeto CRUD
 	*/
 	ReferencesToURI.post("/",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Representatives);
-		var people3=new SubPeople(app.container.database.Schema.Students);
-		var people2=new People(app.container.database.Schema.Peoples);
+		var people=new SubPeople(Schema.Representatives);
+		var people3=new SubPeople(Schema.Students);
+		var people2=new People(Schema.Peoples);
 		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
 			throw new ValidatorException("Solo se aceptan documentos de identidad");
 		}
@@ -2189,7 +2188,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people<SubPeople>	objeto CRUD
 	*/
 	ReferencesToURI.get("/",function(request, response,next) {
-		app.container.database.Schema.Representatives.find().populate('students').then(function(data){
+		Schema.Representatives.find().populate('students').then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -2206,7 +2205,7 @@ module.exports = function (app, express, server, __DIR__) {
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
-		app.container.database.Schema.Representatives.findOne({_id:request.params.id}).populate('students').then(function(data){
+		Schema.Representatives.findOne({_id:request.params.id}).populate('students').then(function(data){
 			if(!data){
 				throw new ValidatorException("No existe el representante!");
 			}
@@ -2225,9 +2224,9 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var grade<Grade>	objeto CRUD
 	*/
 	ReferencesToURI.put("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Representatives);
-		var people2=new People(app.container.database.Schema.Peoples);
-		var grade=new Grade(app.container.database.Schema.Grades);
+		var people=new SubPeople(Schema.Representatives);
+		var people2=new People(Schema.Peoples);
+		var grade=new Grade(Schema.Grades);
 		if(request.body.dni && !Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
 			throw new ValidatorException("Solo se aceptan documentos de identidad");
 		}
@@ -2244,9 +2243,9 @@ module.exports = function (app, express, server, __DIR__) {
 			throw new ValidatorException("El genero es invalido");
 		}
 		var people, represent;
-		app.container.database.Schema.Representatives.findOne({_id:request.params.id}).then(function(data){
+		Schema.Representatives.findOne({_id:request.params.id}).then(function(data){
 			represent=data;
-			return app.container.database.Schema.Peoples.findOne({_id:represent.data._id});
+			return Schema.Peoples.findOne({_id:represent.data._id});
 		}).then(function(data){
 			people=data;
 			var fields=people.toJSON();
@@ -2278,8 +2277,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people2<People>	objeto CRUD
 	*/
 	ReferencesToURI.delete("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Representatives);
-		var people2=new People(app.container.database.Schema.Peoples);
+		var people=new SubPeople(Schema.Representatives);
+		var people2=new People(Schema.Peoples);
 		people.remove({_id:request.params.id}).then(function(data){
 			response.send(data);
 			return people2.remove(data.data._id);
@@ -2304,8 +2303,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions> objeto CRUD
 	*/
-	inferenURI.post("/type",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.events);
+	inferenURI.post("/type",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var category=new CategoryCoginitions(Schema.events);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Solo se aceptan textos categoricos");
 		}
@@ -2327,8 +2326,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
 	inferenURI.get("/type",function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.events);
-		app.container.database.Schema.events.find().then(function(data){
+		var category=new CategoryCoginitions(Schema.events);
+		Schema.events.find().then(function(data){
 			response.send(data);
 		}).catch(function(error){
 			next(error);
@@ -2345,7 +2344,7 @@ module.exports = function (app, express, server, __DIR__) {
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
-		app.container.database.Schema.events.findOne({_id:request.params.id}).then(function(data){
+		Schema.events.findOne({_id:request.params.id}).then(function(data){
 			if(!data){
 				throw new ValidatorException("No existe el evento!");
 			}
@@ -2361,8 +2360,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	inferenURI.put("/type/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.events);
+	inferenURI.put("/type/:id",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var category=new CategoryCoginitions(Schema.events);
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
@@ -2392,8 +2391,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	inferenURI.delete("/type/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.events);
+	inferenURI.delete("/type/:id",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var category=new CategoryCoginitions(Schema.events);
 		category.remove({_id:request.params.id}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -2409,8 +2408,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions> objeto CRUD
 	*/
-	inferenURI.post("/:event/inferences",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var domain=new CategoryCoginitions(app.container.database.Schema.events);
+	inferenURI.post("/:event/inferences",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var domain=new CategoryCoginitions(Schema.events);
 		if(Validator.isNull()(request.body.premise)){
 			throw new ValidatorException("Solo se aceptan textos categoricos");
 		}
@@ -2428,7 +2427,7 @@ module.exports = function (app, express, server, __DIR__) {
 			if(!matchs || !request.body.consecuent.match(exp)){
 				throw new ValidatorException("las inferencias deben poseer variables de inferencias desde p hasta t o x");
 			}
-			var inference= new app.container.database.Schema.inferences({
+			var inference= new Schema.inferences({
 				premise:request.body.premise,
 				consecuent:request.body.consecuent
 			});
@@ -2455,7 +2454,7 @@ module.exports = function (app, express, server, __DIR__) {
 		if(Validator.isNull()(request.params.event)){
 			throw new ValidatorException("Solo se aceptan dominios validos");
 		}
-		app.container.database.Schema.events.findOne({name:request.params.event.toUpperCase()}).then(function(row){
+		Schema.events.findOne({name:request.params.event.toUpperCase()}).then(function(row){
 			if(!row){
 				throw new ValidatorException("No existe el evento!");
 			}
@@ -2475,7 +2474,7 @@ module.exports = function (app, express, server, __DIR__) {
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id no es valido!");
 		}
-		app.container.database.Schema.events.findOne({name:request.params.event.toUpperCase()}).then(function(data){
+		Schema.events.findOne({name:request.params.event.toUpperCase()}).then(function(data){
 			if(!data){
 				throw new ValidatorException("No existe el evento!");
 			}
@@ -2497,8 +2496,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	inferenURI.put("/:event/inferences/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.events);
+	inferenURI.put("/:event/inferences/:id",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var category=new CategoryCoginitions(Schema.events);
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
@@ -2532,8 +2531,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	inferenURI.delete("/:event/inferences/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.events);
+	inferenURI.delete("/:event/inferences/:id",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var category=new CategoryCoginitions(Schema.events);
 		category.update({name:request.params.event.toUpperCase()},function(obj){
 			for(i in obj.premises){
 				if(obj.premises[i]._id.toString()==request.params.id.toString()){
@@ -2561,7 +2560,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions> objeto CRUD
 	*/
-	activityURI.post("/:course",Auth.isTeacherOrNot.bind(app.container),function(request, response,next) {
+	activityURI.post("/:course",Auth.isTeacherOrNot.bind(this.Schema),function(request, response,next) {
 		var dm;
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Es requerido un nombre");
@@ -2580,7 +2579,7 @@ module.exports = function (app, express, server, __DIR__) {
 		if(request.body.teacher && request.user.isAdmin==true){
 			dni=request.body.teacher;
 		}
-		Promise.all([app.container.database.Schema.Courses.findOne({name:request.params.course.toUpperCase()}),app.container.database.Schema.Teachers.findOne({"data.dni":dni.toUpperCase()}),Events.get("ACTIVITY-ADD")]).then((data)=>{
+		Promise.all([Schema.Courses.findOne({name:request.params.course.toUpperCase()}),Schema.Teachers.findOne({"data.dni":dni.toUpperCase()}),Events.get("ACTIVITY-ADD")]).then((data)=>{
 			if(!data[0]){
 				throw new ValidatorException("No existe la materia!");
 			}
@@ -2590,7 +2589,7 @@ module.exports = function (app, express, server, __DIR__) {
       if(!data[1].grade){
 				throw new ValidatorException("No existe el grado!");
 			}
-			var activity=new app.container.database.Schema.Activities({
+			var activity=new Schema.Activities({
 				name:request.body.name,
 				description:request.body.description,
 				objetives:[],
@@ -2612,7 +2611,7 @@ module.exports = function (app, express, server, __DIR__) {
 					throw new ValidatorException(result.q1);
 				}
 			}else{
-				var helpEvent=new app.container.database.Schema.events({
+				var helpEvent=new Schema.events({
 					name:"ACTIVITY-ADD",
 					objects:{
 						p1:"request.body.name",
@@ -2623,10 +2622,10 @@ module.exports = function (app, express, server, __DIR__) {
 				});
 				helpEvent.save();
 			}
-			return Promise.all([activity,Events.get("ACTIVITY-OBJETIVES"),app.container.database.Schema.LearningObjetive.find()]);
+			return Promise.all([activity,Events.get("ACTIVITY-OBJETIVES"),Schema.LearningObjetive.find()]);
 		}).then((row)=>{
 			if(!row[1]){
-				var helpEvent=new app.container.database.Schema.events({
+				var helpEvent=new Schema.events({
 					name:"ACTIVITY-OBJETIVES",
 					objects:{
 						p1:"row[0].name",
@@ -2696,12 +2695,12 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions> objeto CRUD
 	*/
-	activityURI.put("/:id/objetives/:objetive",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	activityURI.put("/:id/objetives/:objetive",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
 		var dm;
 		if(!Validator.isMongoId()(request.params.objetive)){
 			throw new ValidatorException("El objetivo no es un id valido!");
 		}
-		Promise.all([app.container.database.Schema.LearningObjetive.findOne({_id:request.params.objetive}),app.container.database.Schema.Activities.findOne({_id:request.params.id}).populate("students")]).then((data)=>{
+		Promise.all([Schema.LearningObjetive.findOne({_id:request.params.objetive}),Schema.Activities.findOne({_id:request.params.id}).populate("students")]).then((data)=>{
 			if(!data[0]){
 				throw new ValidatorException("No existe el objetivo de aprendizaje!");
 			}
@@ -2728,7 +2727,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions> objeto CRUD
 	*/
-	activityURI.put("/:id/objetives",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	activityURI.put("/:id/objetives",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
 		if(!Validator.isJSON()(request.body.data)){
 			throw new ValidatorException("no es valido el contenido!")
 		}
@@ -2769,14 +2768,14 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions> objeto CRUD
 	*/
-	activityURI.put("/:id/student/:student",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	activityURI.put("/:id/student/:student",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("La actividad no es un id valido!");
 		}
 		if(!Validator.isMongoId()(request.params.student)){
 			throw new ValidatorException("El estudiante no es un id valido!");
 		}
-		Promise.all([app.container.database.Schema.Activities.findOne({_id:request.params.id}),app.container.database.Schema.Students.findOne({_id:request.params.student})]).then((data)=>{
+		Promise.all([Schema.Activities.findOne({_id:request.params.id}),Schema.Students.findOne({_id:request.params.student})]).then((data)=>{
 			if(!data[0]){
 				throw new ValidatorException("No existe la actividad!");
 			}
@@ -2807,7 +2806,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions> objeto CRUD
 	*/
-	activityURI.put("/:id/student",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	activityURI.put("/:id/student",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
 		if(!Validator.isJSON()(request.body.data)){
 			throw new ValidatorException("no es valido el contenido!")
 		}
@@ -2848,14 +2847,14 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions> objeto CRUD
 	*/
-	activityURI.delete("/:id/student/:student",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	activityURI.delete("/:id/student/:student",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("La actividad no es un id valido!");
 		}
 		if(!Validator.isMongoId()(request.params.student)){
 			throw new ValidatorException("El estudiante no es un id valido!");
 		}
-		app.container.database.Schema.Activities.findOne({_id:request.params.id}).then((data)=>{
+		Schema.Activities.findOne({_id:request.params.id}).then((data)=>{
 			if(!data){
 				throw new ValidatorException("No existe la actividad!");
 			}
@@ -2883,12 +2882,12 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions> objeto CRUD
 	*/
-	activityURI.delete("/:id/objetives/:objetive",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	activityURI.delete("/:id/objetives/:objetive",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
 		var dm;
 		if(!Validator.isMongoId()(request.params.objetive)){
 			throw new ValidatorException("El objetivo no es un id valido!");
 		}
-		app.container.database.Schema.Activities.findOne({_id:request.params.id}).then((data)=>{
+		Schema.Activities.findOne({_id:request.params.id}).then((data)=>{
 			if(!data){
 				throw new ValidatorException("No existe la actividad!");
 			}
@@ -2915,7 +2914,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
 	activityURI.get("/:grade/:teacher/:course",function(request, response,next) {
-		app.container.database.Schema.Activities.find({"grade.name":request.params.grade.toUpperCase(),"course.name":request.params.course.toUpperCase(),teacher:request.params.teacher}).then(function(rows){
+		Schema.Activities.find({"grade.name":request.params.grade.toUpperCase(),"course.name":request.params.course.toUpperCase(),teacher:request.params.teacher}).then(function(rows){
 			response.send(rows);
 		}).catch(function(error){
 			next(error);
@@ -2945,7 +2944,7 @@ module.exports = function (app, express, server, __DIR__) {
 		if(!Validator.isMongoId()(request.params.teacher)){
 			throw new ValidatorException("el docente es invalido");
 		}
-		app.container.database.Schema.Activities.find({"grade.name":request.params.grade.toUpperCase(),teacher:request.params.teacher}).then(function(rows){
+		Schema.Activities.find({"grade.name":request.params.grade.toUpperCase(),teacher:request.params.teacher}).then(function(rows){
 			response.send(rows);
 		}).catch(function(error){
 			next(error);
@@ -2962,7 +2961,7 @@ module.exports = function (app, express, server, __DIR__) {
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
-		app.container.database.Schema.Activities.findOne({_id:request.params.id}).populate("students").then(function(rows){
+		Schema.Activities.findOne({_id:request.params.id}).populate("students").then(function(rows){
 			if(!rows){
 				throw new ValidatorException("No existe la actividad!");
 			}
@@ -2979,11 +2978,11 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	activityURI.put("/:id/completed",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	activityURI.put("/:id/completed",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
-		app.container.database.Schema.Activities.findOne({_id:request.params.id }).populate("students").then(function(obj){
+		Schema.Activities.findOne({_id:request.params.id }).populate("students").then(function(obj){
 			if(!obj){
 				throw new ValidatorException("No existe el registro");
 			}
@@ -3003,11 +3002,11 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
-	activityURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	activityURI.delete("/:id",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
-		app.container.database.Schema.Activities.findOne({_id:request.params.id }).then(function(obj){
+		Schema.Activities.findOne({_id:request.params.id }).then(function(obj){
 			if(!obj){
 				throw new ValidatorException("No existe el registro");
 			}
@@ -3033,7 +3032,7 @@ module.exports = function (app, express, server, __DIR__) {
 		if(!Validator.isMongoId()(request.params.activity)){
 			throw new ValidatorException("No es valido el id");
 		}
-		app.container.database.Schema.Activities.findOne({_id:request.params.activity}).then(function(row){
+		Schema.Activities.findOne({_id:request.params.activity}).then(function(row){
 			if(!row){
 				throw new ValidatorException("No existe la actividad!");
 			}
@@ -3067,7 +3066,7 @@ module.exports = function (app, express, server, __DIR__) {
 				}
 				return true;
 			});
-			return app.container.database.Schema.LearningObjetive.find({$or:querys});
+			return Schema.LearningObjetive.find({$or:querys});
 		}).then((rows)=>{
 			response.send(rows);
 		}).catch(function(error){
@@ -3085,17 +3084,17 @@ module.exports = function (app, express, server, __DIR__) {
 		if(!Validator.isMongoId()(request.params.objetive)){
 			throw new ValidatorException("No es valido el id");
 		}
-		app.container.database.Schema.LearningObjetive.findOne({_id:request.params.objetive}).then(function(row){
+		Schema.LearningObjetive.findOne({_id:request.params.objetive}).then(function(row){
 			if(!row){
 				throw new ValidatorException("No existe el objetivo!");
 			}
-			return Promise.all([Events.get("OBJETIVES-HELP-COGNITIONS"),row,app.container.database.Schema.domainsLearning.findOne({_id:row.domain._id})]);
+			return Promise.all([Events.get("OBJETIVES-HELP-COGNITIONS"),row,Schema.domainsLearning.findOne({_id:row.domain._id})]);
 		}).then((data)=>{
 			if(!data[2]){
 				throw new ValidatorException("No existe el dominio del objetivo!");
 			}
 			if(!data[0]){
-				var helpEvent=new app.container.database.Schema.events({
+				var helpEvent=new Schema.events({
 					name:"OBJETIVES-HELP-COGNITIONS",
 					objects:{
 						p1:"data[1].name",
@@ -3167,9 +3166,9 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people2<People> objeto CRUD
 	*\/
 	morphema.post("/",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Representatives);
-		var people3=new SubPeople(app.container.database.Schema.Students);
-		var people2=new People(app.container.database.Schema.Peoples);
+		var people=new SubPeople(Schema.Representatives);
+		var people3=new SubPeople(Schema.Students);
+		var people2=new People(Schema.Peoples);
 		if(!Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
 			throw new ValidatorException("Solo se aceptan documentos de identidad");
 		}
@@ -3210,7 +3209,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people2<People> objeto CRUD
 	*\/
 	morphema.post("/type",function(request, response,next) {
-		var morphem=new CRUD(app.container.database.Schema.morphem_type);
+		var morphem=new CRUD(Schema.morphem_type);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("El nombre solo debe contener letras");
 		}
@@ -3233,7 +3232,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people2<People> objeto CRUD
 	*\/
 	morphema.get("/type",function(request, response,next) {
-		var morphem=new CRUD(app.container.database.Schema.morphem_type);
+		var morphem=new CRUD(Schema.morphem_type);
 		morphem.get().then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -3250,7 +3249,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people2<People> objeto CRUD
 	*\/
 	morphema.get("/type/:id",function(request, response,next) {
-		var morphem=new CRUD(app.container.database.Schema.morphem_type);
+		var morphem=new CRUD(Schema.morphem_type);
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
@@ -3270,7 +3269,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people2<People> objeto CRUD
 	*\/
 	morphema.delete("/type/:id",function(request, response,next) {
-		var morphem=new CRUD(app.container.database.Schema.morphem_type);
+		var morphem=new CRUD(Schema.morphem_type);
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
@@ -3288,7 +3287,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people<SubPeople>	objeto CRUD
 	*\/
 	morphema.get("/",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Representatives);
+		var people=new SubPeople(Schema.Representatives);
 		people.get().then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -3303,7 +3302,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people<SubPeople>	objeto CRUD
 	*\/
 	morphema.get("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Representatives);
+		var people=new SubPeople(Schema.Representatives);
 		people.find({_id:request.params.id}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -3320,9 +3319,9 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var grade<Grade>	objeto CRUD
 	*\/
 	morphema.put("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Representatives);
-		var people2=new People(app.container.database.Schema.Peoples);
-		var grade=new Grade(app.container.database.Schema.Grades);
+		var people=new SubPeople(Schema.Representatives);
+		var people2=new People(Schema.Peoples);
+		var grade=new Grade(Schema.Grades);
 		if(request.body.dni && !Validator.matches(/^[VE][0-9]{6,15}/i)(request.body.dni)){
 			throw new ValidatorException("Solo se aceptan documentos de identidad");
 		}
@@ -3337,9 +3336,9 @@ module.exports = function (app, express, server, __DIR__) {
 		}
 
 		var people, represent;
-		app.container.database.Schema.Representatives.findOne({_id:request.params.id}).then(function(data){
+		Schema.Representatives.findOne({_id:request.params.id}).then(function(data){
 			represent=data;
-			return app.container.database.Schema.Peoples.findOne({_id:represent.data._id});
+			return Schema.Peoples.findOne({_id:represent.data._id});
 		}).then(function(data){
 			people=data;
 			var fields=people.toJSON();
@@ -3371,8 +3370,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var people2<People>	objeto CRUD
 	*\/
 	morphema.delete("/:id",function(request, response,next) {
-		var people=new SubPeople(app.container.database.Schema.Representatives);
-		var people2=new People(app.container.database.Schema.Peoples);
+		var people=new SubPeople(Schema.Representatives);
+		var people2=new People(Schema.Peoples);
 		people.remove({_id:request.params.id}).then(function(data){
 			response.send(data);
 			return people2.remove(data.data._id);
@@ -3410,8 +3409,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var hability<Habilities>	objeto CRUD
 	*\/
-	HabilitiesURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var hability=new Habilities(app.container.database.Schema.Habilities);
+	HabilitiesURI.post("/",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var hability=new Habilities(Schema.Habilities);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("No se acepta campos nulos");
 		}
@@ -3433,7 +3432,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var hability<Habilities>	objeto CRUD
 	*\/
 	HabilitiesURI.get("/",function(request, response,next) {
-		var hability=new Habilities(app.container.database.Schema.Habilities);
+		var hability=new Habilities(Schema.Habilities);
 		hability.get().then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -3448,7 +3447,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var hability<Habilities>	objeto CRUD
 	*\/
 	HabilitiesURI.get("/:id",function(request, response,next) {
-		var hability=new Habilities(app.container.database.Schema.Habilities);
+		var hability=new Habilities(Schema.Habilities);
 		hability.find({_id:request.params.id}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -3462,8 +3461,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var hability<Habilities>	objeto CRUD
 	*\/
-	HabilitiesURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var hability=new Habilities(app.container.database.Schema.Habilities);
+	HabilitiesURI.put("/:id",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var hability=new Habilities(Schema.Habilities);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("No se acepta campos nulos");
 		}
@@ -3483,8 +3482,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var hability<Habilities>	objeto CRUD
 	*\/
-	HabilitiesURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var grade=new Habilities(app.container.database.Schema.Habilities);
+	HabilitiesURI.delete("/:id",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var grade=new Habilities(Schema.Habilities);
 		grade.remove({_id:request.params.id}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -3507,9 +3506,9 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var course<Course>	objeto CRUD
 	*\/
 	ActivitiesURI.post("/",function(request, response,next) {
-		var grade= new Activities(app.container.database.Schema.Activities);
-		var people= new SubPeople(app.container.database.Schema.Teachers);
-		var course= new Course(app.container.database.Schema.Courses);
+		var grade= new Activities(Schema.Activities);
+		var people= new SubPeople(Schema.Teachers);
+		var course= new Course(Schema.Courses);
 		var min=parseInt(request.body.minDate);
 		var max=parseInt(request.body.maxDate);
 		if(Validator.isNull()(request.body.name) || Validator.isNull()(request.body.description)){
@@ -3530,7 +3529,7 @@ module.exports = function (app, express, server, __DIR__) {
 		//var a=;
 		var field={
 			name:request.body.name,
-			TeacherCreate:new app.container.database.Schema.Teachers(request.people),
+			TeacherCreate:new Schema.Teachers(request.people),
 			description:request.body.description,
 			course:null,
 			range:{
@@ -3558,7 +3557,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var activity<Activities>	objeto CRUD
 	*\/
 	ActivitiesURI.get("/",function(request, response,next) {
-		var activity=new Activities(app.container.database.Schema.Activities);
+		var activity=new Activities(Schema.Activities);
 		activity.get().then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -3573,7 +3572,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var activity<Activities>	objeto CRUD
 	*\/
 	ActivitiesURI.get("/:id",function(request, response,next) {
-		var activity= new Activities(app.container.database.Schema.Activities);
+		var activity= new Activities(Schema.Activities);
 		activity.find({_id:request.params.id}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -3590,9 +3589,9 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var course<Course>	objeto CRUD
 	*\/
 	ActivitiesURI.put("/:id",function(request, response,next) {
-		var activity= new Activities(app.container.database.Schema.Activities);
-		var people= new SubPeople(app.container.database.Schema.Teachers);
-		var course= new Course(app.container.database.Schema.Courses);
+		var activity= new Activities(Schema.Activities);
+		var people= new SubPeople(Schema.Teachers);
+		var course= new Course(Schema.Courses);
 
 		if(request.body.name){
 			throw new ValidatorException("No puede modificar el campo nombre");
@@ -3686,7 +3685,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var activity<Activities>	objeto CRUD
 	*\/
 	ActivitiesURI.delete("/:id",function(request, response,next) {
-		var activity=new Activities(app.container.database.Schema.Activities);
+		var activity=new Activities(Schema.Activities);
 		activity.remove({_id:request.params.id}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -3707,7 +3706,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var conflict<Habilities>	objeto CRUD
 	*\/
 	ConflictCognitionsURI.post("/",function(request, response,next) {
-		var conflict=new Habilities(app.container.database.Schema.ConflictCognitions);
+		var conflict=new Habilities(Schema.ConflictCognitions);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("No se acepta campos nulos");
 		}
@@ -3729,7 +3728,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var conflict<Habilities>	objeto CRUD
 	*\/
 	ConflictCognitionsURI.get("/",function(request, response,next) {
-		var conflict=new Habilities(app.container.database.Schema.ConflictCognitions);
+		var conflict=new Habilities(Schema.ConflictCognitions);
 		conflict.get().then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -3744,7 +3743,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var conflict<Habilities>	objeto CRUD
 	*\/
 	ConflictCognitionsURI.get("/:id",function(request, response,next) {
-		var conflict=new Habilities(app.container.database.Schema.ConflictCognitions);
+		var conflict=new Habilities(Schema.ConflictCognitions);
 		conflict.find({_id:request.params.id}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -3759,7 +3758,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var conflict<Habilities>	objeto CRUD
 	*\/
 	ConflictCognitionsURI.put("/:id",function(request, response,next) {
-		var conflict=new Habilities(app.container.database.Schema.ConflictCognitions);
+		var conflict=new Habilities(Schema.ConflictCognitions);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("No se acepta campos nulos");
 		}
@@ -3780,7 +3779,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var activity<Activities>	objeto CRUD
 	*\/
 	ConflictCognitionsURI.delete("/:id",function(request, response,next) {
-		var conflict=new Habilities(app.container.database.Schema.ConflictCognitions);
+		var conflict=new Habilities(Schema.ConflictCognitions);
 		conflict.remove({_id:request.params.id}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -3800,8 +3799,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var period<Period>	objeto CRUD
 	*\/
-	periodURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var period=new Period(app.container.database.Schema.PeriodSchools);
+	periodURI.post("/",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var period=new Period(Schema.PeriodSchools);
 		if(!Validator.matches(/[0-9]{4}\-[0-9]{4}/i)(request.body.name)){
 			throw new ValidatorException("Solo se acepta formato de periodo escolar");
 		}
@@ -3819,7 +3818,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var period<Period>	objeto CRUD
 	*\/
 	periodURI.get("/",function(request, response,next) {
-		var period=new Period(app.container.database.Schema.PeriodSchools);
+		var period=new Period(Schema.PeriodSchools);
 		period.get().then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -3834,7 +3833,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var period<Period>	objeto CRUD
 	*\/
 	periodURI.get("/:id",function(request, response,next) {
-		var period=new Period(app.container.database.Schema.PeriodSchools);
+		var period=new Period(Schema.PeriodSchools);
 		period.find({_id:request.params.id}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -3848,8 +3847,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var period<Period>	objeto CRUD
 	*\/
-	periodURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var period=new Period(app.container.database.Schema.PeriodSchools);
+	periodURI.put("/:id",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var period=new Period(Schema.PeriodSchools);
 		if(!Validator.matches(/[0-9]{4}\-[0-9]{4}/i)(request.body.name)){
 			throw new ValidatorException("Solo se acepta formato de periodo escolar");
 		}
@@ -3869,8 +3868,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var period<Period>	objeto CRUD
 	*\/
-	periodURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var period=new Period(app.container.database.Schema.PeriodSchools);
+	periodURI.delete("/:id",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var period=new Period(Schema.PeriodSchools);
 		period.remove({_id:request.params.id}).then(function(data){
 			response.send({data});
 		}).catch(function(error){
@@ -3890,8 +3889,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions> objeto CRUD
 	*\/
-	categoryCognitionURI.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
+	categoryCognitionURI.post("/",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var category=new CategoryCoginitions(Schema.CategoryCognitions);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Solo se aceptan textos categoricos");
 		}
@@ -3909,7 +3908,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*\/
 	categoryCognitionURI.get("/",function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
+		var category=new CategoryCoginitions(Schema.CategoryCognitions);
 		category.get().then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -3924,7 +3923,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*\/
 	categoryCognitionURI.get("/:name",function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
+		var category=new CategoryCoginitions(Schema.CategoryCognitions);
 		category.find({name:request.params.name.toUpperCase()}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -3938,8 +3937,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*\/
-	categoryCognitionURI.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
+	categoryCognitionURI.put("/:id",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var category=new CategoryCoginitions(Schema.CategoryCognitions);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Solo se aceptan textos categoricos");
 		}
@@ -3959,8 +3958,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*\/
-	categoryCognitionURI.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
+	categoryCognitionURI.delete("/:id",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var category=new CategoryCoginitions(Schema.CategoryCognitions);
 		category.remove({_id:request.params.id}).then(function(data){
 			response.send({data});
 		}).catch(function(error){
@@ -3975,8 +3974,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var category<CategoryCoginitions> objeto CRUD
 	* @var cognition<Cognitions> objeto CRUD
 	*\/
-	categoryCognitionURI.post("/:name",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
+	categoryCognitionURI.post("/:name",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var category=new CategoryCoginitions(Schema.CategoryCognitions);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Solo se aceptan caracteres alphabeticos");
 		}
@@ -4008,8 +4007,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @var cognition<Cognitions>	objeto CRUD
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*\/
-	categoryCognitionURI.put("/:name/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
+	categoryCognitionURI.put("/:name/:id",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var category=new CategoryCoginitions(Schema.CategoryCognitions);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Solo se aceptan caracteres alphabeticos");
 		}
@@ -4037,8 +4036,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var cognition<Cognitions>	objeto CRUD
 	*\/
-	categoryCognitionURI.delete("/:name/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var category=new CategoryCoginitions(app.container.database.Schema.CategoryCognitions);
+	categoryCognitionURI.delete("/:name/:id",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var category=new CategoryCoginitions(Schema.CategoryCognitions);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Solo se aceptan caracteres alphabeticos");
 		}
@@ -4075,8 +4074,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var test<CRUD> objeto CRUD
 	*\/
-	testParent.post("/",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var test=new CRUD(app.container.database.Schema.TestInteligence);
+	testParent.post("/",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var test=new CRUD(Schema.TestInteligence);
 		if(Validator.isNull()(request.body.name)){
 			throw new ValidatorException("Es requerido un nombre");
 		}
@@ -4085,7 +4084,7 @@ module.exports = function (app, express, server, __DIR__) {
 		}
 		var fields={
 			name:request.body.name.toString(),
-			range:(request.body.range) ? new app.container.database.Schema.RangeInteligence(JSON.parse(request.body.range)) : null
+			range:(request.body.range) ? new Schema.RangeInteligence(JSON.parse(request.body.range)) : null
 		};
 		test.add({name:fields.name},fields).then(function(data){
 			response.send(data);
@@ -4100,8 +4099,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var test<CRUD>	objeto CRUD
 	*\/
-	testParent.get("/",Auth.isTeacherOrNot.bind(app.container),function(request, response,next) {
-		var test=new CRUD(app.container.database.Schema.TestInteligence);
+	testParent.get("/",Auth.isTeacherOrNot.bind(this.Schema),function(request, response,next) {
+		var test=new CRUD(Schema.TestInteligence);
 		test.get().then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -4115,8 +4114,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var test<CRUD>	objeto CRUD
 	*\/
-	testParent.get("/:id",Auth.isTeacherOrNot.bind(app.container),function(request, response,next) {
-		var test=new CRUD(app.container.database.Schema.TestInteligence);
+	testParent.get("/:id",Auth.isTeacherOrNot.bind(this.Schema),function(request, response,next) {
+		var test=new CRUD(Schema.TestInteligence);
 		test.find({_id:request.params.id}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -4130,13 +4129,13 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var test<CRUD>	objeto CRUD
 	*\/
-	testParent.put("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	testParent.put("/:id",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
 		if(!Validator.isJSON(request.body.range)){
 			throw new ValidatorException("Los datos de rangos no son validos");
 		}
-		var test=new CRUD(app.container.database.Schema.TestInteligence);
+		var test=new CRUD(Schema.TestInteligence);
 		test.update({_id:request.params.id},function(data){
-			data.range= new app.container.database.Schema.RangeInteligence(JSON.parse(request.body.range));
+			data.range= new Schema.RangeInteligence(JSON.parse(request.body.range));
 			return data;
 		}).then(function(data){
 			response.send(data);
@@ -4151,8 +4150,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var test<CRUD>	objeto CRUD
 	*\/
-	testParent.delete("/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var test=new CRUD(app.container.database.Schema.TestInteligence);
+	testParent.delete("/:id",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var test=new CRUD(Schema.TestInteligence);
 		test.remove({_id:request.params.id}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -4166,7 +4165,7 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var test<CRUD> objeto CRUD
 	*\/
-	testParent.post("/:name",Auth.isAdmin.bind(app.container),function(request, response,next) {
+	testParent.post("/:name",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
 		var min=parseInt(request.body.minDate);
 		var max=parseInt(request.body.maxDate);
 		var count=parseInt(request.body.count);
@@ -4179,9 +4178,9 @@ module.exports = function (app, express, server, __DIR__) {
 		if((max-min)<=0 || count<=0){
 			throw new ValidatorException("El rango entre las edades debe ser mayor a cero");
 		}
-		var test=new CRUD(app.container.database.Schema.TestInteligence);
+		var test=new CRUD(Schema.TestInteligence);
 		test.update({name:request.params.name.toUpperCase()},function(data){
-			var serie=new app.container.database.Schema.SerieInteligence({
+			var serie=new Schema.SerieInteligence({
 				name:request.body.name,
 				age:{
 					min:min,
@@ -4209,8 +4208,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var test<CRUD>	objeto CRUD
 	*\/
-	testParent.delete("/:name/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var test=new CRUD(app.container.database.Schema.TestInteligence);
+	testParent.delete("/:name/:id",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var test=new CRUD(Schema.TestInteligence);
 		test.update({name:request.params.name.toUpperCase()},function(data){
 			for (i in data.serie){
 				if(data.serie[i]._id==request.params.id){
@@ -4232,8 +4231,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var test<CRUD> objeto CRUD
 	*\/
-	testParent.post("/:name/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var test=new CRUD(app.container.database.Schema.TestInteligence);
+	testParent.post("/:name/:id",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var test=new CRUD(Schema.TestInteligence);
 		if(Validator.isNull()(request.params.name)){
 			throw new ValidatorException("Es requerido un nombre");
 		}
@@ -4246,7 +4245,7 @@ module.exports = function (app, express, server, __DIR__) {
 					if(!(request.body.correct>=0 && request.body.correct<data.serie[i].length)){
 						throw new ValidatorException("El valor correcto del item esta fuera del rango aceptado por la serie");
 					}
-					var item=new app.container.database.Schema.ItemsInteligence({
+					var item=new Schema.ItemsInteligence({
 						name:request.body.name,
 						value:request.body.correct
 					});
@@ -4268,8 +4267,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var test<CRUD>	objeto CRUD
 	*\/
-	testParent.delete("/:name/:id/:item",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var test=new CRUD(app.container.database.Schema.TestInteligence);
+	testParent.delete("/:name/:id/:item",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var test=new CRUD(Schema.TestInteligence);
 		test.update({name:request.params.name.toUpperCase()},function(data){
 			for (i in data.serie){
 				if(data.serie[i]._id==request.params.id){
@@ -4295,8 +4294,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var test<CRUD> objeto CRUD
 	*\/
-	testParent.post("/inteligence/range",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var user=new CRUD(app.container.database.Schema.groupsInteligence);
+	testParent.post("/inteligence/range",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var user=new CRUD(Schema.groupsInteligence);
 		var min=parseInt(request.body.min);
 		var max=parseInt(request.body.max);
 		var count=parseInt(request.body.count);
@@ -4342,8 +4341,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var test<CRUD> objeto CRUD
 	*\/
-	inteligenceURI.post("/range",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var user=new CRUD(app.container.database.Schema.groupsInteligence);
+	inteligenceURI.post("/range",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var user=new CRUD(Schema.groupsInteligence);
 		var min=parseInt(request.body.min);
 		var max=parseInt(request.body.max);
 		var count=parseInt(request.body.count);
@@ -4380,8 +4379,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var test<CRUD>	objeto CRUD
 	*\/
-	inteligenceURI.get("/range",Auth.isTeacherOrNot.bind(app.container),function(request, response,next) {
-		var user=new CRUD(app.container.database.Schema.groupsInteligence);
+	inteligenceURI.get("/range",Auth.isTeacherOrNot.bind(this.Schema),function(request, response,next) {
+		var user=new CRUD(Schema.groupsInteligence);
 		user.get().then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -4395,8 +4394,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var test<CRUD>	objeto CRUD
 	*\/
-	inteligenceURI.get("/range/:id",Auth.isTeacherOrNot.bind(app.container),function(request, response,next) {
-		var user=new CRUD(app.container.database.Schema.groupsInteligence);
+	inteligenceURI.get("/range/:id",Auth.isTeacherOrNot.bind(this.Schema),function(request, response,next) {
+		var user=new CRUD(Schema.groupsInteligence);
 		user.find({_id:request.params.id}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
@@ -4410,8 +4409,8 @@ module.exports = function (app, express, server, __DIR__) {
 	* @params next middleware dispara la proxima funcion
 	* @var user<User>	objeto CRUD
 	*\/
-	inteligenceURI.delete("/range/:id",Auth.isAdmin.bind(app.container),function(request, response,next) {
-		var user=new CRUD(app.container.database.Schema.groupsInteligence);
+	inteligenceURI.delete("/range/:id",Auth.isAdmin.bind(this.Schema),function(request, response,next) {
+		var user=new CRUD(Schema.groupsInteligence);
 		user.remove({_id:request.params.id}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
