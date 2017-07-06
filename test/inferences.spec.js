@@ -5,25 +5,24 @@ describe("Test route knowedge cognitions",function(){
 	var self=this,user,find,category;
 	afterEach(utils.dropDatabase.bind(self));
 	beforeEach(function(done){
-		self.db=utils.getDatabase();
-		find=new  self.db.schema.inferences({
+		self.schema=utils.getDatabase();
+		find=new  self.schema.inferences({
 			premise:"p1==\"hola\"",
 			consecuent:"q1=\"saludo\"",
 			h:0.85
 		});
-		category=new self.db.schema.events({
+		category=new self.schema.events({
 			name:faker.name.findName(),
 			objects:{
 				p1:"var1"
 			},
 			premises:[find]
 		});
-		Promise.all([utils.insertSession(self.db), category.save()]).then(function(data){
+		Promise.all([utils.insertSession(self.schema), category.save()]).then(function(data){
 			user=data[0]
 			done();
 		}).catch(function(error){
-			expect(error).toBeNull();
-			done();
+			done(error);
 		})
 	});
 	it("GET /:event/inferences/",function(done){
@@ -32,8 +31,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(response[0].name).toBe(find.name);
 			done();
 		}).catch(function(error){
-			expect(error).toBeNull();
-			done();
+			done(error);
 		});
 	});
 
@@ -43,8 +41,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(response.name).toBe(find.name);
 			done();
 		}).catch(function(error){
-			expect(error.toString()).toBeNull();
-			done();
+      done(error);
 		});
 	});
 
@@ -53,8 +50,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(error!=undefined).toBe(true);
 			done();
 		}).catch(function(error){
-			expect(error).toBeNull();
-			done();
+			done(error);
 		});
 	});
 	it("PUT /:event/inferences/:id",function(done){
@@ -73,8 +69,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(cognition[0].premise).toBe("hola");
 			done();
 		}).catch(function(error){
-			expect(error).toBeNull();
-			done();
+			done(error);
 		});
 	});
 	it("POST /:event/inferences/:id",function(done){
@@ -94,8 +89,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(cognition[0].premise).toBe("p1 ==\"hola\"");
 			done();
 		}).catch(function(error){
-			expect(error).toBeNull();
-			done();
+			done(error);
 		});
 	});
 	it("DELETE /:event/inferences/:id",function(done){
@@ -104,8 +98,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(response.premises.length).toBe(0);
 			done();
 		}).catch(function(error){
-			expect(error).toBeNull();
-			done();
+			done(error);
 		});
 	});
 })
