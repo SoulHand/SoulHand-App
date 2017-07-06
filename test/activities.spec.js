@@ -5,32 +5,32 @@ describe("Test route knowedge cognitions",function(){
 	var self=this,user,find,category;
 	afterEach(utils.dropDatabase.bind(self));
 	beforeEach(function(done){
-		self.db=utils.getDatabase();
-		self.course=new  self.db.schema.Courses({
+		self.schema = utils.getDatabase();
+		self.course = new  self.schema.Courses({
 			name:faker.name.findName()
 		});
-		self.grade=new  self.db.schema.Grades({
+		self.grade = new self.schema.Grades({
 			name:faker.name.findName()
 		});
-		self.people=self.db.schema.Peoples({
+		self.people=self.schema.Peoples({
 			dni:"V12345679",
 			name:"people",
 			birthdate:"1992-03-15",
 			mode:"STUDENT",
 			genero:"FEMENINO"
 		});
-		self.people2=self.db.schema.Peoples({
+		self.people2=self.schema.Peoples({
 			dni:"V13145679",
 			name:"people",
 			birthdate:"1992-03-15",
 			mode:"TEACHER",
 			genero:"FEMENINO"
 		});
-		self.teacher=self.db.schema.Teachers({
+		self.teacher=self.schema.Teachers({
 			data:self.people2,
 			interprete:true
 		});
-		self.student=self.db.schema.Students({
+		self.student=self.schema.Students({
 			data:self.people,
 			grade:self.grade,
 			discapacityLevel:0,
@@ -42,7 +42,7 @@ describe("Test route knowedge cognitions",function(){
 				}
 			]
 		});
-		self.activity= new self.db.schema.Activities({
+		self.activity= new self.schema.Activities({
 			name:faker.name.findName(),
 			description:"actividad",
 			isCompleted:false,
@@ -52,16 +52,16 @@ describe("Test route knowedge cognitions",function(){
 			grade:self.grade,
 			course:self.course
 		});
-		find=new  self.db.schema.nivelDomain({
+		find=new  self.schema.nivelDomain({
 			name:faker.name.findName(),
 			level:1
 		});
-		category=new self.db.schema.domainsLearning({
+		category=new self.schema.domainsLearning({
 			name:faker.name.findName(),
 			description:"mensaje",
 			levels:[find]
 		});
-		self.objetive=new self.db.schema.LearningObjetive({
+		self.objetive=new self.schema.LearningObjetive({
 			name:faker.name.findName(),
 			description:"hola",
 			domain:{
@@ -72,7 +72,7 @@ describe("Test route knowedge cognitions",function(){
 			},
 			cognitions:[]
 		});
-		self.event=new self.db.schema.events({
+		self.event=new self.schema.events({
 			name:"ACTIVITY-HELP-OBJETIVES",
 			objects:{
 				p1:"name",

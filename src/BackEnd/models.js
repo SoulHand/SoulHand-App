@@ -1,6 +1,6 @@
 var mongoose= require('mongoose');
 mongoose.Promise = Promise;
-var db = mongoose.createConnection(process.env.DATABASE);
+mongoose.connect(process.env.DATABASE);
 
 var encode=function(str){
 	const base64=require('base-64');
@@ -186,7 +186,7 @@ structDb.events=mongoose.Schema({
 });
 
 for (var i in structDb) {
-  structDb[i] = db.model(i, structDb[i])
+  structDb[i] = mongoose.model(i, structDb[i])
 }
 
 //module.exports.db = mongoose.connection;
