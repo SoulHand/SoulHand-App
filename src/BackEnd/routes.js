@@ -1170,6 +1170,8 @@ module.exports = function (app, express, Schema, __DIR__) {
         throw new ValidatorException('No existe el peso!')
       }
       return data.remove()
+    }).then((data) => {
+      response.send(data)
     }).catch((error) => {
       next(error)
     })
