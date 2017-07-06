@@ -5,25 +5,25 @@ describe("Test route knowedge cognitions",function(){
 	var self=this,user,find,category;
 	afterEach(utils.dropDatabase.bind(self));
 	beforeEach(function(done){
-		self.db=utils.getDatabase();
-		self.people=self.db.schema.Peoples({
+		self.schema=utils.getDatabase();
+		self.people=self.schema.Peoples({
 			dni:"V12345679",
 			name:"people",
 			birthdate:"1992-03-15",
 			mode:"STUDENT",
 			genero:"FEMENINO"
 		});
-		self.people2=self.db.schema.Peoples({
+		self.people2=self.schema.Peoples({
 			dni:"V13145679",
 			name:"people",
 			birthdate:"1992-03-15",
 			mode:"PARENT",
 			genero:"FEMENINO"
 		});
-		self.grade=self.db.schema.Grades({
+		self.grade=self.schema.Grades({
 			name:"1ro"
 		});
-		self.student=self.db.schema.Students({
+		self.student=self.schema.Students({
 			data:self.people,
 			grade:self.grade,
 			discapacityLevel:0,
@@ -35,11 +35,11 @@ describe("Test route knowedge cognitions",function(){
 				}
 			]
 		});
-		self.parent=self.db.schema.Representatives({
+		self.parent=self.schema.Representatives({
 			data:self.people2,
 			students:[self.student]
 		});
-		Promise.all([utils.insertSession(self.db),self.grade.save(), self.people.save(),self.people2.save(),self.student.save(),self.parent.save()]).then(function(data){	
+		Promise.all([utils.insertSession(self.schema),self.grade.save(), self.people.save(),self.people2.save(),self.student.save(),self.parent.save()]).then(function(data){
 			user=data[0]
 			done();
 		}).catch(function(error){
@@ -47,7 +47,7 @@ describe("Test route knowedge cognitions",function(){
 			done();
 		})
 	})
-	
+
 	it("GET /v1/people/students",function(done){
 		utils.runApp("GET",`/v1/people/students/`).then(function(response){
 			response=JSON.parse(response);
@@ -59,7 +59,7 @@ describe("Test route knowedge cognitions",function(){
 			done();
 		});
 	});
-	
+
 	it("GET /v1/people/students/:id",function(done){
 		utils.runApp("GET",`/v1/people/students/${self.student._id}`).then(function(response){
 			response=JSON.parse(response);
@@ -69,9 +69,9 @@ describe("Test route knowedge cognitions",function(){
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();
 			done();
-		});	
+		});
 	});
-	
+
 	it("GET /v1/people/students/:id (failed)",function(done){
 		utils.runApp("GET",`/v1/people/students/00f0f2dd60e8613875e5e488`).then(function(error){
 			expect(error!=undefined).toBe(true);
@@ -79,7 +79,7 @@ describe("Test route knowedge cognitions",function(){
 		}).catch(function(error){
 			expect(error).toBeNull();
 			done();
-		});	
+		});
 	});
 	it("PUT /v1/people/students/:id",function(done){
 		utils.runApp("PUT",`/v1/people/students/${self.student._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
@@ -93,7 +93,7 @@ describe("Test route knowedge cognitions",function(){
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();
 			done();
-		});	
+		});
 	});
 	it("PUT /v1/people/students/:id/sound/test",function(done){
 		utils.runApp("PUT",`/v1/people/students/${self.student._id}/sound/test?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
@@ -107,12 +107,12 @@ describe("Test route knowedge cognitions",function(){
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();
 			done();
-		});	
+		});
 	});
 	it("POST /v1/people/students/",function(done){
 		var input={
 			name:faker.name.findName(),
-			birthdate:"1992-03-15",
+			birthdate:"15-03-1994",
 			tel:faker.phone.phoneNumberFormat(),
 			grade:self.grade._id.toString(),
 			parent:self.parent._id.toString(),
@@ -145,8 +145,8 @@ describe("Test route knowedge cognitions",function(){
 			var last=new Date(`${response.data.birthdate}T00:00:00`);
 			var age=Math.round((now-last.getTime())/31536000000);
 			expect(response.physics[1].height).toBe(input.height);
-			expect(response.physics[1].weight).toBe(input.weight);			
-			expect(response.physics[1].age).toBe(age);			
+			expect(response.physics[1].weight).toBe(input.weight);
+			expect(response.physics[1].age).toBe(age);
 			done();
 		}).catch(function(error){
 			expect(error).toBeNull();
