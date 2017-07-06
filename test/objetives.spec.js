@@ -5,26 +5,26 @@ describe("Test route knowedge cognitions",function(){
 	var self=this,user,find,category;
 	afterEach(utils.dropDatabase.bind(self));
 	beforeEach(function(done){
-		self.db=utils.getDatabase();
-		find=new  self.db.schema.nivelDomain({
+		self.schema=utils.getDatabase();
+		find=new  self.schema.nivelDomain({
 			name:faker.name.findName(),
 			level:1
 		});
-		self.cognition=new  self.db.schema.Cognitions({
+		self.cognition=new  self.schema.Cognitions({
 			name:faker.name.findName(),
 			description:"mensaje"
 		});
-		self.cognition2=new  self.db.schema.Cognitions({
+		self.cognition2=new  self.schema.Cognitions({
 			name:faker.name.findName(),
 			description:"mensaje"
 		});
-		category=new self.db.schema.domainsLearning({
+		category=new self.schema.domainsLearning({
 			name:faker.name.findName(),
 			description:"mensaje",
 			levels:[find],
 			cognitions:[self.cognition, self.cognition2]
 		});
-		self.objetive=new self.db.schema.LearningObjetive({
+		self.objetive=new self.schema.LearningObjetive({
 			name:faker.name.findName(),
 			description:"hola",
 			domain:{
@@ -38,7 +38,7 @@ describe("Test route knowedge cognitions",function(){
 			},
 			cognitions:[self.cognition2]
 		});
-		self.event=new self.db.schema.events({
+		self.event=new self.schema.events({
 			name:"OBJETIVES-HELP-COGNITIONS",
 			objects:{
 				p1:"name",
@@ -55,7 +55,7 @@ describe("Test route knowedge cognitions",function(){
 				}
 			]
 		});
-		self.event2=new self.db.schema.events({
+		self.event2=new self.schema.events({
 			name:"OBJETIVES-ADD",
 			objects:{
 				p1:"request.body.name",
@@ -72,7 +72,7 @@ describe("Test route knowedge cognitions",function(){
 				}
 			]
 		});
-		self.event3 = new self.db.schema.events({
+		self.event3 = new self.schema.events({
 			name:"OBJETIVES-ADD-COGNITIONS",
 			objects:{
 				p1:"data[1].name",
@@ -89,7 +89,7 @@ describe("Test route knowedge cognitions",function(){
 				}
 			]
 		});
-		Promise.all([utils.insertSession(self.db), category.save(),self.objetive.save(),self.event.save(),self.event2.save(), self.event3.save()]).then(function(data){
+		Promise.all([utils.insertSession(self.schema), category.save(),self.objetive.save(),self.event.save(),self.event2.save(), self.event3.save()]).then(function(data){
 			user=data[0]
 			done();
 		}).catch(function(error){
