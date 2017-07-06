@@ -5,16 +5,15 @@ describe("Test route knowedge cognitions",function(){
 	var self=this,user,find,category;
 	afterEach(utils.dropDatabase.bind(self));
 	beforeEach(function(done){
-		self.db=utils.getDatabase();
-		find=new  self.db.schema.Grades({
+		self.schema=utils.getDatabase();
+		find=new  self.schema.Grades({
 			name:faker.name.findName()
 		});
-		Promise.all([utils.insertSession(self.db), find.save()]).then(function(data){
+		Promise.all([utils.insertSession(self.schema), find.save()]).then(function(data){
 			user=data[0]
 			done();
 		}).catch(function(error){
-			expect(error).toBeNull();
-			done();
+			done(error);
 		})
 	})
 
