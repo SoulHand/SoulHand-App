@@ -98,7 +98,7 @@ describe("Test route knowedge cognitions",function(){
 	});
 	it("GET /v1/activities/:grade/:teacher/:course/",function(done){
 		utils.runApp("GET",`/v1/activities/${self.grade.name}/${self.teacher._id}/${self.course.name}/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
-			response=JSON.parse(response);
+			response = JSON.parse(response);
 			expect(response[0].name).toBe(self.activity.name);
 			done();
 		}).catch(function(error){
@@ -107,7 +107,7 @@ describe("Test route knowedge cognitions",function(){
 	});
 	it("GET /v1/activities/:grade/:teacher/",function(done){
 		utils.runApp("GET",`/v1/activities/${self.grade.name}/${self.teacher._id}/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
-			response=JSON.parse(response);
+			response = JSON.parse(response);
 			expect(response[0].name).toBe(self.activity.name);
 			done();
 		}).catch(function(error){
@@ -116,7 +116,7 @@ describe("Test route knowedge cognitions",function(){
 	});
 	it("GET/v1/activities/:id",function(done){
 		utils.runApp("GET",`/v1/activities/${self.activity._id}?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
-			response=JSON.parse(response);
+			response = JSON.parse(response);
 			expect(response.name).toBe(self.activity.name);
 			done();
 		}).catch(function(error){
@@ -125,7 +125,7 @@ describe("Test route knowedge cognitions",function(){
 	});
 	it("GET /v1/helps/activity/objetives/:activity/",function(done){
 		utils.runApp("GET",`/v1/helps/activity/objetives/${self.activity._id}/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`).then(function(response){
-			response=JSON.parse(response);
+			response = JSON.parse(response);
 			expect(response.length).toBe(1);
 			expect(response[0].name).toBe(self.objetive.name);
 			done();
