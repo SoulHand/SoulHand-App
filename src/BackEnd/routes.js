@@ -1403,6 +1403,7 @@ module.exports = function (app, express, Schema, __DIR__) {
   UsersURI.put('/root/:id', Auth.isAdmin.bind(Schema), function (request, response, next) {
     Schema.User.findOne({_id: request.params.id}).then((data) => {
       data.isAdmin = (request.body.isAdmin && request.body.isAdmin === 'true')
+      return data.save();
     }).then((data) => {
       response.send(data)
     }).catch((error) => {
