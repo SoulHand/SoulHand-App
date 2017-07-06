@@ -1208,6 +1208,8 @@ module.exports = function (app, express, Schema, __DIR__) {
         genero: genero
       })
       return height.save()
+    }).then((data) => {
+      response.send(data)
     }).catch((error) => {
       next(error)
     })
