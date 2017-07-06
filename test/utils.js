@@ -9,10 +9,10 @@ module.exports.getDatabase=function(){
 }
 module.exports.dropDatabase=function(done){
   mongoose.connection.dropDatabase().then(() => {
-    return mongoose.connection.close();
-  }).then(() =>{
     done();
-  });
+  }).catch((error) => {
+    done(error);
+  })
 }
 
 
@@ -50,7 +50,9 @@ function insertSession(db){
 					dateLastConnect:Date.now(),
 					user:user._id
 				}).save();
-	});
+	}).catch((error) => {
+    console.log(error);
+  });
 	return p1;
 }
 module.exports.insertSession=insertSession;

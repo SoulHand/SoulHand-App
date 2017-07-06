@@ -12,14 +12,14 @@ describe("Test route knowedge cognitions",function(){
 		self.grade = new self.schema.Grades({
 			name:faker.name.findName()
 		});
-		self.people=self.schema.Peoples({
+		self.people = new self.schema.Peoples({
 			dni:"V12345679",
 			name:"people",
 			birthdate:"1992-03-15",
 			mode:"STUDENT",
 			genero:"FEMENINO"
 		});
-		self.people2=self.schema.Peoples({
+		self.people2 = new self.schema.Peoples({
 			dni:"V13145679",
 			name:"people",
 			birthdate:"1992-03-15",
@@ -28,6 +28,7 @@ describe("Test route knowedge cognitions",function(){
 		});
 		self.teacher=self.schema.Teachers({
 			data:self.people2,
+      grade:self.grade,
 			interprete:true
 		});
 		self.student=self.schema.Students({
@@ -88,12 +89,11 @@ describe("Test route knowedge cognitions",function(){
 				}
 			]
 		});
-		Promise.all([utils.insertSession(self.db), self.course.save(),self.grade.save(),self.people2.save(),self.teacher.save(),self.activity.save(),self.people.save(),self.student.save(),category.save(),self.objetive.save(),self.event.save()]).then(function(data){
+		Promise.all([utils.insertSession(self.schema), self.course.save(),self.grade.save(),self.people2.save(),self.teacher.save(),self.activity.save(),self.people.save(),self.student.save(),category.save(),self.objetive.save(),self.event.save()]).then(function(data){
 			user=data[0]
 			done();
 		}).catch(function(error){
-			expect(error).toBeNull();
-			done();
+			done(error);
 		})
 	});
 	it("GET /v1/activities/:grade/:teacher/:course/",function(done){
@@ -102,8 +102,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(response[0].name).toBe(self.activity.name);
 			done();
 		}).catch(function(error){
-			expect(error).toBeNull();
-			done();
+			done(error);
 		});
 	});
 	it("GET /v1/activities/:grade/:teacher/",function(done){
@@ -112,8 +111,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(response[0].name).toBe(self.activity.name);
 			done();
 		}).catch(function(error){
-			expect(error).toBeNull();
-			done();
+      done(error);
 		});
 	});
 	it("GET/v1/activities/:id",function(done){
@@ -122,8 +120,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(response.name).toBe(self.activity.name);
 			done();
 		}).catch(function(error){
-			expect(error.toString()).toBeNull();
-			done();
+			done(error);
 		});
 	});
 	it("GET /v1/helps/activity/objetives/:activity/",function(done){
@@ -133,8 +130,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(response[0].name).toBe(self.objetive.name);
 			done();
 		}).catch(function(error){
-			expect(error.toString()).toBeNull();
-			done();
+			done(error);
 		});
 	});
 
@@ -143,25 +139,24 @@ describe("Test route knowedge cognitions",function(){
 			expect(error!=undefined).toBe(true);
 			done();
 		}).catch(function(error){
-			expect(error).toBeNull();
-			done();
+			done(error);
 		});
 	});
-	it("POST /v1/activities/:grade/:course/",function(done){
-		utils.runApp("POST",`/v1/activities/${self.grade.name}/${self.course.name}/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
+	it("POST /v1/activities/:grade/",function(done){
+    var now = new Date(Date.now() + 100);
+		utils.runApp("POST",`/v1/activities/${self.course.name}/?PublicKeyId=${user.publicKeyId}&PrivateKeyId=${user.privateKeyId}`,{
 			form:{
 				name:"hola",
 				description:"descripción",
 				teacher:self.teacher.data.dni,
-				expire:"2016-03-15 23:04:12"
+				expire:now.toJSON().replace("T", " ")
 			}
 		}).then(function(response){
 			response=JSON.parse(response);
 			expect(response.name).toBe("HOLA");
 			done();
 		}).catch(function(error){
-			expect(error).toBeNull();
-			done();
+			done(error);
 		});
 	});
 	it("DELETE/v1/activities/:id",function(done){
@@ -170,8 +165,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(response._id).toBe(self.activity._id.toString());
 			done();
 		}).catch(function(error){
-			expect(error).toBeNull();
-			done();
+			done(error);
 		});
 	});
 	it("PUT /v1/people/students/:id/activity/:activity",function(done){
@@ -185,8 +179,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(response.students[0]).toBe(self.student._id.toString());
 			done();
 		}).catch(function(error){
-			expect(error.toString()).toBeNull();
-			done();
+			done(error);
 		});
 	});
 	it("PUT /v1/activities/:id/objetives/:objetive",function(done){
@@ -196,8 +189,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(response.objetives[0]._id).toBe(self.objetive._id.toString());
 			done();
 		}).catch(function(error){
-			expect(error.toString()).toBeNull();
-			done();
+			done(error);
 		});
 	});
 });
