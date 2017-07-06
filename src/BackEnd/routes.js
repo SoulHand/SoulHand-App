@@ -647,6 +647,8 @@ module.exports = function (app, express, Schema, __DIR__) {
           }
         }
         return data.save()
+      }).then((data) => {
+        response.send(data)
       }).catch((error) => {
         next(error)
       })
