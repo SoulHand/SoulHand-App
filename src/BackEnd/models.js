@@ -61,7 +61,7 @@ var structDb={
 		createDate:{type:Date, default:Date.now},
 		tel:{type:String, required: false},
 		image:{type:String, required:false},
-		mode:{type:String, required:true},
+		mode:[],
 		genero:{type:String, trim:true, uppercase: true}
 	})
 };
