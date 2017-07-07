@@ -9,14 +9,14 @@ describe("Test route knowedge cognitions",function(){
 		self.people=self.schema.Peoples({
 			dni:"V12345679",
 			name:"people",
-			birthdate:"1992-03-15",
+			birthdate:"15-03-1994",
 			mode:"STUDENT",
 			genero:"FEMENINO"
 		});
 		self.people2=self.schema.Peoples({
 			dni:"V13145679",
 			name:"people",
-			birthdate:"1992-03-15",
+			birthdate:"15-03-1994",
 			mode:"PARENT",
 			genero:"FEMENINO"
 		});
@@ -90,7 +90,7 @@ describe("Test route knowedge cognitions",function(){
 		var input={
 			dni:faker.helpers.replaceSymbolWithNumber("V########"),
 			name:faker.name.findName(),
-			birthdate:"1992-03-15",
+			birthdate:"15-03-1994",
 			tel:faker.phone.phoneNumberFormat(),
 			genero:"MASCULINO"
 		};

@@ -131,14 +131,14 @@ import {ajax} from 'jquery'
                </div>
                <div className="mdl-cell mdl-cell--6-col">
                 <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.tel) ? 'is-invalid' :'')}>
-                   <input className="mdl-textfield__input" type="tel" id="tel" pattern="^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$" onChange={(e:any)=>{this.getFields(e)}}/>
+<input className="mdl-textfield__input" type="tel" id="tel" pattern='^[+]?([\\d]{0,3})?[\\(\\.\\-\\s]?(([\\d]{1,3})[\\)\\.\\-\\s]*)?(([\\d]{3,5})[\\.\\-\\s]?([\\d]{4})|([\\d]{2}[\\.\\-\\s]?){4})$' onChange={(e:any)=>{this.getFields(e)}}/>
                    <label className="mdl-textfield__label" htmlFor="tel">Telefono*</label>
                    <span className="mdl-textfield__error">Es necesaria un telefono</span>
                  </div>
                </div>
                <div className="mdl-cell mdl-cell--6-col">
                 <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.birthdate) ? 'is-invalid' :'')}>
-                   <input className="mdl-textfield__input" type="text" id="birthdate" pattern="^[0-9]{2}\-[0-9]{2}-[0-9]{4}$" onChange={(e:any)=>{this.getFields(e)}}/>
+         <input className="mdl-textfield__input" type="text" id="birthdate" pattern="^[0-9]{2}\-[0-9]{2}-[0-9]{4}$" onChange={(e:any)=>{this.getFields(e)}}/>
                    <label className="mdl-textfield__label" htmlFor="birthdate">Fecha de nacimiento*</label>
                    <span className="mdl-textfield__error">Es necesaria una fecha en formato d-m-Y</span>
                  </div>
