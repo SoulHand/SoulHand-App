@@ -1553,21 +1553,57 @@ module.exports = function (app, express, Schema, __DIR__) {
       throw new ValidatorException('El genero es invalido')
     }
     request.body.dni = request.body.dni.toUpperCase()
-    var fields = {
-      data: JSON.parse(JSON.stringify(request.body)),
-      interprete: (request.body.interprete !== undefined)
-    }
-    fields.data.mode = 'TEACHER'
-    delete (fields.data.interprete)
-    people2.add(fields.data).then((data) => {
-      fields.data = data
-      return people.add(fields)
+    Schema.Peoples.findOne({dni: request.body.dni}).then((row) => {
+      if(row){
+        row.mode.forEach((row2) => {
+          if(row2 == "TEACHER"){
+            throw new ValidatorException("Ya existe como docente!");
+          }
+        });
+        row.mode.push("TEACHER");
+        row.name = request.body.name;
+        row.tel = request.body.tel;
+        row.genero = request.body.genero.toUpperCase();
+        return row.save();
+      }else{
+        var add = new Schema.Peoples({
+          name: request.body.name,
+          dni: request.body.dni,
+          tel: request.body.tel,
+          birthdate: request.body.birthdate,
+          genero: request.body.genero,
+          mode: ["TEACHER"]
+        });
+        return add.save();
+      }
     }).then((data) => {
+      var promises = [];
+      for(var i=0, n=data.mode.length; i<n; i++){
+        var row = data.mode[i];
+        if(row == "TEACHER"){
+          continue
+        }
+        var p1 = Promise.all([
+          data,
+          Schema.Representatives.findOne({"data.dni": data.dni})
+        ]).then((rows) => {
+          rows[1].data = rows[0];
+          return rows[1].save();
+        });
+        promises.push(p1);
+      }
+      promises.push(people.add({
+        interprete: (request.body.interprete !== undefined),
+        data: data
+      }));
+      return Promise.all(promises);
+    }).then((data) => {
+      var body = data[data.length-1];
       response.send(data)
     }).catch((error) => {
       next(error)
-    })
-  })
+    });
+  });
 	/*
 	* @api {get} / Obtener todos los docentes
 	* @params request peticiones del cliente
@@ -2174,7 +2210,57 @@ module.exports = function (app, express, Schema, __DIR__) {
 		if(request.body.genero.toUpperCase()!="MASCULINO" && request.body.genero.toUpperCase()!="FEMENINO" ){
 			throw new ValidatorException("El genero es invalido");
 		}
-		var fields={
+    request.body.dni = request.body.dni.toUpperCase()
+    Schema.Peoples.findOne({dni: request.body.dni}).then((row) => {
+      if(row){
+        row.mode.forEach((row2) => {
+          if(row2 == "PARENT"){
+            throw new ValidatorException("Ya existe como representante!");
+          }
+        });
+        row.mode.push("PARENT");
+        row.name = request.body.name;
+        row.tel = request.body.tel;
+        row.genero = request.body.genero.toUpperCase();
+        return row.save();
+      }else{
+        var add = new Schema.Peoples({
+          name: request.body.name,
+          dni: request.body.dni,
+          tel: request.body.tel,
+          birthdate: request.body.birthdate,
+          genero: request.body.genero,
+          mode: ["PARENT"]
+        });
+        return add.save();
+      }
+    }).then((data) => {
+      var promises = [];
+      for(var i=0, n=data.mode.length; i<n; i++){
+        var row = data.mode[i];
+        if(row == "PARENT"){
+          continue
+        }
+        var p1 = Promise.all([
+          data,
+          Schema.Teachers.findOne({"data.dni": data.dni})
+        ]).then((rows) => {
+          rows[1].data = rows[0];
+          return rows[1].save();
+        });
+        promises.push(p1);
+      }
+      promises.push(people.add({
+        data: data
+      }));
+      return Promise.all(promises);
+    }).then((data) => {
+      var body = data[data.length-1];
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    });
+		/*var fields={
 			data:JSON.parse(JSON.stringify(request.body)),
 		};
 		fields.data.mode="PARENT";
@@ -2185,7 +2271,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 			response.send(data);
 		}).catch(function(error){
 			next(error);
-		});
+		});*/
 	});
 	/*
 	* @api {get} / Obtener todos los representantes
