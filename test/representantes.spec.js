@@ -10,14 +10,14 @@ describe("Test route knowedge cognitions",function(){
 			dni:"V12345679",
 			name:"people",
 			birthdate:"15-03-1994",
-			mode:"STUDENT",
+			mode:["STUDENT"],
 			genero:"FEMENINO"
 		});
 		self.people2=self.schema.Peoples({
 			dni:"V13145679",
 			name:"people",
 			birthdate:"15-03-1994",
-			mode:"PARENT",
+			mode:["PARENT"],
 			genero:"FEMENINO"
 		});
 		self.grade=self.schema.Grades({
@@ -101,7 +101,7 @@ describe("Test route knowedge cognitions",function(){
 			expect(response.data.dni).toBe(input.dni.toUpperCase());
 			expect(response.data.name).toBe(input.name.toUpperCase());
 			expect(response.data.tel).toBe(input.tel);
-			expect(response.data.mode).toBe("PARENT");
+			expect(response.data.mode[0]).toBe("PARENT");
 			done();
 		}).catch(function(error){
 			expect(error.toString()).toBeNull();

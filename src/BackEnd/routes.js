@@ -1599,7 +1599,7 @@ module.exports = function (app, express, Schema, __DIR__) {
       return Promise.all(promises);
     }).then((data) => {
       var body = data[data.length-1];
-      response.send(data)
+      response.send(body)
     }).catch((error) => {
       next(error)
     });
@@ -2256,7 +2256,7 @@ module.exports = function (app, express, Schema, __DIR__) {
       return Promise.all(promises);
     }).then((data) => {
       var body = data[data.length-1];
-      response.send(data)
+      response.send(body)
     }).catch((error) => {
       next(error)
     });
