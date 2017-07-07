@@ -1,11 +1,10 @@
 @import "../vendor/material.min.css";
 @import "../vendor/material-grid.min.css";
-@import "material-icons.css";
-@import "article.css";
-@import "panel.css";
-@import "box-only.css";
-/*@import "material.css";
-@import "snackbar";*/
+@import "./material-icons.css";
+@import "./article.css";
+@import "./panel.css";
+@import "./box-only.css";
+
 
 img{
   margin:5px;
@@ -93,29 +92,28 @@ div[data-app="soulhand-app"]{
   .animations{
     &.transitions{
       &-linear{
-        $linear:linear;
-        animation-timing-function: $linear;
-        -webkit-animation-timing-function: $linear;
+        animation-timing-function: linear;
+        -webkit-animation-timing-function: linear;
       }
       &-ease-out{
-        $ease:ease-out;
-        animation-timing-function: $ease;
-        -webkit-animation-timing-function: $ease;
+        @ease:ease-out;
+        animation-timing-function: @ease;
+        -webkit-animation-timing-function: @ease;
       }
       &-ease-in-out{
-        $ease:ease-in-out;
-        animation-timing-function: $ease;
-        -webkit-animation-timing-function: $ease;
+        @ease:ease-in-out;
+        animation-timing-function: @ease;
+        -webkit-animation-timing-function: @ease;
       }
       &-cubic{
-        $cubic:cubic-bezier(.46,.03,.52,.96);
-        animation-timing-function: $cubic;
-        -webkit-animation-timing-function: $cubic;
+        @cubic:cubic-bezier(.46,.03,.52,.96);
+        animation-timing-function: @cubic;
+        -webkit-animation-timing-function: @cubic;
       }
       &-quartic{
-        $cubic:cubic-bezier(.91,-0.18,.18,1);
-        animation-timing-function: $cubic;
-        -webkit-animation-timing-function: $cubic;
+        @cubic:cubic-bezier(.91,-0.18,.18,1);
+        animation-timing-function: @cubic;
+        -webkit-animation-timing-function: @cubic;
       }
     }
   }

@@ -4,7 +4,7 @@ var path = require('path')
 module.exports = {
   entry: {
     app: './src/FrontEnd/js/main.tsx',
-    style: './src/FrontEnd/css/index.scss'
+    style: './src/FrontEnd/css/index.less'
   },
   output: {
     path: path.join(__dirname, '/public/'),
@@ -18,8 +18,9 @@ module.exports = {
   module: {
     loaders: [
       {test: /\.tsx?$/, loader: 'ts-loader'},
-      {test: /\.scss$/, loader: 'style-loader!css-loader!sass-loader'},
       {test: /\.css$/, loader: 'style-loader!css-loader'},
+      {test: /\.less$/, loader: 'style!css!less',
+        options: { importLoaders: 1 }},
       {
         test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         loader: "url-loader?mimetype=application/font-woff"
