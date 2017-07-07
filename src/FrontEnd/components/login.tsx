@@ -40,20 +40,36 @@ import {withRouter} from 'react-router'
          </header>
          <div className="demo-ribbon"></div>
          <main className="demo-main mdl-layout__content">
-           <div className="demo-container mdl-grid">
-             <div className="mdl-cell mdl-cell--2-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
-             <div className="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--8-col">
-              <div className="section__circle-container__circle mdl-color--primary"></div>
-               <form className="form-signin" onSubmit={(e) => {this.auth(e);}}>
-                   <span id="reauth-email" className="reauth-email"></span>
-                   <input type="text" name="username" className="mdl-textfield__input" placeholder="Usuario o Correo" autoFocus/>
-                   <input type="password" name="password" className="mdl-textfield__input" placeholder="Contraseña"/>
-                   <button className="btn btn-lg btn-primary btn-block btn-signin" type="submit">Iniciar sesión</button>
-               </form>
-             </div>
-           </div>
-         </main>
-       </div>
+          <div className="mdl-cell mdl-cell--2-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
+          <div className="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--8-col">
+          <div className="section__circle-container__circle mdl-color--primary"></div>
+          <div className=" demo-container mdl-grid">
+            <div className="mdl-grid mdl-cell mdl-cell--4">
+
+            </div>
+            <div className="mdl-grid mdl-cell mdl-cell--4">
+              <form className="form-signin" onSubmit={(e) => {this.auth(e);}}>
+               <div className="mdl-cell mdl-cell--8-col">
+                  <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input className="mdl-textfield__input" type="text" name="username" id="username"/>
+                    <label className="mdl-textfield__label" htmlFor="username">Nombre de Usuario</label>
+                    <span className="mdl-textfield__error">Es obligatorio</span>
+                  </div>
+                </div>
+               <div className="mdl-cell mdl-cell--8-col">
+                  <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input className="mdl-textfield__input" type="password" name="password" id="password"/>
+                    <label className="mdl-textfield__label" htmlFor="password">Contraseña</label>
+                    <span className="mdl-textfield__error">Es obligatorio</span>
+                  </div>
+                </div>
+                <button className="mdl-button mdl-js-button mdl-button--raised button--colored" type="submit">Iniciar sesión <i className="material-icons">navigate_next</i></button>
+              </form>
+            </div>
+          </div>
+        </div>
+       </main>
+     </div>
      );
    }
  }
