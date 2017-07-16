@@ -385,13 +385,13 @@ module.exports = function (app, express, Schema, __DIR__) {
   var cognitions = express.Router()
 
   /*
-  * @api {post} /:domain/cognitions Crear funcion cognitiva
+  * @api {post} /cognitions Crear funcion cognitiva
   * @params request peticiones del cliente
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   * @var category<CategoryCoginitions> objeto CRUD
   */
-  cognitions.post('/:domain/cognitions', Auth.isAdmin.bind(Schema),
+  cognitions.post('/cognitions', Auth.isAdmin.bind(Schema),
   function (request, response, next) {
     if (Validator.isNull()(request.body.name)) {
       throw new ValidatorException('Solo se aceptan textos categoricos!')
@@ -399,26 +399,16 @@ module.exports = function (app, express, Schema, __DIR__) {
     if (Validator.isNull()(request.body.description)) {
       throw new ValidatorException('Es necesario una breve descripción!')
     }
-    if (Validator.isNull()(request.params.domain)) {
-      throw new ValidatorException('Solo se aceptan dominios validos!')
-    }
-    Schema.domainsLearning.findOne({
-      name: request.params.domain.toUpperCase()
-    }).then((data) => {
-      if (!data) {
-        throw new ValidatorException('No existe el dominio!')
-      }
-      let cognition = new Schema.Cognitions({
-        name: request.body.name.toUpperCase(),
-        description: request.body.description.toUpperCase()
-      })
-      data.cognitions.forEach((row) => {
-        if (row.name === cognition.name) {
-          throw new ValidatorException('Ya existe una funcion cognitiva igual!')
+    Schema.Cognitions.findOne({name: request.body.name.toUpperCase()})
+    .then((row) => {
+        if(row){
+          throw new ValidatorException("Ya existe el registro!");
         }
-      })
-      data.cognitions.push(cognition)
-      return data.save()
+        var cognition = new Schema.Cognitions({
+          name: request.body.name.toUpperCase(),
+          description: request.body.description.toUpperCase()
+        });
+        return cognition.save();
     }).then((data) => {
       response.send(data)
     }).catch((error) => {
@@ -427,61 +417,47 @@ module.exports = function (app, express, Schema, __DIR__) {
   })
 
   /*
-  * @api {get} /:domain/cognitions Obtener todas las funcion cognitiva
+  * @api {get} /cognitions Obtener todas las funcion cognitiva
   * @params request peticiones del cliente
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  cognitions.get('/:domain/cognitions',
+  cognitions.get('/cognitions',
   function (request, response, next) {
-    if (Validator.isNull()(request.params.domain)) {
-      throw new ValidatorException('Solo se aceptan dominios validos')
-    }
-    Schema.domainsLearning
-    .findOne({name: request.params.domain.toUpperCase()}).then((row) => {
-      if (!row) {
-        throw new ValidatorException('No existe el dominio!')
-      }
-      response.send(row.cognitions)
+    Schema.Cognitions.find().then((row) => {
+      response.send(row)
     }).catch((error) => {
       next(error)
     })
   })
 
   /*
-  * @api {get} /:domain/cognitions/:id Obtener funcion cognitiva
+  * @api {get} /cognitions/:id Obtener funcion cognitiva
   * @params request peticiones del cliente
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  cognitions.get('/:domain/cognitions/:id', function (request, response, next) {
+  cognitions.get('/cognitions/:id', function (request, response, next) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('El id no es valido!')
     }
-    Schema.domainsLearning
-    .findOne({name: request.params.domain.toUpperCase()}).then((data) => {
-      if (!data) {
-        throw new ValidatorException('No existe el dominio!')
+    Schema.Cognitions.findOne({_id: request.params.id}).then((row) => {
+      if(row){
+        throw new ValidatorException("No existe el registro!");
       }
-      for (var i = 0, n = data.cognitions.length; i < n; i++) {
-        if (data.cognitions[i]._id.toString() === request.params.id.toString()) {
-          response.send(data.cognitions[i])
-          return
-        }
-      }
-      throw new VoidException('No existe la función cognitiva!')
+      response.send(row)
     }).catch((error) => {
       next(error)
     })
   })
 
   /*
-  * @api {put} /:domain/cognitions/:id Editar funcion cognitiva
+  * @api {put} /cognitions/:id Editar funcion cognitiva
   * @params request peticiones del cliente
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  cognitions.put('/:domain/cognitions/:id', Auth.isAdmin.bind(Schema),
+  cognitions.put('/cognitions/:id', Auth.isAdmin.bind(Schema),
   function (request, response, next) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('El id es invalido!')
@@ -489,27 +465,16 @@ module.exports = function (app, express, Schema, __DIR__) {
     if (!Validator.isNull()(request.body.words)) {
       throw new ValidatorException('Este campo no es valido!')
     }
-    Schema.domainsLearning.findOne({name: request.params.domain.toUpperCase()})
-    .then((data) => {
-      if (!data) {
-        throw new ValidatorException('No existe el dominio!')
+    Schema.Cognitions.findOne({_id: request.params.id}).then((row) => {
+      if(row){
+        throw new ValidatorException("No existe el registro!");
       }
-      let add = true
-      data.cognitions = data.cognitions.map((row) => {
-        if (request.params.id === row._id.toString()) {
-          add = false
-          for (var i in row.schema.obj) {
-            if (request.body[i]) {
-              row[i] = request.body[i]
-            }
-          }
+      for (var i in row.schema.obj) {
+        if (request.body[i]) {
+          row[i] = request.body[i]
         }
-        return row
-      })
-      if (add) {
-        throw new ValidatorException('Ya existe una funcion cognitiva igual!')
       }
-      return data.save()
+      return row.save();
     }).then((data) => {
       response.send(data)
     }).catch((error) => {
@@ -518,31 +483,26 @@ module.exports = function (app, express, Schema, __DIR__) {
   })
 
   /*
-  * @api {delete} /:domain/cognitions/:id Eliminar una funcion cognitiva
+  * @api {delete} /cognitions/:id Eliminar una funcion cognitiva
   * @params request peticiones del cliente
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  cognitions.delete('/:domain/cognitions/:id', Auth.isAdmin.bind(Schema),
+  cognitions.delete('/cognitions/:id', Auth.isAdmin.bind(Schema),
     function (request, response, next) {
-      Schema.domainsLearning.findOne({
-        name: request.params.domain.toUpperCase()
-      }).then((obj) => {
-        if (!obj) {
-          throw new ValidatorException('No existe el dominio')
-        }
-        for (var i in obj.cognitions) {
-          if (obj.cognitions[i]._id.toString() === request.params.id.toString()) {
-            obj.cognitions[i].remove()
-            break
+      if (!Validator.isMongoId()(request.params.id)) {
+        throw new ValidatorException('El id es invalido!')
+      }
+      Schema.Cognitions.findOne({_id: request.params.id}).then((row) => {
+          if(!row){
+            throw new ValidatorException("No existe el registro!");
           }
-        }
-        return obj.save()
+          return row.remove();
       }).then((data) => {
         response.send(data)
       }).catch((error) => {
         next(error)
-      })
+      });
     })
 
   /*

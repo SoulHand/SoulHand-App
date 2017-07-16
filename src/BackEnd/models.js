@@ -118,7 +118,6 @@ structDb.Cognitions=mongoose.Schema({
 structDb.domainsLearning=mongoose.Schema({
 	name:{type:String, required:true, trim:true, uppercase: true},
 	description:{type:String, required:true, trim:true, uppercase: true},
-	cognitions:[structDb.Cognitions],
 	levels:[structDb.nivelDomain],
 	words:[structDb.words]
 });

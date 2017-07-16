@@ -37,6 +37,7 @@ import {Cognition} from '../cards/cognition'
        this.cognitions = cognition.cognitions;
        this.setState(cognition);
      });
+     componentHandler.upgradeAllRegistered();
    }
    render(){
      if(!this.state){
@@ -46,11 +47,16 @@ import {Cognition} from '../cards/cognition'
          </div>
        );
      }
-     let body: any = this.state.cognitions.map((row) => {
-       return (
-         <Cognition session={this.session} cognition={row} key={row._id} delete={this.delete.bind(this)} domain={this.props.routeParams.domain} level={this.props.routeParams.level}/>
-       );
-     })
+     let body: any = (
+       <span className="text-align center">No posee funciones cognitivas asociadas</span>
+     );
+     if(this.state.cognitions.length > 0){
+       body = this.state.cognitions.map((row) => {
+         return (
+           <Cognition session={this.session} cognition={row} key={row._id} delete={this.delete.bind(this)} domain={this.props.routeParams.domain} level={this.props.routeParams.level}/>
+         );
+       })
+     }
      return(
        <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
        <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
@@ -61,8 +67,8 @@ import {Cognition} from '../cards/cognition'
          </div>
        </header>
          <main className="mdl-layout__content mdl-color--white-100">
-           <div className="mdl-grid demo-content">
-             <div className="mdl-grid mdl-color--white demo-content">
+           <div className="demo-content">
+             <div className="mdl-grid mdl-color--white">
               <div className="mdl-cell--6-col mdl-cell--middle">
                 <div className="mdl-textfield">
                   <label className="mdl-input__expandable-holder">Nombre:</label>
@@ -97,7 +103,9 @@ import {Cognition} from '../cards/cognition'
               </div>
              </div>
              <h3>Funciones cognitivas desarrollables</h3>
+             <div className="mdl-grid mdl-color--white demo-content">
               {body}
+             </div>
            </div>
          </main>
        </div>

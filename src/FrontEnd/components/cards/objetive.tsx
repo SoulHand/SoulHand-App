@@ -32,7 +32,7 @@ import {Link} from 'react-router'
             {this.props.objetive._id}
           </div>
           <div className="mdl-card__actions mdl-card--border">
-            <Link to={`/objetives/get/${this.props.objetive._id}`} className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver funciones cognitivas</Link>
+            <Link to={`/objetives/get/${this.props.objetive._id}`} className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver detalles</Link>
           </div>
         </div>
       </div>
