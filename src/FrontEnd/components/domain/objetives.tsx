@@ -89,6 +89,7 @@ import {Objetive} from '../cards/objetive'
        </header>
          <main className="mdl-layout__content mdl-color--white-100">
            <div className="mdl-grid demo-content">
+              
               {body}
            </div>
          </main>
