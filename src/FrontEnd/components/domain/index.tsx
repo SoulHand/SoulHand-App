@@ -93,6 +93,7 @@ import {Menu} from '../app/menu'
                );
              })}
           </div>
+            <Link to="/objetives/create" title="Crear un nuevo objetivo" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
           </main>
        </div>
      );

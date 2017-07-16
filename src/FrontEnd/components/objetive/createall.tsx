@@ -5,7 +5,7 @@ import {FormUtils} from '../formutils'
 import {ajax} from 'jquery'
 
 @withRouter
- export class ParentCreate extends FormUtils<{router: any}, {}>{
+export class CreateAll extends FormUtils<{router: any}, {}>{
    public fields:compat.Map={
  		name:{
  			match:(fn:string)=>{
@@ -42,8 +42,8 @@ import {ajax} from 'jquery'
 	        url: `${window._BASE}/v1/knowedge/objetives/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:values,
-	        success:(data: CRUD.objetive)=>{
-	        	this.props.router.replace(`/objetives/get/${data._id}`);
+	        success:(data:any)=>{
+	        	this.props.router.replace('/matters');
 	        },
 	        error:(data:any)=>{
 	        	var state: CRUD.codeError = data.responseJSON;
@@ -63,7 +63,7 @@ import {ajax} from 'jquery'
      return(
        <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
        <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-        <div className="mdl-layout__drawer-button"><Link to="/domains"><i className="material-icons">&#xE5C4;</i></Link></div>
+        <div className="mdl-layout__drawer-button"><Link to="/matters"><i className="material-icons">&#xE5C4;</i></Link></div>
          <div className="mdl-layout__header-row">
            <span className="mdl-layout-title">SoulHand</span>
            <div className="mdl-layout-spacer"></div>
@@ -78,14 +78,14 @@ import {ajax} from 'jquery'
                <div className="mdl-cell mdl-cell--6-col">
                   <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.name) ? 'is-invalid' :'')}>
                    <input className="mdl-textfield__input" type="text" id="name" onChange={(e:any)=>{this.getFields(e)}}/>
-                   <label className="mdl-textfield__label" htmlFor="name">Nombre del objetivo*</label>
-                   <span className="mdl-textfield__error">Es necesaria un nombre valido con un verbo infinitivo</span>
+                   <label className="mdl-textfield__label" htmlFor="name">Nombre*</label>
+                   <span className="mdl-textfield__error">Es necesaria un nombre valido</span>
                  </div>
                </div>
                <div className="mdl-cell mdl-cell--6-col">
                   <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.name) ? 'is-invalid' :'')}>
                    <textarea className="mdl-textfield__input" type="text" id="description" onChange={(e:any)=>{this.getFields(e)}}/>
-                   <label className="mdl-textfield__label" htmlFor="description">Descripción del objetivo*</label>
+                   <label className="mdl-textfield__label" htmlFor="description">Descripción*</label>
                    <span className="mdl-textfield__error">Es necesaria una descripción valida</span>
                  </div>
                </div>

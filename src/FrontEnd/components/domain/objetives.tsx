@@ -91,7 +91,6 @@ import {Objetive} from '../cards/objetive'
            <div className="mdl-grid demo-content">
               {body}
            </div>
-           <Link to="/objetives/create" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
          </main>
        </div>
      );
