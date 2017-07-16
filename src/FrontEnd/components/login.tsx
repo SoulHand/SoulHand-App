@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {ajax} from 'jquery'
-import {withRouter} from 'react-router'
+import {withRouter, Link} from 'react-router'
 
 @withRouter
  export class Login extends React.Component <Props.GenericRouter, {error:any}>{
@@ -49,21 +49,25 @@ import {withRouter} from 'react-router'
             </div>
             <div className="mdl-grid mdl-cell mdl-cell--4">
               <form className="form-signin" onSubmit={(e) => {this.auth(e);}}>
-               <div className="mdl-cell mdl-cell--8-col">
                   <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                     <input className="mdl-textfield__input" type="text" name="username" id="username"/>
                     <label className="mdl-textfield__label" htmlFor="username">Nombre de Usuario</label>
                     <span className="mdl-textfield__error">Es obligatorio</span>
                   </div>
-                </div>
-               <div className="mdl-cell mdl-cell--8-col">
                   <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                     <input className="mdl-textfield__input" type="password" name="password" id="password"/>
                     <label className="mdl-textfield__label" htmlFor="password">Contraseña</label>
                     <span className="mdl-textfield__error">Es obligatorio</span>
                   </div>
-                </div>
-                <button className="mdl-button mdl-js-button mdl-button--raised button--colored" type="submit">Iniciar sesión <i className="material-icons">navigate_next</i></button>
+                  <div className="mdl-grid">
+                    <div className="mdl-cell mdl-cell--6-col">
+                      <a href="#/teachers/get/595f61a45d15193ac4cdf224">¿Se me olvidó la contraseña?</a>
+                    </div>
+                    <div className="mdl-cell mdl-cell--6-col">
+                      <Link to="/registry">Registrarse</Link>
+                    </div>
+                  </div>
+                  <button className="mdl-button mdl-js-button mdl-button--raised button--colored" type="submit">Iniciar sesión <i className="material-icons">navigate_next</i></button>
               </form>
             </div>
           </div>

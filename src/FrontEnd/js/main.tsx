@@ -1,4 +1,5 @@
 import "../vendor/material.min.js"
+import "../vendor/material.min.js"
 import * as React from 'react'
 import {render} from 'react-dom'
 import {Route, Router, hashHistory, IndexRoute} from 'react-router'
@@ -12,6 +13,7 @@ import * as Grade from '../components/grades'
 import * as Matters from '../components/matters'
 import * as Domain from '../components/domain'
 import * as Activity from '../components/activities'
+import {UserCreate} from '../components/users/usercreate'
 import {Auth} from './auth'
 
 window.addEventListener("load",()=>{
@@ -74,6 +76,7 @@ window.addEventListener("load",()=>{
           <Route path="set/:activity/student" component={Activity.setStudent}/>
         </Route>
         <Route path="/auth" component={Login}/>
+        <Route path="/registry" component={UserCreate}/>
 	  	</Router>
 	  ), document.getElementById("app"));
 });
