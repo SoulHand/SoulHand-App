@@ -337,12 +337,16 @@ module.exports = function (app, express, Schema, __DIR__) {
     Validator.isNull()(request.body.description)) {
       throw new ValidatorException('Solo se aceptan textos categoricos')
     }
+    if(request.body.words){
+      request.body.words = JSON.parse(request.body.words);
+    }
     Schema.domainsLearning.findOne({_id: request.params.id}).then((row) => {
       if (!row) {
         throw new ValidatorException('No existe el dominio!')
       }
       for (var i in row.schema.obj) {
         if (request.body[i]) {
+          console.log(i, request.body[i].length);
           row[i] = request.body[i]
         }
       }

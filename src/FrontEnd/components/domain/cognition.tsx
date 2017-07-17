@@ -64,6 +64,12 @@ import {Cognition} from '../cards/cognition'
          <div className="mdl-layout__header-row">
            <span className="mdl-layout-title">SoulHand</span>
            <div className="mdl-layout-spacer"></div>
+             <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
+               <i className="material-icons">more_vert</i>
+             </button>
+           <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
+             <li className="mdl-menu__item"><Link to={`/objetives/get/${this.props.routeParams.id}/cognition`}>Asignar funciones cognitivas</Link></li>
+           </ul>
          </div>
        </header>
          <main className="mdl-layout__content mdl-color--white-100">

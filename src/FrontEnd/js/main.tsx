@@ -14,6 +14,7 @@ import * as Matters from '../components/matters'
 import * as Domain from '../components/domain'
 import * as Activity from '../components/activities'
 import {UserCreate} from '../components/users/usercreate'
+import {CognitionCreate} from '../components/objetive/cognitioncreate'
 import {Auth} from './auth'
 
 window.addEventListener("load",()=>{
@@ -64,6 +65,7 @@ window.addEventListener("load",()=>{
         </Route>
         <Route path="/objetives" onEnter={Auth}>
           <Route path="get/:id" component={Domain.Cognition}/>
+          <Route path="get/:id/cognition" component={CognitionCreate}/>
           <Route path="create/:activity" component={Activity.setObjetive}/>
           <Route path="create" component={Domain.Add}/>
         </Route>
