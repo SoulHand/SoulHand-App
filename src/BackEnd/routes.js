@@ -687,11 +687,25 @@ module.exports = function (app, express, Schema, __DIR__) {
       }
       throw new ValidatorException('No existe el nivel de aprendizaje')
     }).then((row) => {
+      var verbo = /[a-z]+(?:ar|er|ir)/ig;
+      var words = (request.body.name + " " + request.body.description).match(verbo);
+      var i = 0;
+      words = words.filter((word, index) => {
+        var repeats = 0;
+        for(var i=index, n=words.length; i<n;i++){
+          if(words[i] == word && i!= index){
+            return false;
+          }
+        }
+        return true;
+      })
+      console.log(words);
       var p1 = new Schema.LearningObjetive({
         name: request.body.name,
         description: request.body.description,
         domain: row[0],
-        level: row[1]
+        level: row[1],
+        words: words
       })
       return Promise.all([p1, Events.get('OBJETIVES-COGNITION'), row[0]])
     }).then((row) => {
@@ -809,7 +823,7 @@ module.exports = function (app, express, Schema, __DIR__) {
     }
     Schema.LearningObjetive.findOne({_id: request.params.id}).then((rows) => {
       if (!rows) {
-        throw new Validator('No existe el objetivo de aprendizaje')
+        throw new ValidatorException('No existe el objetivo de aprendizaje')
       }
       response.send(rows)
     }).catch((error) => {
@@ -936,19 +950,20 @@ module.exports = function (app, express, Schema, __DIR__) {
             throw new ValidatorException(row.q1)
           }
           if (/ADD:/ig.test(row.q1)) {
-            let str = row.q1.replace(/ADD:/ig);
+            let str = row.q1.replace(/ADD:/ig, '');
             var add = true;
             _objetive.cognitions.forEach((row2) => {
-              if (row2._id.toString() === str._id) {
+              if (row2._id.toString() === str) {
                 add = false;
               }
             });
             if(add){
+              console.log(str);
               executes.push(Schema.Cognitions.findOne({_id: str}))
             }
           }
           if (/DELETE:/ig.test(row.q1)) {
-            let str = row.q1.replace(/DELETE:/ig)
+            let str = row.q1.replace(/DELETE:/ig, '')
             _objetive.cognitions.forEach((row2) => {
               if (row2._id.toString() === str) {
                 row2.remove()
@@ -956,7 +971,22 @@ module.exports = function (app, express, Schema, __DIR__) {
             })
           }
         })
+        var str = JSON.stringify(_objetive.words);
+        var _rule = "this.isContaint(p1," + str + ") || this.isContaint(p2," + str + ")";
+        var _consecuent = "q1 = \"ADD:" + objetive._id.toString() + "\"";
+        var con = _rules.premises.filter((item) => {
+          return item.premise == _rule && item.consecuent == _consecuent;
+        });
+        if(con.length == 0){
+          var pr = new Schema.inferences({
+            premise: _rule,
+            consecuent: _consecuent,
+            h: 0.5
+          });
+          _rules.premises.push(pr);
+        }
       });
+      _rules.save();
       if(executes.length == 0){
         return [];
       }
