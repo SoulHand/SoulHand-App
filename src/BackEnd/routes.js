@@ -636,6 +636,7 @@ module.exports = function (app, express, Schema, __DIR__) {
     request.body.name = request.body.name.toUpperCase()
     request.body.description = request.body.description.toUpperCase()
 
+    var _rules, _objetive;
     Schema.LearningObjetive.findOne({name: request.body.name}).then((row) => {
       if (row) {
         throw new ValidatorException('Ya existe un objetivo con el mismo nombre!')
@@ -699,7 +700,6 @@ module.exports = function (app, express, Schema, __DIR__) {
         }
         return true;
       })
-      console.log(words);
       var p1 = new Schema.LearningObjetive({
         name: request.body.name,
         description: request.body.description,
@@ -707,67 +707,69 @@ module.exports = function (app, express, Schema, __DIR__) {
         level: row[1],
         words: words
       })
-      return Promise.all([p1, Events.get('OBJETIVES-COGNITION'), row[0]])
-    }).then((row) => {
-      if (!row[1]) {
+      return Promise.all([Events.get('OBJETIVES-ADD-COGNITIONS'), p1, row[0]])
+    }).then((rows) => {
+      if (!rows[0]) {
         var EventClass = Schema.events
-        var helpEvent = new EventClass({
-          name: 'OBJETIVES-COGNITION',
+        rows[0] = new EventClass({
+          name: 'OBJETIVES-ADD-COGNITIONS',
           objects: {
             p1: 'data[1].name',
             p2: 'data[1].description',
-            p3: 'data[1].domain.name',
-            p4: 'data[1].level.name',
-            p5: 'addcognitions'
+            p3: 'data[1].level.level',
+            p4: 'data[1].domain.name',
+            p5: 'cognitions',
+            p6: 'addcognitions'
           }
         })
-        helpEvent.save()
-        return row[0].save()
+        rows[0].save()
       }
-      var event = row[1]
-      while (true) {
-        var addcognitions = row[0].cognitions.map((row) => {
-          return row.name
-        })
-        var querys = Events.ChainGetAllBucle(event.premises, {
-          p1: row[0].name,
-          p2: row[0].description,
-          p3: row[0].domain.name,
-          p4: row[0].level.name,
-          p5: addcognitions
-        })
-        if (!querys) {
-          return row[0].save()
-        }
-        querys.forEach((data) => {
-          if (/ADD:/ig.test(data.q1)) {
-            let str = data.q1.replace(/ADD:/ig, '')
-            for (var i = 0, n = row[2].cognitions.length; i < n; i++) {
-              if (row[2].cognitions[i].name === str) {
-                var add = true
-                row[0].cognitions.forEach((row2) => {
-                  if (row2._id === str) {
-                    add = false
-                    return
-                  }
-                })
-                if (!add) {
-                  continue
-                }
-                row[0].cognitions.push(row[2].cognitions[i])
-              }
+      _rules = rows[0];
+      _objetive = rows[1];
+      var event = _rules
+      var addcognitions = _objetive.cognitions.map((row) => {
+        return row.name
+      });
+      var executes = [];
+      var querys = Events.ChainGetAll(event.premises, {
+        p1: _objetive.name,
+        p2: _objetive.description,
+        p3: _objetive.level.level,
+        p4: _objetive.domain.name,
+        p5: cognitions,
+        p6: addcognitions
+      });
+      querys.forEach((row) => {
+        if (/ADD:/ig.test(row.q1)) {
+          let str = row.q1.replace(/ADD:/ig, '');
+          var add = true;
+          _objetive.cognitions.forEach((row2) => {
+            if (row2._id.toString() === str) {
+              add = false;
             }
+          });
+          if(add){
+            executes.push(Schema.Cognitions.findOne({_id: str}))
           }
-          if (/DELETE:/ig.test(data.q1)) {
-            let str = data.q1.replace(/DELETE:/ig)
-            row[0].cognitions.forEach((row2) => {
-              if (row2._id.toString() === str) {
-                row2.remove()
-              }
-            })
-          }
-        })
+        }
+        if (/DELETE:/ig.test(row.q1)) {
+          let str = row.q1.replace(/DELETE:/ig, '')
+          _objetive.cognitions.forEach((row2) => {
+            if (row2._id.toString() === str) {
+              row2.remove()
+            }
+          })
+        }
+      })
+      if(executes.length == 0){
+        return [];
       }
+      return Promise.all(executes);
+    }).then((adds) => {
+      adds.forEach((row) => {
+        _objetive.cognitions.push(row);
+      });
+      return _objetive.save();
     }).then((data) => {
       response.send(data)
     }).catch((error) => {
@@ -1001,103 +1003,6 @@ module.exports = function (app, express, Schema, __DIR__) {
     }).catch((error) => {
       next(error)
     })
-    /*Schema.LearningObjetive.findOne({_id: request.params.id})
-    .then((row) => {
-      if (!row) {
-        throw new ValidatorException('No existe el objetivo!')
-      }
-      return Promise.all([
-        Events.get('OBJETIVES-ADD-COGNITIONS'),
-        row, Schema.domainsLearning.findOne({_id: row.domain._id})
-      ])
-    }).then((row) => {
-      if (!row[2]) {
-        throw new ValidatorException('No existe el dominio del objetivo!')
-      }
-      for (var i = 0, n = row[2].cognitions.length; i < n; i++) {
-        if (row[2].cognitions[i]._id.toString() === request.params.cognition) {
-          return Promise.all([
-            row[0],
-            row[1],
-            row[2].cognitions[i],
-            row[2].cognitions
-          ])
-        }
-      }
-      throw new ValidatorException('No existe la funcion cognitiva!')
-    }).then((data) => {
-      if (!data[0]) {
-        var EventClass = Schema.events
-        var helpEvent = new EventClass({
-          name: 'OBJETIVES-ADD-COGNITIONS',
-          objects: {
-            p1: 'data[1].name',
-            p2: 'data[1].description',
-            p3: 'data[1].level.level',
-            p4: 'data[1].domain.name',
-            p5: 'cognitions',
-            p6: 'addcognitions'
-          }
-        })
-        helpEvent.save()
-        throw new ValidatorException('No existe inferencias!')
-      }
-      var event = data[0]
-      var addcognitions = data[1].cognitions.map((row) => {
-        return row.name
-      })
-      var querys = Events.ChainGetAll(event.premises, {
-        p1: data[1].name,
-        p2: data[1].description,
-        p3: data[1].level.level,
-        p4: data[1].domain.name,
-        p5: cognitions,
-        p6: addcognitions,
-        p7: data[2].name
-      })
-      data[1].cognitions.forEach((row) => {
-        if (row._id === data[0]._id) {
-          throw new ValidatorException('ya existe el registro')
-        }
-      })
-      data[1].cognitions.push(data[2])
-      querys.forEach((row) => {
-        if (/Error:/ig.test(row.q1)) {
-          throw new ValidatorException(row.q1)
-        }
-        if (/ADD:/ig.test(row.q1)) {
-          let str = row.q1.replace(/ADD:/ig)
-          for (var i = 0, n = data[3].cognitions.length; i < n; i++) {
-            if (data[3].cognitions[i]._id.toString() === str) {
-              var add = true
-              data[1].cognitions.forEach((row2) => {
-                if (row2._id === str) {
-                  add = false
-                  return
-                }
-              })
-              if (!add) {
-                continue
-              }
-              data[1].cognitions.push(data[3].cognitions[i])
-            }
-          }
-        }
-        if (/DELETE:/ig.test(row.q1)) {
-          let str = row.q1.replace(/DELETE:/ig)
-          data[1].cognitions.forEach((row2) => {
-            if (row2._id.toString() === str) {
-              row2.remove()
-            }
-          })
-        }
-      })
-      return data[1].save()
-    }).then((rows) => {
-      response.send(rows)
-    }).catch((error) => {
-      next(error)
-    })*/
   })
 
   /*

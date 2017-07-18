@@ -108,6 +108,14 @@ import {Cognition} from '../cards/cognition'
                 </div>
               </div>
              </div>
+             <h4>Palabras claves</h4>
+             {this.state.words.map((row) => {
+               return (
+                 <span className="mdl-chip">
+                    <span className="mdl-chip__text">{row}</span>
+                </span>
+               );
+             })}
              <h3>Funciones cognitivas desarrollables</h3>
              <div className="mdl-grid mdl-color--white demo-content">
               {body}
