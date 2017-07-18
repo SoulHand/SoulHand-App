@@ -24,7 +24,7 @@ import {ajax} from 'jquery'
     }
     ajax({
 			method:"PUT",
-	        url: `${window._BASE}/v1/activities/${this.props.routeParams.activity}/objetives?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+	        url: `${window._BASE}/v1/knowedge/objetives/${this.props.routeParams.id}/cognitions?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:{
             data: JSON.stringify(fields)

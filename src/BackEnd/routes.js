@@ -865,13 +865,113 @@ module.exports = function (app, express, Schema, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  cognitions.put('/objetives/:id/cognitions/:cognition',
+  cognitions.put('/objetives/:id/cognitions',
   Auth.isAdmin.bind(Schema),
   function (request, response, next) {
-    if (!Validator.isMongoId()(request.params.id) || !Validator.isMongoId()(request.params.cognition)) {
+    if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('El id es invalido!')
     }
-    Schema.LearningObjetive.findOne({_id: request.params.id})
+    if(!Validator.isJSON()(request.body.data)){
+      throw new ValidatorException("No es valido el objeto!");
+    }
+    var _objetive, _rules;
+    request.body.data = JSON.parse(request.body.data);
+    Promise.all([Events.get('OBJETIVES-ADD-COGNITIONS'),
+    Schema.LearningObjetive.findOne({_id: request.params.id})])
+    .then((rows) => {
+      if (!rows[1]) {
+        throw new ValidatorException('No existe el objetivo!')
+      }
+      if (!rows[0]) {
+        var EventClass = Schema.events
+        rows[0] = new EventClass({
+          name: 'OBJETIVES-ADD-COGNITIONS',
+          objects: {
+            p1: 'data[1].name',
+            p2: 'data[1].description',
+            p3: 'data[1].level.level',
+            p4: 'data[1].domain.name',
+            p5: 'cognitions',
+            p6: 'addcognitions'
+          }
+        })
+        rows[0].save()
+      }
+      _rules = rows[0];
+      _objetive = rows[1];
+      var promises = [];
+      request.body.data.forEach((cognition) => {
+        if (!Validator.isMongoId()(cognition)) {
+          throw new ValidatorException('El id es invalido!')
+        }
+        promises.push(Schema.Cognitions.findOne({_id: cognition}));
+      });
+      return Promise.all(promises);
+    }).then((rows) => {
+      var executes = [];
+      rows.forEach((objetive) => {
+        if(!objetive){
+          throw new ValidatorException("No existe el registro");
+        }
+        _objetive.cognitions.forEach((row2) => {
+          if (row2._id === objetive._id) {
+            throw new ValidatorException('ya existe el registro')
+          }
+        })
+        var event = _rules
+        var addcognitions = _objetive.cognitions.map((row) => {
+          return row.name
+        });
+        var querys = Events.ChainGetAll(event.premises, {
+          p1: _objetive.name,
+          p2: _objetive.description,
+          p3: _objetive.level.level,
+          p4: _objetive.domain.name,
+          p5: cognitions,
+          p6: addcognitions
+        });
+        _objetive.cognitions.push(objetive);
+        querys.forEach((row) => {
+          if (/Error:/ig.test(row.q1)) {
+            throw new ValidatorException(row.q1)
+          }
+          if (/ADD:/ig.test(row.q1)) {
+            let str = row.q1.replace(/ADD:/ig);
+            var add = true;
+            _objetive.cognitions.forEach((row2) => {
+              if (row2._id.toString() === str._id) {
+                add = false;
+              }
+            });
+            if(add){
+              executes.push(Schema.Cognitions.findOne({_id: str}))
+            }
+          }
+          if (/DELETE:/ig.test(row.q1)) {
+            let str = row.q1.replace(/DELETE:/ig)
+            _objetive.cognitions.forEach((row2) => {
+              if (row2._id.toString() === str) {
+                row2.remove()
+              }
+            })
+          }
+        })
+      });
+      if(executes.length == 0){
+        return [];
+      }
+      return Promise.all(executes);
+    }).then((adds) => {
+      adds.forEach((row) => {
+        _objetive.cognitions.push(row);
+      });
+      return _objetive.save();
+    }).then((data) => {
+      response.send(data);
+    }).catch((error) => {
+      next(error)
+    })
+    /*Schema.LearningObjetive.findOne({_id: request.params.id})
     .then((row) => {
       if (!row) {
         throw new ValidatorException('No existe el objetivo!')
@@ -967,7 +1067,7 @@ module.exports = function (app, express, Schema, __DIR__) {
       response.send(rows)
     }).catch((error) => {
       next(error)
-    })
+    })*/
   })
 
   /*
