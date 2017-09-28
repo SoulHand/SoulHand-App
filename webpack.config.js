@@ -35,7 +35,7 @@ module.exports = {
       },
       {
         test: /\.json$/,
-        use: 'json-loader'
+        loader: 'json-loader'
       }
     ]
   },
@@ -48,7 +48,7 @@ module.exports = {
       React: 'react',
       ReactDOM: 'react-dom',
       ReactRouter: 'react-router',
-      'window.settings': path.join(__dirname, 'src/FrontEnd/settings.js')
+      'window.settings': path.join(__dirname, 'src/FrontEnd/settings.js')      
     }),
     new webpack.DefinePlugin({
       NODE_ENV: 'development'
