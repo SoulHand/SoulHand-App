@@ -1,3 +1,9 @@
+interface ProgressStatic{
+	parent: Element
+	isProgress: boolean
+	start():void
+	done(): void
+}
 interface Window{
 	settings:any
 	validator:any
@@ -5,7 +11,8 @@ interface Window{
 		all:any
 		race:any
 	}
-  _BASE: string
+	_BASE: string
+	progress: ProgressStatic
 }
 declare let validator: any;
 declare let componentHandler: any;
@@ -182,6 +189,8 @@ declare namespace Props {
   interface LineChart{
 		id:string
 		config:any
+		className ?: string
+		autoSize ?: boolean
 	}
 }
 /*

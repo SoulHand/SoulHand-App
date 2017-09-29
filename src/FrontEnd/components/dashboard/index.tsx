@@ -115,7 +115,7 @@ import {LineChart} from "../linechart"
           text: this.state.values.progress.toFixed(2) + "%",
           align: 'center',
           verticalAlign: 'middle',
-          y: 5,
+          y: 3,
           style: {
             fontFamily: "Roboto",
             fontSize: "3em",
@@ -129,8 +129,6 @@ import {LineChart} from "../linechart"
                 ['Actividades pendientes', this.state.values.pending]
             ]
         }],
-        width: 200,
-        height: 200
       };
       var Colors = ["#649AE1", "#55BADF", "#F7C65F", "#A992E2", "#EC6F5A", "#48C9A9", "#85D27A"];
      var DomainObjetives = {

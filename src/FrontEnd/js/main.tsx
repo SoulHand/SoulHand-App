@@ -1,5 +1,3 @@
-import "../vendor/material.min.js"
-import "../vendor/material.min.js"
 import * as React from 'react'
 import {render} from 'react-dom'
 import {Route, Router, hashHistory, IndexRoute} from 'react-router'
@@ -16,6 +14,7 @@ import * as Activity from '../components/activities'
 import {UserCreate} from '../components/users/usercreate'
 import {CognitionCreate} from '../components/objetive/cognitioncreate'
 import {Auth} from './auth'
+import "./custom.js"
 
 window.addEventListener("load",()=>{
   render((
