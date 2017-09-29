@@ -2,7 +2,7 @@ import * as React from 'react'
 import {ajax} from 'jquery'
 import {LineChart} from "../linechart"
 
- export class DashBoard extends React.Component <{}, {activities: Array<CRUD.activity>, objetives: Array<CRUD.objetive>, values: any}>{
+ export class DashBoard extends React.Component <{}, {activities: Array<CRUD.activity>, values: any}>{
    public session: User.session;
    constructor(props:{}){
      super(props)
@@ -10,7 +10,6 @@ import {LineChart} from "../linechart"
      this.session = JSON.parse(str);
      this.state = {
        activities: null,
-       objetives: null,
        values: null
      }
    }
@@ -25,63 +24,78 @@ import {LineChart} from "../linechart"
        dataType: "json",
        data:null
      });
-     let p2 = ajax({
-       method:"GET",
-       url: `${window._BASE}/v1/knowedge/objetives/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
-       dataType: "json",
-       data:null
-     });
-     window.Promise.all([p1.done(), p2.done()]).then((data: any) => {
-       let activities:Array<CRUD.activity> = data[0];
-       let objetives:Array<CRUD.objetive> = data[1];
-       let parse = this.parseGraphs(activities, objetives);
+     p1.done((activities: Array<CRUD.activity>) => {
+       let parse = this.parseGraphs(activities);
        this.setState({
          activities: activities,
-         objetives: objetives,
          values: parse
        });
        window.progress.done();
      });
    }
-   parseGraphs(activities: Array<CRUD.activity>, objetives: Array<CRUD.objetive>){
+   parseGraphs(activities: Array<CRUD.activity>){
      let count: any = {
-       completed: 0,
-       failed: 0,
-       pending: 0,
-       count: activities.length,
-       progress: 0,
-       categories: [],
-       domains:[]
+       activities:{
+         completed: 0,
+         failed: 0,
+         pending: 0,
+         count: 0,
+         progress: 0,
+         categories: [],
+         domains: []
+       },
+       objetives:{
+         completed: 0,
+         failed: 0,
+         pending: 0,
+         count: 0,
+         progress: 0,
+         categories: [],
+         domains: []
+       }       
      };
+     let objetives: Array < CRUD.objetive > = [];
+     activities = activities.filter((row) => {
+       var date = new Date(row.dateCreated);
+       var days = (Date.now() - date.getTime()) / 8.64e+7;
+       return days <= 7;
+     });
+     count.activities.count = activities.length;
+     activities.forEach((row) => {
+       for (var i in row.objetives){
+         objetives.push(row.objetives[i]);
+       }
+     });
      let categoryObjetives: compat.Map = {};
+     count.objetives.count = objetives.length;
      activities.forEach((row) => {
        if (row.isCompleted) {
-         count.completed++;
+         count.activities.completed++;
        } else {
-         count.pending++;
+         count.activities.pending++;
        }
      });
      objetives.forEach((row) => {
-        var isAdd = count.categories.filter((str: string) => {
+       var isAdd = count.objetives.categories.filter((str: string) => {
           return row.domain.name == str;
         });
         if(isAdd.length == 0){
-          count.categories.push(row.domain.name);
-          count.domains.push({
+          count.objetives.categories.push(row.domain.name);
+          count.objetives.domains.push({
             name: row.domain.name,
             y: 0
           });
         }
      });
-     count.domains = count.domains.map((row: {name: string, y:number}) => {
+     count.objetives.domains = count.objetives.domains.map((row: {name: string, y:number}) => {
         var counter = objetives.filter((objetive) => {
           return objetive.domain.name == row.name;
         });
         row.y = counter.length;
         return row;
      });
-     if(count.count > 0){
-       count.progress = (count.completed / count.count) * 100;
+     if (count.activities.count > 0){
+       count.activities.progress = (count.activities.completed / count.activities.count) * 100;
      }
      console.log(count);
      return count;
@@ -112,10 +126,20 @@ import {LineChart} from "../linechart"
         },
         colors: Colors,
         title: {
-          text: this.state.values.progress.toFixed(2) + "%",
+          text: `Progreso de actividades`,
+          align: 'center',
+          style: {
+            fontFamily: "Roboto",
+            fontSize: "1.5em",
+            fontWeight: "bold",
+            color: "#888",
+          }
+        },
+        subtitle: {
+          text: `${this.state.values.activities.progress.toFixed(2)}%`,
           align: 'center',
           verticalAlign: 'middle',
-          y: 3,
+          y: 1,
           style: {
             fontFamily: "Roboto",
             fontSize: "3em",
@@ -125,8 +149,8 @@ import {LineChart} from "../linechart"
         },
         series: [{
             data: [
-                ['Actividades completadas', this.state.values.completed],
-                ['Actividades pendientes', this.state.values.pending]
+                ['Actividades completadas', this.state.values.activities.completed],
+                ['Actividades pendientes', this.state.values.activities.pending]
             ]
         }],
       };
@@ -135,10 +159,9 @@ import {LineChart} from "../linechart"
        credits: false,
        chart: {
          type: 'pie',
-         plotShadow: false
        },
        tooltip: {
-         pointFormat: '{series.name}: <b>{point.y} actividades</b>'
+         pointFormat: '{series.name}: <b>{point.y} Actividades</b>'
        },
        plotOptions: {
          pie: {
@@ -152,8 +175,30 @@ import {LineChart} from "../linechart"
          }
        },
        colors: Colors,
+       title: {
+         text: `Cobertura de actividades`,
+         align: 'center',
+         style: {
+           fontFamily: "Roboto",
+           fontSize: "1.5em",
+           fontWeight: "bold",
+           color: "#888",
+         }
+       },
+       subtitle: {
+         text: `${this.state.values.objetives.count}`,
+         align: 'center',
+         verticalAlign: 'middle',
+         y: 1,
+         style: {
+           fontFamily: "Roboto",
+           fontSize: "3em",
+           fontWeight: "bold",
+           color: "#888"
+         }
+       },
        series: [{
-         data: this.state.values.domains
+         data: this.state.values.objetives.domains
        }]
       };
       var series: Array <any> = [];
@@ -208,8 +253,8 @@ import {LineChart} from "../linechart"
      return(
        <div className="mdl-grid demo-content">
          <div className="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
-           <LineChart id="completedvsfailed" config={completeVsPending} className="mdl-cell mdl-cell--8-col mdl-cell--6-col-desktop width-center" autoSize={false}/>
-           <LineChart id="domainobjetive" config={DomainObjetives} className="mdl-cell mdl-cell--8-col mdl-cell--6-col-desktop width-center" autoSize={false}/>
+           <LineChart id="completedvsfailed" config={completeVsPending} className="mdl-cell mdl-cell--8-col mdl-cell--6-col-desktop width-center" autoSize={false} title="El porcentaje de progreso mide el avance semanal de tus alumnos."/>
+           <LineChart id="domainobjetive" config={DomainObjetives} className="mdl-cell mdl-cell--8-col mdl-cell--6-col-desktop width-center" autoSize={false} title="La covertura de actividades mide los objetivos a cumplir."/>
          </div>
          <div className="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--8-col">
           <LineChart id="objetivecompleted" config={ObjetivesCompleted}/>

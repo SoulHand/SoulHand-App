@@ -191,6 +191,7 @@ declare namespace Props {
 		config:any
 		className ?: string
 		autoSize ?: boolean
+		title ?: string
 	}
 }
 /*

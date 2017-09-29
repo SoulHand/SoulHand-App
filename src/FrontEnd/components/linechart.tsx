@@ -18,7 +18,7 @@ export class LineChart extends React.Component <Props.LineChart,{}>{
 			flex.width = "100%";
 		}
 	  return (
-	    <div id={this.props.id} style={flex} className={this.props.className}>
+	    <div id={this.props.id} style={flex} className={this.props.className} title={this.props.title}>
 	    </div>
 	  )
 	}
