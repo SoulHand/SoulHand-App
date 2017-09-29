@@ -2,7 +2,7 @@ import * as React from 'react'
 import {ajax} from 'jquery'
 import {LineChart} from "../linechart"
 
- export class DashBoard extends React.Component <{}, {activities: Array<CRUD.activity>, objetives: Array<CRUD.objetive>}>{
+ export class DashBoard extends React.Component <{}, {activities: Array<CRUD.activity>, objetives: Array<CRUD.objetive>, values: any}>{
    public session: User.session;
    constructor(props:{}){
      super(props)
@@ -10,10 +10,15 @@ import {LineChart} from "../linechart"
      this.session = JSON.parse(str);
      this.state = {
        activities: null,
-       objetives: null
+       objetives: null,
+       values: null
      }
    }
+   componentDidUpdate() {
+     componentHandler.upgradeAllRegistered();
+   }
    componentDidMount(){
+     window.progress.start();
      let p1 = ajax({
        method:"GET",
        url: `${window._BASE}/v1/activities/teacher?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
@@ -29,90 +34,129 @@ import {LineChart} from "../linechart"
      window.Promise.all([p1.done(), p2.done()]).then((data: any) => {
        let activities:Array<CRUD.activity> = data[0];
        let objetives:Array<CRUD.objetive> = data[1];
+       let parse = this.parseGraphs(activities, objetives);
        this.setState({
          activities: activities,
-         objetives: objetives
-       })
+         objetives: objetives,
+         values: parse
+       });
+       window.progress.done();
      });
    }
-   render(){
-     if(!this.state.activities){
-       return (
-         <div className="mdl-grid mdl-color--white demo-content">
-            <div className="mdl-spinner mdl-js-spinner is-active"></div>
-         </div>
-       );
-     }
-     let count = {
+   parseGraphs(activities: Array<CRUD.activity>, objetives: Array<CRUD.objetive>){
+     let count: any = {
        completed: 0,
        failed: 0,
        pending: 0,
-       count: 0
+       count: activities.length,
+       progress: 0,
+       categories: [],
+       domains:[]
      };
      let categoryObjetives: compat.Map = {};
-     this.state.activities.forEach((row) => {
-       if(row.isCompleted){
+     activities.forEach((row) => {
+       if (row.isCompleted) {
          count.completed++;
-       }else{
+       } else {
          count.pending++;
        }
      });
-     this.state.objetives.forEach((row) => {
-       if(!categoryObjetives[row.domain.name]){
-         categoryObjetives[row.domain.name] = 0;
-       }
-       categoryObjetives[row.domain.name]++;
+     objetives.forEach((row) => {
+        var isAdd = count.categories.filter((str: string) => {
+          return row.domain.name == str;
+        });
+        if(isAdd.length == 0){
+          count.categories.push(row.domain.name);
+          count.domains.push({
+            name: row.domain.name,
+            y: 0
+          });
+        }
      });
-     var completeVsPending = {
+     count.domains = count.domains.map((row: {name: string, y:number}) => {
+        var counter = objetives.filter((objetive) => {
+          return objetive.domain.name == row.name;
+        });
+        row.y = counter.length;
+        return row;
+     });
+     if(count.count > 0){
+       count.progress = (count.completed / count.count) * 100;
+     }
+     console.log(count);
+     return count;
+   }
+   render(){
+     if(!this.state.activities){
+       return null;
+     }
+     var Colors = ["rgb(24, 146, 77)", "#F7C65F"];
+      var completeVsPending = {
+        credits: false,
         chart: {
-            type: 'pie'
+            type: 'pie',
         },
-        title:{
-          align: "center",
-          text: "Actividades",
-          style:{
+        tooltip: {
+          pointFormat: '{series.name}: <b>{point.y} Actividades</b>'
+        },
+        plotOptions: {
+          pie: {
+            innerSize: '60%',
+            center: ['50%', '50%'],
+            cursor: 'pointer',
+            dataLabels: {
+              enabled: false
+            },
+            showInLegend: true
+          }
+        },
+        colors: Colors,
+        title: {
+          text: this.state.values.progress.toFixed(2) + "%",
+          align: 'center',
+          verticalAlign: 'middle',
+          y: 5,
+          style: {
             fontFamily: "Roboto",
-            fontSize: "1em",
+            fontSize: "3em",
             fontWeight: "bold",
             color: "#888"
           }
-        },
-        plotOptions: {
-            pie: {
-                //borderColor: '#000000',
-                innerSize: '60%'
-            }
         },
         series: [{
             data: [
-                ['Actividades completadas', count.completed],
-                ['Actividades pendientes', count.pending]
+                ['Actividades completadas', this.state.values.completed],
+                ['Actividades pendientes', this.state.values.pending]
             ]
-        }]
+        }],
+        width: 200,
+        height: 200
       };
+      var Colors = ["#649AE1", "#55BADF", "#F7C65F", "#A992E2", "#EC6F5A", "#48C9A9", "#85D27A"];
      var DomainObjetives = {
-        chart: {
-            type: 'pie'
-        },
-        title:{
-          align: "center",
-          text: "Actividades realizadas en la semana",
-          style:{
-            fontFamily: "Roboto",
-            fontSize: "1em",
-            fontWeight: "bold",
-            color: "#888"
-          }
-        },
-        plotOptions: {
-            pie: {
-                //borderColor: '#000000',
-                innerSize: '60%'
-            }
-        },
-        series: [{
-            data: Object.entries(categoryObjetives)
-        }]
+       credits: false,
+       chart: {
+         type: 'pie',
+         plotShadow: false
+       },
+       tooltip: {
+         pointFormat: '{series.name}: <b>{point.y} actividades</b>'
+       },
+       plotOptions: {
+         pie: {
+           innerSize: '60%',
+           center: ['50%', '50%'],
+           cursor: 'pointer',
+           dataLabels: {
+             enabled: false
+           },
+           showInLegend: true
+         }
+       },
+       colors: Colors,
+       series: [{
+         data: this.state.values.domains
+       }]
       };
       var series: Array <any> = [];
       this.state.activities.forEach((activity) => {
@@ -163,15 +207,14 @@ import {LineChart} from "../linechart"
         },
         series: series
       };
-      console.log(series);
      return(
        <div className="mdl-grid demo-content">
-         <div className="demo-charts mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
-           <LineChart id="completedvsfailed" config={completeVsPending}/>
-           <LineChart id="domainobjetive" config={DomainObjetives}/>
+         <div className="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+           <LineChart id="completedvsfailed" config={completeVsPending} className="mdl-cell mdl-cell--8-col mdl-cell--6-col-desktop width-center" autoSize={false}/>
+           <LineChart id="domainobjetive" config={DomainObjetives} className="mdl-cell mdl-cell--8-col mdl-cell--6-col-desktop width-center" autoSize={false}/>
          </div>
          <div className="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--8-col">
-         <LineChart id="objetivecompleted" config={ObjetivesCompleted}/>
+          <LineChart id="objetivecompleted" config={ObjetivesCompleted}/>
            <div id="graph1"></div>
          </div>
          <div className="demo-cards mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing">

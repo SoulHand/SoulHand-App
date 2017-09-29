@@ -11,12 +11,14 @@ export class LineChart extends React.Component <Props.LineChart,{}>{
 	  	//this.chart.highcharts().series[0].setData(props.data);
 	}*/
 	render() {
-		let flex = {
+		let flex: any = {
 		  display:"block",
-		  width:"100%"
+		};
+		if(this.props.autoSize != false){
+			flex.width = "100%";
 		}
 	  return (
-	    <div id={this.props.id} style={flex}>
+	    <div id={this.props.id} style={flex} className={this.props.className}>
 	    </div>
 	  )
 	}
