@@ -12,6 +12,10 @@ var UserException = require('./SoulHand/Exceptions/UserException.js')
 // var basicAuth = require('basic-auth-connect')
 // const logger = require('winston')
 var Auth = require('./SoulHand/Auth.js')
+var mongoose = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId;
+
+
 
 module.exports = function (app, express, Schema, __DIR__) {
 	let Events = require('./SoulHand/inferencia/events.js')(Schema)
@@ -84,7 +88,11 @@ module.exports = function (app, express, Schema, __DIR__) {
 							isCompleted: true
 						}
 					]
-				})/*,
+				}),
+				Schema.Students.find({
+					"grade._id": row.grade._id
+				})
+				/*,
 				Schema.Activities.aggregate([
 					{
 						$group: {
@@ -98,7 +106,8 @@ module.exports = function (app, express, Schema, __DIR__) {
     }).then(function(rows){
 			let activitiesAll = rows[0],
 					activitiesPending = rows[1],
-					activitiesCompleted = rows[2];
+					activitiesCompleted = rows[2]
+					students = rows[3];
 			let count = {
 				activities: {
 					completed: activitiesCompleted.length,
@@ -117,9 +126,15 @@ module.exports = function (app, express, Schema, __DIR__) {
 					progress: 0,
 					categories: [],
 					domains: []
+				},
+				students:{
+					fails: {
+						data: students,
+						count: students.length
+					}
 				}
 			};
-			let objetives = [];
+			let objetives = [], min, max = 0;
 			activitiesAll.forEach((row) => {
 				row.objetives.forEach((objetive) => {
 					objetives.push(objetive);
@@ -142,6 +157,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 					count.activities.completeds.push(node);
 				}
 			});
+			count.objetives.count = objetives.length;
 			count.activities.domains = count.activities.domains.map((row, index) => {
 				activitiesAll.forEach((activity) => {
 					var date = new Date(activity.dateCreated);
@@ -172,13 +188,79 @@ module.exports = function (app, express, Schema, __DIR__) {
 					return objetive.domain.name == row.name;
 				});
 				row.y = counter.length;
+				if(!min){
+					min = row.y;
+				}
+				min = Math.min(min, row.y);
+				max = Math.max(max, row.y);
 				return row;
 			});
+			if(max > 0){
+				count.objetives.progress = (min / max) * 100;
+			}
 			response.send(count);
 		}).catch(function(error){
 			next(error);
 		});
-  })
+	});
+	/*
+	* @api {get} /:id Obtener un alumno
+	* @params request peticiones del cliente
+	* @params response respuesta del servidor
+	* @params next middleware dispara la proxima funcion
+	* @var people<SubPeople>	objeto CRUD
+	*/
+	reportsURI.get("/students/objetive/:id", function (request, response, next) {
+		Schema.Students.aggregate([
+			{
+				$match: { "_id": ObjectId(request.params.id) }
+			},
+			{ $unwind: "$objetives" },
+			{
+				$group: {
+					_id: "$_id",
+					max: { $max: "$objetives.completed" },
+					min: { $min: "$objetives.completed" },
+					avg: { $avg: "$objetives.completed" },
+					data: { $push: "$objetives" }
+				}
+			},
+			{
+				$project: {
+					_id: 0,
+					max: 1,
+					min: 1,
+					avg: 1,
+					objetives: {
+						$map: {
+							input: "$data",
+							as: "row",
+							in: {
+								_id: "$$row._id",
+								objetive: "$$row.objetive",
+								completed: "$$row.completed",
+								avg: {
+									$multiply: [{ $divide: ["$$row.completed", "$max"] }, 100]
+								},
+								exp: {
+									$multiply: ["$$row.completed", 10]
+								}
+							}
+						}
+					}
+				}
+			}
+
+		])
+			.then(function (data) {
+				if (!data) {
+					throw new ValidatorException("No existe el alumno!");
+				}
+				response.send(data);
+			}).catch(function (error) {
+				next(error);
+			});
+	});
 
   app.use('/v1/reports', reportsURI);
 
@@ -1992,12 +2074,12 @@ module.exports = function (app, express, Schema, __DIR__) {
 	* @var people<SubPeople>	objeto CRUD
 	*/
 	StudentsURI.get("/:id",function(request, response,next) {
-		Schema.Students.findOne({_id:request.params.id}).populate("activities").then(function(data){
-			if(!data){
+		Schema.Students.findOne({ _id: request.params.id }).populate("activities").then(function (data) {
+			if (!data) {
 				throw new ValidatorException("No existe el alumno!");
 			}
 			response.send(data);
-		}).catch(function(error){
+		}).catch(function (error) {
 			next(error);
 		});
 	});
