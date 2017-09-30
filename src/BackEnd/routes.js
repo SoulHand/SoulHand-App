@@ -14,7 +14,174 @@ var UserException = require('./SoulHand/Exceptions/UserException.js')
 var Auth = require('./SoulHand/Auth.js')
 
 module.exports = function (app, express, Schema, __DIR__) {
-  let Events = require('./SoulHand/inferencia/events.js')(Schema)
+	let Events = require('./SoulHand/inferencia/events.js')(Schema)
+	
+	/*
+  * Ruta /v1/reports
+  * @var gradeURI object enrutador para agrupar metodos
+  */
+  let reportsURI = express.Router()
+  /*
+  * @api {get} /dashboard Obtener indicadores
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  reportsURI.get('/dashboard', function (request, response, next) {
+    Schema.Teachers.findOne({'data.dni': request.user.people.dni})
+    .then((row) => {
+      if (!row) {
+        throw new ValidatorException('No existe el docente!')
+      }
+      return Promise.all([
+				Schema.Activities.find({
+					$and: [
+						{teacher: row._id},
+						{
+							dateCreated: {
+								$gt: Date.now() - 6912e+5
+							}
+						},
+						{
+							dateCreated: {
+								$lt: Date.now()
+							}
+						}
+					]
+				}),
+				Schema.Activities.find({
+					$and: [
+						{teacher: row._id},
+						{
+							dateCreated: {
+								$gt: Date.now() - 6912e+5
+							}
+						},
+						{
+							dateCreated: {
+								$lt: Date.now()
+							}
+						},
+						{
+							isCompleted: false
+						}
+					]
+				}),
+				Schema.Activities.find({
+					$and: [
+						{teacher: row._id},
+						{
+							dateCreated: {
+								$gt: Date.now() - 6912e+5
+							}
+						},
+						{
+							dateCreated: {
+								$lt: Date.now()
+							}
+						},
+						{
+							isCompleted: true
+						}
+					]
+				})/*,
+				Schema.Activities.aggregate([
+					{
+						$group: {
+							_id: "$course.name",
+							activities: { $push: "$$ROOT"},
+							count: {$sum: 1}
+						}
+					}
+				])*/
+			]);
+    }).then(function(rows){
+			let activitiesAll = rows[0],
+					activitiesPending = rows[1],
+					activitiesCompleted = rows[2];
+			let count = {
+				activities: {
+					completed: activitiesCompleted.length,
+					pending: activitiesPending.length,
+					count: activitiesAll.length,
+					progress: 0,
+					courses: [],
+					domains: [],
+					completeds: []
+				},
+				objetives: {
+					completed: 0,
+					failed: 0,
+					pending: 0,
+					count: 0,
+					progress: 0,
+					categories: [],
+					domains: []
+				}
+			};
+			let objetives = [];
+			activitiesAll.forEach((row) => {
+				row.objetives.forEach((objetive) => {
+					objetives.push(objetive);
+				});
+			});
+			if (count.activities.count > 0){
+				count.activities.progress = (count.activities.completed / count.activities.count) * 100;
+			}
+			activitiesAll.forEach((row) => {
+				var isAdd = count.activities.courses.filter((str) => {
+					return row.course.name == str;
+				});
+				if (isAdd.length == 0) {
+					var node = {
+						name: row.course.name,
+						data: [0, 0, 0, 0, 0, 0]
+					};
+					count.activities.courses.push(row.course.name);
+					count.activities.domains.push(node);
+					count.activities.completeds.push(node);
+				}
+			});
+			count.activities.domains = count.activities.domains.map((row, index) => {
+				activitiesAll.forEach((activity) => {
+					var date = new Date(activity.dateCreated);
+					var dayWeek = date.getDay();
+					if (activity.course.name == row.name) {
+						row.data[dayWeek]++;
+						if (activity.isCompleted) {
+							count.activities.completeds[index].data[dayWeek]++;
+						}
+					}
+				});
+				return row;
+			});
+			objetives.forEach((row) => {
+				var isAdd = count.objetives.categories.filter((str) => {
+					return row.domain.name == str;
+				});
+				if (isAdd.length == 0) {
+					count.objetives.categories.push(row.domain.name);
+					count.objetives.domains.push({
+						name: row.domain.name,
+						y: 0
+					});
+				}
+			});
+			count.objetives.domains = count.objetives.domains.map((row) => {
+				var counter = objetives.filter((objetive) => {
+					return objetive.domain.name == row.name;
+				});
+				row.y = counter.length;
+				return row;
+			});
+			response.send(count);
+		}).catch(function(error){
+			next(error);
+		});
+  })
+
+  app.use('/v1/reports', reportsURI);
+
   /*
   * Ruta /v1/grades
   * @var gradeURI object enrutador para agrupar metodos

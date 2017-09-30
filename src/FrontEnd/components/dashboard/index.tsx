@@ -2,8 +2,9 @@ import * as React from 'react'
 import {ajax} from 'jquery'
 import {LineChart} from "../linechart"
 
- export class DashBoard extends React.Component <{}, {activities: Array<CRUD.activity>, values: any}>{
+ export class DashBoard extends React.Component <{}, any>{
    public session: User.session;
+   public init: boolean = false;
    constructor(props:{}){
      super(props)
      let str = localStorage.getItem("session");
@@ -19,7 +20,7 @@ import {LineChart} from "../linechart"
    componentDidMount(){
      let p1 = ajax({
        method:"GET",
-       url: `${window._BASE}/v1/activities/teacher?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       url: `${window._BASE}/v1/reports/dashboard?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
        data:null,
        beforeSend: () => {
@@ -29,12 +30,14 @@ import {LineChart} from "../linechart"
          window.progress.done();
        }
      });
-     p1.done((activities: Array<CRUD.activity>) => {
-       let parse = this.parseGraphs(activities);
+     p1.done((data: any) => {
+       this.init = true;
+       this.setState(data);
+       /*let parse = this.parseGraphs(activities);
        this.setState({
          activities: activities,
          values: parse
-       });
+       });*/
      });
    }
    parseGraphs(activities: Array<CRUD.activity>){
@@ -127,11 +130,10 @@ import {LineChart} from "../linechart"
      if (count.activities.count > 0){
        count.activities.progress = (count.activities.completed / count.activities.count) * 100;
      }
-     console.log(count);
      return count;
    }
    render(){
-     if(!this.state.activities){
+     if(!this.init){
        return null;
      }
      var Colors = ["#90ed7d", "rgb(80, 67, 67)"];
@@ -166,7 +168,7 @@ import {LineChart} from "../linechart"
           }
         },
         subtitle: {
-          text: `${this.state.values.activities.progress.toFixed(2)}%`,
+          text: `${this.state.activities.progress.toFixed(2)}%`,
           align: 'center',
           verticalAlign: 'middle',
           y: 1,
@@ -179,8 +181,8 @@ import {LineChart} from "../linechart"
         },
         series: [{
             data: [
-                ['Actividades completadas', this.state.values.activities.completed],
-                ['Actividades pendientes', this.state.values.activities.pending]
+                ['Actividades completadas', this.state.activities.completed],
+                ['Actividades pendientes', this.state.activities.pending]
             ]
         }],
       };
@@ -216,7 +218,7 @@ import {LineChart} from "../linechart"
           }
         },
         subtitle: {
-          text: `${this.state.values.objetives.count}`,
+          text: `${this.state.objetives.count}`,
           align: 'center',
           verticalAlign: 'middle',
           y: 1,
@@ -228,7 +230,7 @@ import {LineChart} from "../linechart"
           }
         },
         series: [{
-          data: this.state.values.objetives.domains
+          data: this.state.objetives.domains
         }]
       };
       var ObjetivesCompleted = {
@@ -251,7 +253,7 @@ import {LineChart} from "../linechart"
             text:"días de la semana"
           }
         },
-        series: this.state.values.activities.domains
+        series: this.state.activities.domains
       };
       var ActivitieCompleted = {
         credits: false,
@@ -273,7 +275,7 @@ import {LineChart} from "../linechart"
             text:"días de la semana"
           }
         },
-        series: this.state.values.activities.completeds
+        series: this.state.activities.completeds
       };
       return(
         <div className="mdl-grid demo-content">
