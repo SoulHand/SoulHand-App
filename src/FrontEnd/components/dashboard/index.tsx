@@ -218,7 +218,7 @@ import {LineChart} from "../linechart"
           }
         },
         subtitle: {
-          text: `${this.state.objetives.count}`,
+          text: `${this.state.objetives.progress.toFixed(2)}%`,
           align: 'center',
           verticalAlign: 'middle',
           y: 1,
