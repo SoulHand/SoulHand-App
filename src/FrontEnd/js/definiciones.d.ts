@@ -13,6 +13,7 @@ interface Window{
 	}
 	_BASE: string
 	progress: ProgressStatic
+	dialogPolyfill: any
 }
 declare let validator: any;
 declare let componentHandler: any;

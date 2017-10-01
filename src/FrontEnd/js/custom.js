@@ -1,6 +1,8 @@
 //Configuraciones para entorno y escritorios
 require("../vendor/material.min.js");
+require("dialog-polyfill/dialog-polyfill.css");
 
+window.dialogPolyfill = require("dialog-polyfill/dialog-polyfill.js");
 
 window.progress = {
     parent: null,

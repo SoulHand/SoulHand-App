@@ -225,6 +225,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 			},
 			{ $unwind: "$physics" },
 			{ $unwind: "$objetives" },
+			{ $unwind: "$objetives.objetive.cognitions" },
 			{ $sort: {"physics.date": 1} },
 			{
 				$group: {
@@ -233,6 +234,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 					min: { $min: "$objetives.completed" },
 					avg: { $avg: "$objetives.completed" },
 					data: { $push: "$objetives" },
+					cognitions: { $addToSet: "$objetives.objetive.cognitions" },
 					exp: { $sum: "$objetives.completed"},
 					physic: {$last: "$physics"}
 				}
@@ -243,8 +245,9 @@ module.exports = function (app, express, Schema, __DIR__) {
 					max: 1,
 					min: 1,
 					avg: 1,
-					physic: 1,
 					exp: { $multiply: ["$exp", 10] },
+					physic: 1,
+					cognitions: 1,
 					objetives: {
 						$map: {
 							input: "$data",

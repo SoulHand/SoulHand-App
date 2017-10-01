@@ -51,6 +51,7 @@
     "bootstrap": "^4.0.0-alpha.6",
     "bootstrap-sass": "^3.3.7",
     "ciweb": "git+https://github.com/matajmSoluciones/CIWeb.git",
+    "dialog-polyfill": "^0.4.9",
     "error-handler": "^1.0.0",
     "events": "^1.1.1",
     "express": "^4.14.0",

@@ -53,8 +53,10 @@ module.exports.isUser = function (request, response, next) {
 module.exports.isTeacherOrNot = function (request, response, next) {
   isUser(request, this).then((data) => {
     var bool = (data.user.isAdmin === true);
-    for(var i=0, n=data.user.people.mode.length; i<n; i++){
-      bool = bool || data.user.people.mode[i] == "TEACHER";
+    if (data.user.people.mode) {
+      for(var i=0, n=data.user.people.mode.length; i<n; i++){
+        bool = bool || data.user.people.mode[i] == "TEACHER";
+      }
     }
     if (!bool) {
       throw new UserException('No posee permisos!')
@@ -69,8 +71,10 @@ module.exports.isTeacherOrNot = function (request, response, next) {
 module.exports.isTeacher = function (request, response, next) {
   isUser(request, this).then((data) => {
     var bool = false;
-    for(var i=0, n=data.user.people.mode.length; i<n; i++){
-      bool = bool || data.user.people.mode[i] == "TEACHER";
+    if (data.user.people.mode){
+      for(var i=0, n=data.user.people.mode.length; i<n; i++){
+        bool = bool || data.user.people.mode[i] == "TEACHER";
+      }
     }
     if (!bool) {
       throw new UserException('No posee permisos!')

@@ -50,23 +50,7 @@ import { ProgressBar} from '../../progressbar'
           </header>
           <main className="mdl-layout__content mdl-color--white-100">
             <div className="mdl-grid demo-content">
-              <div className="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
-                <div className="mdl-cell mdl-cell--3-col mdl-cell--3-col-desktop width-center">
-                  <h5 className="mdl-typography--text-center">Puntos de experiencia</h5>
-                  <div id="ind1" className="card-circle-ld mdl-color--blue-900">{this.state.exp} XP</div>
-                    <div className="mdl-tooltip" data-mdl-for="ind1">
-                      La experiencia mide la cantidad de aciertos.
-                    </div>
-                </div>
-                <div className="mdl-cell mdl-cell--3-col mdl-cell--3-col-desktop width-center">
-                  <h5 className="mdl-typography--text-center">Promedio de aciertos</h5>
-                  <div id="ind2" className="card-circle-ld mdl-color--red-500">{this.state.avg}</div>
-                    <div className="mdl-tooltip" data-mdl-for="ind2">
-                      Estima la frecuencia de aciertos en el alumno.
-                    </div>
-                </div>
-              </div>
-              <div className="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--12-col">
+              <div className="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--8-col">
                 <h3>Conocimientos previos</h3>
                <table className="mdl-data-table mdl-js-data-table resize">
                  <thead>
@@ -94,6 +78,16 @@ import { ProgressBar} from '../../progressbar'
                    }
                  </tbody>
                </table>
+              </div>
+              <div className="demo-cards mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing">
+                <div className="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
+                  <div className="mdl-card__title mdl-card--expand mdl-color--teal-300">
+                    <h2 className="mdl-card__title-text mdl-typography--text-center">Puntos de experiencia</h2>
+                  </div>
+                  <div className="mdl-card__supporting-text mdl-color-text--grey-600">
+                    <h1 className="mdl-typography--text-center display-2">{this.state.exp} XP</h1>
+                  </div>
+                </div>
               </div>
             </div>
           </main>

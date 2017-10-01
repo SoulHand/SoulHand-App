@@ -5,7 +5,6 @@ import * as List from '../profiles/student'
 import { ProgressBar } from '../progressbar'
 import { LineChart } from "../linechart"
 
-
 @withRouter
 export class View extends React.Component<Props.teacherView, { student: People.student, report: any, graphs:any, weights: any, heights: any}>{
    public session: User.session;
@@ -17,6 +16,22 @@ export class View extends React.Component<Props.teacherView, { student: People.s
    }
    componentDidUpdate(){
      componentHandler.upgradeAllRegistered();
+   }
+   showKnowEdge(e: any){
+     e.preventDefault();
+     var modal: any = document.getElementById("knowedge");
+     if (!modal.showModal) {
+       window.dialogPolyfill.registerDialog(modal);
+     }
+     modal.showModal();
+   }
+   hidenKnowEdge(e: any){
+     e.preventDefault();
+     var modal: any = document.getElementById("knowedge");
+     if (!modal.showModal) {
+       window.dialogPolyfill.registerDialog(modal);
+     }
+     modal.close();
    }
    delete(){
      ajax({
@@ -314,62 +329,36 @@ export class View extends React.Component<Props.teacherView, { student: People.s
                 <LineChart id="HeightHistory" config={chart2} />
                 <LineChart id="WeightHistory" config={chart3} />
               </div>
-              {
-                /*
-
-              <div className="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--8-col">
-                <h3 className="mdl-typography--text-center">Conocimientos previos</h3>
-                <table className="mdl-data-table mdl-js-data-table resize">
-                  <thead>
-                    <tr>
-                      <th className="mdl-data-table__cell--non-numeric td-ms-40">Objetivo</th>
-                      <th className="mdl-data-table__cell--non-numeric td-ms-20">Dominio</th>
-                      <th className="mdl-data-table__cell td-ms-15">Nivel</th>
-                      <th className="mdl-data-table__cell--non-numeric td-ms-25">Progreso</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {
-                      this.state.report.objetives.map((row: any) => {
-                        return (
-                          <tr key={row._id}>
-                            <td className="mdl-data-table__cell--non-numeric"><span>{row.objetive.name}</span></td>
-                            <td className="mdl-data-table__cell--non-numeric">{row.objetive.domain.name}</td>
-                            <td className="mdl-data-table__cell">{row.objetive.level.level}</td>
-                            <td className="mdl-data-table__cell--non-numeric">
-                              <ProgressBar title={`${row.exp} XP`} width={row.avg} />
-                            </td>
-                          </tr>
-                        );
-                      })
-                    }
-                  </tbody>
-                </table>
-              </div>
-                 */
-              }
               <div className="demo-cards mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing">
                 <div className="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
                   <div className="mdl-card__title mdl-card--expand mdl-color--teal-300">
-                    <h2 className="mdl-card__title-text">Puntos de experiencia</h2>
+                   <h2 className="mdl-card__title-text mdl-typography--text-center">Puntos de experiencia</h2>
                   </div>
                   <div className="mdl-card__supporting-text mdl-color-text--grey-600">
                    <h1 className="mdl-typography--text-center display-2">{this.state.report.exp} XP</h1>
                 </div>
                   <div className="mdl-card__actions mdl-card--border">
-                    <a href="#" className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver detalles</a>
+                   <Link to={`/students/get/${this.props.routeParams.id}/objetives`} className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver detalles</Link>
                   </div>
                 </div>
-              </div>
-              <div className="demo-cards mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing">
                 <div className="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
                   <div className="mdl-card__title mdl-card--expand mdl-color--teal-300">
-                    <h2 className="mdl-card__title-text">Desarrollo físico</h2>
+                   <h2 className="mdl-card__title-text mdl-typography--text-center">Desarrollo físico</h2>
                   </div>
                   <div className="mdl-card__supporting-text mdl-color-text--grey-600">
-                   <h3 className="mdl-typography--text-center">{this.state.report.physic.height} cm</h3>
-                   <h3 className="mdl-typography--text-center">{this.state.report.physic.weight} kg</h3>
-                </div>
+                    <div className="mdl-grid">
+                      <div className="mdl-cell mdl-cell--6-col">
+                        <p className="mdl-typography--text-center display-2">Altura</p>
+                        <p className="mdl-typography--text-center display-2">{this.state.report.physic.height} cm</p>
+                      </div>
+                      <div className="mdl-cell mdl-cell--6-col">
+                        <p className="mdl-typography--text-center display-2">Peso</p>
+                        <p className="mdl-typography--text-center display-2">{this.state.report.physic.weight} kg</p>
+                      </div>
+                    </div>
+                    <p className="mdl-typography--text-center">Registrado: {new Date(this.state.report.physic.date).toLocaleString()}</p>
+                  </div>
+                  <br/>
                   <div className="mdl-card__actions mdl-card--border">
                     <a href="#" className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver detalles</a>
                   </div>
@@ -399,6 +388,40 @@ export class View extends React.Component<Props.teacherView, { student: People.s
                   </tbody>
                 </table>
               </div>
+              <dialog className="mdl-dialog" id="knowedge" key="knowedge">
+               <div className="mdl-dialog__content mdl-dialog__actions--full-width">
+                 <h3 className="mdl-typography--text-center">Conocimientos previos</h3>
+                 <table className="mdl-data-table mdl-js-data-table resize">
+                   <thead>
+                     <tr>
+                       <th className="mdl-data-table__cell--non-numeric td-ms-40">Objetivo</th>
+                       <th className="mdl-data-table__cell--non-numeric td-ms-20">Dominio</th>
+                       <th className="mdl-data-table__cell td-ms-15">Nivel</th>
+                       <th className="mdl-data-table__cell--non-numeric td-ms-25">Progreso</th>
+                     </tr>
+                   </thead>
+                   <tbody>
+                     {
+                       this.state.report.objetives.map((row: any) => {
+                         return (
+                           <tr key={"tr-" + row._id}>
+                             <td className="mdl-data-table__cell--non-numeric"><span>{row.objetive.name}</span></td>
+                             <td className="mdl-data-table__cell--non-numeric">{row.objetive.domain.name}</td>
+                             <td className="mdl-data-table__cell">{row.objetive.level.level}</td>
+                             <td className="mdl-data-table__cell--non-numeric">
+                               <ProgressBar title={`${row.exp} XP`} width={row.avg} />
+                             </td>
+                           </tr>
+                         );
+                       })
+                     }
+                   </tbody>
+                 </table>
+                </div>
+                <div className="mdl-dialog__actions">
+                 <button type="button" className="mdl-button close" onClick={this.hidenKnowEdge.bind(this)}>Cerrar</button>
+                </div>
+              </dialog>
           </div>
         </main>
        </div>
