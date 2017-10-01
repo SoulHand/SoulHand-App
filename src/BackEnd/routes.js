@@ -2244,10 +2244,11 @@ module.exports = function (app, express, Schema, __DIR__) {
 			throw new ValidatorException("El id es invalido!");
 		}
 		Schema.Students.findOne({_id:request.params.id}).then(function(data){
-			var now=Date.now();
-			var last=new Date(`${data.data.birthdate}T00:00:00`);
-			var age=Math.round((now-last.getTime())/31536000000);
-			var element=Schema.physic({
+			var now = Date.now();
+			var dates = data.data.birthdate.split("-");
+			var last = Date.UTC(dates[2], dates[1], dates[0]);
+			var age = Math.round((now - last) / 31536e+6);
+			var element = Schema.physic({
 				weight:request.body.weight,
 				height:request.body.height,
 				age:age
