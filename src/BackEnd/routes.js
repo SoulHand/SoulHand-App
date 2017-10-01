@@ -36,7 +36,13 @@ module.exports = function (app, express, Schema, __DIR__) {
     .then((row) => {
       if (!row) {
         throw new ValidatorException('No existe el docente!')
-      }
+			}
+			var query = null;
+			if (row.grade) {
+				query = Schema.Students.find({
+					"grade._id": ObjectId(row.grade._id)
+				})
+			}
       return Promise.all([
 				Schema.Activities.find({
 					$and: [
@@ -89,9 +95,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 						}
 					]
 				}),
-				Schema.Students.find({
-					"grade._id": row.grade._id
-				})
+				query
 				/*,
 				Schema.Activities.aggregate([
 					{
@@ -129,12 +133,16 @@ module.exports = function (app, express, Schema, __DIR__) {
 				},
 				students:{
 					fails: {
-						data: students,
-						count: students.length
+						data: [],
+						count: 0
 					}
 				}
 			};
 			let objetives = [], min, max = 0;
+			if (students) {
+				count.students.fails.data = students;
+				count.students.fails.count = students.length;
+			}
 			activitiesAll.forEach((row) => {
 				row.objetives.forEach((objetive) => {
 					objetives.push(objetive);
@@ -222,7 +230,8 @@ module.exports = function (app, express, Schema, __DIR__) {
 					max: { $max: "$objetives.completed" },
 					min: { $min: "$objetives.completed" },
 					avg: { $avg: "$objetives.completed" },
-					data: { $push: "$objetives" }
+					data: { $push: "$objetives" },
+					exp: { $sum: "$objetives.completed"}
 				}
 			},
 			{
@@ -231,6 +240,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 					max: 1,
 					min: 1,
 					avg: 1,
+					exp: { $multiply: ["$exp", 10] },
 					objetives: {
 						$map: {
 							input: "$data",
@@ -256,7 +266,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 				if (!data) {
 					throw new ValidatorException("No existe el alumno!");
 				}
-				response.send(data);
+				response.send(data[0]);
 			}).catch(function (error) {
 				next(error);
 			});
