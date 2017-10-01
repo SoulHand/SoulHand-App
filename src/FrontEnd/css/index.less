@@ -212,27 +212,51 @@ div[data-app="soulhand-app"]{
 table.resize{
   width: 98%;
   margin: 0% auto;
-  td > span{
-    display: block;
+  table-layout: fixed;
+  th{
+    text-align: center !important;
+  }
+  td, th {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     word-break: normal;
-  }
-}
-@media screen and (max-width: 480px) {
-  table.resize table.resize td > span{
-    max-width: 15vw;
-  }
-}
-@media screen and (max-width: 640px) {
-  table.resize td > span{
-    max-width: 17vw;
-  }
-}
-@media screen and (min-width: 800px) {
-  table.resize td > span{
-    max-width: 33vw;
+    &.td-ms-10 {
+      width: 10%;
+    }
+    &.td-ms-15 {
+      width: 15%;
+    }
+    &.td-ms-20 {
+      width: 20%;
+    }
+    &.td-ms-25 {
+      width: 25%;
+    }
+    &.td-ms-30 {
+      width: 30%;
+    }
+    &.td-ms-35 {
+      width: 35%;
+    }
+    &.td-ms-40 {
+      width: 40%;
+    }
+    &.td-ms-45 {
+      width: 45%;
+    }
+    &.td-ms-50 {
+      width: 50%;
+    }
+    &.td-ms-55 {
+      width: 55%;
+    }
+    &.td-ms-60 {
+      width: 60%;
+    }
+    &.td-ms-65 {
+      width: 65%;
+    }
   }
 }
 .demo-main .demo-content {
