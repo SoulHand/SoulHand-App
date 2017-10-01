@@ -11,3 +11,4 @@ logs/
 *.sublime-*
 *.log
 _SpecRunner.html
+.vscode

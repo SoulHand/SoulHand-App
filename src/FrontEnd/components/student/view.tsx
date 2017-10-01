@@ -361,6 +361,20 @@ export class View extends React.Component<Props.teacherView, { student: People.s
                   </div>
                 </div>
               </div>
+              <div className="demo-cards mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing">
+                <div className="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
+                  <div className="mdl-card__title mdl-card--expand mdl-color--teal-300">
+                    <h2 className="mdl-card__title-text">Desarrollo físico</h2>
+                  </div>
+                  <div className="mdl-card__supporting-text mdl-color-text--grey-600">
+                   <h3 className="mdl-typography--text-center">{this.state.report.physic.height} cm</h3>
+                   <h3 className="mdl-typography--text-center">{this.state.report.physic.weight} kg</h3>
+                </div>
+                  <div className="mdl-card__actions mdl-card--border">
+                    <a href="#" className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver detalles</a>
+                  </div>
+                </div>
+              </div>
               <div className="demo-graphs mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col mdl-grid">
                 <h3 className="mdl-typography--text-center">Historial de eventos</h3>
                 <table className="mdl-data-table mdl-js-data-table resize">

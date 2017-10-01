@@ -223,7 +223,9 @@ module.exports = function (app, express, Schema, __DIR__) {
 			{
 				$match: { "_id": ObjectId(request.params.id) }
 			},
+			{ $unwind: "$physics" },
 			{ $unwind: "$objetives" },
+			{ $sort: {"physics.date": 1} },
 			{
 				$group: {
 					_id: "$_id",
@@ -231,7 +233,8 @@ module.exports = function (app, express, Schema, __DIR__) {
 					min: { $min: "$objetives.completed" },
 					avg: { $avg: "$objetives.completed" },
 					data: { $push: "$objetives" },
-					exp: { $sum: "$objetives.completed"}
+					exp: { $sum: "$objetives.completed"},
+					physic: {$last: "$physics"}
 				}
 			},
 			{
@@ -240,6 +243,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 					max: 1,
 					min: 1,
 					avg: 1,
+					physic: 1,
 					exp: { $multiply: ["$exp", 10] },
 					objetives: {
 						$map: {
