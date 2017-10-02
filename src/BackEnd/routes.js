@@ -985,9 +985,74 @@ module.exports = function (app, express, Schema, __DIR__) {
 				});
 				return row;
 			});
-			console.log(JSON.stringify(_conductuals));
-      return Events.get('OBJETIVES-ADD');
-    }).then((data) => {
+			return Promise.all([
+				_conductuals,
+				Schema.events.findOne({ name: 'OBJETIVES-ADD-FAIL'}),
+				Schema.events.findOne({ name: 'OBJETIVES-ADD-CONTEXT'})
+			]);
+		}).then((data) => {
+			var EventClass = Schema.events, _EventFail = data[1], _helpEvent = data[2];
+			if (!_EventFail){
+				_EventFail = new EventClass({
+					name: 'OBJETIVES-ADD-FAIL',
+					objects: {
+						p1: 'request.body.name',
+						p2: 'request.body.description',
+						p3: 'request.body.course'
+					},
+					premises:[]
+				});
+			}
+			if (!_helpEvent){
+				_helpEvent = new EventClass({
+					name: 'OBJETIVES-PRIORITY-CONTEXT',
+					objects: {
+						p1: 'data[0][i][0]', // id del dominio.
+						p2: 'data[0][i][1]', // palabras claves (dominio)
+						p3: 'data[0][i][2][j][0]', //id del nivel
+						p4: 'data[0][i][2][j]' // palabras claves (nivel)
+					},
+					premises:[]
+				});
+			}
+			console.log(_EventFail.premises);
+			var _fails = Events.ChainGetAll(_EventFail.premises, {
+				p1: request.body.name,
+				p2: request.body.description,
+				p3: request.body.course
+			});
+			for (var i = 0, n = _fails.length; i < n; i++){
+					if(_fails[i].q1){
+						throw new ValidatorException(_fails[i].q1);
+					}
+			}
+			if(_fails.length == 0 && (!data[0] || data[0].length == 0)){
+				var keywords = [];
+				var verbo = /^[a-z]+(?:ar|er|ir|an|en|os|as|)$/ig;
+				var text = (request.body.name + " " + request.body.description);
+				var words = text.replace(/\n|\t/, '').split(" ");
+				for( var i = 0, n = words.length; i<n; i++){
+					if (!verbo.test(words[i]) || words[i].length <= 3){
+						continue;
+					}
+					keywords.push(words[i]);
+				}
+				if(keywords.length > 0){
+					var _inference = new Schema.inferences({
+						premise:`this.isContaint(p1, ${JSON.stringify(keywords)})`,
+						consecuent: 'q1 = "El objetivo no posee un verbo observable. Esto reduce la efectividad del objetivo!"'
+					});
+					_EventFail.premises.push(_inference);
+					_EventFail.save();
+				}
+				throw new ValidatorException("Uff!. Lo sentimos no pudimos interpretar su objetivo, intente nuevamente.");
+			}
+			//_helpEvent.save();
+			return _EventFail.save();
+		//})
+
+
+    /*}).then((data) => {
       if (!data) {
         var EventClass = Schema.events
         var helpEvent = new EventClass({
@@ -1114,7 +1179,7 @@ module.exports = function (app, express, Schema, __DIR__) {
       adds.forEach((row) => {
         _objetive.cognitions.push(row);
       });
-      return _objetive.save();
+      return _objetive.save();*/
     }).then((data) => {
       response.send(data)
     }).catch((error) => {
