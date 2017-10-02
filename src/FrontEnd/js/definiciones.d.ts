@@ -262,6 +262,7 @@ declare namespace CRUD{
 		description:string
 		level:number
 		_v:number
+		words: Array<string>
 	}
 	interface objetive{
       __v: number
