@@ -8,7 +8,8 @@
     "compiler": "node node_modules/webpack/bin/webpack.js",
     "export": "mongodump --db SoulHand --out database",
     "import": "mongorestore database",
-    "start": "node index.js"
+    "start": "node index.js",
+    "debug": "DEBUG=express:* node_modules/hotnode/javascript/hotnode.js index.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,7 @@
     "grunt-cli": "^1.2.0",
     "grunt-contrib-jasmine": "^0.5.3",
     "grunt-template-jasmine-requirejs": "^0.1.10",
+    "hotnode": "0.0.8",
     "jasmine-node": "^1.14.5",
     "json-loader": "^0.5.4",
     "less": "^2.7.2",
