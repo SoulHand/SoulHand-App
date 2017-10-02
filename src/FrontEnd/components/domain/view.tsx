@@ -12,6 +12,44 @@ import {Level} from '../cards/level'
      let str = localStorage.getItem("session");
      this.session = JSON.parse(str);
    }
+   sendKey(event: any){
+     event.preventDefault();
+     this.state.words.forEach((row) => {
+       if (row == event.target.keyword.value){
+        throw new Error("No se admiten duplicados!");
+      }
+     });
+     this.state.words.push(event.target.keyword.value);
+     event.target.reset();
+     let p1 = ajax({
+       method: "PUT",
+       url: `${window._BASE}/v1/learning/domain/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       dataType: "json",
+       data: {
+         words: JSON.stringify(this.state.words)
+       }
+     });
+     p1.done((domain: CRUD.domain) => {
+        this.hidenKey();
+        this.setState(domain);
+     });
+   }
+   delete(id: string){
+     var _result = this.state.words.filter((row) => {
+        return row != id;
+     });
+     let p1 = ajax({
+       method: "PUT",
+       url: `${window._BASE}/v1/learning/domain/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       dataType: "json",
+       data: {
+         words: JSON.stringify(_result)
+       }
+     });
+     p1.done((domain: CRUD.domain) => {
+        this.setState(domain);
+     });
+   }
    componentDidUpdate(){
      componentHandler.upgradeAllRegistered();
    }
@@ -27,16 +65,14 @@ import {Level} from '../cards/level'
        this.setState(domain);
      });
    }
-   showKey(e: any) {
-     e.preventDefault();
+   showKey() {
      var modal: any = document.getElementById("keyword-add");
      if (!modal.showModal) {
        window.dialogPolyfill.registerDialog(modal);
      }
      modal.showModal();
    }
-   hidenKey(e: any) {
-     e.preventDefault();
+   hidenKey() {
      var modal: any = document.getElementById("keyword-add");
      if (!modal.showModal) {
        window.dialogPolyfill.registerDialog(modal);
@@ -102,7 +138,7 @@ import {Level} from '../cards/level'
                       return (
                         <span className="mdl-chip">
                           <span className="mdl-chip__text">{row}</span>
-                          <button type="button" className="mdl-chip__action"><i className="material-icons">cancel</i></button>
+                          <button type="button" className="mdl-chip__action" onClick={this.delete.bind(this, row)}><i className="material-icons">cancel</i></button>
                         </span>
                       );
                     })}
@@ -120,12 +156,19 @@ import {Level} from '../cards/level'
               </div>
            </div>
            <dialog className="mdl-dialog" id="keyword-add" key="keyword-add">
-             <div className="mdl-dialog__content mdl-dialog__actions--full-width">
-
-             </div>
-             <div className="mdl-dialog__actions">
-               <button type="button" className="mdl-button close" onClick={this.hidenKey.bind(this)}>Cerrar</button>
-             </div>
+             <form method="PUT" id="keyword" onSubmit={this.sendKey.bind(this)}>
+              <div className="mdl-dialog__content mdl-dialog__actions--full-width">
+                 <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                   <input className="mdl-textfield__input" type="text" id="keyword" required={true}/>
+                   <label className="mdl-textfield__label" htmlFor="name">Palabra clave*</label>
+                   <span className="mdl-textfield__error">Es requerido</span>
+                 </div>
+              </div>
+              <div className="mdl-dialog__actions">
+                <button type="submit" className="mdl-button open">Añadir</button>
+                <button type="button" className="mdl-button close" onClick={this.hidenKey.bind(this)}>Cerrar</button>
+              </div>
+            </form>
            </dialog>
          </main>
        </div>
