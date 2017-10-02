@@ -1,6 +1,7 @@
 //Configuraciones para entorno y escritorios
 require("../vendor/material.min.js");
 require("dialog-polyfill/dialog-polyfill.css");
+require("material-datetime-picker/dist/material-datetime-picker.css");
 
 window.dialogPolyfill = require("dialog-polyfill/dialog-polyfill.js");
 

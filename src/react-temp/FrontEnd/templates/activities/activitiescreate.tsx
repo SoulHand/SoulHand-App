@@ -3,6 +3,7 @@ import 'string-validator';
 import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
 
+
 @withRouter
 export class ActivitiesCreate extends React.Component<Props.GenericRouter, states.MatterList> {
 	public session:users.sessions;

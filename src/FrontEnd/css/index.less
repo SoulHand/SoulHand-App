@@ -293,3 +293,42 @@ table.resize{
   font-size: 2em;
   color: #fbfbfb;
 }
+.c-datepicker--open, .c-scrim--shown{
+  z-index: 1000;
+}
+.c-datepicker__header-date {
+    height: 140px;
+    padding: 15px 0;
+}
+.c-datepicker__header-date__day {
+    font-size: 50px;
+}
+.c-datepicker__header-date span {
+  margin: 21px;
+}
+.c-datepicker__day-body {
+  margin: 2px 12px;
+}
+.c-datepicker__header-date{
+  line-height: 47px;
+}
+
+@media screen and (max-height: 600px){
+  .c-datepicker__day-body {
+    font-size: 12px !important;
+    width: 36px !important;
+    height: 33px !important;
+  }
+  .c-datepicker__header-date {
+    padding: 2px 0px !important;
+  }
+  .c-datepicker__toggle {
+    top: 143px !important;
+  }
+  .c-datepicker__days {
+      margin: 2px 15px !important;
+  }
+  .c-datepicker {
+      min-height: 520px !important;
+  }
+}

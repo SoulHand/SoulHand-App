@@ -42,6 +42,7 @@ module.exports = {
   plugins: [
     new webpack.ProvidePlugin({
       $: 'jquery',
+      "window.$": 'jquery',
       validator: 'string-validator',
       jQuery: 'jquery',
       Tether: 'tether',

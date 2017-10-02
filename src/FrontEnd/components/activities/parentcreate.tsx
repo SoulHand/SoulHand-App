@@ -3,6 +3,9 @@ import {withRouter} from 'react-router'
 import {Link} from 'react-router'
 import {FormUtils} from '../formutils'
 import {ajax} from 'jquery'
+import * as MaterialDateTimePicker from 'material-datetime-picker'
+import * as moment from 'moment'
+
 
 @withRouter
  export class ParentCreate extends FormUtils<{router: any}, {}>{
@@ -53,22 +56,22 @@ import {ajax} from 'jquery'
     }
     values.expire = values.expire.replace(/([0-9]{2})\-([0-9]{2})\-([0-9]{4})/ig,"$3-$2-$1")
     ajax({
-			method:"POST",
-	        url: `${window._BASE}/v1/activities/${values.course}/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
-	        dataType: "json",
-	        data:values,
-	        success:(data:any)=>{
-	        	this.props.router.replace('/parents');
-	        },
-	        error:(data:any)=>{
-	        	var state: CRUD.codeError = data.responseJSON;
-            var config = {
-              message: state.message,
-              timeout: 2000
-            };
-            var message: any = document.querySelector('.mdl-js-snackbar')
-            message.MaterialSnackbar.showSnackbar(config);
-	        }
+        method:"POST",
+        url: `${window._BASE}/v1/activities/${values.course}/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+        dataType: "json",
+        data:values,
+        success:(data:any)=>{
+          this.props.router.replace('/parents');
+        },
+        error:(data:any)=>{
+          var state: CRUD.codeError = data.responseJSON;
+          var config = {
+            message: state.message,
+            timeout: 2000
+          };
+          var message: any = document.querySelector('.mdl-js-snackbar')
+          message.MaterialSnackbar.showSnackbar(config);
+        }
 		});
   }
    componentDidMount(){
@@ -82,8 +85,17 @@ import {ajax} from 'jquery'
         this.setState({
           courses: rows
         })
-     })
+     });
      componentHandler.upgradeAllRegistered();
+     const input: any = document.querySelector('.c-datepicker-input');
+     var now = moment();
+     //input.value = now.format("DD-MM-YYYY HH:mm:ss");
+     const picker = new MaterialDateTimePicker()
+       .on('submit', (val: any) => {
+         input.value = val.format("DD-MM-YYYY HH:mm:ss");
+       });
+     console.log(picker);
+     input.addEventListener('focus', () => picker.open());
    }
    render(){
      return(
@@ -117,9 +129,9 @@ import {ajax} from 'jquery'
                </div>
                <div className="mdl-cell mdl-cell--6-col">
                 <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.expire) ? 'is-invalid' :'')}>
-                   <input className="mdl-textfield__input" type="text" id="expire" pattern="^[0-9]{2}\-[0-9]{2}-[0-9]{4} [0-9]{2}\:[0-9]{2}\:[0-9]{2}$" onChange={(e:any)=>{this.getFields(e)}}/>
-                   <label className="mdl-textfield__label" htmlFor="expire">Fecha de expiración*</label>
-                   <span className="mdl-textfield__error">Es necesaria una fecha en formato d-m-Y</span>
+                  <input className="mdl-textfield__input c-datepicker-input" type="text" id="expire" pattern="^[0-9]{2}\-[0-9]{2}-[0-9]{4} [0-9]{2}\:[0-9]{2}\:[0-9]{2}$" onChange={(e:any)=>{this.getFields(e)}}/>
+                  <label className="mdl-textfield__label" htmlFor="expire">Fecha de expiración*</label>
+                  <span className="mdl-textfield__error">Es necesaria una fecha en formato d-m-Y</span>
                  </div>
                </div>
                <div className="mdl-cell mdl-cell--6-col">
