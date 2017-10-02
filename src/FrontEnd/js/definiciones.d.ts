@@ -254,6 +254,7 @@ declare namespace CRUD{
 		_v:number
 		levels: Array<level>
 		cognitions:Array<cognition>
+		words:Array<string>
 	}
 	interface level{
 		_id:string

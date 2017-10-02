@@ -4,16 +4,13 @@ import {Link, withRouter} from 'react-router'
 import {Level} from '../cards/level'
 
 @withRouter
- export class View extends React.Component <Props.teacherView, {levels: Array<CRUD.level>, domain: string}>{
+ export class View extends React.Component <Props.teacherView, CRUD.domain>{
    public session: User.session;
+   public init: boolean = false;
    constructor(props:Props.teacherView){
      super(props)
      let str = localStorage.getItem("session");
      this.session = JSON.parse(str);
-     this.state = {
-       levels: null,
-       domain: null
-     };
    }
    componentDidUpdate(){
      componentHandler.upgradeAllRegistered();
@@ -26,24 +23,29 @@ import {Level} from '../cards/level'
        data:null
      });
      p1.done((domain: CRUD.domain) => {
-       this.setState({
-         levels: domain.levels,
-         domain:domain.name
-       })
+       this.init = true;
+       this.setState(domain);
      });
    }
+   showKey(e: any) {
+     e.preventDefault();
+     var modal: any = document.getElementById("keyword-add");
+     if (!modal.showModal) {
+       window.dialogPolyfill.registerDialog(modal);
+     }
+     modal.showModal();
+   }
+   hidenKey(e: any) {
+     e.preventDefault();
+     var modal: any = document.getElementById("keyword-add");
+     if (!modal.showModal) {
+       window.dialogPolyfill.registerDialog(modal);
+     }
+     modal.close();
+   }
    render(){
-     let body: any = (
-       <div className="mdl-grid mdl-color--white demo-content">
-          <div className="mdl-spinner mdl-js-spinner is-active"></div>
-       </div>
-     );
-     if(this.state.levels){
-       body = this.state.levels.map((row) => {
-         return (
-           <Level session={this.session} level={row} key={row._id} domain={this.state.domain}/>
-         );
-       })
+     if(!this.init){
+       return null;
      }
      return(
        <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
@@ -56,8 +58,75 @@ import {Level} from '../cards/level'
        </header>
          <main className="mdl-layout__content mdl-color--white-100">
            <div className="mdl-grid demo-content">
-              {body}
+              <div className="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+                <div className="mdl-grid mdl-color--white demo-content">
+                  <div className="mdl-cell--6-col mdl-cell--middle">
+                    <div className="mdl-textfield">
+                      <label className="mdl-input__expandable-holder">Nombre del dominio</label>
+                      <div className="mdl-textfield__input">
+                        {this.state.name}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mdl-cell--6-col mdl-cell--middle">
+                    <div className="mdl-textfield">
+                      <label className="mdl-input__expandable-holder">Numero de niveles</label>
+                      <div className="mdl-textfield__input">
+                        {this.state.levels.length} Niveles
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mdl-cell--6-col mdl-cell--middle">
+                    <div className="mdl-textfield">
+                      <label className="mdl-input__expandable-holder">Descripción</label>
+                      <div className="mdl-textfield__input">
+                        {this.state.description}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="mdl-grid mdl-color--white">
+                 <div className="mdl-cell--2-col mdl-cell--middle">
+                   <label className="mdl-input__expandable">Palabras claves</label>
+                 </div>
+                 <div className="mdl-cell--2-col mdl-cell--middle">
+                    <button id="add-keyword" className="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" onClick={this.showKey.bind(this)}>
+                      <i className="material-icons">add</i>
+                    </button>
+                    <div className="mdl-tooltip" data-mdl-for="add-keyword">
+                      Añadir una palabra clave
+                    </div>
+                 </div>
+                 <div className="mdl-cell--10-col mdl-cell--middle">
+                    {this.state.words.map((row) => {
+                      return (
+                        <span className="mdl-chip">
+                          <span className="mdl-chip__text">{row}</span>
+                          <button type="button" className="mdl-chip__action"><i className="material-icons">cancel</i></button>
+                        </span>
+                      );
+                    })}
+                 </div>
+                </div>
+              </div>
+              <div className="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+                {
+                  this.state.levels.map((row) => {
+                    return (
+                      <Level session={this.session} level={row} key={row._id} domain={this.state.name} />
+                    );
+                  })
+                }
+              </div>
            </div>
+           <dialog className="mdl-dialog" id="keyword-add" key="keyword-add">
+             <div className="mdl-dialog__content mdl-dialog__actions--full-width">
+
+             </div>
+             <div className="mdl-dialog__actions">
+               <button type="button" className="mdl-button close" onClick={this.hidenKey.bind(this)}>Cerrar</button>
+             </div>
+           </dialog>
          </main>
        </div>
      );
