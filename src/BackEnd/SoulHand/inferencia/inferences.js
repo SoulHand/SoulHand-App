@@ -41,16 +41,18 @@ class Inferences extends EventEmitter {
   ChainGetAll (premises, varGlobals) {
     var exp = new RegExp('([p-t][0-9]+)', 'g')
     var matchs = []
-    premises.forEach((premise) => {
+    for (var i = 0, n = premises.length; i<n; i++){
+      var premise = premises[i];
       var condition = premise.premise.replace(exp, 'varGlobals.$1')
       var p1 = eval(condition)
-      if (p1) {
-        var vars = {}
-        var consecuent = premise.consecuent.replace(exp, 'vars.$1')
-        eval(consecuent)
-        matchs.push(vars)
+      if (!p1) {
+        continue;
       }
-    })
+      var vars = {}
+      var consecuent = premise.consecuent.replace(exp, 'vars.$1')
+      eval(consecuent)
+      matchs.push(vars)
+    }
     return matchs
   }
 
