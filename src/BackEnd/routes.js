@@ -602,7 +602,7 @@ module.exports = function (app, express, Schema, __DIR__) {
     if (request.body.description &&
     Validator.isNull()(request.body.description)) {
       throw new ValidatorException('Solo se aceptan textos categoricos')
-    }
+		}
     if(request.body.words){
       request.body.words = JSON.parse(request.body.words);
     }
@@ -612,8 +612,7 @@ module.exports = function (app, express, Schema, __DIR__) {
       }
       for (var i in row.schema.obj) {
         if (request.body[i]) {
-          console.log(i, request.body[i].length);
-          row[i] = request.body[i]
+          row[i] = request.body[i];
         }
       }
       return row.save()
@@ -854,6 +853,39 @@ module.exports = function (app, express, Schema, __DIR__) {
     })
   })
 
+	/*
+  * @api {put} /:id Editar un dominio del aprendizaje
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+	cognitions.put('/:domain/level/:id', Auth.isAdmin.bind(Schema),
+		function (request, response, next) {
+			if (!Validator.isMongoId()(request.params.id)) {
+				throw new ValidatorException('El id no es valido!')
+			}
+			if (!Validator.isJSON()(request.body.words)) {
+				throw new ValidatorException('No posee un formato valido!');
+			}
+			request.body.words = JSON.parse(request.body.words);
+			Schema.domainsLearning.findOne({ name: request.params.domain.toUpperCase() })
+				.then((data) => {
+					for (var i = 0, n = data.levels.length; i < n; i++) {
+						if (data.levels[i]._id.toString() === request.params.id.toString()) {
+							return [data,i];
+						}
+					}
+					throw new VoidException('No existe un resultado')
+				}).then((data) => {
+					data[0].levels[data[1]].words = request.body.words;
+					return data[0].save();
+				}).then((data) => {
+					response.send(data)
+				}).catch((error) => {
+					next(error)
+				})
+		})
+
   /*
   * @api {delete} /:id Eliminar un nivel de aprendizaje
   * @params request peticiones del cliente
@@ -899,15 +931,62 @@ module.exports = function (app, express, Schema, __DIR__) {
     if (Validator.isNull()(request.body.description)) {
       throw new ValidatorException('Es necesaria una description')
     }
+    if (Validator.isJSON()(request.body.conditions)) {
+      throw new ValidatorException('Las condiciones no son validas!')
+    }
+		if (request.body.exp
+					&& !Validator.isNumeric(request.body.exp)) {
+      throw new ValidatorException('Los puntos de exp deben ser numericos!');
+		}
+		if (request.body.exp
+			&& parseFloat(request.body.exp) <= 0) {
+			throw new ValidatorException('Los puntos de exp deben ser superiores a cero!');
+		}
     request.body.name = request.body.name.toUpperCase()
-    request.body.description = request.body.description.toUpperCase()
-
+		request.body.description = request.body.description.toUpperCase()
+		if (request.body.conditions){
+			request.body.conditions = JSON.parse(request.body.conditions);
+		}
+		if (!request.body.exp){
+			request.body.exp = 10; // evaluador principal
+		}
+		request.body.words = [];
     var _rules, _objetive;
     Schema.LearningObjetive.findOne({name: request.body.name}).then((row) => {
       if (row) {
         throw new ValidatorException('Ya existe un objetivo con el mismo nombre!')
-      }
-      return Events.get('OBJETIVES-ADD')
+			}
+			return Schema.domainsLearning.find();
+		}).then((domains) => {
+			var _conductuals = domains.map((domain) => {
+				if (domain.words.length == 0){
+					return [domain._id, []];
+				}
+				var _join = request.body.name + " " + request.body.description;
+				var _exp = new RegExp("(" + domain.words.join("|") + ")", "ig");
+				var _elements1 = _join.match(_exp);
+				var _levels = domain.levels.map((level) => {
+					if (level.words.length == 0) {
+						return [level._id, []];
+					}
+					var _exp = new RegExp("(" + level.words.join("|") + ")", "ig");
+					var _elements2 = _join.match(_exp);
+					return [level._id, _elements2];
+				});
+				return [domain._id, _elements1, _levels];
+				//request.body.words = request.body.words.concat(_elements);
+			});
+			_conductuals = _conductuals.filter((row)  => {
+				return row[1] && row[1].length > 0;
+			});
+			_conductuals = _conductuals.map((row) => {
+				row[2] = row[2].filter((row2) => {
+					return row2[1] && row2[1].length > 0;
+				});
+				return row;
+			});
+			console.log(JSON.stringify(_conductuals));
+      return Events.get('OBJETIVES-ADD');
     }).then((data) => {
       if (!data) {
         var EventClass = Schema.events
