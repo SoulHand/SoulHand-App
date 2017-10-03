@@ -61,7 +61,7 @@ import * as moment from 'moment'
         dataType: "json",
         data:values,
         success:(data:any)=>{
-          this.props.router.replace('/parents');
+          this.props.router.replace('/activity');
         },
         error:(data:any)=>{
           var state: CRUD.codeError = data.responseJSON;

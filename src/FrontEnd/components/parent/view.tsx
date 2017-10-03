@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link, withRouter} from 'react-router'
-import {Parent} from '../cards/parent'
+import {Student} from '../cards/student'
 import * as List from '../profiles/parent'
 
 @withRouter
@@ -17,6 +17,15 @@ import * as List from '../profiles/parent'
    }
    componentDidUpdate(){
      componentHandler.upgradeAllRegistered();
+   }
+   deleteStudent(student: People.student) {
+     this.state.parent.students = this.state.parent.students.filter((row) => {
+       if (row._id === student._id) {
+         return false;
+       }
+       return true;
+     })
+     this.setState(this.state);
    }
    delete(){
      ajax({
@@ -66,8 +75,12 @@ import * as List from '../profiles/parent'
            )}
            {this.state.parent && (
              <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
-               <li className="mdl-menu__item"><Link to={`/parents/edit/${this.props.routeParams.id}`}>Editar</Link></li>
-               <li className="mdl-menu__item"><Link to={`/students/create/${this.state.parent._id}`}>Asignar alumno</Link></li>
+                 <li className="mdl-menu__item" onClick={(e) => {
+                   this.props.router.replace(`/parents/edit/${this.props.routeParams.id}`);
+                 }}>Editar</li>
+                 <li className="mdl-menu__item" onClick={(e) => {
+                   this.props.router.replace(`/students/create/${this.state.parent._id}`);
+                 }}>Asignar alumno</li>
                <li className="mdl-menu__item" onClick={(e)=>{this.delete()}}>Eliminar</li>
              </ul>
            )}
@@ -75,6 +88,15 @@ import * as List from '../profiles/parent'
        </header>
           <main className="mdl-layout__content mdl-color--white-100">
             {body}
+            {this.state.parent && (
+             <div className="mdl-grid demo-content">
+               {this.state.parent.students.map((row) => {
+                 return (
+                   <Student key={row._id} student={row} session={this.session} delete={this.deleteStudent.bind(this)} />
+                 );
+               })}
+             </div>
+            )}
           </main>
        </div>
      );

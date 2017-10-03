@@ -45,14 +45,13 @@ import {ajax} from 'jquery'
       return;
     }
     values.parent = this.props.routeParams.id;
-    console.log(values, this.props.routeParams);
     ajax({
 			method:"POST",
 	        url: `${window._BASE}/v1/people/students/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
 	        data:values,
 	        success:(data:any)=>{
-	        	this.props.router.replace('/students');
+            this.props.router.replace(`/parents/get/${this.props.routeParams.id}`);
 	        },
 	        error:(data:any)=>{
 	        	var state: CRUD.codeError = data.responseJSON;

@@ -65,8 +65,12 @@ import * as List from '../profiles/teacher'
              </button>
            )}
            <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
-             <li className="mdl-menu__item"><Link to={`/teachers/edit/${this.props.routeParams.id}`}>Editar</Link></li>
-             <li className="mdl-menu__item"><Link to={`/teachers/grade/edit/${this.props.routeParams.id}`}>Asignar grado</Link></li>
+             <li className="mdl-menu__item" onClick={(e) => {
+                 this.props.router.replace(`/teachers/edit/${this.props.routeParams.id}`);
+               }}>Editar</li>
+             <li className="mdl-menu__item" onClick={(e) => {
+                 this.props.router.replace(`/teachers/grade/edit/${this.props.routeParams.id}`);
+             }}>Asignar grado</li>
              <li className="mdl-menu__item" onClick={(e)=>{this.delete()}}>Eliminar</li>
            </ul>
          </div>

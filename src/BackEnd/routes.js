@@ -273,7 +273,20 @@ module.exports = function (app, express, Schema, __DIR__) {
 				if (!data) {
 					throw new ValidatorException("No existe el alumno!");
 				}
-				response.send(data[0]);
+				if(!data[0]){
+					response.send({
+						_id: 0,
+						max: 0,
+						min: 0,
+						avg: 0,
+						exp: 0,
+						physic: null,
+						cognitions: null,
+						objetives: []
+					});
+				}else{
+					response.send(data[0]);
+				}
 			}).catch(function (error) {
 				next(error);
 			});
@@ -2154,8 +2167,8 @@ module.exports = function (app, express, Schema, __DIR__) {
 		if(request.body.name && Validator.matches(/[0-9]/)(request.body.name)){
 			throw new ValidatorException("Solo se aceptan nombres validos");
 		}
-		if(request.body.birthdate && !Validator.isDate()(request.body.birthdate)){
-			throw new ValidatorException("La fecha de nacimiento no es valida");
+		if (request.body.birthdate && !Validator.matches(/^[0-9]{2}\-[0-9]{2}-[0-9]{4}$/)(request.body.birthdate)) {
+			throw new ValidatorException('La fecha de nacimiento no es valida')
 		}
 		if(request.body.tel && !Validator.matches(/^[+]?([\d]{0,3})?[\(\.\-\s]?(([\d]{1,3})[\)\.\-\s]*)?(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/)(request.body.tel)){
 			throw new ValidatorException("El telefono no tiene un formato valido");
@@ -2395,7 +2408,6 @@ module.exports = function (app, express, Schema, __DIR__) {
 			return Schema.Peoples.findOne({"dni":student.data.dni});
 		});
 		p1.then(function(data){
-      console.log(data);
 			people=data;
 			var fields=people.toJSON();
 			for (i in fields){

@@ -341,28 +341,30 @@ export class View extends React.Component<Props.teacherView, { student: People.s
                    <Link to={`/students/get/${this.props.routeParams.id}/objetives`} className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver detalles</Link>
                   </div>
                 </div>
-                <div className="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
-                  <div className="mdl-card__title mdl-card--expand mdl-color--teal-300">
-                   <h2 className="mdl-card__title-text mdl-typography--text-center">Desarrollo físico</h2>
-                  </div>
-                  <div className="mdl-card__supporting-text mdl-color-text--grey-600">
-                    <div className="mdl-grid">
-                      <div className="mdl-cell mdl-cell--6-col">
-                        <p className="mdl-typography--text-center display-2">Altura</p>
-                        <p className="mdl-typography--text-center display-2">{this.state.report.physic.height} cm</p>
-                      </div>
-                      <div className="mdl-cell mdl-cell--6-col">
-                        <p className="mdl-typography--text-center display-2">Peso</p>
-                        <p className="mdl-typography--text-center display-2">{this.state.report.physic.weight} kg</p>
-                      </div>
+                {this.state.report.physic && (
+                  <div className="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
+                    <div className="mdl-card__title mdl-card--expand mdl-color--teal-300">
+                      <h2 className="mdl-card__title-text mdl-typography--text-center">Desarrollo físico</h2>
                     </div>
-                    <p className="mdl-typography--text-center">Registrado: {new Date(this.state.report.physic.date).toLocaleString()}</p>
+                    <div className="mdl-card__supporting-text mdl-color-text--grey-600">
+                      <div className="mdl-grid">
+                        <div className="mdl-cell mdl-cell--6-col">
+                          <p className="mdl-typography--text-center display-2">Altura</p>
+                          <p className="mdl-typography--text-center display-2">{this.state.report.physic.height} cm</p>
+                        </div>
+                        <div className="mdl-cell mdl-cell--6-col">
+                          <p className="mdl-typography--text-center display-2">Peso</p>
+                          <p className="mdl-typography--text-center display-2">{this.state.report.physic.weight} kg</p>
+                        </div>
+                      </div>
+                      <p className="mdl-typography--text-center">Registrado: {new Date(this.state.report.physic.date).toLocaleString()}</p>
+                    </div>
+                    <br />
+                    <div className="mdl-card__actions mdl-card--border">
+                      <a href="#" className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver detalles</a>
+                    </div>
                   </div>
-                  <br/>
-                  <div className="mdl-card__actions mdl-card--border">
-                    <a href="#" className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver detalles</a>
-                  </div>
-                </div>
+                )}                
               </div>
               <div className="demo-graphs mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col mdl-grid">
                 <h3 className="mdl-typography--text-center">Historial de eventos</h3>

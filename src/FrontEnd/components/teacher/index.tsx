@@ -50,13 +50,15 @@ import {ParentCreate} from './parentcreate'
      });
    }
    delete(teacher: People.teacher){
-     this.state.teachers = this.teachers.filter((row) => {
+     this.teachers = this.teachers.filter((row) => {
        if (row._id === teacher._id) {
          return false;
        }
        return true;
      })
-     this.setState(this.state);
+     this.setState({
+       teachers: this.teachers
+     });
    }
    render(){
      return(
