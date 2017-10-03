@@ -971,9 +971,9 @@ module.exports = function (app, express, Schema, __DIR__) {
 					}
 					var _exp = new RegExp("(" + level.words.join("|") + ")", "ig");
 					var _elements2 = _join.match(_exp);
-					return [level._id, _elements2];
+					return [level._id, _elements2, level];
 				});
-				return [domain._id, _elements1, _levels];
+				return [domain._id, _elements1, _levels, domain];
 				//request.body.words = request.body.words.concat(_elements);
 			});
 			_conductuals = _conductuals.filter((row)  => {
@@ -993,7 +993,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 			]);
 		}).then((data) => {
 			var EventClass = Schema.events, _EventFail = data[1],
-					_helpEvent = data[2], _WordsEvent = data[3];
+			_helpEvent = data[2], _WordsEvent = data[3];
 			if (!_EventFail){
 				_EventFail = new EventClass({
 					name: 'OBJETIVES-ADD-FAIL',
@@ -1004,6 +1004,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 					},
 					premises:[]
 				});
+				_EventFail.save();
 			}
 			if (!_helpEvent){
 				_helpEvent = new EventClass({
@@ -1016,6 +1017,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 					},
 					premises:[]
 				});
+				_helpEvent.save();
 			}
 			if (!_WordsEvent){
 				var exps = require("./words.js");
@@ -1051,6 +1053,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 					});
 					_WordsEvent.premises.push(_inference);
 				}
+				_WordsEvent.save();
 			}
 			var _fails = Events.ChainGetAll(_EventFail.premises, {
 				p1: request.body.name,
@@ -1095,13 +1098,43 @@ module.exports = function (app, express, Schema, __DIR__) {
 						consecuent: 'q1 = "El objetivo no posee un verbo observable. Esto reduce la efectividad del objetivo!"'
 					});
 					_EventFail.premises.push(_inference);
-					//_EventFail.save();
+					_EventFail.save();
 				}
 				throw new ValidatorException("Uff!. Lo sentimos no pudimos interpretar su objetivo, intente nuevamente.");
 			}
+			for(var i = 0, n = data[0].length; i<n; i++){
+				var domain = data[0][i];
+				domain[1] = domain[1].length;
+				for (var j = 0, m = domain[2]; j<m; j++){
+					domain[2][j][1] = domain[2][j][1].length;
+				}
+			}
+			var _domain = data[0].sort((row1, row2) => {
+				return row1[1] -row2[1];
+			})[0];
+			if (_fails.length == 0 && !_domain[2]) {
+				if (request.body.words.length > 0) {
+					var _inference = new Schema.inferences({
+						premise: `this.isContaint(p1, ${JSON.stringify(request.body.words)})`,
+						consecuent: 'q1 = "El objetivo no posee un verbo observable. Esto reduce la efectividad del objetivo!"'
+					});
+					_EventFail.premises.push(_inference);
+					_EventFail.save();
+				}
+				throw new ValidatorException("Uff!. No se pudo identificar un nivel valido!");
+			}
+			var _level = _domain[2].sort((row1, row2) => {
+				return row1[1] -row2[1];
+			})[0];
 
-			//_helpEvent.save();
-			return _EventFail.save();
+			var p1 = new Schema.LearningObjetive({
+				name: request.body.name,
+				description: request.body.description,
+				domain: _domain[3],
+				level: _level[2],
+				words: request.body.words
+			})
+			return p1.save();
 		//})
 
 
@@ -1234,6 +1267,7 @@ module.exports = function (app, express, Schema, __DIR__) {
       });
       return _objetive.save();*/
     }).then((data) => {
+			console.log(data);
       response.send(data)
     }).catch((error) => {
       next(error)
