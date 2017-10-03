@@ -988,10 +988,12 @@ module.exports = function (app, express, Schema, __DIR__) {
 			return Promise.all([
 				_conductuals,
 				Schema.events.findOne({ name: 'OBJETIVES-ADD-FAIL'}),
-				Schema.events.findOne({ name: 'OBJETIVES-ADD-CONTEXT'})
+				Schema.events.findOne({ name: 'OBJETIVES-ADD-CONTEXT'}),
+				Schema.events.findOne({ name: 'KEYWORDS-CONTEXT'})
 			]);
 		}).then((data) => {
-			var EventClass = Schema.events, _EventFail = data[1], _helpEvent = data[2];
+			var EventClass = Schema.events, _EventFail = data[1],
+					_helpEvent = data[2], _WordsEvent = data[3];
 			if (!_EventFail){
 				_EventFail = new EventClass({
 					name: 'OBJETIVES-ADD-FAIL',
@@ -1015,7 +1017,41 @@ module.exports = function (app, express, Schema, __DIR__) {
 					premises:[]
 				});
 			}
-			console.log(_EventFail.premises);
+			if (!_WordsEvent){
+				var exps = require("./words.js");
+				_WordsEvent = new EventClass({
+					name: 'KEYWORDS-CONTEXT',
+					objects: {
+						p1: 'word', // Palabra
+						p2: 'word.length', // Cantidad de repeticiones
+					},
+					premises:[]
+				});
+				for(var i = 0, n = exps.VERBOS.length; i<n; i++){
+					var _VERBO = exps.VERBOS[i];
+					var _inference = new Schema.inferences({
+						premise: `${_VERBO}.test(p1) == true && p1.length > 3`,
+						consecuent: 'q1 = "KEYWORD VERBO"'
+					});
+					_WordsEvent.premises.push(_inference);
+				}
+				for(var i = 0, n = exps.ACTIONS.length; i<n; i++){
+					var _ACTION = exps.ACTIONS[i];
+					var _inference = new Schema.inferences({
+						premise: `${_ACTION}.test(p1) == true && p1.length > 3`,
+						consecuent: 'q1 = "KEYWORD ACCION"'
+					});
+					_WordsEvent.premises.push(_inference);
+				}
+				for(var i = 0, n = exps.INSTRUMENTS.length; i<n; i++){
+					var _INSTRUMENT = exps.INSTRUMENTS[i];
+					var _inference = new Schema.inferences({
+						premise: `${_INSTRUMENT}.test(p1) == true && p1.length > 3`,
+						consecuent: 'q1 = "KEYWORD INSTRUMENTO"'
+					});
+					_WordsEvent.premises.push(_inference);
+				}
+			}
 			var _fails = Events.ChainGetAll(_EventFail.premises, {
 				p1: request.body.name,
 				p2: request.body.description,
@@ -1026,27 +1062,44 @@ module.exports = function (app, express, Schema, __DIR__) {
 						throw new ValidatorException(_fails[i].q1);
 					}
 			}
-			if(_fails.length == 0 && (!data[0] || data[0].length == 0)){
-				var keywords = [];
-				var verbo = /^[a-z]+(?:ar|er|ir|an|en|os|as|)$/ig;
-				var text = (request.body.name + " " + request.body.description);
-				var words = text.replace(/\n|\t/, '').split(" ");
-				for( var i = 0, n = words.length; i<n; i++){
-					if (!verbo.test(words[i]) || words[i].length <= 3){
-						continue;
+			var text = (request.body.name + " " + request.body.description);
+			var words = text.replace(/\n|\t/, '').split(" ");
+			var _verbos = [], _morphemas = [], _lexemas = [], keywords = [];
+			for (var i = 0, n = words.length; i<n; i++){
+				var _exp = new RegExp(words[i], "ig");
+				var _repeat = words[i].match(_exp);
+				var _wordQuery = Events.ChainGetAll(_WordsEvent.premises, {
+					p1: words[i],
+					p2: _repeat.length
+				});
+				for(var j = 0, m = _wordQuery.length; j < m; j++){
+					if (/keyword/ig.test(_wordQuery[j].q1)){
+						var _isAdd = true;
+						for(var k = 0, u = keywords.length; k<u; k++){
+							if(keywords[k] == words[i]){
+								_isAdd = false;
+								break;
+							}
+						}
+						if (_isAdd){
+							keywords.push(words[i]);
+						}
 					}
-					keywords.push(words[i]);
 				}
+			}
+			request.body.words = keywords;
+			if(_fails.length == 0 && (!data[0] || data[0].length == 0)){
 				if(keywords.length > 0){
 					var _inference = new Schema.inferences({
 						premise:`this.isContaint(p1, ${JSON.stringify(keywords)})`,
 						consecuent: 'q1 = "El objetivo no posee un verbo observable. Esto reduce la efectividad del objetivo!"'
 					});
 					_EventFail.premises.push(_inference);
-					_EventFail.save();
+					//_EventFail.save();
 				}
 				throw new ValidatorException("Uff!. Lo sentimos no pudimos interpretar su objetivo, intente nuevamente.");
 			}
+
 			//_helpEvent.save();
 			return _EventFail.save();
 		//})
