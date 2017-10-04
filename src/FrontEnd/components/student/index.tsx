@@ -19,6 +19,7 @@ import * as Activities from './activity'
    }
    constructor(props:{}){
      super(props)
+     window.ReactPath = "/students";
      let str = localStorage.getItem("session");
      this.session = JSON.parse(str);
    }

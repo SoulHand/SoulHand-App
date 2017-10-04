@@ -14,6 +14,7 @@ interface Window{
 	_BASE: string
 	progress: ProgressStatic
 	dialogPolyfill: any
+	ReactPath: string
 }
 declare let validator: any;
 declare let componentHandler: any;
@@ -60,6 +61,7 @@ declare namespace People {
 		physics?:Array<CRUD.physic>
 		discapacityLevel?:number
 		history?:Array<CRUD.history>
+		exp: number
 	}
 	interface parent{
 		_id:string
@@ -215,9 +217,10 @@ declare namespace CRUD{
   interface ActivityMaked{
     activity: string,
     objetive: string,
-    description: string,
-  	dateCreated:string,
-    isAdd: boolean
+    description: string
+  	dateCreated:string
+		isAdd: boolean
+		exp: number
   }
   interface codeError{
   	code:string
@@ -250,7 +253,7 @@ declare namespace CRUD{
 		_id:string
 		name:string
 		description:string
-      	words: Array<string>
+		words: Array<string>
 	}
 	interface domain{
 		_id:string

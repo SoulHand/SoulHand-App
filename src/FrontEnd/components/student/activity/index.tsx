@@ -50,7 +50,8 @@ import {LineChart} from '../../linechart'
       failed: 0,
       pending: 0,
       count: data.objetives.length,
-      progress: 0
+      progress: 0,
+      exp: 0
     };
     data.objetives.forEach((row) => {
       var isExist = false;
@@ -60,6 +61,7 @@ import {LineChart} from '../../linechart'
         }
         if (student.activities[i].isAdd == true) {
           count.completed++;
+          count.exp += student.activities[i].exp;
         } else {
           count.failed++;
         }
@@ -90,6 +92,7 @@ import {LineChart} from '../../linechart'
        data: this.data
      });
      p1.done((data: People.student) => {
+       this.hidenKey();
        this.state.activity.students = this.state.activity.students.map((row) => {
          if(row._id == data._id){
            return data;
@@ -192,36 +195,38 @@ import {LineChart} from '../../linechart'
          </div>
        </header>
           <main className="mdl-layout__content mdl-color--white-100">
-            <div className="mdl-grid mdl-color--white demo-content">
+          <div className="mdl-grid mdl-color--white demo-content">
             <div className="demo-charts mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
               <LineChart id="container" config={graficConfig}/>
             </div>
+            <div className="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--12-col">
               <div className="mdl-cell--6-col mdl-cell--middle">
                 <div className="mdl-textfield">
-                    <label className="mdl-input__expandable-holder">Nombre de la actividad</label>
-                    <div className="mdl-textfield__input">
-                      {this.state.activity.name}
-                    </div>
+                  <label className="mdl-input__expandable-holder">Nombre de la actividad</label>
+                  <div className="mdl-textfield__input">
+                    {this.state.activity.name}
+                  </div>
                 </div>
               </div>
               <div className="mdl-cell--6-col mdl-cell--middle">
                 <div className="mdl-textfield">
-                    <label className="mdl-input__expandable-holder">Descripción de la actividad</label>
-                    <div className="mdl-textfield__input">
-                      {this.state.activity.description}
-                    </div>
+                  <label className="mdl-input__expandable-holder">Descripción de la actividad</label>
+                  <div className="mdl-textfield__input">
+                    {this.state.activity.description}
+                  </div>
                 </div>
               </div>
               <div className="mdl-cell--6-col mdl-cell--middle">
                 <div className="mdl-textfield">
-                    <label className="mdl-input__expandable-holder">Nombre del alumno</label>
-                    <div className="mdl-textfield__input">
-                      {this.state.student.data.name}
-                    </div>
+                  <label className="mdl-input__expandable-holder">Nombre del alumno</label>
+                  <div className="mdl-textfield__input">
+                    {this.state.student.data.name}
+                  </div>
                 </div>
               </div>
             </div>
-              <label className="label static">Objetivos de aprendizaje esperados</label>
+            <div className="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--8-col">
+              <h3 className="mdl-typography--text-center">Objetivos de aprendizaje esperados</h3>
               <table className="mdl-data-table mdl-js-data-table mdl-data-table resize">
                 <thead>
                   <tr>
@@ -278,7 +283,7 @@ import {LineChart} from '../../linechart'
                           {!_objetive && (
                             <div className="mdl-cell--1">
                               <div id={`status${row._id}`} className="icon material-icons">report_problem</div>
-                              <div className="mdl-tooltip" data-mdl-for={`toolp${row._id}`}>
+                              <div className="mdl-tooltip" data-mdl-for={`status${row._id}`}>
                                 El objetivo esta pendiente
                               </div>
                             </div>
@@ -304,8 +309,20 @@ import {LineChart} from '../../linechart'
                 }
                 </tbody>
               </table>
-              <dialog className="mdl-dialog" id="keyword-add" key="keyword-add">
-             <form method="PUT" id="keyword" onSubmit={(e) => { this.sendObjetive(e)}}>
+            </div>
+            <div className="demo-cards mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing">
+              <div className="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
+                <div className="mdl-card__title mdl-card--expand mdl-color--teal-300">
+                  <h2 className="mdl-card__title-text">Puntos de experiencias acumulado</h2>
+                </div>
+                <div className="mdl-card__supporting-text mdl-color-text--grey-600">
+                   <h1 className="mdl-typography--text-center display-2">{this.state.graph.exp} XP</h1>
+              </div>
+              </div>
+            </div>
+          </div>
+            <dialog className="mdl-dialog" id="keyword-add" key="keyword-add">
+              <form method="PUT" id="keyword" onSubmit={(e) => { this.sendObjetive(e)}}>
                   <div className="mdl-dialog__content mdl-dialog__actions--full-width">
                     <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                       <textarea className="mdl-textfield__input" type="text" name="description" id="description" required={true} />
@@ -317,8 +334,8 @@ import {LineChart} from '../../linechart'
                     <button type="submit" className="mdl-button open">Añadir</button>
                     <button type="button" className="mdl-button close" onClick={this.hidenKey.bind(this)}>Cerrar</button>
                   </div>
-                </form>
-              </dialog>
+              </form>
+            </dialog>
           </main>
        </div>
      );

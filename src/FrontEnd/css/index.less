@@ -38,7 +38,9 @@ img{
   bottom: 0;
   margin-right: 40px;
   margin-bottom: 40px;
-  z-index: 900;
+  & > *, & {
+    z-index: 900;
+  }
 }
 .mdl-textfield__label, .label.static{
     bottom: 0;
@@ -334,4 +336,8 @@ table.resize{
   .c-datepicker {
       min-height: 520px !important;
   }
+}
+
+li > .material-icons{
+  vertical-align: middle;
 }

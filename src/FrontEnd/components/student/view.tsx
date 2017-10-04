@@ -9,6 +9,7 @@ import { LineChart } from "../linechart"
 export class View extends React.Component<Props.teacherView, { student: People.student, report: any, graphs:any, weights: any, heights: any}>{
    public session: User.session;
    public init: boolean = false;
+   public last: string = "/";
    constructor(props:Props.teacherView){
      super(props)
      let str = localStorage.getItem("session");
@@ -44,6 +45,9 @@ export class View extends React.Component<Props.teacherView, { student: People.s
             this.props.router.replace('/students');
  	        }
  		});
+   }
+   componentWillReceip(){
+
    }
    componentDidMount(){
      let p1 = ajax({
@@ -299,10 +303,12 @@ export class View extends React.Component<Props.teacherView, { student: People.s
          },
          series: this.state.graphs[2]
        };
+     var _url = window.ReactPath || "/students";
      return(
        <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
        <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-        <div className="mdl-layout__drawer-button"><Link to="/parents"><i className="material-icons">&#xE5C4;</i></Link></div>
+        <div className="mdl-layout__drawer-button">
+        <Link to={_url}><i className="material-icons">&#xE5C4;</i></Link></div>
          <div className="mdl-layout__header-row">
            <span className="mdl-layout-title">SoulHand</span>
            <div className="mdl-layout-spacer"></div>
@@ -312,9 +318,12 @@ export class View extends React.Component<Props.teacherView, { student: People.s
              </button>
            )}
            <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
-             <li className="mdl-menu__item"><Link to={`/students/edit/${this.props.routeParams.id}`}>Editar</Link></li>
-             <li className="mdl-menu__item"><Link to={`/students/get/${this.props.routeParams.id}/physic`}>Desarrollo físico</Link></li>
-             <li className="mdl-menu__item"><Link to={`/students/get/${this.props.routeParams.id}/objetives`}>Conocimientos previos</Link></li>
+              <li className="mdl-menu__item" onClick={(e) => {
+                 this.props.router.replace(`/students/edit/${this.props.routeParams.id }`);
+              }}>Editar</li>
+              <li className="mdl-menu__item" onClick={(e) => {
+                this.props.router.replace(`/students/get/${this.props.routeParams.id}/objetives`);
+              }}>Conocimientos previos</li>
              <li className="mdl-menu__item" onClick={(e)=>{this.delete()}}>Eliminar</li>
            </ul>
          </div>
@@ -335,7 +344,7 @@ export class View extends React.Component<Props.teacherView, { student: People.s
                    <h2 className="mdl-card__title-text mdl-typography--text-center">Puntos de experiencia</h2>
                   </div>
                   <div className="mdl-card__supporting-text mdl-color-text--grey-600">
-                   <h1 className="mdl-typography--text-center display-2">{this.state.report.exp} XP</h1>
+                   <h1 className="mdl-typography--text-center display-2">{this.state.student.exp} XP</h1>
                 </div>
                   <div className="mdl-card__actions mdl-card--border">
                    <Link to={`/students/get/${this.props.routeParams.id}/objetives`} className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver detalles</Link>
@@ -425,6 +434,17 @@ export class View extends React.Component<Props.teacherView, { student: People.s
                 </div>
               </dialog>
           </div>
+              <div className="fixed">
+                <button id="add-menu" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></button>
+                <ul className="mdl-menu mdl-menu--top-right mdl-js-menu mdl-js-ripple-effect"
+                  data-mdl-for="add-menu">
+                  <li className="mdl-menu__item" onClick={(e) => {
+                    this.props.router.replace(`/students/get/${this.props.routeParams.id}/physic/create`);
+                  }}>
+                    <i className="material-icons">assignment</i> Añadir un desarrollo físico
+                  </li>
+                </ul>
+              </div>
         </main>
        </div>
      );

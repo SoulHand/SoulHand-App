@@ -102,13 +102,7 @@ export class View extends React.Component <Props.teacherView, CRUD.activity>{
           <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
             {this.state && this.state.isCompleted == false && (
               <li className="mdl-menu__item" onClick={this.completed.bind(this)}>Completar Actividad</li>
-            )}
-            <li className="mdl-menu__item" onClick={(e) => {
-                this.props.router.replace(`/objetives/create/${this.props.routeParams.id}`);
-            }}>Añadir objetivos</li>
-            <li className="mdl-menu__item" onClick={(e) => {
-                this.props.router.replace(`/activity/set/${this.props.routeParams.id}/student`);
-            }}>Añadir alumnos</li>
+            )}            
             <li className="mdl-menu__item" onClick={(e)=>{this.delete()}}>Eliminar</li>
           </ul>
         </div>
@@ -216,6 +210,18 @@ export class View extends React.Component <Props.teacherView, CRUD.activity>{
                 </tbody>
               </table>
             </div>
+          </div>
+          <div className="fixed">
+            <button id="add-menu" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></button>
+            <ul className="mdl-menu mdl-menu--top-right mdl-js-menu mdl-js-ripple-effect"
+              data-mdl-for="add-menu">
+              <li className="mdl-menu__item" onClick={(e) => {
+                this.props.router.replace(`/objetives/create/${this.props.routeParams.id}`);
+              }}><i className="material-icons">explore</i> Añadir objetivos</li>
+              <li className="mdl-menu__item" onClick={(e) => {
+                this.props.router.replace(`/activity/set/${this.props.routeParams.id}/student`);
+              }}><i className="material-icons">face</i> Añadir alumnos</li>
+            </ul>
           </div>
         </main>
       </div>

@@ -16,6 +16,7 @@ import {Menu} from '../app/menu'
    }
    constructor(props:{}){
      super(props)
+     window.ReactPath = "/parents";
      let str = localStorage.getItem("session");
      this.session = JSON.parse(str);
    }

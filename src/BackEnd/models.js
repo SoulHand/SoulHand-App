@@ -157,7 +157,8 @@ structDb.Activities = mongoose.Schema({
   grade: structDb.Grades,
   course: structDb.Courses,
   dateCreated: { type: Date, default: Date.now },
-  history: []
+	history: [],
+	exp: { type: Number, required: true, default: 0 }
 })
 
 structDb.ActivitiesMaked = mongoose.Schema({
@@ -165,7 +166,8 @@ structDb.ActivitiesMaked = mongoose.Schema({
   objetive: { type: mongoose.Schema.ObjectId, ref: 'LearningObjetive' },
   description: {type: String, trim: true, required: true, uppercase: true},
   dateCreated: { type: Date, default: Date.now },
-  isAdd: { type: Boolean, default: false }
+	isAdd: { type: Boolean, default: false },
+	exp: { type: Number, required: true, default: 0 }
 })
 
 structDb.ObjetiveMaked = mongoose.Schema({
@@ -181,7 +183,8 @@ structDb.Students = mongoose.Schema({
   domain: { type: mongoose.Schema.ObjectId, ref: 'domainsLearning' },
   objetives: [structDb.ObjetiveMaked],
   activities: [structDb.ActivitiesMaked],
-  history: [structDb.HistoryLearning]
+	history: [structDb.HistoryLearning],
+	exp: {type: Number, required: true, default: 0}
 })
 
 structDb.events = mongoose.Schema({

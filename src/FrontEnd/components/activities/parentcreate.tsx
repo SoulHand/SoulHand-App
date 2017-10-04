@@ -93,9 +93,13 @@ import * as moment from 'moment'
      const picker = new MaterialDateTimePicker()
        .on('submit', (val: any) => {
          input.value = val.format("DD-MM-YYYY HH:mm:ss");
+         this.fields.expire.value = input.value;
        });
      console.log(picker);
-     input.addEventListener('focus', () => picker.open());
+     input.addEventListener('focus', function(){
+       this.blur();
+       picker.open();
+     });
    }
    render(){
      return(

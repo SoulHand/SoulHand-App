@@ -1146,7 +1146,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 					}
 			}
 			var text = (request.body.name + " " + request.body.description);
-			var words = text.replace(_SPECIALCHAR, '').split(" ");
+			var words = text.replace(_SPECIALCHAR, ' ').split(" ");
 			var _verbos = [], _morphemas = [], _lexemas = [], keywords = [];
 			for (var i = 0, n = words.length; i<n; i++){
 				var _exp = new RegExp(words[i], "ig");
@@ -1192,7 +1192,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 						_elements1.push(keywords[k]);
 					}
 				}
-				console.log(request.body.words, _elements1, _exp);
+				//console.log(request.body.words, _elements1, _exp);
 				var _levels = domain.levels.map((level) => {
 					if (level.words.length == 0) {
 						return [level._id, []];
@@ -2683,17 +2683,19 @@ module.exports = function (app, express, Schema, __DIR__) {
     }).then((rows) => {
       if(!rows[1]){
         throw new ValidatorException("No existe el alumno!");
-      }
+			}
+			var _isCompleted = (request.body.completed && request.body.completed == "true");
       var objetive = new Schema.ActivitiesMaked({
         activity: rows[2]._id,
         objetive: rows[0]._id,
         description: request.body.description,
-        isAdd: ((request.body.completed && request.body.completed == "true") ? true : false)
+				isAdd: _isCompleted,
+				exp: (_isCompleted) ? rows[0].exp : 0
       });
-      rows[1].activities.push(objetive);
+			rows[1].activities.push(objetive);
+			rows[1].exp += objetive.exp;
       var add = true;
       for(var i=0, n=rows[1].objetives.length; i<n;i++){
-        console.log(rows[1].objetives[i].objetive._id, objetive.objetive, rows[1].objetives[i].objetive._id.toString() === objetive.objetive.toString());
         if(rows[1].objetives[i].objetive._id.toString() === objetive.objetive.toString()) {
           add = false;
           rows[1].objetives[i].completed += (objetive.isAdd == true) ? 1 : -1
@@ -3427,6 +3429,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 					}
 			});
 			data[1].objetives.push(data[0]);
+			data[1].exp += data[0].exp;
 			return data[1].save();
 		}).then(function(data){
 			response.send(data);
@@ -3466,7 +3469,8 @@ module.exports = function (app, express, Schema, __DIR__) {
             throw new ValidatorException("El objetivo ya existe en la actividad!");
           }
         });
-        data[1].objetives.push(objetive);
+				data[1].objetives.push(objetive);
+				data[1].exp += objetive.exp;
       })
 			return data[1].save();
 		}).then(function(data){

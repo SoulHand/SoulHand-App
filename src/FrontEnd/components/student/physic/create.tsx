@@ -42,7 +42,7 @@ import {ajax} from 'jquery'
 	        dataType: "json",
 	        data:values,
 	        success:(data:any)=>{
-	        	this.props.router.replace(`/students/get/${this.props.routeParams.id}/physic`);
+	        	this.props.router.replace(`/students/get/${this.props.routeParams.id}`);
 	        },
 	        error:(data:any)=>{
 	        	var state: CRUD.codeError = data.responseJSON;
@@ -63,7 +63,8 @@ import {ajax} from 'jquery'
      return(
        <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
        <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-        <div className="mdl-layout__drawer-button"><Link to={`/students/get/${this.props.routeParams.id}/physic`}><i className="material-icons">&#xE5C4;</i></Link></div>
+           <div className="mdl-layout__drawer-button">
+            <Link to={`/students/get/${this.props.routeParams.id}`}><i className="material-icons">&#xE5C4;</i></Link></div>
          <div className="mdl-layout__header-row">
            <span className="mdl-layout-title">SoulHand</span>
            <div className="mdl-layout-spacer"></div>
@@ -77,14 +78,14 @@ import {ajax} from 'jquery'
           <div className="mdl-grid mdl-color--white demo-content">
                <div className="mdl-cell mdl-cell--6-col">
                   <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.weight) ? 'is-invalid' :'')}>
-                   <input className="mdl-textfield__input" type="number" id="weight" onChange={(e:any)=>{this.getFields(e)}} min={0} max={285}/>
+                   <input className="mdl-textfield__input" type="text" id="weight" onChange={(e:any)=>{this.getFields(e)}}/>
                    <label className="mdl-textfield__label" htmlFor="weight">Peso(kg)*</label>
                    <span className="mdl-textfield__error">Es necesaria un peso valido</span>
                  </div>
                </div>
                <div className="mdl-cell mdl-cell--6-col">
                 <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.height) ? 'is-invalid' :'')}>
-                   <input className="mdl-textfield__input" type="number" id="height" onChange={(e:any)=>{this.getFields(e)}} min={0}/>
+                   <input className="mdl-textfield__input" type="text" id="height" onChange={(e:any)=>{this.getFields(e)}}/>
                    <label className="mdl-textfield__label" htmlFor="height">Altura(cm)*</label>
                    <span className="mdl-textfield__error">Es necesario una altura valida</span>
                  </div>
