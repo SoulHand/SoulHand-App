@@ -221,6 +221,9 @@ table.resize{
     text-overflow: ellipsis;
     white-space: nowrap;
     word-break: normal;
+    &:not(.mdl-data-table__cell--non-numeric):first-child{
+      width: 5%;
+    }
     &.td-ms-10 {
       width: 10%;
     }

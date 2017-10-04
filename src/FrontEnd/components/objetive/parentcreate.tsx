@@ -97,6 +97,9 @@ import {ajax} from 'jquery'
                     <tbody>
                     {
                       this.state.objetives.map((row) => {
+                        if (!row.domain || !row.level){
+                          return null;
+                        }
                         return (
                           <tr key={row._id} id={row._id}>
                             <td className="mdl-data-table__cell--non-numeric" title={row.name}><span>{row.name}</span></td>

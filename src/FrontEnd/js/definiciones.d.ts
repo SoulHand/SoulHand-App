@@ -278,7 +278,8 @@ declare namespace CRUD{
       dateCreated: string
       cognitions: Array<cognition>
       level: level
-      domain: domain
+			domain: domain
+			exp: number
   	}
 	interface activity{
 		name: string
@@ -292,7 +293,8 @@ declare namespace CRUD{
   		students: Array<People.student>
   		dateCreated: string
   		isCompleted: Boolean
-  		objetives: Array<objetive>
+			objetives: Array<objetive>
+		exp: number
 	}
 	interface weight{
 		_id:string
