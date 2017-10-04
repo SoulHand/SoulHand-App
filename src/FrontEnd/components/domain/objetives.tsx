@@ -43,7 +43,7 @@ export class Objetives extends React.Component<Props.objetiveView, { objetives: 
    deleteWord(id: string) {
      let p1 = ajax({
        method: "DELETE",
-       url: `${window._BASE}/v1/knowedge/${this.props.routeParams.domain}/level/${this.props.routeParams.level}/words/${id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       url: `${window._BASE}/v1/knowedge/${this.props.routeParams.domain}/level/${this.props.routeParams.level}/word/${id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json"
      });
      p1.done((domain: CRUD.domain) => {

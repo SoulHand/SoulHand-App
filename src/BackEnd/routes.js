@@ -941,7 +941,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 					}
 					throw new VoidException('No existe un resultado')
 				}).then((data) => {
-					var _text = request.body.word.toUpperCase().trim(), isAdd = true;
+					var _text = request.params.word.toUpperCase().trim(), isAdd = true;
 					data[0].levels[data[1]].words = data[0].levels[data[1]].words.filter((row) => {
 						return row != request.params.word;
 					});
