@@ -5,8 +5,9 @@ import {CompleteObjetive} from './completeobjetive'
 import {Objetives} from './objetives'
 import {LineChart} from '../../linechart'
 
+
 @withRouter
- export class View extends React.Component <Props.GenericRouter, {student: People.student, activity: CRUD.activity}>{
+ export class View extends React.Component <Props.GenericRouter, {student: People.student, activity: CRUD.activity, graph: any}>{
    public session: User.session;
    constructor(props:Props.GenericRouter){
      super(props)
@@ -14,7 +15,8 @@ import {LineChart} from '../../linechart'
      this.session = JSON.parse(str);
      this.state = {
        student: null,
-       activity: null
+       activity: null,
+       graph: null
      };
    }
    componentDidUpdate(){
@@ -37,9 +39,37 @@ import {LineChart} from '../../linechart'
          }
          return false;
        })[0];
+       let count = {
+         completed: 0,
+         failed: 0,
+         pending: 0,
+         count: data.objetives.length,
+         progress: 0
+       };
+       data.objetives.forEach((row) => {
+         var isExist = false;
+         for (var i = 0, n = student.activities.length; i<n; i++){
+           if(student.activities[i].objetive != row._id){
+              continue;
+           }
+           if (student.activities[i].isAdd == true){
+             count.completed++;
+            }else{
+              count.failed++;
+           }
+           isExist = true;
+         }
+         if(!isExist){
+          count.pending++;
+         }
+       });
+       if(count.count > 0){
+         count.progress = ((count.completed * 100) / count.count)
+       }
        this.setState({
          student: student,
-         activity: data
+         activity: data,
+         graph: count
        })
      });
      componentHandler.upgradeAllRegistered();
@@ -52,55 +82,57 @@ import {LineChart} from '../../linechart'
          </div>
        );
      }
-     let count = {
-       completed: 0,
-       failed: 0,
-       pending: 0,
-       count: 0
-     };
-     this.state.student.activities.forEach((row) => {
-       if(row.activity == this.state.activity._id){
-         if(row.isAdd == true){
-           count.completed ++;
-         }else{
-           count.failed++;
-         }
-         count.count ++;
-       }
-     });
-     console.log(count);
-     count.pending = this.state.activity.objetives.length - count.count;
+     var Colors = ["#00C853", "#424242", "#F44336"];
      var graficConfig = {
+        credits: false,
         chart: {
-            type: 'pie'
+            type: 'pie',
         },
-        title:{
-          //align: "center",
-          //verticalAlign: "center",
-          text: ((count.completed*100)/this.state.activity.objetives.length).toFixed(2) + "%",
-          x: 6,
-          y: 230,
-          style:{
+        tooltip: {
+          pointFormat: '{series.name}: <b>{point.y} objetivos</b>'
+        },
+        plotOptions: {
+          pie: {
+            innerSize: '60%',
+            center: ['50%', '50%'],
+            cursor: 'pointer',
+            dataLabels: {
+              enabled: false
+            },
+            showInLegend: true
+          }
+        },
+        colors: Colors,
+        title: {
+          text: `Progreso de la Actividad`,
+          align: 'center',
+          style: {
             fontFamily: "Roboto",
-            fontSize: "4em",
+            fontSize: "1.5em",
+            fontWeight: "bold",
+            color: "#888",
+          }
+        },
+        subtitle: {
+          text: `${this.state.graph.progress.toFixed(2)}%`,
+          align: 'center',
+          verticalAlign: 'middle',
+          y: 1,
+          style: {
+            fontFamily: "Roboto",
+            fontSize: "3em",
             fontWeight: "bold",
             color: "#888"
           }
         },
-        plotOptions: {
-            pie: {
-                //borderColor: '#000000',
-                innerSize: '60%'
-            }
-        },
         series: [{
             data: [
-                ['Objetivos completados', count.completed],
-                ['Objetivos pendientes', count.pending],
-                ['Objetivos fallidos', count.failed]
+                ['Objetivos completados', this.state.graph.completed],
+                ['Objetivos pendientes', this.state.graph.pending],
+                ['Objetivos fallidos', this.state.graph.failed]
             ]
-        }]
-    };
+        }],
+      };     
      return(
        <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
        <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
@@ -216,28 +248,3 @@ import {LineChart} from '../../linechart'
 
 export let Completed = CompleteObjetive;
 export let ViewObjetive = Objetives;
-/*
-{this.state.student && (
-  <table className="mdl-data-table mdl-js-data-table resize">
-    <thead>
-      <tr>
-        <th className="mdl-data-table__cell--non-numeric">Fecha</th>
-        <th className="mdl-data-table__cell--non-numeric">Registro</th>
-      </tr>
-    </thead>
-    <tbody>
-    {
-      this.state.student.history.map((row) => {
-        let date = new Date(row.dateCreated);
-        return (
-          <tr key={row._id}>
-            <td className="mdl-data-table__cell--non-numeric"><span>{date.toLocaleString()}</span></td>
-            <td className="mdl-data-table__cell--non-numeric" title={row.description}><span>{row.description}</span></td>
-          </tr>
-        );
-      })
-    }
-    </tbody>
-  </table>
-)}
-*/

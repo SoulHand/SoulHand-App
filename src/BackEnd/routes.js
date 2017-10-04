@@ -1521,15 +1521,13 @@ module.exports = function (app, express, Schema, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-  cognitions.delete('/:domain/objetives/:level/:id', Auth.isAdmin.bind(Schema),
+  cognitions.delete('/objetives/:id', Auth.isAdmin.bind(Schema),
   function (request, response, next) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('El id es invalido!')
     }
     Schema.LearningObjetive.findOne({
-      'domain.name': request.params.domain.toString(),
-      'level.name': request.params.level.toString(),
-      _id: request.params.id
+      _id: ObjectId(request.params.id)
     }).then((obj) => {
       if (!obj) {
         throw new ValidatorException('No existe el objetivo')

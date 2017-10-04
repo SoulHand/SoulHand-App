@@ -5,14 +5,14 @@ import {Link} from 'react-router'
  export class Objetive extends React.Component <Card.objetive, {}>{
    delete(){
      ajax({
- 			method:"DELETE",
- 	        url: `${window._BASE}/v1/knowedge/${this.props.domain}/objetives/${this.props.level}/${this.props.objetive._id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
- 	        dataType: "json",
- 	        data:null,
- 	        crossDomain:true,
- 	        success:(data: CRUD.objetive)=>{
- 	        	this.props.delete(data);
- 	        }
+      method:"DELETE",
+      url: `${window._BASE}/v1/knowedge/objetives/${this.props.objetive._id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
+      dataType: "json",
+      data:null,
+      crossDomain:true,
+      success:(data: CRUD.objetive)=>{
+        this.props.delete(data);
+      }
  		});
    }
    render(){
