@@ -13,7 +13,7 @@ module.exports.VERBOS = [
 
 //Acciones
 module.exports.ACTIONS = [
-    /^dia[a-z]+/ig, 
+    /^dia[a-z]*/ig,
     /^ilustra[a-z]*/ig,
     /[a-z]*cultura$/ig,
     /pint(ura|ar)*/ig,

@@ -9,6 +9,7 @@ import {LineChart} from '../../linechart'
 @withRouter
  export class View extends React.Component <Props.GenericRouter, {student: People.student, activity: CRUD.activity, graph: any}>{
    public session: User.session;
+   public data: any = {};
    constructor(props:Props.GenericRouter){
      super(props)
      let str = localStorage.getItem("session");
@@ -33,48 +34,91 @@ import {LineChart} from '../../linechart'
        data:null
      });
      p1.done((data: CRUD.activity) => {
-       let student: People.student = data.students.filter((row) => {
-         if(row._id == this.props.routeParams.student){
+       let student = data.students.filter((row) => {
+         if (row._id == this.props.routeParams.student) {
            return true;
          }
          return false;
        })[0];
-       let count = {
-         completed: 0,
-         failed: 0,
-         pending: 0,
-         count: data.objetives.length,
-         progress: 0
-       };
-       data.objetives.forEach((row) => {
-         var isExist = false;
-         for (var i = 0, n = student.activities.length; i<n; i++){
-           if(student.activities[i].objetive != row._id){
-              continue;
-           }
-           if (student.activities[i].isAdd == true){
-             count.completed++;
-            }else{
-              count.failed++;
-           }
-           isExist = true;
-         }
-         if(!isExist){
-          count.pending++;
-         }
-       });
-       if(count.count > 0){
-         count.progress = ((count.completed * 100) / count.count)
-       }
-       this.setState({
-         student: student,
-         activity: data,
-         graph: count
-       })
-     });
+       this.loadData(data, student);
+      });
      componentHandler.upgradeAllRegistered();
    }
-   render(){
+   loadData(data: CRUD.activity, student: People.student) {
+    let count = {
+      completed: 0,
+      failed: 0,
+      pending: 0,
+      count: data.objetives.length,
+      progress: 0
+    };
+    data.objetives.forEach((row) => {
+      var isExist = false;
+      for (var i = 0, n = student.activities.length; i < n; i++) {
+        if (student.activities[i].objetive != row._id) {
+          continue;
+        }
+        if (student.activities[i].isAdd == true) {
+          count.completed++;
+        } else {
+          count.failed++;
+        }
+        isExist = true;
+      }
+      if (!isExist) {
+        count.pending++;
+      }
+    });
+    if (count.count > 0) {
+      count.progress = ((count.completed * 100) / count.count)
+    }
+    this.setState({
+      student: student,
+      activity: data,
+      graph: count
+    })
+  }
+  sendObjetive(event: any) {
+     event.preventDefault();
+     var _element = event.target;
+     this.data.description = _element.description.value;
+     _element.reset();
+     let p1 = ajax({
+       method: "PUT",
+       url: `${window._BASE}/v1/people/students/${this.state.student._id}/activity/${this.state.activity._id}/objetive/${this.data.id}/complete?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       dataType: "json",
+       data: this.data
+     });
+     p1.done((data: People.student) => {
+       this.state.activity.students = this.state.activity.students.map((row) => {
+         if(row._id == data._id){
+           return data;
+         }
+         return row;
+       });
+       this.loadData(this.state.activity, data);
+     });
+  }
+  hidenKey() {
+     var modal: any = document.getElementById("keyword-add");
+     if (!modal.showModal) {
+       window.dialogPolyfill.registerDialog(modal);
+     }
+     modal.close();
+  }
+  showFinaly(id: string, isCompleted: boolean){
+      this.data = {
+        id: id,
+        completed: isCompleted,
+        description: null
+      };
+      var modal: any = document.getElementById("keyword-add");
+      if (!modal.showModal) {
+        window.dialogPolyfill.registerDialog(modal);
+      }
+      modal.showModal();
+  }
+  render(){
      if(!this.state.student){
        return (
          <div className="mdl-grid mdl-color--white demo-content">
@@ -181,24 +225,17 @@ import {LineChart} from '../../linechart'
               <table className="mdl-data-table mdl-js-data-table mdl-data-table resize">
                 <thead>
                   <tr>
-                    <th className="mdl-data-table__cell--non-numeric">Objetivo</th>
-                    <th>Dominio</th>
-                    <th>Nivel</th>
-                    <th></th>
+                 <th className="mdl-data-table__cell--non-numeric td-ms-30">Objetivo</th>
+                    <th className="td-ms-30">Dominio</th>
+                    <th className="td-ms-10">Nivel</th>
+                    <th className="td-ms-10">Estado</th>
+                    <th className="td-ms-20"></th>
                   </tr>
                 </thead>
                 <tbody>
                 {
                   this.state.activity.objetives.map((row) => {
                     var error:any = "null";
-                    var content = (
-                      <div className="mdl-cell--1">
-                        <div id={`toolp${row._id}`} className="icon material-icons" onClick={this.redirect.bind(this, [row._id])}>delete</div>
-                        <div className="mdl-tooltip" data-mdl-for={`toolp${row._id}`}>
-                          El objetivo esta pendiente
-                        </div>
-                      </div>
-                    );
                     let obj = this.state.student.activities.filter((row2) => {
                       if(row2.objetive == row._id && row2.activity == this.state.activity._id){
                         return true;
@@ -208,42 +245,84 @@ import {LineChart} from '../../linechart'
                     if(obj.length > 0) {
                       if(obj[0].isAdd == true){
                         error = false;
-                        content = (
-                          <div className="mdl-cell--1">
-                            <div id={`toolp${row._id}`} className="icon material-icons">check</div>
-                            <div className="mdl-tooltip" data-mdl-for={`toolp${row._id}`}>
-                              Objetivo completado
-                            </div>
-                          </div>
-                        );
                       }else{
                         error = true;
-                        content = (
-                          <div className="mdl-cell--1">
-                            <div id={`toolp${row._id}`} className="icon material-icons">cancel</div>
-                            <div className="mdl-tooltip" data-mdl-for={`toolp${row._id}`}>
-                              Fallo el objetivo
-                            </div>
-                          </div>
-                        );
                       }
+                    }
+                    let _objetive: CRUD.ActivityMaked;
+                    if (obj.length > 0) {
+                      _objetive = obj[0];
                     }
                     return (
                       <tr key={row._id} id={row._id} style={(error === true) ? {color: "#d50000"} : ((error === false) ? {color: "rgb(41, 162, 63)"} : {})}>
                         <td className="mdl-data-table__cell--non-numeric" title={row.name}><span>{row.name}</span></td>
                         <td title={row.domain.name}><span>{row.domain.name}</span></td>
-                        <td title={row.level.name}><span>{row.level.name}</span></td>
-                        <td>{content}</td>
+                        <td title={row.level.name}><span>{row.level.level}</span></td>
+                        <td>
+                          {_objetive && _objetive.isAdd == true && (
+                            <div className="mdl-cell--1">
+                              <div id={`status${row._id}`} className="icon material-icons">check</div>
+                              <div className="mdl-tooltip" data-mdl-for={`status${row._id}`}>
+                                Objetivo completado
+                            </div>
+                            </div>
+                          )}
+                          {_objetive && _objetive.isAdd == false && (
+                            <div className="mdl-cell--1">
+                              <div id={`status${row._id}`} className="icon material-icons">cancel</div>
+                              <div className="mdl-tooltip" data-mdl-for={`status${row._id}`}>
+                                  Fallo el objetivo
+                              </div>
+                            </div>
+                          )}
+                          {!_objetive && (
+                            <div className="mdl-cell--1">
+                              <div id={`status${row._id}`} className="icon material-icons">report_problem</div>
+                              <div className="mdl-tooltip" data-mdl-for={`toolp${row._id}`}>
+                                El objetivo esta pendiente
+                              </div>
+                            </div>
+                          )}
+                        </td>
+                        <td>
+                          {!_objetive && (
+                            <div className="mdl-cell--1">
+                              <div id={`upTop${row._id}`} className="icon material-icons" onClick={(e) => { this.showFinaly(row._id, true)}} style={{cursor: "pointer"}}>thumb_up</div>
+                              <div className="mdl-tooltip" data-mdl-for={`upTop${row._id}`}>
+                                Dar por completado
+                              </div>
+                              <div id={`downTop${row._id}`} className="icon material-icons" onClick={(e) => { this.showFinaly(row._id, false) }} style={{ cursor: "pointer" }}>thumb_down</div>
+                              <div className="mdl-tooltip" data-mdl-for={`downTop${row._id}`}>
+                                Dar por fallido
+                              </div>
+                            </div>
+                          )}
+                        </td>
                       </tr>
                     );
                   })
                 }
                 </tbody>
               </table>
+              <dialog className="mdl-dialog" id="keyword-add" key="keyword-add">
+             <form method="PUT" id="keyword" onSubmit={(e) => { this.sendObjetive(e)}}>
+                  <div className="mdl-dialog__content mdl-dialog__actions--full-width">
+                    <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                      <textarea className="mdl-textfield__input" type="text" name="description" id="description" required={true} />
+                      <label className="mdl-textfield__label" htmlFor="description">Observaciones*</label>
+                      <span className="mdl-textfield__error">Es requerido</span>
+                    </div>
+                  </div>
+                  <div className="mdl-dialog__actions">
+                    <button type="submit" className="mdl-button open">Añadir</button>
+                    <button type="button" className="mdl-button close" onClick={this.hidenKey.bind(this)}>Cerrar</button>
+                  </div>
+                </form>
+              </dialog>
           </main>
        </div>
      );
-   }
+  }
  }
 
 export let Completed = CompleteObjetive;

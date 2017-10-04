@@ -41,47 +41,41 @@ export class Objetives extends React.Component<Props.objetiveView, { objetives: 
      });
    }
    deleteWord(id: string) {
-     var _result = this.state.level.words.filter((row) => {
-       return row != id;
-     });
      let p1 = ajax({
-       method: "PUT",
-       url: `${window._BASE}/v1/knowedge/${this.props.routeParams.domain}/level/${this.props.routeParams.level}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
-       dataType: "json",
-       data: {
-         words: JSON.stringify(_result)
-       }
+       method: "DELETE",
+       url: `${window._BASE}/v1/knowedge/${this.props.routeParams.domain}/level/${this.props.routeParams.level}/words/${id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       dataType: "json"
      });
      p1.done((domain: CRUD.domain) => {
-       this.state.level.words = _result;
-        this.setState({
-          level: this.state.level
-        });
+       var level = domain.levels.filter((row) => {
+         return row._id == this.props.routeParams.level;
+       })[0];
+       this.setState({
+         level: level
+       });
      });
    }
    sendKey(event: any) {
      event.preventDefault();
-     this.state.level.words.forEach((row) => {
-       if (row == event.target.keyword.value) {
-         throw new Error("No se admiten duplicados!");
-       }
-     });
-     this.state.level.words.push(event.target.keyword.value);
+     var _key = event.target.keyword.value;
      event.target.reset();
      let p1 = ajax({
        method: "PUT",
-       url: `${window._BASE}/v1/knowedge/${this.props.routeParams.domain}/level/${this.props.routeParams.level}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       url: `${window._BASE}/v1/knowedge/${this.props.routeParams.domain}/level/${this.props.routeParams.level}/word?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
        data: {
-         words: JSON.stringify(this.state.level.words)
+         word: _key
        }
      });
-     p1.done((domain: CRUD.level) => {
-       this.hidenKey();
-       this.setState({
-         level: this.state.level
-       });
-     });
+     p1.done((domain: CRUD.domain) => {
+      this.hidenKey();
+      var level = domain.levels.filter((row) => {
+        return row._id == this.props.routeParams.level;
+      }) [0];
+      this.setState({
+        level: level
+      });
+    });
    }
    componentDidMount(){
      let p1 = ajax({

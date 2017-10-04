@@ -617,7 +617,10 @@ module.exports = function (app, express, Schema, __DIR__) {
       throw new ValidatorException('Solo se aceptan textos categoricos')
 		}
     if(request.body.words){
-      request.body.words = JSON.parse(request.body.words);
+			request.body.words = JSON.parse(request.body.words);
+			for (var i = 0, n = request.body.words.length; i<n; i++){
+				request.body.words[i] = request.body.words[i].toUpperCase().trim();
+			}
     }
     Schema.domainsLearning.findOne({_id: request.params.id}).then((row) => {
       if (!row) {
@@ -872,6 +875,92 @@ module.exports = function (app, express, Schema, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
+	cognitions.put('/:domain/level/:id/word', Auth.isAdmin.bind(Schema),
+		function (request, response, next) {
+			if (!Validator.isMongoId()(request.params.id)) {
+				throw new ValidatorException('El id no es valido!')
+			}
+			if (Validator.isNull()(request.body.word)) {
+				throw new ValidatorException('No se admiten nulos!');
+			}
+			Schema.domainsLearning.findOne({ name: request.params.domain.toUpperCase() })
+				.then((data) => {
+					for (var i = 0, n = data.levels.length; i < n; i++) {
+						if (data.levels[i]._id.toString() === request.params.id.toString()) {
+							return [data,i];
+						}
+					}
+					throw new VoidException('No existe un resultado')
+				}).then((data) => {
+					var _text = request.body.word.toUpperCase().trim(), isAdd = true;
+					for (var i = 0, n = data[0].levels[data[1]].words.length; i < n; i++){
+						if (data[0].levels[data[1]].words[i] === _text){
+							isAdd = false;
+							break;
+						}
+					}
+					if(isAdd){
+						data[0].levels[data[1]].words.push(_text);
+						for (var i = 0, n = data[0].words.length; i < n; i++) {
+							if (data[0].words[i] === _text) {
+								isAdd = false;
+								break;
+							}
+						}
+						if(isAdd){
+							data[0].words.push(_text);
+						}
+					}
+					return data[0].save();
+				}).then((data) => {
+					response.send(data)
+				}).catch((error) => {
+					next(error)
+				})
+		})
+	/*
+  * @api {put} /:id Editar un dominio del aprendizaje
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+	cognitions.delete('/:domain/level/:id/word/:word', Auth.isAdmin.bind(Schema),
+		function (request, response, next) {
+			if (!Validator.isMongoId()(request.params.id)) {
+				throw new ValidatorException('El id no es valido!')
+			}
+			if (Validator.isNull()(request.params.word)) {
+				throw new ValidatorException('No se admiten nulos!');
+			}
+			Schema.domainsLearning.findOne({ name: request.params.domain.toUpperCase() })
+				.then((data) => {
+					for (var i = 0, n = data.levels.length; i < n; i++) {
+						if (data.levels[i]._id.toString() === request.params.id.toString()) {
+							return [data,i];
+						}
+					}
+					throw new VoidException('No existe un resultado')
+				}).then((data) => {
+					var _text = request.body.word.toUpperCase().trim(), isAdd = true;
+					data[0].levels[data[1]].words = data[0].levels[data[1]].words.filter((row) => {
+						return row != request.params.word;
+					});
+					data[0].words = data[0].words.filter((row) => {
+						return row != request.params.word;
+					});
+					return data[0].save();
+				}).then((data) => {
+					response.send(data)
+				}).catch((error) => {
+					next(error)
+				})
+		})
+	/*
+  * @api {put} /:id Editar un dominio del aprendizaje
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
 	cognitions.put('/:domain/level/:id', Auth.isAdmin.bind(Schema),
 		function (request, response, next) {
 			if (!Validator.isMongoId()(request.params.id)) {
@@ -890,6 +979,9 @@ module.exports = function (app, express, Schema, __DIR__) {
 					}
 					throw new VoidException('No existe un resultado')
 				}).then((data) => {
+					for (var i = 0, n = request.body.words.length; i < n; i++) {
+						request.body.words[i] = request.body.words[i].toUpperCase().trim();
+					}
 					data[0].levels[data[1]].words = request.body.words;
 					return data[0].save();
 				}).then((data) => {
@@ -938,6 +1030,7 @@ module.exports = function (app, express, Schema, __DIR__) {
   */
   cognitions.post('/objetives/', Auth.isAdmin.bind(Schema),
   function (request, response, next) {
+		var _SPECIALCHAR = /[\+\*\?\[^\]$\(\)\{\}\=\!\<\>\|\:\-\,\.;_\n\t\s]/ig
     if (Validator.isNull()(request.body.name)) {
       throw new ValidatorException('Es requerido un nombre')
     }
@@ -970,43 +1063,17 @@ module.exports = function (app, express, Schema, __DIR__) {
         throw new ValidatorException('Ya existe un objetivo con el mismo nombre!')
 			}
 			return Schema.domainsLearning.find();
-		}).then((domains) => {
-			var _conductuals = domains.map((domain) => {
-				if (domain.words.length == 0){
-					return [domain._id, []];
-				}
-				var _join = request.body.name + " " + request.body.description;
-				var _exp = new RegExp("(" + domain.words.join("|") + ")", "ig");
-				var _elements1 = _join.match(_exp);
-				var _levels = domain.levels.map((level) => {
-					if (level.words.length == 0) {
-						return [level._id, []];
-					}
-					var _exp = new RegExp("(" + level.words.join("|") + ")", "ig");
-					var _elements2 = _join.match(_exp);
-					return [level._id, _elements2, level];
-				});
-				return [domain._id, _elements1, _levels, domain];
-				//request.body.words = request.body.words.concat(_elements);
-			});
-			_conductuals = _conductuals.filter((row)  => {
-				return row[1] && row[1].length > 0;
-			});
-			_conductuals = _conductuals.map((row) => {
-				row[2] = row[2].filter((row2) => {
-					return row2[1] && row2[1].length > 0;
-				});
-				return row;
-			});
+		}).then((domains) => {			
 			return Promise.all([
-				_conductuals,
+				domains,
 				Schema.events.findOne({ name: 'OBJETIVES-ADD-FAIL'}),
 				Schema.events.findOne({ name: 'OBJETIVES-ADD-CONTEXT'}),
 				Schema.events.findOne({ name: 'KEYWORDS-CONTEXT'})
 			]);
 		}).then((data) => {
-			var EventClass = Schema.events, _EventFail = data[1],
-			_helpEvent = data[2], _WordsEvent = data[3];
+			var EventClass = Schema.events, domains = data[0],
+					_EventFail = data[1],
+					_helpEvent = data[2], _WordsEvent = data[3];
 			if (!_EventFail){
 				_EventFail = new EventClass({
 					name: 'OBJETIVES-ADD-FAIL',
@@ -1045,7 +1112,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 				for(var i = 0, n = exps.VERBOS.length; i<n; i++){
 					var _VERBO = exps.VERBOS[i];
 					var _inference = new Schema.inferences({
-						premise: `${_VERBO}.test(p1) == true && p1.length > 3`,
+						premise: `${_VERBO}.test(p1) == true`,
 						consecuent: 'q1 = "KEYWORD VERBO"'
 					});
 					_WordsEvent.premises.push(_inference);
@@ -1053,7 +1120,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 				for(var i = 0, n = exps.ACTIONS.length; i<n; i++){
 					var _ACTION = exps.ACTIONS[i];
 					var _inference = new Schema.inferences({
-						premise: `${_ACTION}.test(p1) == true && p1.length > 3`,
+						premise: `${_ACTION}.test(p1) == true`,
 						consecuent: 'q1 = "KEYWORD ACCION"'
 					});
 					_WordsEvent.premises.push(_inference);
@@ -1061,7 +1128,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 				for(var i = 0, n = exps.INSTRUMENTS.length; i<n; i++){
 					var _INSTRUMENT = exps.INSTRUMENTS[i];
 					var _inference = new Schema.inferences({
-						premise: `${_INSTRUMENT}.test(p1) == true && p1.length > 3`,
+						premise: `${_INSTRUMENT}.test(p1) == true`,
 						consecuent: 'q1 = "KEYWORD INSTRUMENTO"'
 					});
 					_WordsEvent.premises.push(_inference);
@@ -1079,7 +1146,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 					}
 			}
 			var text = (request.body.name + " " + request.body.description);
-			var words = text.replace(/\n|\t/, '').split(" ");
+			var words = text.replace(_SPECIALCHAR, '').split(" ");
 			var _verbos = [], _morphemas = [], _lexemas = [], keywords = [];
 			for (var i = 0, n = words.length; i<n; i++){
 				var _exp = new RegExp(words[i], "ig");
@@ -1089,7 +1156,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 					p2: _repeat.length
 				});
 				for(var j = 0, m = _wordQuery.length; j < m; j++){
-					if (/keyword/ig.test(_wordQuery[j].q1)){
+					if (/keyword/ig.test(_wordQuery[j].q1) && words[i].length >= 3){
 						var _isAdd = true;
 						for(var k = 0, u = keywords.length; k<u; k++){
 							if(keywords[k] == words[i]){
@@ -1098,13 +1165,60 @@ module.exports = function (app, express, Schema, __DIR__) {
 							}
 						}
 						if (_isAdd){
+							var _method = _wordQuery[j].q1.replace(/keyword/ig, '').trim();
+							switch (_method){
+								case "VERBO":
+									_verbos.push(words[i]);
+								break;
+								default:
+									_morphemas.push(words[i]);
+								break;
+							}
 							keywords.push(words[i]);
 						}
 					}
 				}
 			}
 			request.body.words = keywords;
-			if(_fails.length == 0 && (!data[0] || data[0].length == 0)){
+			console.log(request.body.words, _verbos);
+			var _conductuals = domains.map((domain) => {
+				if (domain.words.length == 0) {
+					return [domain._id, []];
+				}
+				var _elements1 = [];
+				var _exp = new RegExp("(" + domain.words.join("|") + ")", "ig");
+				for (var k = 0, u=keywords.length; k < u; k++){
+					if (_exp.test(keywords[k])){
+						_elements1.push(keywords[k]);
+					}
+				}
+				console.log(request.body.words, _elements1, _exp);
+				var _levels = domain.levels.map((level) => {
+					if (level.words.length == 0) {
+						return [level._id, []];
+					}
+					var _elements2 = [];
+					var _exp = new RegExp("(" + level.words.join("|") + ")", "ig");
+					for (var k = 0, u = keywords.length; k < u; k++) {
+						if (_exp.test(keywords[k])) {
+							_elements2.push(keywords[k]);
+						}
+					}
+					return [level._id, _elements2, level];
+				});
+				return [domain._id, _elements1, _levels, domain];
+				//request.body.words = request.body.words.concat(_elements);
+			});
+			_conductuals = _conductuals.filter((row) => {
+				return row[1] && row[1].length > 0;
+			});
+			_conductuals = _conductuals.map((row) => {
+				row[2] = row[2].filter((row2) => {
+					return row2[1] && row2[1].length > 0;
+				});
+				return row;
+			});
+			if(_fails.length == 0 && (!_conductuals || _conductuals.length == 0)){
 				if(keywords.length > 0){
 					var _inference = new Schema.inferences({
 						premise:`this.isContaint(p1, ${JSON.stringify(keywords)})`,
@@ -1115,20 +1229,20 @@ module.exports = function (app, express, Schema, __DIR__) {
 				}
 				throw new ValidatorException("Uff!. Lo sentimos no pudimos interpretar su objetivo, intente nuevamente.");
 			}
-			for(var i = 0, n = data[0].length; i<n; i++){
-				var domain = data[0][i];
+			for(var i = 0, n = _conductuals.length; i<n; i++){
+				var domain = _conductuals[i];
 				domain[1] = domain[1].length;
 				for (var j = 0, m = domain[2]; j<m; j++){
 					domain[2][j][1] = domain[2][j][1].length;
 				}
 			}
-			var _domain = data[0].sort((row1, row2) => {
+			var _domain = _conductuals.sort((row1, row2) => {
 				return row1[1] -row2[1];
 			})[0];
 			if (_fails.length == 0 && !_domain[2]) {
-				if (request.body.words.length > 0) {
+				if (_verbos > 0) {
 					var _inference = new Schema.inferences({
-						premise: `this.isContaint(p1, ${JSON.stringify(request.body.words)})`,
+						premise: `this.isContaint(p1, ${JSON.stringify(_verbos)})`,
 						consecuent: 'q1 = "El objetivo no posee un verbo observable. Esto reduce la efectividad del objetivo!"'
 					});
 					_EventFail.premises.push(_inference);
@@ -1382,7 +1496,7 @@ module.exports = function (app, express, Schema, __DIR__) {
       response.send(data)
     }).catch((error) => {
       next(error)
-    })
+    });
   })
 
   /*
@@ -2216,7 +2330,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 			throw new ValidatorException("el id no es valido!");
 		}
 		Promise.all([Schema.Teachers.findOne({_id:request.params.id}),Schema.Grades.findOne({_id:request.params.grade})]).then(function(data){
-			if(!data[0]){
+			if (!data[0]){
 				throw new ValidatorException("No existe un registro de este tipo");
 			}
 			if(!data[1]){
