@@ -95,7 +95,6 @@ import * as moment from 'moment'
          input.value = val.format("DD-MM-YYYY HH:mm:ss");
          this.fields.expire.value = input.value;
        });
-     console.log(picker);
      input.addEventListener('focus', function(){
        this.blur();
        picker.open();

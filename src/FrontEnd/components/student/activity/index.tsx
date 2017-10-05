@@ -53,27 +53,27 @@ import {LineChart} from '../../linechart'
       progress: 0,
       exp: 0
     };
-    data.objetives.forEach((row) => {
-      var isExist = false;
-      for (var i = 0, n = student.activities.length; i < n; i++) {
-        if (student.activities[i].objetive != row._id) {
+    for (var i = 0, m = student.activities.length; i<m; i++){
+      for (var j = 0, n = data.objetives.length; j<n; j++){
+        if (student.activities[i].objetive != data.objetives[j]._id
+          || student.activities[i].activity != data._id) {
           continue;
         }
+        var row = data.objetives[j];
         if (student.activities[i].isAdd == true) {
           count.completed++;
           count.exp += student.activities[i].exp;
         } else {
           count.failed++;
         }
-        isExist = true;
+        break;
       }
-      if (!isExist) {
-        count.pending++;
-      }
-    });
+    }
+    count.pending = count.count - (count.completed + count.failed);
     if (count.count > 0) {
       count.progress = ((count.completed * 100) / count.count)
     }
+    console.log(count);
     this.setState({
       student: student,
       activity: data,
