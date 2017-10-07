@@ -20,12 +20,6 @@ var structDb = {
   PeriodSchools: mongoose.Schema({
     name: {type: String, required: true, trim: true, uppercase: true}
   }),
-  type_morphema: mongoose.Schema({
-    name: {type: String, required: true, trim: true, uppercase: true}
-  }),
-  mode_morphema: mongoose.Schema({
-    name: {type: String, required: true, trim: true, uppercase: true}
-  }),
   nivelDomain: mongoose.Schema({
     name: {type: String, required: true, trim: true, uppercase: true},
     level: {type: Number},
@@ -95,35 +89,44 @@ structDb.Sessions = mongoose.Schema({
   dateDeleted: Date,
   dateLastConnect: Date,
   user: { type: mongoose.Schema.ObjectId, ref: 'User' }
-})
+});
 
 structDb.morphems = mongoose.Schema({
-  type: structDb.type_morphema,
-  mode: structDb.mode_morphema,
+	type: { type: String, required: true, trim: true, uppercase: true },
+	mode: { type: String, required: true, trim: true, uppercase: true },
+	regexp: { type: string, required: false, trim: true },
   key: {type: String, required: true, trim: true, uppercase: true}
-})
+});
+
 structDb.lexemas = mongoose.Schema({
-  key: {type: String, required: true, trim: true, uppercase: true},
-  morphems: structDb.morphems
-})
+	key: {type: String, required: true, trim: true, uppercase: true},
+	regexp: {type: string, required: false, trim: true},
+  morphems: [structDb.morphems]
+});
+
 structDb.words = mongoose.Schema({
   key: {type: String, required: true, trim: true, uppercase: true},
-  lexema: structDb.lexemas,
-  concept: {type: String, required: true, trim: true, uppercase: true}
-})
+	lexema: { type: mongoose.Schema.ObjectId, ref: 'lexemas' },
+	morphems: { type: mongoose.Schema.ObjectId, ref: 'morphems' },
+  concept: {type: String, required: true, trim: true, uppercase: true},
+  derivation: {type: Boolean, required: true}
+});
+
 structDb.Cognitions = mongoose.Schema({
   name: {type: String, required: true, trim: true, uppercase: true},
   description: {type: String, required: true, trim: true, uppercase: true},
   words: []
 // words:[structDb.words]
-})
+});
+
 structDb.domainsLearning = mongoose.Schema({
   name: {type: String, required: true, trim: true, uppercase: true},
   description: {type: String, required: true, trim: true, uppercase: true},
   levels: [structDb.nivelDomain],
   words: []
 // words:[structDb.words]
-})
+});
+
 structDb.LearningObjetive = mongoose.Schema({
   name: {type: String, trim: true, required: true, uppercase: true},
 	description: {type: String, trim: true, required: false, uppercase: true},
@@ -142,7 +145,7 @@ structDb.LearningObjetive = mongoose.Schema({
   dateCreated: { type: Date, default: Date.now },
   words: []
 // words:[structDb.words]
-})
+});
 
 structDb.Activities = mongoose.Schema({
   name: {type: String, trim: true, required: true, uppercase: true},
@@ -197,7 +200,6 @@ for (var i in structDb) {
   structDb[i] = mongoose.model(i, structDb[i])
 }
 
-// module.exports.db = mongoose.connection
 module.exports = structDb
 
 /*
