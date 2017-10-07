@@ -15,6 +15,49 @@ interface Window{
 	progress: ProgressStatic
 	dialogPolyfill: any
 	ReactPath: string
+	WORDS: {
+		MODE_MORPHEMS: {
+			PREFIX: string
+			SUFIX: string
+			INTERFIX: string
+		}
+		TYPE_MORPHEMS: {
+			NOFOREING: string
+			DERIVATE: string
+			FLEX: string
+		}
+		CONCEPTS: {
+			VERB: string
+			SUSTANT: string
+			PREPO: string
+			ADJECT: string
+			PARTICI: string
+			PRONOMB: string
+			ARTIC: string
+			NAME: string
+			ADVER: string
+		}
+		TIMES: {
+			PRESENT: string
+			PRETERITO_PERFECT: string
+			PRETERITO_INPERFECT: string
+			ANTE_COPRETERITO: string
+			PRETERITO_PERFECTO_SIMPLEX: string
+			PRETERITO_BEFORE: string
+			FUTURO_SIMPLEX: string
+			FUTURO_PERFECT: string
+			CONDITIONAL_SIMPLEX: string
+			CONDITIONAL_PERFECT: string
+		}
+		GENERO: {
+			MAN: string
+			WOMAN: string
+		}
+		COUNT: {
+			SINGLE: string
+			MULTI: string
+		}
+	}
 }
 declare let validator: any;
 declare let componentHandler: any;
@@ -323,6 +366,29 @@ declare namespace compat {
   }
 }
 
+declare namespace Words{
+	interface Morphema{
+		_id: string
+		type: string
+		mode: string
+		regexp?: string
+		key: string
+	}
+	interface Lexema{
+		_id: string
+		key: string
+		regexp: string,
+		morphems: Array<Words.Morphema>
+	}
+	interface word{
+		_id: string
+		key: string,
+		lexema: Words.Lexema,
+		morphems: Words.Morphema,
+		concept: string
+		derivation: boolean
+	}
+}
 
 /*
 declare namespace Props{

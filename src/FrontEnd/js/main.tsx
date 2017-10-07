@@ -7,6 +7,7 @@ import {Login} from '../components/login'
 import * as Teacher from '../components/teacher'
 import * as Student from '../components/student'
 import * as Parent from '../components/parent'
+import * as Words from '../components/words'
 import * as Grade from '../components/grades'
 import * as Matters from '../components/matters'
 import * as Domain from '../components/domain'
@@ -28,6 +29,13 @@ window.addEventListener("load",()=>{
           <Route path="edit/:id" component={Teacher.Modify}/>
           <Route path="grade/edit/:id" component={Teacher.Grade}/>
           <Route path="create" component={Teacher.Add}/>
+        </Route>
+        <Route path="/words" onEnter={Auth}>
+          <IndexRoute component={Words.Lexemas}/>
+          <Route path="get/:id" component={Teacher.Get}/>
+          <Route path="edit/:id" component={Teacher.Modify}/>
+          <Route path="grade/edit/:id" component={Teacher.Grade}/>
+          <Route path="create" component={Words.Add}/>
         </Route>
         <Route path="/students" onEnter={Auth}>
           <IndexRoute component={Student.Student}/>

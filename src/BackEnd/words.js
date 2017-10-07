@@ -29,7 +29,7 @@ module.exports.INSTRUMENTS = [
 ];
 
 //Modo de un morfema
-module.export.MODE_MORPHEMS = {
+module.exports.MODE_MORPHEMS = {
     PREFIX: "MORPH-PREFIX", // Morphema clase afijo antepone a la raiz (español todos son derivativos)
     SUFIX: "MORPH-SUFIX", // Morphema clase afijo despues de la raiz ()
     INTERFIX: "MORPH-INTER" // Morphema clase afijo intermedio a la raiz (casi nulos)

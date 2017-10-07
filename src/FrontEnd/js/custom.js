@@ -2,8 +2,11 @@
 require("../vendor/material.min.js");
 require("dialog-polyfill/dialog-polyfill.css");
 require("material-datetime-picker/dist/material-datetime-picker.css");
+var WORDS = require("../../BackEnd/words.js");
+
 
 window.dialogPolyfill = require("dialog-polyfill/dialog-polyfill.js");
+window.WORDS = WORDS;
 
 window.progress = {
     parent: null,

@@ -94,13 +94,13 @@ structDb.Sessions = mongoose.Schema({
 structDb.morphems = mongoose.Schema({
 	type: { type: String, required: true, trim: true, uppercase: true },
 	mode: { type: String, required: true, trim: true, uppercase: true },
-	regexp: { type: string, required: false, trim: true },
+	regexp: { type: String, required: false, trim: true },
   key: {type: String, required: true, trim: true, uppercase: true}
 });
 
 structDb.lexemas = mongoose.Schema({
 	key: {type: String, required: true, trim: true, uppercase: true},
-	regexp: {type: string, required: false, trim: true},
+	regexp: {type: String, required: false, trim: true},
   morphems: [structDb.morphems]
 });
 
