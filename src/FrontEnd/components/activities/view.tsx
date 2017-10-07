@@ -28,15 +28,22 @@ export class View extends React.Component <Props.teacherView, CRUD.activity>{
         }
   });
   }
-  deleteObjetive(id: string, level: string, domain: string){
+  deleteObjetive(id: any){
+    if(typeof(id) == "object"){
+      id= id[0];
+    }
     ajax({
         method:"DELETE",
-        url: `${window._BASE}/v1/knowedge/${domain}/objetives/${level}/${id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+        url: `${window._BASE}/v1/activities/${this.state._id}/objetives/${id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
         dataType: "json",
         data:null,
         crossDomain:true,
         success:(data: CRUD.activity)=>{
-          this.props.router.replace('/students');
+          this.state.objetives = this.state.objetives.filter((row) => {
+            return row._id != id;
+          });
+          this.state.exp = data.exp;
+          this.setState(this.state);
         }
     });
   }
@@ -79,13 +86,12 @@ export class View extends React.Component <Props.teacherView, CRUD.activity>{
     });
   }
   render(){
-    let body = (
-      <div className="mdl-grid mdl-color--white demo-content">
-        <div className="mdl-spinner mdl-js-spinner is-active"></div>
-      </div>
-    );
-    if(this.state){
-      body = (<List.Activity activity={this.state}/>);
+    if(!this.state){
+      return (
+        <div className="mdl-grid mdl-color--white demo-content">
+          <div className="mdl-spinner mdl-js-spinner is-active"></div>
+        </div>
+      );
     }
     return(
       <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
@@ -110,7 +116,7 @@ export class View extends React.Component <Props.teacherView, CRUD.activity>{
         <main className="mdl-layout__content mdl-color--white-100">
           <div className="mdl-grid demo-content">
             <div className="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
-              {body}
+              <List.Activity activity={this.state} />
             </div>
             <div className="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col mdl-grid">
               <h3 className="mdl-typografy mdl-text-center">Objetivos asignados</h3>
@@ -130,6 +136,7 @@ export class View extends React.Component <Props.teacherView, CRUD.activity>{
                       if (!row.domain || !row.level) {
                         return null;
                       }
+                      console.log(row);
                       return (
                         <tr key={row._id} id={row._id}>
                           <td className="mdl-data-table__cell--non-numeric" title={row.name}><span>{row.name}</span></td>
@@ -150,7 +157,7 @@ export class View extends React.Component <Props.teacherView, CRUD.activity>{
                             <div className="mdl-tooltip" data-mdl-for={`view1${row._id}`}>
                               Ver detalles
                             </div>
-                            <div id={`row1delete${row._id}`} className="icon material-icons" onClick={this.deleteObjetive.bind(this, [row._id, row.level._id, row.domain._id])} style={{ cursor: "pointer" }}>delete</div>
+                            <div id={`row1delete${row._id}`} className="icon material-icons" onClick={this.deleteObjetive.bind(this, [row._id])} style={{ cursor: "pointer" }}>delete</div>
                             <div className="mdl-tooltip" data-mdl-for={`row1delete${row._id}`}>
                               Eliminar
                             </div>
@@ -167,7 +174,7 @@ export class View extends React.Component <Props.teacherView, CRUD.activity>{
                   <h2 className="mdl-card__title-text">Total puntos de experiencia</h2>
                 </div>
                 <div className="mdl-card__supporting-text mdl-color-text--grey-600">
-                  <h1 className="mdl-typography--text-center display-2">{(this.state) ? this.state.exp : 0} XP</h1>
+                  <h1 className="mdl-typography--text-center display-2">{(this.state.exp) ? this.state.exp : 0} XP</h1>
                 </div>
               </div>
             </div>
@@ -197,7 +204,7 @@ export class View extends React.Component <Props.teacherView, CRUD.activity>{
                               <div className="mdl-tooltip" data-mdl-for={`view${row._id}`}>
                                 Ver detalles
                               </div>
-                              <div id={`delete${row._id}`} className="icon material-icons" onClick={this.remove.bind(this, [row._id])} style={{cursor: "pointer"}}>delete</div>
+                              <div id={`delete${row._id}`} className="icon material-icons" onClick={this.remove.bind(this, row._id)} style={{cursor: "pointer"}}>delete</div>
                               <div className="mdl-tooltip" data-mdl-for={`delete${row._id}`}>
                                 Eliminar
                               </div>
