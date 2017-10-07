@@ -12,6 +12,7 @@ var UserException = require('./SoulHand/Exceptions/UserException.js')
 // var basicAuth = require('basic-auth-connect')
 // const logger = require('winston')
 var Auth = require('./SoulHand/Auth.js')
+var corpusRoutes = require('./Corpus/routes.js');
 var mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -19,6 +20,7 @@ const ObjectId = mongoose.Types.ObjectId;
 
 module.exports = function (app, express, Schema, __DIR__) {
 	let Events = require('./SoulHand/inferencia/events.js')(Schema)
+	corpusRoutes(app, express, Schema, Events, __DIR__);
 	
 	/*
   * Ruta /v1/reports
@@ -223,20 +225,16 @@ module.exports = function (app, express, Schema, __DIR__) {
 			{
 				$match: { "_id": ObjectId(request.params.id) }
 			},
-			{ $unwind: "$physics" },
 			{ $unwind: "$objetives" },
 			{ $unwind: "$objetives.objetive.cognitions" },
-			{ $sort: {"physics.date": 1} },
 			{
 				$group: {
-					_id: "$_id",
+					_id: { _id: "$_id", "$activities._id": "$activities._id", "$objetives._id": "$objetives._id"},
 					max: { $max: "$objetives.completed" },
 					min: { $min: "$objetives.completed" },
 					avg: { $avg: "$objetives.completed" },
 					data: { $push: "$objetives" },
 					cognitions: { $addToSet: "$objetives.objetive.cognitions" },
-					exp: { $sum: "$objetives.completed"},
-					physic: {$last: "$physics"}
 				}
 			},
 			{
@@ -245,8 +243,6 @@ module.exports = function (app, express, Schema, __DIR__) {
 					max: 1,
 					min: 1,
 					avg: 1,
-					exp: { $multiply: ["$exp", 10] },
-					physic: 1,
 					cognitions: 1,
 					objetives: {
 						$map: {
@@ -255,38 +251,59 @@ module.exports = function (app, express, Schema, __DIR__) {
 							in: {
 								_id: "$$row._id",
 								objetive: "$$row.objetive",
+								activity: "$$row.activity",
 								completed: "$$row.completed",
 								avg: {
-									$multiply: [{ $divide: ["$$row.completed", "$max"] }, 100]
+									$multiply: [{ $divide: ["$$row.exp", "$max"] }, 100]
 								},
-								exp: {
-									$multiply: ["$$row.completed", 10]
-								}
+								exp: "$$row.exp"
 							}
 						}
-					}
+					}					
 				}
 			}
-
+			
 		])
+		.then((data) => {
+			var _data = data[0];
+			if (!data[0]) {
+				_data = {
+					_id: 0,
+					max: 0,
+					min: 0,
+					avg: 0,
+					exp: 0,
+					physic: null,
+					cognitions: null,
+					objetives: [],
+					activities: []
+				};
+			}
+			return Promise.all([_data, Schema.Students.findOne({ _id: ObjectId(request.params.id) }).populate('activities.activity').populate('activities.objetive')]);
+			//return Schema.Students.populate(data[0], { path: 'Activities' });
+		}).then((data) => {
+			if (!data[1]) {
+				throw new ValidatorException("No existe el alumno!");
+			}
+			if (data[1].activities) {
+				data[0].activities = data[1].activities;
+			}
+			data[0].exp = 0;
+			for (var i = 0, n = data[0].objetives.length; i < n; i++) {
+				data[0].exp += data[0].objetives[i].exp || 0;
+			}
+			data[0].physic = null, _now = null;
+			for (var i = 0, n = data[1].physics.length; i < n; i++) {
+				var _date = new Date(data[1].physics[i].date);
+				if (!_now || _now < _date){
+					_now = _date;
+					data[0].physic = data[1].physics[i];
+				}
+			}
+			return data[0];
+		})
 			.then(function (data) {
-				if (!data) {
-					throw new ValidatorException("No existe el alumno!");
-				}
-				if(!data[0]){
-					response.send({
-						_id: 0,
-						max: 0,
-						min: 0,
-						avg: 0,
-						exp: 0,
-						physic: null,
-						cognitions: null,
-						objetives: []
-					});
-				}else{
-					response.send(data[0]);
-				}
+					response.send(data);
 			}).catch(function (error) {
 				next(error);
 			});
@@ -3609,11 +3626,10 @@ module.exports = function (app, express, Schema, __DIR__) {
 			if(!data){
 				throw new ValidatorException("No existe la actividad!");
 			}
-      console.log(data.objetives);
       for (var i = 0, n=data.objetives.length; i < n; i++) {
-        console.log(data.objetives[i]._id, request.params.objetive);
         if(data.objetives[i]._id.toString()==request.params.objetive){
-          data.objetives[i].remove();
+					data.exp -= data.objetives[i].exp;
+					data.objetives[i].remove();
           return data.save();
         }
       }
