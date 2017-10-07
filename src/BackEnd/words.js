@@ -2,6 +2,9 @@
     Expresiones regulares para separacion de palabras en textos
 */
 
+//Separador de palabras
+module.exports.wordSeparators= /[`~!@#$%^&*\(\)-=+\[{\]}\\|;:'\",.<>/?]/ig;
+
 /*
     Separacion de verbos
  */
@@ -32,14 +35,20 @@ module.exports.INSTRUMENTS = [
 module.exports.MODE_MORPHEMS = {
     PREFIX: "MORPH-PREFIX", // Morphema clase afijo antepone a la raiz (español todos son derivativos)
     SUFIX: "MORPH-SUFIX", // Morphema clase afijo despues de la raiz ()
-    INTERFIX: "MORPH-INTER" // Morphema clase afijo intermedio a la raiz (casi nulos)
+    INTERFIX: "MORPH-INTER", // Morphema clase afijo intermedio a la raiz (casi nulos)
+    GENERO: "MORPH-GENERO", // Morphema flexible genero
+    COUNT: "MORPH-COUNT", // Morphema clase flexible numero
+    TIME: "MORPH-TIME" // Morphema clase flexible numero
 };
+
+
 
 //Tipos de morfemas
 module.exports.TYPE_MORPHEMS = {
     NOFOREING: "MORPH-NOFOREING", // Morfema Independiente preposiciones y conjugaciones
     DERIVATE: "MORPH-DERIVATE", //Morfemas dependientes unen monemas para generar significado (cerca de la raiz).
-    FLEX: "MORPH-FLEX" // marcan accion verbal marcan genero numero y en el verbo tiempo.
+    FLEX: "MORPH-FLEX", // marcan accion verbal marcan genero numero y en el verbo tiempo.
+    DIMINUTIVE: "MORPH-DIMI" // marcan accion verbal marcan genero numero y en el verbo tiempo.
 }
 
 //categoria gramatical

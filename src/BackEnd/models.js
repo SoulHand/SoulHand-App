@@ -92,10 +92,9 @@ structDb.Sessions = mongoose.Schema({
 });
 
 structDb.morphems = mongoose.Schema({
-	type: { type: String, required: true, trim: true, uppercase: true },
-	mode: { type: String, required: true, trim: true, uppercase: true },
 	regexp: { type: String, required: false, trim: true },
-  key: {type: String, required: true, trim: true, uppercase: true}
+  key: {type: String, required: true, trim: true, uppercase: true},
+  concepts: [{type: String, required: true, trim: true, uppercase: true}]
 });
 
 structDb.lexemas = mongoose.Schema({
@@ -107,9 +106,11 @@ structDb.lexemas = mongoose.Schema({
 structDb.words = mongoose.Schema({
   key: {type: String, required: true, trim: true, uppercase: true},
 	lexema: { type: mongoose.Schema.ObjectId, ref: 'lexemas' },
-	morphems: { type: mongoose.Schema.ObjectId, ref: 'morphems' },
-  concept: {type: String, required: true, trim: true, uppercase: true},
-  derivation: {type: Boolean, required: true}
+	morphems: [{ 
+		key: { type: String, required: true, trim: true, uppercase: true },
+		_id: { type: mongoose.Schema.ObjectId }
+	}],
+	concept: [{type: String, required: true, trim: true, uppercase: true}],
 });
 
 structDb.Cognitions = mongoose.Schema({

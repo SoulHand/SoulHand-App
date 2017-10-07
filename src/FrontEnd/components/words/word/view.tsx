@@ -65,9 +65,10 @@ export class View extends React.Component <Props.teacherView, Words.Lexema>{
               <table className="mdl-data-table mdl-js-data-table mdl-data-table resize">
                 <thead>
                   <tr>
-                    <th className="mdl-data-table__cell--non-numeric td-ms-5">Palabra</th>
-                    <th className="td-ms-5">Expresión regular</th>
-                    <th className="td-ms-40">conceptos</th>
+                    <th className="mdl-data-table__cell--non-numeric td-ms-20">Palabra</th>
+                    <th className="td-ms-20">Expresión regular</th>
+                    <th className="td-ms-20">Tipo</th>
+                    <th className="td-ms-20">Modo</th>
                     <th className="td-ms-20"></th>
                   </tr>
                 </thead>
@@ -109,15 +110,8 @@ export class View extends React.Component <Props.teacherView, Words.Lexema>{
                         <tr key={row._id} id={row._id}>
                           <td className="mdl-data-table__cell--non-numeric" title={row.key}><span>{row.key}</span></td>
                           <td title={row.regexp}><span>{row.regexp}</span></td>
-                          <td>
-                            {row.concepts.map((concept, index) => {
-                              return (
-                                <span className="mdl-chip" key={concept + index}>
-                                  <span className="mdl-chip__text">{concept}</span>
-                                </span>
-                              );
-                            })}
-                          </td>
+                          <td title={type}><span>{type}</span></td>
+                          <td title={mode}><span>{mode}</span></td>
                           <td>
                             <div id={`row1delete${row._id}`} className="icon material-icons" onClick={this.remove.bind(this, [row._id])} style={{ cursor: "pointer" }}>delete</div>
                             <div className="mdl-tooltip" data-mdl-for={`row1delete${row._id}`}>

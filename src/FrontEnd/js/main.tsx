@@ -32,10 +32,11 @@ window.addEventListener("load",()=>{
         </Route>
         <Route path="/words" onEnter={Auth}>
           <IndexRoute component={Words.Lexemas}/>
-          <Route path="get/:id" component={Teacher.Get}/>
-          <Route path="edit/:id" component={Teacher.Modify}/>
-          <Route path="grade/edit/:id" component={Teacher.Grade}/>
+          <Route path="get/:id" component={Words.Get}/>
+          <Route path="get/:id/morphemas/create" component={Words.setStudent}/>
           <Route path="create" component={Words.Add}/>
+          <Route path="words" component={Words.Words.Word}/>
+          <Route path="words/create" component={Words.Words.Add}/>
         </Route>
         <Route path="/students" onEnter={Auth}>
           <IndexRoute component={Student.Student}/>

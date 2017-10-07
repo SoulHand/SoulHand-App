@@ -20,6 +20,9 @@ interface Window{
 			PREFIX: string
 			SUFIX: string
 			INTERFIX: string
+			GENERO: string
+			COUNT: string
+			TIME: string
 		}
 		TYPE_MORPHEMS: {
 			NOFOREING: string
@@ -369,10 +372,9 @@ declare namespace compat {
 declare namespace Words{
 	interface Morphema{
 		_id: string
-		type: string
-		mode: string
 		regexp?: string
 		key: string
+		concepts: Array<string>
 	}
 	interface Lexema{
 		_id: string
@@ -384,9 +386,8 @@ declare namespace Words{
 		_id: string
 		key: string,
 		lexema: Words.Lexema,
-		morphems: Words.Morphema,
-		concept: string
-		derivation: boolean
+		morphems: Array<Words.Morphema>,
+		concepts: Array<string>
 	}
 }
 
