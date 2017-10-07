@@ -215,8 +215,9 @@ declare namespace State {
 
 declare namespace CRUD{
   interface ActivityMaked{
-    activity: string,
-    objetive: string,
+		_id: string
+    activity: any,
+    objetive: any,
     description: string
   	dateCreated:string
 		isAdd: boolean

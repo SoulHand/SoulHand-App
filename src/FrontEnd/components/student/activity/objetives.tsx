@@ -79,6 +79,35 @@ import { ProgressBar} from '../../progressbar'
                  </tbody>
                </table>
               </div>
+               {this.state.activities && (
+                  <div className="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--8-col">
+                  <h3>Historico de objetivos</h3>
+                  <table className="mdl-data-table mdl-js-data-table resize">
+                      <thead>
+                        <tr>
+                          <th className="mdl-data-table__cell--non-numeric">Objetivo</th>
+                          <th>Actividad</th>
+                          <th>Descripción</th>
+                          <th>Estado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {
+                          this.state.activities.map((row: CRUD.ActivityMaked) => {
+                            return (
+                              <tr key={row._id}>
+                                <td className="mdl-data-table__cell--non-numeric"><span>{row.objetive.name}</span></td>
+                                <td className="mdl-data-table__cell">{row.activity.name}</td>
+                                <td className="mdl-data-table__cell">{row.description}</td>
+                                <td className="mdl-data-table__cell">{(row.isAdd) ? "Completado" : "Fallido"}</td>
+                              </tr>
+                            );
+                          })
+                        }
+                      </tbody>
+                    </table>
+                </div>
+               )}
               <div className="demo-cards mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing">
                 <div className="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
                   <div className="mdl-card__title mdl-card--expand mdl-color--teal-300">
