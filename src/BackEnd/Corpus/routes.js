@@ -256,7 +256,7 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
                 return row.trim();
             });
             request.body.words = request.body.words.filter((row) => {
-                return !Validator.isNull(row);
+                return !Validator.isNull()(row);
             });
         }
         try {
@@ -264,6 +264,7 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
         } catch (error) {
             throw new ValidatorException("La expresión regular es invalida!");
         }
+        request.body.name = request.body.name.toUpperCase();
         request.body.name = request.body.name.toUpperCase();
         request.body.term = JSON.parse(request.body.term).map((row) => {
             return {
@@ -331,7 +332,6 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
             return Promise.all([_word.save(), rows[0]]);
         })
         .then((data) => {
-            console.log(request.body.words);
             var promises = [];
             data[1].forEach((hiperonimo) => {
                 var _taxon = new Schema.Taxon({
