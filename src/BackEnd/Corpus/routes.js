@@ -270,16 +270,6 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
         } catch (error) {
             throw new ValidatorException("La expresión regular es invalida!");
         }
-        var isValidConcept = false;
-        for (var key in WORDS.CONCEPTS){
-            if (WORDS.CONCEPTS[key] == request.body.concept){
-                isValidConcept = true;
-                break;
-            }
-        }
-        if (!isValidConcept){
-            throw new ValidatorException("La clasificación gramatical no es valida!");
-        }
         if(request.body.time){
             var isValidTime = false;
             for (var key in WORDS.TIMES) {
