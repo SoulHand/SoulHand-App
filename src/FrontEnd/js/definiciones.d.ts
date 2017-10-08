@@ -16,6 +16,13 @@ interface Window{
 	dialogPolyfill: any
 	ReactPath: string
 	WORDS: {
+
+		CONCEPTS: {
+			COUNT: string
+			GENERO: string
+			TIME: string
+			CLASS: string
+		}
 		MODE_MORPHEMS: {
 			PREFIX: string
 			SUFIX: string
@@ -29,7 +36,7 @@ interface Window{
 			DERIVATE: string
 			FLEX: string
 		}
-		CONCEPTS: {
+		CLASS_GRAMATICAL: {
 			VERB: string
 			SUSTANT: string
 			PREPO: string
@@ -370,11 +377,15 @@ declare namespace compat {
 }
 
 declare namespace Words{
+	interface Concept{
+		key:string
+		value: string
+	}
 	interface Morphema{
 		_id: string
 		regexp?: string
 		key: string
-		concepts: Array<string>
+		concepts: Array<Concept>
 	}
 	interface Lexema{
 		_id: string
@@ -387,7 +398,7 @@ declare namespace Words{
 		key: string,
 		lexema: Words.Lexema,
 		morphems: Array<Words.Morphema>,
-		concepts: Array<string>
+		concepts: Array<Concept>
 	}
 }
 

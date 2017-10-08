@@ -1,8 +1,8 @@
 import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link, withRouter} from 'react-router'
-import * as Cards from '../cards/activity'
 import * as Word from './word'
+import * as Term from './terms'
 import {Header} from '../app/header'
 import {ParentCreate} from './parentcreate'
 import {AlumnCreate} from './alumncreate'
@@ -17,7 +17,7 @@ export class Lexemas extends React.Component<Props.teacherView, {}>{
   state: { lexemas: Array<Words.Lexema>} = {
     lexemas: []
   }
-  constructor(props:{}){
+  constructor(props:any){
     super(props)
     let str = localStorage.getItem("session");
     this.session = JSON.parse(str);
@@ -130,3 +130,4 @@ export let Add = ParentCreate;
 export let Get = View;
 export let setStudent = AlumnCreate;
 export let Words = Word;
+export let Terms = Term;

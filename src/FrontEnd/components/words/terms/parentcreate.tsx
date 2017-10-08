@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {withRouter} from 'react-router'
 import {Link} from 'react-router'
-import {FormUtils} from '../formutils'
+import {FormUtils} from '../../formutils'
 import {ajax} from 'jquery'
 
 
@@ -15,9 +15,13 @@ import {ajax} from 'jquery'
  			value:null,
  			required:true
  		},
- 		regexp:{
- 			value:null
-    }
+ 		description:{
+ 			match:(fn:string)=>{
+ 				return !validator.isNull()(fn);
+ 			},
+ 			value:null,
+ 			required:true
+ 		}
  	};
   state: {error: compat.Map} = {
     error:{},
@@ -36,11 +40,11 @@ import {ajax} from 'jquery'
     }
     ajax({
         method:"POST",
-        url: `${window._BASE}/v1/words/lexemas/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+        url: `${window._BASE}/v1/terms/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
         dataType: "json",
         data:values,
         success:(data:any)=>{
-          this.props.router.replace(`/words/get/${data._id}`);
+          this.props.router.replace(`/terms/get/${data._id}`);
         },
         error:(data:any)=>{
           var state: CRUD.codeError = data.responseJSON;
@@ -60,7 +64,7 @@ import {ajax} from 'jquery'
      return(
        <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
        <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-        <div className="mdl-layout__drawer-button"><Link to="/words"><i className="material-icons">&#xE5C4;</i></Link></div>
+        <div className="mdl-layout__drawer-button"><Link to="/terms"><i className="material-icons">&#xE5C4;</i></Link></div>
          <div className="mdl-layout__header-row">
            <span className="mdl-layout-title">SoulHand</span>
            <div className="mdl-layout-spacer"></div>
@@ -72,26 +76,21 @@ import {ajax} from 'jquery'
        </header>
           <main className="mdl-layout__content mdl-color--white-100">
           <div className="mdl-grid mdl-color--white demo-content">
-              <div className="mdl-cell mdl-cell--6-col">
-                <h1>Añadir un lexema</h1>
-              </div>
                <div className="mdl-cell mdl-cell--6-col">
-                <div className="mdl-cell mdl-cell--12-col">
-                    <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.name) ? 'is-invalid' :'')}>
-                    <input className="mdl-textfield__input" type="text" id="name" onChange={(e:any)=>{this.getFields(e)}}/>
-                    <label className="mdl-textfield__label" htmlFor="name">Nombre*</label>
-                    <span className="mdl-textfield__error">Es necesaria un nombre valido</span>
-                  </div>
-                </div>
-                <div className="mdl-cell mdl-cell--12-col">
-                  <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.description) ? 'is-invalid' :'')}>
-                    <textarea className="mdl-textfield__input" id="regexp" onChange={(e:any)=>{this.getFields(e)}}/>
-                    <label className="mdl-textfield__label" htmlFor="regexp">Expresión regular (solo desarrolladores)</label>
-                    <span className="mdl-textfield__error">No se admite la expresión</span>
-                  </div>
-                </div>
-              </div>
-             </div>
+                  <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.name) ? 'is-invalid' :'')}>
+                   <input className="mdl-textfield__input" type="text" id="name" onChange={(e:any)=>{this.getFields(e)}}/>
+                   <label className="mdl-textfield__label" htmlFor="name">Nombre*</label>
+                   <span className="mdl-textfield__error">Es necesaria un nombre valido</span>
+                 </div>
+               </div>               
+               <div className="mdl-cell mdl-cell--6-col">
+                  <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.name) ? 'is-invalid' :'')}>
+                   <textarea className="mdl-textfield__input" type="text" id="description" onChange={(e:any)=>{this.getFields(e)}}/>
+                   <label className="mdl-textfield__label" htmlFor="description">Descripción*</label>
+                   <span className="mdl-textfield__error">Es necesaria un nombre valido</span>
+                 </div>
+               </div>               
+          </div>
           </main>
        </div>
      );

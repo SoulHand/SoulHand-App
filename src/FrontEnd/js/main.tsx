@@ -38,6 +38,11 @@ window.addEventListener("load",()=>{
           <Route path="words" component={Words.Words.Word}/>
           <Route path="words/create" component={Words.Words.Add}/>
         </Route>
+        <Route path="/terms" onEnter={Auth}>
+          <IndexRoute component={Words.Terms.Word}/>
+          <Route path="get/:id" component={Words.Terms.Get} />
+          <Route path="create" component={Words.Terms.Add}/>
+        </Route>
         <Route path="/students" onEnter={Auth}>
           <IndexRoute component={Student.Student}/>
           <Route path="get/:id" component={Student.Get}/>

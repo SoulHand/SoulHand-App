@@ -12,7 +12,7 @@ import {Menu} from '../../app/menu'
 @withRouter
 export class Word extends React.Component<Props.teacherView, {}>{
   public session: User.session;
-  state: { words: Array<Words.word>} = {
+  state: { words: Array<any>} = {
     words: []
   }
   constructor(props:any){
@@ -26,7 +26,7 @@ export class Word extends React.Component<Props.teacherView, {}>{
   componentDidMount(){
     let p1 = ajax({
       method:"GET",
-      url: `${window._BASE}/v1/words/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+      url: `${window._BASE}/v1/terms/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
       dataType: "json",
       data:null
     });
@@ -39,7 +39,7 @@ export class Word extends React.Component<Props.teacherView, {}>{
   delete(id: string){
     let p1 = ajax({
       method: "DELETE",
-      url: `${window._BASE}/v1/words/${id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+      url: `${window._BASE}/v1/terms/${id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
       dataType: "json",
       data: null
     });
@@ -79,13 +79,12 @@ export class Word extends React.Component<Props.teacherView, {}>{
         <main className="mdl-layout__content mdl-color--white-100">
           <div className="mdl-grid demo-content">
             <div className="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--8-col">
-              <h3>Palabras Registradas</h3>
+              <h3>Definición de terminos</h3>
               <table className="mdl-data-table mdl-js-data-table resize">
                 <thead>
                   <tr>
-                    <th className="mdl-data-table__cell--non-numeric">Palabra</th>
-                    <th>Lexema</th>
-                    <th>morfemas</th>
+                    <th className="mdl-data-table__cell--non-numeric">Termino</th>
+                    <th className="mdl-data-table__cell--non-numeric">Definición</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -94,18 +93,12 @@ export class Word extends React.Component<Props.teacherView, {}>{
                     this.state.words.map((row) => {
                       return (
                         <tr key={row._id}>
-                          <td className="mdl-data-table__cell--non-numeric"><span>{row.key}</span></td>
-                          <td className="mdl-data-table__cell">{row.lexema.key}</td>
+                          <td className="mdl-data-table__cell--non-numeric"><span>{row.concept}</span></td>
+                          <td className="mdl-data-table__cell--non-numeric"><span>{row.description}</span></td>
                           <td className="mdl-data-table__cell">
-                            <ul>
-                              {row.morphems.map((morphema) => {
-                                return (
-                                  <li key={`${row._id}-${morphema._id}`}>{morphema.key}</li>
-                                );
-                              })}
-                            </ul>
-                          </td>
-                          <td className="mdl-data-table__cell">
+                            <div onClick={(e) => {
+                              this.props.router.replace(`/terms/get/${row._id}`);
+                            }} id={`view${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>visibility</div>
                             <div onClick={this.delete.bind(this, row._id)} id={`delete${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>delete</div>
                             <div className="mdl-tooltip" data-mdl-for={`delete${row._id}`}>
                               Eliminar
@@ -118,7 +111,7 @@ export class Word extends React.Component<Props.teacherView, {}>{
                 </tbody>
               </table>
             </div>
-            <Link to="/words/words/create" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
+            <Link to="/terms/create" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
         </div>
         </main>
       </div>

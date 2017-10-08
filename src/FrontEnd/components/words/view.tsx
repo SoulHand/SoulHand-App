@@ -59,8 +59,24 @@ export class View extends React.Component <Props.teacherView, Words.Lexema>{
         <main className="mdl-layout__content mdl-color--white-100">
           <div className="mdl-grid demo-content">
             <div className="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+                <div className="mdl-cell--6-col mdl-cell--middle">
+                  <div className="mdl-textfield">
+                    <label className="mdl-input__expandable-holder">Lexema</label>
+                    <div className="mdl-textfield__input">
+                      {this.state.key}
+                    </div>
+                  </div>
+                </div>
+                <div className="mdl-cell--6-col mdl-cell--middle">
+                  <div className="mdl-textfield">
+                    <label className="mdl-input__expandable-holder">Expresión regular</label>
+                    <div className="mdl-textfield__input">
+                      {this.state.regexp}
+                    </div>
+                  </div>
+                </div>
             </div>
-            <div className="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col mdl-grid">
+            <div className="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
               <h3 className="mdl-typografy mdl-text-center">Morfemas asociados</h3>
               <table className="mdl-data-table mdl-js-data-table mdl-data-table resize">
                 <thead>
@@ -73,38 +89,6 @@ export class View extends React.Component <Props.teacherView, Words.Lexema>{
                 </thead>
                 <tbody>
                   {this.state.morphems.map((row) => {
-                      var type, mode;
-                      switch(row.type){
-                        case window.WORDS.TYPE_MORPHEMS.DERIVATE:
-                          type = "DERIVATIVOS";
-                        break;
-                        case window.WORDS.TYPE_MORPHEMS.FLEX:
-                          type = "FLEXIVOS";
-                        break;
-                        case window.WORDS.TYPE_MORPHEMS.NOFOREING:
-                          type = "INDEPENDIENTES";
-                        break;
-                      }
-                      switch(row.mode){
-                        case window.WORDS.MODE_MORPHEMS.PREFIX:
-                          mode = "PREFIJOS";
-                        break;
-                        case window.WORDS.MODE_MORPHEMS.INTERFIX:
-                          mode = "INTERFIJOS";
-                        break;
-                        case window.WORDS.MODE_MORPHEMS.SUFIX:
-                          mode = "SUFIJOS";
-                        break;
-                        case window.WORDS.MODE_MORPHEMS.TIME:
-                          mode = "TIEMPO VERBAL";
-                        break;
-                        case window.WORDS.MODE_MORPHEMS.COUNT:
-                          mode = "NUMERO";
-                        break;
-                        case window.WORDS.MODE_MORPHEMS.GENERO:
-                          mode = "GENERO";
-                        break;
-                      }
                       return (
                         <tr key={row._id} id={row._id}>
                           <td className="mdl-data-table__cell--non-numeric" title={row.key}><span>{row.key}</span></td>
@@ -112,8 +96,8 @@ export class View extends React.Component <Props.teacherView, Words.Lexema>{
                           <td>
                             {row.concepts.map((concept, index) => {
                               return (
-                                <span className="mdl-chip" key={concept + index}>
-                                  <span className="mdl-chip__text">{concept}</span>
+                                <span className="mdl-chip" key={concept.key + index}>
+                                  <span className="mdl-chip__text" title={concept.key}>{concept.value}</span>
                                 </span>
                               );
                             })}
@@ -137,5 +121,3 @@ export class View extends React.Component <Props.teacherView, Words.Lexema>{
     );
   }
 }
-
-/* <StudentActivity key={row._id} student={row} session={this.session} delete={this.remove.bind(this)} activity={}/>
