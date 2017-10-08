@@ -16,7 +16,7 @@ export class View extends React.Component <Props.teacherView, Words.Lexema>{
   remove(id: string){
     ajax({
       method: "DELETE",
-      url: `${window._BASE}/v1/terms/${this.props.routeParams.id}/morphemas/${id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+      url: `${window._BASE}/v1/terms/${this.props.routeParams.id}/hiponimos/${id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
       dataType: "json",
       data: null,
       crossDomain: true,
@@ -37,7 +37,6 @@ export class View extends React.Component <Props.teacherView, Words.Lexema>{
     });
   }
   render(){
-    console.log(this.state);
     if(!this.state){
       return (
         <div className="mdl-grid mdl-color--white demo-content">
@@ -79,8 +78,8 @@ export class View extends React.Component <Props.teacherView, Words.Lexema>{
               <table className="mdl-data-table mdl-js-data-table mdl-data-table resize">
                 <thead>
                   <tr>
-                    <th className="mdl-data-table__cell--non-numeric td-ms-5">Palabra</th>
-                    <th className="td-ms-5">Definición</th>
+                    <th className="mdl-data-table__cell--non-numeric td-ms-10">Palabra</th>
+                    <th className="td-ms-60">Definición</th>
                     <th className="td-ms-20"></th>
                   </tr>
                 </thead>
@@ -108,5 +107,3 @@ export class View extends React.Component <Props.teacherView, Words.Lexema>{
     );
   }
 }
-
-/* <StudentActivity key={row._id} student={row} session={this.session} delete={this.remove.bind(this)} activity={}/>

@@ -6,7 +6,7 @@ import {ajax} from 'jquery'
 
 
 @withRouter
- export class ParentCreate extends FormUtils<{router: any}, {}>{
+ export class ParentCreate extends FormUtils<{router: any}, any>{
    public fields:compat.Map={
  		name:{
  			match:(fn:string)=>{
@@ -14,10 +14,29 @@ import {ajax} from 'jquery'
  			},
  			value:null,
  			required:true
+ 		},
+ 		term:{
+ 			match:(fn:string)=>{
+ 				return !validator.isNull()(fn);
+ 			},
+ 			value:null,
+ 			required:true
+ 		},
+ 		description:{
+ 			match:(fn:string)=>{
+ 				return !validator.isNull()(fn);
+ 			},
+ 			value:null,
+ 			required:true
+ 		},
+ 		words:{
+ 			value:null,
+ 			required:true
  		} 		
  	};
-  state: {error: compat.Map} = {
+   state: { error: compat.Map, terms: any} = {
     error:{},
+    terms: null
   }
   send(event: any){
     var values: compat.Map = {};
@@ -50,10 +69,24 @@ import {ajax} from 'jquery'
         }
 		});
   }
-   componentDidMount(){
+  componentDidMount() {
+    let p1 = ajax({
+      method: "GET",
+      url: `${window._BASE}/v1/terms/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+      dataType: "json",
+      data: null
+    });
+    p1.done((lexema: any) => {
+      this.setState({ terms: lexema});
+    });
+  }
+  componentDidUpdate(){
      componentHandler.upgradeAllRegistered();
-   }
-   render(){
+  }
+  render(){
+    if(!this.state.terms){
+      return null;
+    }
      return(
        <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
        <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
@@ -75,7 +108,32 @@ import {ajax} from 'jquery'
                    <label className="mdl-textfield__label" htmlFor="name">Nombre*</label>
                    <span className="mdl-textfield__error">Es necesaria un nombre valido</span>
                  </div>
-               </div>               
+               </div>
+               <div className="mdl-cell mdl-cell--6-col">
+                  <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.name) ? 'is-invalid' :'')}>
+                   <input className="mdl-textfield__input" type="text" id="description" onChange={(e:any)=>{this.getFields(e)}}/>
+                   <label className="mdl-textfield__label" htmlFor="description">Definición*</label>
+                   <span className="mdl-textfield__error">Es necesaria un nombre valido</span>
+                 </div>
+               </div>
+               <div className="mdl-cell mdl-cell--6-col">
+                <label className="label static" htmlFor="term">Tipo de concepto</label>
+                <select className="mdl-textfield__input" id="term" onChange={(e: any) => { this.getFields(e) }}>
+                  <option value="">Seleccione una opción</option>
+                  {this.state.terms.map((row: any) => {
+                    return (
+                      <option key={row._id} value={row._id}>{row.concept}</option>
+                    );
+                  })}
+                </select>
+               </div>
+               <div className="mdl-cell mdl-cell--6-col">
+                  <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.name) ? 'is-invalid' :'')}>
+                   <input className="mdl-textfield__input" type="text" id="words" onChange={(e:any)=>{this.getFields(e)}}/>
+                   <label className="mdl-textfield__label" htmlFor="words">Sinonimos(valido separadores)*</label>
+                   <span className="mdl-textfield__error">Es necesaria un nombre valido</span>
+                 </div>
+               </div>
           </div>
           </main>
        </div>
