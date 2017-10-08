@@ -130,6 +130,10 @@ structDb.words = mongoose.Schema({
 	}],
 	concepts: [structDb.Concept],
 });
+structDb.wordsPending = mongoose.Schema({
+	key: {type: String, required: true, trim: true, uppercase: true},
+	dateCreated: { type: Date, default: Date.now },
+});
 
 structDb.Cognitions = mongoose.Schema({
   name: {type: String, required: true, trim: true, uppercase: true},
@@ -149,7 +153,7 @@ structDb.domainsLearning = mongoose.Schema({
 structDb.LearningObjetive = mongoose.Schema({
   name: {type: String, trim: true, required: true, uppercase: true},
 	description: {type: String, trim: true, required: false, uppercase: true},
-	conditions: [],
+	conditions: [structDb.inferences],
 	instruments: [{ type: String, trim: true, required: false, uppercase: true }],
 	result: { type: String, trim: true, required: false, uppercase: true },
 	exp: { type: Number, default: 10 },
