@@ -283,43 +283,7 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
                 morphems: []
             });
             var row = rows[1];
-            for(var i = 0, n = row.length; i<n; i++){
-                var _regexp = new RegExp(row[i].regexp, "ig");
-                if (_regexp.test(_word.key)){
-                    _word.lexema = row[i]._id;
-                    var _rest = _word.key.replace(_regexp, '');
-                    var length = 0;
-                    for(var j = 0, m = row[i].morphems.length; j < m; j++){
-                        var _regexp2 = new RegExp(row[i].morphems[j].regexp, "ig");
-                        if (!_regexp2.test(_rest)){
-                            continue;
-                        }
-                        _word.morphems.push({
-                            key: row[i].morphems[j].key,
-                            _id: row[i].morphems[j]._id
-                        });
-                        var length1 = row[i].morphems[j].key.length;
-                        for (var k = 0, p = row[i].morphems[j].concepts.length; k<p; k++){
-                            var isDuplicated = false;
-                            for (var u = 0, v = _word.concepts.length; u<v; u++){
-                                if (row[i].morphems[j].concepts[k].key == _word.concepts[u].key){
-                                    if(length1 > length){
-                                        _word.concepts[u] = row[i].morphems[j].concepts[k];
-                                    }
-                                    isDuplicated = true;
-                                    continue;
-                                }
-                            }
-                            if (isDuplicated){
-                                continue;
-                            }
-                            _word.concepts.push(row[i].morphems[j].concepts[k]);
-                        }
-                        length = Math.max(length, row[i].morphems[j].key.length);
-                    }
-                    break;
-                }
-            }
+            _word = WORDS.getMorphology(row, _word);
             if(!_word.lexema){
                 throw new ValidatorException("No se identificó el lexema de la palabra");
             }
