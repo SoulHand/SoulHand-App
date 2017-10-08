@@ -242,17 +242,47 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
         if (Validator.isNull()(request.body.regexp)) {
             request.body.regexp = request.body.name;
         }
+        if (Validator.isNull()(request.body.description)) {
+            throw new ValidatorException("Es necesario una descripción!");
+        }
+        if (!Validator.isMongoId()(request.body.term)) {
+            throw new ValidatorException("No existe el contexto!");
+        }
+        if (Validator.isNull()(request.body.words)) {
+            request.body.words = [];
+        }else{
+            request.body.words = request.body.words.split(WORDS.wordSeparators);
+            request.body.words = request.body.words.map((row) => {
+                return row.trim();
+            });
+            request.body.words = request.body.words.filter((row) => {
+                return !Validator.isNull(row);
+            });
+        }
         try {
             var exp = new RegExp(request.body.regexp, "ig");
         } catch (error) {
             throw new ValidatorException("La expresión regular es invalida!");
         }
-        Schema.lexemas.find().then((row) => {
+        request.body.name = request.body.name.toUpperCase();
+        Promise.all([
+            Schema.Hiperonimo.findOne({}),
+            Schema.lexemas.find(),
+            Schema.words.findOne({ key: request.body.name })
+        ])
+        .then((rows) => {
+            if(!rows[0]){
+                throw new ValidatorException("El contexto no existe o no es valido!");
+            }
+            if(rows[2]){
+                return [rows[2], rows[0]];
+            }
             var _word = new Schema.words({
                 key: request.body.name.trim(),
                 concepts: [],
                 morphems: []
             });
+            var row = rows[1];
             for(var i = 0, n = row.length; i<n; i++){
                 var _regexp = new RegExp(row[i].regexp, "ig");
                 if (_regexp.test(_word.key)){
@@ -293,14 +323,23 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
             if(!_word.lexema){
                 throw new ValidatorException("No se identificó el lexema de la palabra");
             }
-            return _word.save();
+            return Promise.all([_word.save(), rows[0]]);
         })
-            .then((data) => {
-                response.send(data);
-            })
-            .catch((error) => {
-                next(error);
+        .then((data) => {
+            var _taxon = new Schema.Taxon({
+                key: data[0].key,
+                description: request.body.description,
+                words: request.body.words
             });
+            data[1].hiponimos.push(_taxon);
+            return data[1].save();
+        })
+        .then((data) => {
+            response.send(data);
+        })
+        .catch((error) => {
+            next(error);
+        });
     });
     /**
      * Obtener todos los lexemas
@@ -410,6 +449,36 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
                 throw new ValidatorException("No existe el termino!");
             }
             return hiperonimo.remove();
+        })
+        .then((data) => {
+            response.send(data);
+        })
+        .catch((error) => {
+            next(error);
+        });
+    });
+    /**
+     * Añadir una palabra
+     */
+    TermsURI.delete('/:hiper/hiponimos/:id', function (request, response, next) {
+        if(!Validator.isMongoId(request.params.id)){
+            throw new ValidatorException("Es necesario una id valida");
+        }
+        if(!Validator.isMongoId(request.params.hiper)){
+            throw new ValidatorException("Es necesario una id valida");
+        }
+        Schema.Hiperonimo.findOne({ _id: ObjectId(request.params.hiper)})
+        .then((hiperonimo) => {
+            if (!hiperonimo){
+                throw new ValidatorException("No existe el termino!");
+            }
+            for(var i = 0, n = hiperonimo.hiponimos.length; i<n; i++){
+                if (hiperonimo.hiponimos[i]._id.toString() == request.params.id){
+                    hiperonimo.hiponimos[i].remove();
+                    return hiperonimo.save();
+                }
+            }
+            throw new ValidatorException("No existe el hiponimo!");
         })
         .then((data) => {
             response.send(data);
