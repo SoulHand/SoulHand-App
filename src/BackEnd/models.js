@@ -91,10 +91,28 @@ structDb.Sessions = mongoose.Schema({
   user: { type: mongoose.Schema.ObjectId, ref: 'User' }
 });
 
+structDb.Concept = mongoose.Schema({
+	key: { type: String, required: true, trim: true, uppercase: true },
+	value: { type: String, required: true, trim: true, uppercase: true }
+});
+
+//Taxonomia de palabras
+structDb.Taxon = mongoose.Schema({
+	key: { type: String, required: true, trim: true, uppercase: true },
+	description: { type: String, required: true, trim: true, uppercase: true },
+	words: [{ type: String, required: true, trim: true, uppercase: true }] // palabras semanticamente similares (hipónimo)
+});
+
+structDb.Hiperonimo = mongoose.Schema({
+	concept: { type: String, required: true, trim: true, uppercase: true, unique: true }, // Termino que representa globalmente al grupo de palabras
+	description: { type: String, required: true, trim: true, uppercase: true },
+	hiponimos: [structDb.Taxon]
+});
+
 structDb.morphems = mongoose.Schema({
 	regexp: { type: String, required: false, trim: true },
   key: {type: String, required: true, trim: true, uppercase: true},
-  concepts: [{type: String, required: true, trim: true, uppercase: true}]
+	concepts: [structDb.Concept]
 });
 
 structDb.lexemas = mongoose.Schema({
@@ -110,7 +128,7 @@ structDb.words = mongoose.Schema({
 		key: { type: String, required: true, trim: true, uppercase: true },
 		_id: { type: mongoose.Schema.ObjectId }
 	}],
-	concept: [{type: String, required: true, trim: true, uppercase: true}],
+	concepts: [structDb.Concept],
 });
 
 structDb.Cognitions = mongoose.Schema({
