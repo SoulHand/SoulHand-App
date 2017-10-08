@@ -1,9 +1,20 @@
 /*
     Expresiones regulares para separacion de palabras en textos
 */
-
+var wordSeparators = /[`~!@#$%^&*\(\)-=+\[{\]}\\|;:'\",.<>/?]/ig;
 //Separador de palabras
-module.exports.wordSeparators= /[`~!@#$%^&*\(\)-=+\[{\]}\\|;:'\",.<>/?]/ig;
+module.exports.wordSeparators = wordSeparators;
+
+module.exports.SeparatorWords = (str) => {
+    var words = str.split(wordSeparators);
+    words = words.map((row) => {
+        return row.trim();
+    });
+    words = words.filter((row) => {
+        return !Validator.isNull()(row);
+    });
+    return words;
+}
 
 //Conceptos gramaticales
 module.exports.CONCEPTS = {
