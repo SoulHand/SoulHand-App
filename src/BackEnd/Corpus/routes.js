@@ -245,7 +245,7 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
         if (Validator.isNull()(request.body.description)) {
             throw new ValidatorException("Es necesario una descripción!");
         }
-        if (!Validator.isMongoId()(request.body.term)) {
+        if (!Validator.isJSON()(request.body.term)) {
             throw new ValidatorException("No existe el contexto!");
         }
         if (Validator.isNull()(request.body.words)) {
@@ -265,13 +265,18 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
             throw new ValidatorException("La expresión regular es invalida!");
         }
         request.body.name = request.body.name.toUpperCase();
+        request.body.term = JSON.parse(request.body.term).map((row) => {
+            return {
+                _id: ObjectId(row)
+            };
+        })
         Promise.all([
-            Schema.Hiperonimo.findOne({}),
+            Schema.Hiperonimo.find({$or: request.body.term}),
             Schema.lexemas.find(),
             Schema.words.findOne({ key: request.body.name })
         ])
         .then((rows) => {
-            if(!rows[0]){
+            if(rows[0].length == 0){
                 throw new ValidatorException("El contexto no existe o no es valido!");
             }
             if(rows[2]){
@@ -326,13 +331,18 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
             return Promise.all([_word.save(), rows[0]]);
         })
         .then((data) => {
-            var _taxon = new Schema.Taxon({
-                key: data[0].key,
-                description: request.body.description,
-                words: request.body.words
+            console.log(request.body.words);
+            var promises = [];
+            data[1].forEach((hiperonimo) => {
+                var _taxon = new Schema.Taxon({
+                    key: data[0].key,
+                    description: request.body.description,
+                    words: request.body.words
+                });
+                hiperonimo.hiponimos.push(_taxon);
+                promises.push(hiperonimo.save());
             });
-            data[1].hiponimos.push(_taxon);
-            return data[1].save();
+            return Promise.all(promises);
         })
         .then((data) => {
             response.send(data);
