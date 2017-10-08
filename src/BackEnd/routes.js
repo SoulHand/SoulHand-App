@@ -14,6 +14,7 @@ var UserException = require('./SoulHand/Exceptions/UserException.js')
 var Auth = require('./SoulHand/Auth.js')
 var corpusRoutes = require('./Corpus/routes.js');
 var mongoose = require("mongoose");
+var WORDS = require("./words.js");
 const ObjectId = mongoose.Types.ObjectId;
 
 
@@ -1047,7 +1048,6 @@ module.exports = function (app, express, Schema, __DIR__) {
   */
   cognitions.post('/objetives/', Auth.isAdmin.bind(Schema),
   function (request, response, next) {
-		var _SPECIALCHAR = /[\+\*\?\[^\]$\(\)\{\}\=\!\<\>\|\:\-\,\.;_\n\t\s]/ig
     if (Validator.isNull()(request.body.name)) {
       throw new ValidatorException('Es requerido un nombre')
     }
@@ -1074,13 +1074,62 @@ module.exports = function (app, express, Schema, __DIR__) {
 			request.body.exp = 10; // evaluador principal
 		}
 		request.body.words = [];
-    var _rules, _objetive;
-    Schema.LearningObjetive.findOne({name: request.body.name}).then((row) => {
-      if (row) {
-        throw new ValidatorException('Ya existe un objetivo con el mismo nombre!')
+		var _keywords_title = WORDS.SeparatorWords(request.body.name);
+		var _keywords_description = WORDS.SeparatorWords(request.body.description);
+		var _pendingWords = [], _verbs = [], _containts = [], _peoples = [];
+
+		Schema.LearningObjetive.findOne({ name: request.body.name }).then((row) => {
+			if (row) {
+				throw new ValidatorException('Ya existe un objetivo con el mismo nombre!')
 			}
-			return Schema.domainsLearning.find();
-		}).then((domains) => {			
+			//procesando palabras claves
+			var _queryWords = _keywords_title.map((row) => {
+				return Schema.words.findOne({ key: row });
+			});
+			return Promise.all(_queryWords);
+		})
+		.then((words) => {
+				WORDS.getPendingWords(words, _pendingWords,
+					_keywords_title, _verbs,
+					_containts, _peoples, WORDS.CLASS_GRAMATICAL)
+			_keywords_title = words;
+			var _queryWords = _keywords_description.map((row) => {
+				return Schema.words.findOne({ key: row });
+			});
+			return Promise.all(_queryWords);
+		})
+		.then((words) => {
+			WORDS.getPendingWords(words, _pendingWords,
+				_keywords_description, _verbs,
+				_containts, _peoples, WORDS.CLASS_GRAMATICAL)
+			_keywords_description = words;
+			Events.emit("new-words", _pendingWords);
+			response.status(400).send(_keywords_description)
+			/*var _keywords_title = data[0];
+			var _keywords_description = data[1];
+			var _premises = data[2];
+			if (!_premises) {
+				_premises = new EventClass({
+					name: 'KEYWORDS-CONTEXT',
+					objects: {
+						p1: 'word', // Palabra
+						p2: 'word.length', // Cantidad de repeticiones
+					},
+					premises: []
+				});
+			}*/
+			//Schema.events.findOne({ name: 'KEYWORDS-CONTEXT' })
+			//return Schema.domainsLearning.find();
+		})
+		.catch((error) => {
+			next(error)
+		})
+	});
+
+
+		/*
+    var _rules, _objetive;
+    .then((domains) => {			
 			return Promise.all([
 				domains,
 				Schema.events.findOne({ name: 'OBJETIVES-ADD-FAIL'}),
@@ -1409,14 +1458,14 @@ module.exports = function (app, express, Schema, __DIR__) {
       adds.forEach((row) => {
         _objetive.cognitions.push(row);
       });
-      return _objetive.save();*/
+      return _objetive.save();
     }).then((data) => {
 			console.log(data);
       response.send(data)
     }).catch((error) => {
       next(error)
     })
-  })
+  })*/
 
 /*
 * @api {get} /objetives Obtener todos los objetivos
