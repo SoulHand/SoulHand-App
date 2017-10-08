@@ -16,10 +16,11 @@ import {ajax} from 'jquery'
  			required:true
  		},
  		term:{
- 			match:(fn:string)=>{
- 				return !validator.isNull()(fn);
+ 			match:(fn:Array<string>)=>{
+ 				return fn.length > 0;
  			},
- 			value:null,
+      value:[],
+      labels:[],
  			required:true
  		},
  		description:{
@@ -33,7 +34,9 @@ import {ajax} from 'jquery'
  			value:null,
  			required:true
  		} 		
- 	};
+   };
+   public term: string = "";
+   public label: string = "";
    state: { error: compat.Map, terms: any} = {
     error:{},
     terms: null
@@ -46,10 +49,12 @@ import {ajax} from 'jquery'
       values[i] = this.fields[i].value;
       error = error || this.state.error[i];
     }
-    this.setState(this.state);
     if (error) {
+      this.setState(this.state);
       return;
     }
+    values.term = JSON.stringify(values.term);
+    console.log(values);
     ajax({
         method:"POST",
         url: `${window._BASE}/v1/words/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
@@ -68,6 +73,11 @@ import {ajax} from 'jquery'
           message.MaterialSnackbar.showSnackbar(config);
         }
 		});
+  }
+  deleteItem(id: number) {
+    this.fields.term.value.splice(id, 1);
+    this.fields.term.labels.splice(id, 1);
+    this.forceUpdate();
   }
   componentDidMount() {
     let p1 = ajax({
@@ -117,8 +127,19 @@ import {ajax} from 'jquery'
                  </div>
                </div>
                <div className="mdl-cell mdl-cell--6-col">
-                <label className="label static" htmlFor="term">Tipo de concepto</label>
-                <select className="mdl-textfield__input" id="term" onChange={(e: any) => { this.getFields(e) }}>
+                  <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.name) ? 'is-invalid' :'')}>
+                   <input className="mdl-textfield__input" type="text" id="words" onChange={(e:any)=>{this.getFields(e)}}/>
+                   <label className="mdl-textfield__label" htmlFor="words">Sinonimos(valido separadores)*</label>
+                   <span className="mdl-textfield__error">Es necesaria un nombre valido</span>
+                 </div>
+               </div>
+               <div className="mdl-cell--4-col mdl-cell--middle">
+                <label className="label static" htmlFor="term">Categoria contextual</label>
+                <select className="mdl-textfield__input" id="term" onChange={(e) => {
+                  this.term = e.target.value;
+                  this.label = e.target.selectedOptions[0].label;
+                  this.forceUpdate();
+                }} value={this.term}>
                   <option value="">Seleccione una opción</option>
                   {this.state.terms.map((row: any) => {
                     return (
@@ -127,12 +148,31 @@ import {ajax} from 'jquery'
                   })}
                 </select>
                </div>
-               <div className="mdl-cell mdl-cell--6-col">
-                  <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.name) ? 'is-invalid' :'')}>
-                   <input className="mdl-textfield__input" type="text" id="words" onChange={(e:any)=>{this.getFields(e)}}/>
-                   <label className="mdl-textfield__label" htmlFor="words">Sinonimos(valido separadores)*</label>
-                   <span className="mdl-textfield__error">Es necesaria un nombre valido</span>
-                 </div>
+               <div className="mdl-cell--2-col mdl-cell--middle">
+                 <button id="add-keyword" className="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" onClick={(e) => {
+                    if (this.term != ""){
+                      this.fields.term.value.push(this.term);
+                      this.fields.term.labels.push(this.label);
+                      this.term = "";
+                      this.label = "";
+                      this.forceUpdate();
+                    }
+                 }}>
+                   <i className="material-icons">add</i>
+                 </button>
+                 <div className="mdl-tooltip" data-mdl-for="add-keyword">
+                   Añadir una palabra clave
+              </div>
+               </div>
+               <div className="mdl-cell--10-col mdl-cell--middle">
+                 {this.fields.term.value.map((row: any, index: number) => {
+                   return (
+                     <span className="mdl-chip" key={index}>
+                       <span className="mdl-chip__text">{this.fields.term.labels[index]}</span>
+                       <button type="button" className="mdl-chip__action" onClick={this.deleteItem.bind(this, index)}><i className="material-icons">cancel</i></button>
+                     </span>
+                   );
+                 })}
                </div>
           </div>
           </main>

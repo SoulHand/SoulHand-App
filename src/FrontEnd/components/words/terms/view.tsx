@@ -47,7 +47,7 @@ export class View extends React.Component <Props.teacherView, Words.Lexema>{
     return(
       <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
       <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-      <div className="mdl-layout__drawer-button"><Link to="/words"><i className="material-icons">&#xE5C4;</i></Link></div>
+      <div className="mdl-layout__drawer-button"><Link to="/terms"><i className="material-icons">&#xE5C4;</i></Link></div>
         <div className="mdl-layout__header-row">
           <span className="mdl-layout-title">SoulHand</span>
           <div className="mdl-layout-spacer"></div>

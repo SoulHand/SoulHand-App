@@ -83,7 +83,7 @@ export class View extends React.Component <Props.teacherView, Words.Lexema>{
                   <tr>
                     <th className="mdl-data-table__cell--non-numeric td-ms-5">Palabra</th>
                     <th className="td-ms-5">Expresión regular</th>
-                    <th className="td-ms-40">conceptos</th>
+                    <th className="td-ms-40">Inf. Léxica</th>
                     <th className="td-ms-20"></th>
                   </tr>
                 </thead>
