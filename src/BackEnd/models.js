@@ -150,6 +150,8 @@ structDb.LearningObjetive = mongoose.Schema({
   name: {type: String, trim: true, required: true, uppercase: true},
 	description: {type: String, trim: true, required: false, uppercase: true},
 	conditions: [],
+	instruments: [{ type: String, trim: true, required: false, uppercase: true }],
+	result: { type: String, trim: true, required: false, uppercase: true },
 	exp: { type: Number, default: 10 },
   domain: {
     _id: { type: mongoose.Schema.ObjectId, ref: 'domainsLearning' },
