@@ -251,13 +251,7 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
         if (Validator.isNull()(request.body.words)) {
             request.body.words = [];
         }else{
-            request.body.words = request.body.words.split(WORDS.wordSeparators);
-            request.body.words = request.body.words.map((row) => {
-                return row.trim();
-            });
-            request.body.words = request.body.words.filter((row) => {
-                return !Validator.isNull()(row);
-            });
+            request.body.words = WORDS.SeparatorWords(request.body.words);
         }
         try {
             var exp = new RegExp(request.body.regexp, "ig");
