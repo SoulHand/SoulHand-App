@@ -4,7 +4,7 @@ class GradeException extends Exception {
   constructor (msg) {
     super(msg)
     this.code = '101'
-    this.code = 400
+    this.status = 400
   }
 }
 module.exports = GradeException

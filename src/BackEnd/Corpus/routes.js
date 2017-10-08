@@ -29,6 +29,7 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
         } catch (error) {
             throw new ValidatorException("La expresión regular es invalida!");
         }
+        request.body.name = request.body.name.toUpperCase();
         Schema.lexemas.findOne({ key: request.body.name }).then((row) => {
             if (row) {
                 throw new ValidatorException("Ya existe un lexema igual!");
@@ -106,95 +107,71 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
         if (Validator.isNull()(request.body.regexp)) {
             request.body.regexp = request.body.name;
         }
-        if (Validator.isNull()(request.body.type)) {
-            throw new ValidatorException("No se admite tipo nulo!");
-        }
-        if (Validator.isNull()(request.body.mode)) {
-            throw new ValidatorException("No se admite mode nulo!");
+        if (!Validator.isJSON()(request.body.concepts)) {
+            throw new ValidatorException("No es valido los conceptos");
         }
         try {
             var exp = new RegExp(request.body.regexp, "ig");
         } catch (error) {
             throw new ValidatorException("La expresión regular es invalida!");
         }
-        var concepts = [];
-        if (request.body.concept) {
-            var isValidConcept = false;
-            for (var key in WORDS.CONCEPTS) {
-                if (WORDS.CONCEPTS[key] == request.body.concept) {
-                    isValidConcept = true;
-                    break;
-                }
+        request.body.name = request.body.name.toUpperCase();
+        request.body.concepts = JSON.parse(request.body.concepts);
+        for (var i = 0, n = request.body.concepts.length; i<n; i++){
+            switch (request.body.concepts[i].key){
+                case WORDS.CONCEPTS.CLASS:
+                    var isValid = false;
+                    for (var key in WORDS.CLASS_GRAMATICAL){
+                        if (WORDS.CLASS_GRAMATICAL[key]){
+                            isValid = true;
+                            break;
+                        }
+                    }
+                    if (!isValid){
+                        throw new ValidatorException("La clase gramatical es invalida!");
+                    }
+                break;
+                case WORDS.CONCEPTS.COUNT:
+                    var isValid = false;
+                    for (var key in WORDS.COUNT){
+                        if (WORDS.COUNT[key]){
+                            isValid = true;
+                            break;
+                        }
+                    }
+                    if (!isValid){
+                        throw new ValidatorException("El numero grámatical es invalido!");
+                    }
+                break;
+                case WORDS.CONCEPTS.GENERO:
+                    var isValid = false;
+                    for (var key in WORDS.GENERO){
+                        if (WORDS.GENERO[key]){
+                            isValid = true;
+                            break;
+                        }
+                    }
+                    if (!isValid){
+                        throw new ValidatorException("El genero grámatical es invalido!");
+                    }
+                break;
+                case WORDS.CONCEPTS.TIME:
+                    var isValid = false;
+                    for (var key in WORDS.TIMES){
+                        if (WORDS.TIMES[key]){
+                            isValid = true;
+                            break;
+                        }
+                    }
+                    if (!isValid){
+                        throw new ValidatorException("El tiempo verbal es invalido!");
+                    }
+                break;
             }
-            if (!isValidConcept) {
-                throw new ValidatorException("No existe el tipo de morfema!");
+            if (request.body.concepts.length == 0){
+                throw new ValidatorException("Es necesario al menos un concepto gramatical!");
             }
-            concepts.push(request.body.concept);
-        }
-        if (request.body.type) {
-            var isValidType = false;
-            for (var key in WORDS.TYPE_MORPHEMS) {
-                if (WORDS.TYPE_MORPHEMS[key] == request.body.type) {
-                    isValidType = true;
-                    break;
-                }
-            }
-            if (!isValidType) {
-                throw new ValidatorException("No existe el tipo de morfema!");
-            }
-            concepts.push(request.body.type);
-        }
-        if (request.body.mode) {
-            var isValidMode = false;
-            for (var key in WORDS.MODE_MORPHEMS) {
-                if (WORDS.MODE_MORPHEMS[key] == request.body.mode) {
-                    isValidMode = true;
-                    break;
-                }
-            }
-            if (!isValidMode) {
-                throw new ValidatorException("No existe el tipo de morfema!");
-            }
-            concepts.push(request.body.mode);
-        }
-        if (request.body.time) {
-            var isValidTime = false;
-            for (var key in WORDS.TIMES) {
-                if (WORDS.TIMES[key] == request.body.time) {
-                    isValidTime = true;
-                    break;
-                }
-            }
-            if (!isValidTime) {
-                throw new ValidatorException("No existe el tipo de morfema!");
-            }
-            concepts.push(request.body.time);
-        }
-        if (request.body.genero) {
-            var isValidGenero = false;
-            for (var key in WORDS.GENERO) {
-                if (WORDS.GENERO[key] == request.body.genero) {
-                    isValidGenero = true;
-                    break;
-                }
-            }
-            if (!isValidGenero) {
-                throw new ValidatorException("No existe el genero de morfema!");
-            }
-            concepts.push(request.body.genero);
-        }
-        if (request.body.count) {
-            var isValidcount = false;
-            for (var key in WORDS.COUNT) {
-                if (WORDS.COUNT[key] == request.body.count) {
-                    isValidcount = true;
-                    break;
-                }
-            }
-            if (!isValidcount) {
-                throw new ValidatorException("No existe el genero de morfema!");
-            }
-            concepts.push(request.body.count);
+            request.body.concepts[i] = new Schema.Concept(request.body.concepts[i]);
         }
         Schema.lexemas.findOne({ _id: ObjectId(request.params.lexema) }).then((lexema) => {
             if (!lexema) {
@@ -203,7 +180,7 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
             var _morphema = new Schema.morphems({
                 key: request.body.name,
                 regexp: request.body.regexp,
-                concepts: concepts
+                concepts: request.body.concepts
             });
             for(var i = 0, n = lexema.morphems.length; i<n; i++){
                 if(lexema.morphems[i].key == _morphema.key){
@@ -270,46 +247,10 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
         } catch (error) {
             throw new ValidatorException("La expresión regular es invalida!");
         }
-        if(request.body.time){
-            var isValidTime = false;
-            for (var key in WORDS.TIMES) {
-                if (WORDS.TIMES[key] == request.body.time) {
-                    isValidTime = true;
-                    break;
-                }
-            }
-            if (!isValidTime) {
-                throw new ValidatorException("El tiempo gramatical no es valido!");
-            }
-        }
-        if(request.body.count){
-            var isValidCount = false;
-            for (var key in WORDS.COUNT) {
-                if (WORDS.COUNT[key] == request.body.count) {
-                    isValidCount = true;
-                    break;
-                }
-            }
-            if (!isValidCount) {
-                throw new ValidatorException("El numero gramatical no es valido!");
-            }
-        }
-        if(request.body.genero){
-            var isValidGenero = false;
-            for (var key in WORDS.GENERO) {
-                if (WORDS.GENERO[key] == request.body.genero) {
-                    isValidGenero = true;
-                    break;
-                }
-            }
-            if (!isValidGenero) {
-                throw new ValidatorException("El genero gramatical no es valido!");
-            }
-        }
         Schema.lexemas.find().then((row) => {
             var _word = new Schema.words({
                 key: request.body.name.trim(),
-                concept: [],
+                concepts: [],
                 morphems: []
             });
             for(var i = 0, n = row.length; i<n; i++){
@@ -317,6 +258,7 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
                 if (_regexp.test(_word.key)){
                     _word.lexema = row[i]._id;
                     var _rest = _word.key.replace(_regexp, '');
+                    var length = 0;
                     for(var j = 0, m = row[i].morphems.length; j < m; j++){
                         var _regexp2 = new RegExp(row[i].morphems[j].regexp, "ig");
                         if (!_regexp2.test(_rest)){
@@ -326,6 +268,24 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
                             key: row[i].morphems[j].key,
                             _id: row[i].morphems[j]._id
                         });
+                        var length1 = row[i].morphems[j].key.length;
+                        for (var k = 0, p = row[i].morphems[j].concepts.length; k<p; k++){
+                            var isDuplicated = false;
+                            for (var u = 0, v = _word.concepts.length; u<v; u++){
+                                if (row[i].morphems[j].concepts[k].key == _word.concepts[u].key){
+                                    if(length1 > length){
+                                        _word.concepts[u] = row[i].morphems[j].concepts[k];
+                                    }
+                                    isDuplicated = true;
+                                    continue;
+                                }
+                            }
+                            if (isDuplicated){
+                                continue;
+                            }
+                            _word.concepts.push(row[i].morphems[j].concepts[k]);
+                        }
+                        length = Math.max(length, row[i].morphems[j].key.length);
                     }
                     break;
                 }
@@ -333,7 +293,6 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
             if(!_word.lexema){
                 throw new ValidatorException("No se identificó el lexema de la palabra");
             }
-            console.log(_word);
             return _word.save();
         })
             .then((data) => {
@@ -375,4 +334,89 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
             });
     });
     app.use('/v1/words', wordsURI);
+
+    /*
+    * Rutas para hiperonimos (terminos)
+    */
+    let TermsURI = express.Router();
+    /**
+     * Añadir una palabra
+     */
+    TermsURI.post('/', function (request, response, next) {
+        if (Validator.isNull()(request.body.name)) {
+            throw new ValidatorException("No se admite nulos!");
+        }
+        if (Validator.isNull()(request.body.description)) {
+            throw new ValidatorException("Es necesario una definición de terminos");
+        }
+        Schema.Hiperonimo.findOne({ concept: request.body.name })
+        .then((data) => {
+            if(data){
+                throw new ValidatorException("El termino ya existe!");
+            }
+            var _term = new Schema.Hiperonimo({
+                concept: request.body.name,
+                description: request.body.description
+            });
+            return _term.save();
+        })
+        .then((data) => {
+            response.send(data);
+        })
+        .catch((error) => {
+            next(error);
+        });
+    }); 
+    /**
+     * Añadir una palabra
+     */
+    TermsURI.get('/', function (request, response, next) {
+        Schema.Hiperonimo.find()
+        .then((data) => {
+            response.send(data);
+        })
+        .catch((error) => {
+            next(error);
+        });
+    });
+    /**
+     * obtener una palabra
+     */
+    TermsURI.get('/:id', function (request, response, next) {
+        if (!Validator.isMongoId(request.params.id)){
+            throw new ValidatorException("No es valido el id");
+        }
+        Schema.Hiperonimo.findOne({_id: ObjectId(request.params.id)})
+        .then((data) => {
+            if(!data){
+                throw new ValidatorException("No existe el registro!");
+            }
+            response.send(data);
+        })
+        .catch((error) => {
+            next(error);
+        });
+    });
+    /**
+     * Añadir una palabra
+     */
+    TermsURI.delete('/:id', function (request, response, next) {
+        if(!Validator.isMongoId(request.params.id)){
+            throw new ValidatorException("Es necesario una id valida");
+        }
+        Schema.Hiperonimo.findOne({ _id: ObjectId(request.params.id)})
+        .then((hiperonimo) => {
+            if (!hiperonimo){
+                throw new ValidatorException("No existe el termino!");
+            }
+            return hiperonimo.remove();
+        })
+        .then((data) => {
+            response.send(data);
+        })
+        .catch((error) => {
+            next(error);
+        });
+    });
+    app.use('/v1/terms', TermsURI);
 }

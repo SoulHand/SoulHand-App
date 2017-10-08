@@ -4,7 +4,7 @@ class VoidException extends Exception {
   constructor (msg) {
     super(msg)
     this.code = '100'
-    this.code = 204
+    this.status = 204
   }
 }
 

@@ -24,11 +24,12 @@ module.exports = function (app, __DIR__) {
         message: null
       }
       var status = 500
+      body.message = error.toString()
       if (error.code && error.status) {
         body.code = error.code
         status = error.status
       }
-      body.message = error.toString()
+      console.log(body);
       logger.error(error)
       response.status(status).send(body)
     }
