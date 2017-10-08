@@ -65,7 +65,7 @@ module.exports = function (db) {
     db.lexemas.find().then((lexemas) => {
       var promises = [];
       for (var i = 0, n = words.length; i < n; i++) {
-        var _word = new Schema.words({
+        var _word = new db.words({
           key: words[i].trim(),
           concepts: [],
           morphems: []
@@ -74,16 +74,15 @@ module.exports = function (db) {
           message: `Nueva palabra ingresada ${_word.key}. Iniciando inferencia`
         });
         _word = WORDS.getMorphology(lexemas, _word);
-        console.log(_word);
         if(!_word.lexema){
-          logger.warning({ 
+          logger.warn({ 
             message: `Nueva palabra ${_word.key} no fue localizado lexema!`
           });
           var _add = new db.wordsPending({
             key: _word.key
           });
           _add.save();
-          logger.warning({
+          logger.warn({
             message: `Registrada palabra "${_add.key}" en pendientes. No localizada`
           });
           var _lexema = _word.key.replace(WORDS.MORPHEM_CONJUGATION, '');
@@ -100,9 +99,12 @@ module.exports = function (db) {
             _mode = WORDS.CLASS_GRAMATICAL.SUFIX;
           }
           if (_lexema.trim() == "" || _morphema.trim() == ""){
-            continue;
+            if (_lexema.length >= 3){
+              _mode = WORDS.CLASS_GRAMATICAL.ART;              
+            }else{
+              continue;
+            }
           }
-          console.log(_lexema, _morphema, _mode);
           var _concept = new db.Concept({
             key: WORDS.CONCEPTS.CLASS,
             value: _mode
@@ -115,8 +117,13 @@ module.exports = function (db) {
           var _lexe = new db.lexemas({
             key: _lexema,
             regexp: _lexema,
-            morphems: [_morphe]
+            morphems: []
           });
+          if(_morphema.length > 0){
+            _lexe.morphems.push(_morphe);
+            _word.morphems.push(_morphe);
+            _word.concepts.push(_concept);
+          }
           _lexe.save();
           _word.lexema = _lexe;
           _word.save();
@@ -149,7 +156,7 @@ module.exports = function (db) {
             key: _words[i].key
           });
           _add.save();
-          logger.warning({
+          logger.warn({
             message: `Registrada palabra "${_add.key}" en pendientes. No localizada`
           });
           continue;
@@ -159,7 +166,6 @@ module.exports = function (db) {
           description: null,
           words: []
         });
-        //datas[i].description
         for (var j = 0, m = datas[i].hiponimos.length; j<m; j++){
           var _isExist = false;
           for (var k = 0, u = datas[i].hiponimos[j].words.length; k<u; k++){
@@ -180,7 +186,6 @@ module.exports = function (db) {
         logger.info({
           message: `Registrada palabra "${_concept.key}" en el hiperonimo ${datas[i].key}`
         });
-        console.log(_concept);
         datas[i].hiponimos.push(_concept);
         datas[i].save();
       }
