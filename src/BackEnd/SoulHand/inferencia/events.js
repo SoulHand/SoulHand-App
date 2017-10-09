@@ -88,6 +88,7 @@ module.exports = function (db) {
           var _lexema = _word.key.replace(WORDS.MORPHEM_CONJUGATION, '');
           var _morphema = _word.key.replace(_lexema, '');
           var _mode = WORDS.CLASS_GRAMATICAL.VERB;
+          var _concepts = [];
           if (_lexema.trim() == "" || _morphema.trim() == ""){
             _lexema = _word.key.replace(WORDS.MORPHEM_PREFIX, '');
             _morphema = _word.key.replace(_lexema, '');
@@ -98,21 +99,40 @@ module.exports = function (db) {
             _morphema = _word.key.replace(_lexema, '');
             _mode = WORDS.CLASS_GRAMATICAL.SUFIX;
           }
-          if (_lexema.trim() == "" || _morphema.trim() == ""){
-            if (_lexema.length >= 3){
-              _mode = WORDS.CLASS_GRAMATICAL.ART;              
-            }else{
+          if (_lexema.length >= 3 && _mode != WORDS.MORPHEM_CONJUGATION) {
+            _mode = WORDS.CLASS_GRAMATICAL.ART;
+          }
+          if (_lexema.length < 3){
               continue;
+          }
+          if (mode == WORDS.MORPHEM_CONJUGATION){
+            var time = WORDS.TIMES.INFINITY;
+            if(/(o|e?s|a?s)^/ig.test(_morphema)){
+              time = WORDS.TIMES.PRESENTE_PERFECT;
             }
+            if(/(á|ía)^/ig.test(_morphema)){
+              time = WORDS.TIMES.FUTURO;
+            }
+            if (/(ado|ido|í|ó)^/ig.test(_morphema) || /(ado|ido)/ig.test(_morphema)){
+              time = WORDS.TIMES.PASS;
+            }
+            if(/(ando|endo)^/ig.test(_morphema)){
+              time = WORDS.TIMES.PRESENTE_PERFECT;
+            }
+            _concepts.push(new db.Concept({
+              key: WORDS.CONCEPTS.TIME,
+              value: time
+            }));
           }
           var _concept = new db.Concept({
             key: WORDS.CONCEPTS.CLASS,
             value: _mode
           });
+          _concepts.push(_concept);
           var _morphe = new db.morphems({
             key: _morphema,
             regexp: _morphema,
-            concepts: [_concept]
+            concepts: _concepts
           });
           var _lexe = new db.lexemas({
             key: _lexema,
@@ -122,12 +142,13 @@ module.exports = function (db) {
           if(_morphema.length > 0){
             _lexe.morphems.push(_morphe);
             _word.morphems.push(_morphe);
-            _word.concepts.push(_concept);
+            _word.concepts.push(_concepts);
           }
           _lexe.save();
-          _word.lexema = _lexe;
-          _word.save();
-          continue;
+          if(!_lexe._id){
+            continue;
+          }
+          _word.lexema = _lexe._id;
         }
         logger.info({ 
           message: `Nueva palabra ingresada ${_word.key} localizado en lexema ${_word.lexema}`

@@ -1104,7 +1104,10 @@ module.exports = function (app, express, Schema, __DIR__) {
 				_containts, _peoples, WORDS.CLASS_GRAMATICAL)
 			_keywords_description = words;
 			Events.emit("new-words", _pendingWords);
-			response.status(400).send(_keywords_description)
+			if(_verbs.length == 0){
+				throw new ValidatorException("Es necesario por lo menos un verbo observable.");
+			}
+			response.status(400).send(_verbs)
 			/*var _keywords_title = data[0];
 			var _keywords_description = data[1];
 			var _premises = data[2];

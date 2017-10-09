@@ -177,7 +177,7 @@ module.exports.VERBOS = [
 ];
 
 //Morfemas flexivos de conjugación verbos
-module.exports.MORPHEM_CONJUGATION = /(ar|er|ir|ado|ido|ando|endo)$/ig;
+module.exports.MORPHEM_CONJUGATION = /(ar|er|ir|ado|ido|ando|endo|í|ó)$/ig;
 
 //Morfemas derivativos sufijos
 module.exports.MORPHEM_SUFIX = /(ano|ino|i|eño|ita|[eé]s|ense|o|an|aro|ego|ico|[oó]n|eco|ota|eta|era|cio|isco|enco)$/ig;
