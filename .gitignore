@@ -12,3 +12,13 @@ logs/
 *.log
 _SpecRunner.html
 .vscode
+database/
+!database/SoulHand/cognitions.*
+!database/SoulHand/courses.*
+!database/SoulHand/domainslearnings.*
+!database/SoulHand/events.*
+!database/SoulHand/grades.*
+!database/SoulHand/hiperonimos.*
+!database/SoulHand/learningobjetives.*
+!database/SoulHand/lexemas.*
+!database/SoulHand/words.*
