@@ -1107,7 +1107,56 @@ module.exports = function (app, express, Schema, __DIR__) {
 			if(_verbs.length == 0){
 				throw new ValidatorException("Es necesario por lo menos un verbo observable.");
 			}
+			for(var i = 0, n = _verbs.length; i<n; i++){
+				var isValid = false, time;
+				for(var j = 0, m = _verbs[i].concepts.length; j<m; j++){
+					if (_verbs[i].concepts[j].key == WORDS.CONCEPTS.TIME){
+						time = _verbs[i].concepts[j].value;
+					}
+					if (_verbs[i].concepts[j].key == WORDS.CONCEPTS.TIME
+						&& (
+									_verbs[i].concepts[j].value == WORDS.TIMES.FUTURO
+									|| _verbs[i].concepts[j].value == WORDS.TIMES.INFINITY
+							)){
+						isValid = true;
+						break;
+					}
+				}
+				if(!isValid){
+					if(!time){
+						throw new ValidatorException(`Lo sentimos no detecto referencias al indicativo tiempo ${_verbs[i].key}`);
+					}
+					console.log({
+							lexema: _verbs[i].lexema._id,
+							"concepts.value": WORDS.TIMES.FUTURO
+						});
+					return Promise.all([
+						false,
+						_verbs[i],
+						Schema.words.findOne({
+							lexema: _verbs[i].lexema,
+							"concepts.value": WORDS.TIMES.FUTURO
+						}),
+						WORDS.CONCEPTS.TIME,
+						time
+					]);
+				}
+			}
 			response.status(400).send(_verbs)
+		})
+		.then((datas) => {
+			console.log(datas[2]);
+			if(!datas[0]){
+				switch (datas[3]){
+					case WORDS.CONCEPTS.TIME:
+						if(!datas[2]){
+							throw new ValidatorException(`El verbo "${datas[1].key}" se encuentra en el tiempo "${datas[4]}", es recomendable un verbo futuro!`);
+						}
+						throw new ValidatorException(`El verbo "${datas[1].key}" se encuentra en el tiempo "${datas[4]}", es recomendable cambiar por "${datas[2].key}"`);
+					break;
+				}
+			}
+		})
 			/*var _keywords_title = data[0];
 			var _keywords_description = data[1];
 			var _premises = data[2];
@@ -1123,7 +1172,6 @@ module.exports = function (app, express, Schema, __DIR__) {
 			}*/
 			//Schema.events.findOne({ name: 'KEYWORDS-CONTEXT' })
 			//return Schema.domainsLearning.find();
-		})
 		.catch((error) => {
 			next(error)
 		})
