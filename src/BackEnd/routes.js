@@ -1076,6 +1076,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 		request.body.words = [];
 		var _keywords_title = WORDS.SeparatorWords(request.body.name);
 		var _keywords_description = WORDS.SeparatorWords(request.body.description);
+		var _concepts_title = [], _concepts_description = [], _concepts = [];
 		var _pendingWords = [], _verbs = [], _containts = [], _peoples = [];
 
 		Schema.LearningObjetive.findOne({ name: request.body.name }).then((row) => {
@@ -1107,6 +1108,35 @@ module.exports = function (app, express, Schema, __DIR__) {
 			if(_verbs.length == 0){
 				throw new ValidatorException("Es necesario por lo menos un verbo observable.");
 			}
+
+			var querys = _keywords_title.map((row) => {
+				if (!row) {
+					return null;
+				}
+				return Schema.Hiperonimo.findOne({
+					$or: [
+						{ "hiponimos.key": row.key},
+						{ "hiponimos.words": row.key}
+					]
+				});
+			});
+			return Promise.all(querys);
+		})
+		.then((rows) => {
+			_concepts_title = rows;
+			var querys = _keywords_description.map((row) => {
+				if(!row){
+					return null;
+				}
+				return Schema.Hiperonimo.findOne({
+					"hiponimos.key": row.key
+				});
+			});
+			return Promise.all(querys);
+		})
+		.then((rows) => {
+			_concepts_description = rows;
+			_concepts = _concepts_description.concat(_concepts_title);
 			for(var i = 0, n = _verbs.length; i<n; i++){
 				var isValid = false, time;
 				for(var j = 0, m = _verbs[i].concepts.length; j<m; j++){
@@ -1126,10 +1156,6 @@ module.exports = function (app, express, Schema, __DIR__) {
 					if(!time){
 						throw new ValidatorException(`Lo sentimos no detecto referencias al indicativo tiempo ${_verbs[i].key}`);
 					}
-					console.log({
-							lexema: _verbs[i].lexema._id,
-							"concepts.value": WORDS.TIMES.FUTURO
-						});
 					return Promise.all([
 						false,
 						_verbs[i],
@@ -1141,23 +1167,58 @@ module.exports = function (app, express, Schema, __DIR__) {
 						time
 					]);
 				}
+				for (var j = 0, m = _concepts.length; j<m; j++){
+					if (!_concepts[j]){
+						continue;
+					}
+					for (var k = 0, u = _concepts[j].hiponimos.length; k < u; k++){
+						if (_concepts[j].hiponimos[k].key != _verbs[i].key){
+							continue;
+						}
+						_verbs[i] = [
+							_verbs[i],
+							_concepts[j],
+							_concepts[j].hiponimos[k]
+						];
+						if (!/observa(ci[oó]n|ble)/ig.test(_verbs[i][1].concept)){
+							throw new ValidatorException(`La palabra "${_verbs[i][0].key}" no denota acción observable`);
+						}
+						break;
+					}
+				}
 			}
-			response.status(400).send(_verbs)
+			var _domain = null;
+			for(var i = 0, n = _verbs.length; i<n; i++){
+				for(var j = i + 1; j<n; j++){
+					if (_verbs[i][1].concept != _verbs[j][1].concept){
+						throw new ValidatorException(`El objetivo describe dos acciones observables "${_verbs[i][0].key}" y "${_verbs[i][0].key}". Evite conflictos en sus observaciones.`);
+					}
+				}
+				if (!_domain){
+					_domain = _verbs[i][1].concept.replace(/[a-z\s]+\(([a-z]+)\)/ig, "$1");
+				}
+			}
+			return Promise.all([
+				true,
+				_domain,
+				Schema.domainsLearning.findOne({ name: _domain.toUpperCase()})
+			]);
 		})
 		.then((datas) => {
-			console.log(datas[2]);
 			if(!datas[0]){
 				switch (datas[3]){
 					case WORDS.CONCEPTS.TIME:
-						if(!datas[2]){
-							throw new ValidatorException(`El verbo "${datas[1].key}" se encuentra en el tiempo "${datas[4]}", es recomendable un verbo futuro!`);
-						}
-						throw new ValidatorException(`El verbo "${datas[1].key}" se encuentra en el tiempo "${datas[4]}", es recomendable cambiar por "${datas[2].key}"`);
+					if(!datas[2]){
+						throw new ValidatorException(`El verbo "${datas[1].key}" se encuentra en el tiempo "${datas[4]}", es recomendable un verbo futuro!`);
+					}
+					throw new ValidatorException(`El verbo "${datas[1].key}" se encuentra en el tiempo "${datas[4]}", es recomendable cambiar por "${datas[2].key}"`);
 					break;
 				}
 			}
+			console.log(datas);
+			response.status(400).send(datas[2]);
 		})
-			/*var _keywords_title = data[0];
+		/*var _keywords_title = data[0];
 			var _keywords_description = data[1];
 			var _premises = data[2];
 			if (!_premises) {
