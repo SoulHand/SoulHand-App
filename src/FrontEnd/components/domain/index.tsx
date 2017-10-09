@@ -1,21 +1,23 @@
 import * as React from 'react'
 import {ajax} from 'jquery'
-import {Link} from 'react-router'
+import { Link, withRouter } from 'react-router'
 import * as Cards from '../cards/domain'
 import {View} from './view'
 import {Objetives} from './objetives'
 import {CognitionView} from './cognition'
+import { DomainCreate } from './domaincreate'
 import {ParentCreate} from './parentcreate'
 import {Menu} from '../app/menu'
 
 
- export class Domain extends React.Component <{}, {}>{
+@withRouter
+ export class Domain extends React.Component <{router: any}, {}>{
    public session: User.session;
    public domains: Array<CRUD.domain>=[];
    state: { domains:  Array<CRUD.domain>} = {
      domains: []
    }
-   constructor(props:{}){
+   constructor(props: { router: any }){
      super(props)
      let str = localStorage.getItem("session");
      this.session = JSON.parse(str);
@@ -93,7 +95,22 @@ import {Menu} from '../app/menu'
                );
              })}
           </div>
-            <Link to="/objetives/create" title="Crear un nuevo objetivo" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
+             <div className="fixed">
+                <button id="add-menu" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></button>
+                <ul className="mdl-menu mdl-menu--top-right mdl-js-menu mdl-js-ripple-effect"
+                  data-mdl-for="add-menu">
+                  <li className="mdl-menu__item" onClick={(e) => {
+                    this.props.router.push("/domains/create");
+                  }}>
+                    <i className="material-icons">explore</i> Añadir un dominio de aprendizaje
+                  </li>
+                  <li className="mdl-menu__item" onClick={(e) => {
+                    this.props.router.push("/objetives/create");
+                  }}>
+                    <i className="material-icons">lightbulb_outline</i> Añadir un objetivo de aprendizaje
+                  </li>
+                </ul>
+              </div>
           </main>
        </div>
      );
@@ -104,3 +121,4 @@ import {Menu} from '../app/menu'
  export let Objetive = Objetives;
  export let Cognition = CognitionView;
  export let Add = ParentCreate;
+ export let AddDomain = DomainCreate;

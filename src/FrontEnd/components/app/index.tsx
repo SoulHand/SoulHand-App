@@ -1,7 +1,8 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import {Header} from './header'
+import { Header, HeaderBack} from './header'
 import {Menu} from './menu'
+
 
  export class App extends React.Component <{}, {}>{
    componentDidMount(){
@@ -16,6 +17,24 @@ import {Menu} from './menu'
           <Menu/>
           <main className="mdl-layout__content mdl-color--grey-100">
           {this.props.children}
+          </main>
+       </div>
+     );
+   }
+ }
+
+ export class ModalApp extends React.Component <{success: any}, {}>{
+   componentDidMount(){
+     componentHandler.upgradeAllRegistered();
+     window.progress.parent = ReactDOM.findDOMNode(this).querySelector("div#progress.mdl-js-progress");
+   }
+   render(){
+     return(
+       <div className="demo-layout mdl-layout mdl-layout--fixed-header">
+          <HeaderBack success={this.props.success}/>
+          <div id="progress" className="mdl-progress mdl-js-progress mdl-progress__indeterminate progress hiden"/>
+          <main className="mdl-layout__content mdl-color--grey-100">
+            {this.props.children}
           </main>
        </div>
      );

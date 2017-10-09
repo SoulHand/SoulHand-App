@@ -32,3 +32,9 @@ window.progress = {
         window.progress.parent.classList.remove("hiden");
     }
 }
+
+window.settings = {
+    alert:{
+        delay: 120000
+    }
+}
