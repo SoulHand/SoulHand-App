@@ -131,8 +131,8 @@ import {Level} from '../cards/level'
                       <div className="mdl-cell--10-col mdl-cell--middle">
                         {this.state.words.map((row) => {
                           return (
-                            <span className="mdl-chip" key={row}>
-                              <span className="mdl-chip__text">{row}</span>
+                            <span className="mdl-chip" key={row._id}>
+                              <span className="mdl-chip__text">{row.concept}</span>
                             </span>
                           );
                         })}

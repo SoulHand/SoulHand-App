@@ -21,7 +21,7 @@ import * as React from 'react'
    }
  }
 //React.MouseEvent<HTMLButtonElement>
- export class HeaderBack extends React.Component <{success: any}, {}>{
+ export class HeaderBack extends React.Component <{success: any, title?: string}, {}>{
    render(){
      return (
        <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
@@ -32,7 +32,7 @@ import * as React from 'react'
         <div className="mdl-layout__header-row">
           <span className="mdl-layout-title">SoulHand</span>
           <div className="mdl-layout-spacer"></div>
-          <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" onClick={this.props.success}>
+          <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" onClick={this.props.success} title={this.props.title}>
             <i className="material-icons">check</i>
           </button>
         </div>

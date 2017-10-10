@@ -192,15 +192,17 @@ declare namespace Card {
     matter: CRUD.course
     session: User.session
     delete: Function
-  }
-  interface domain{
-    domain: CRUD.domain
+}
+interface domain{
+	domain: CRUD.domain
     session: User.session
-  }
-  interface level{
-    level: CRUD.level
+	delete: Function
+}
+interface level{
+	level: CRUD.level
     session: User.session
     domain: string
+	delete: Function
   }
   interface objetive{
     objetive: CRUD.objetive
@@ -316,7 +318,7 @@ declare namespace CRUD{
 		_v:number
 		levels: Array<level>
 		cognitions:Array<cognition>
-		words:Array<string>
+		words:Array<any>
 	}
 	interface level{
 		_id:string
