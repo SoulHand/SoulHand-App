@@ -40,3 +40,20 @@ import * as React from 'react'
      );
    }
  }
+ export class HeaderFree extends React.Component <{menu?: any}, {}>{
+   render(){
+     return (
+       <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
+        <div className="mdl-layout__drawer-button"><a href="javascript:void(0);" onClick={(e) => {
+           e.preventDefault();
+           window.history.back();
+        }}><i className="material-icons">&#xE5C4;</i></a></div>
+        <div className="mdl-layout__header-row">
+          <span className="mdl-layout-title">SoulHand</span>
+          <div className="mdl-layout-spacer"></div>
+          {this.props.menu}
+        </div>
+       </header>
+     );
+   }
+ }

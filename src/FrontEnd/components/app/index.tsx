@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import { Header, HeaderBack} from './header'
+import { Header, HeaderBack, HeaderFree} from './header'
 import {Menu} from './menu'
 
 
@@ -32,6 +32,24 @@ import {Menu} from './menu'
      return(
        <div className="demo-layout mdl-layout mdl-layout--fixed-header">
           <HeaderBack success={this.props.success} title={this.props.title}/>
+          <div id="progress" className="mdl-progress mdl-js-progress mdl-progress__indeterminate progress hiden"/>
+          <main className="mdl-layout__content mdl-color--grey-100">
+            {this.props.children}
+          </main>
+       </div>
+     );
+   }
+ }
+
+ export class ModalFree extends React.Component <{menu?: any}, {}>{
+   componentDidMount(){
+     componentHandler.upgradeAllRegistered();
+     window.progress.parent = ReactDOM.findDOMNode(this).querySelector("div#progress.mdl-js-progress");
+   }
+   render(){
+     return(
+       <div className="demo-layout mdl-layout mdl-layout--fixed-header">
+         <HeaderFree menu={this.props.menu}/>
           <div id="progress" className="mdl-progress mdl-js-progress mdl-progress__indeterminate progress hiden"/>
           <main className="mdl-layout__content mdl-color--grey-100">
             {this.props.children}

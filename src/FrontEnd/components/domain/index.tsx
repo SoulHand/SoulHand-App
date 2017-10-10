@@ -8,6 +8,7 @@ import {Objetives} from './objetives'
 import {CognitionView} from './cognition'
 import { DomainCreate } from './domaincreate'
 import {ParentCreate} from './parentcreate'
+import { LevelCreate } from './levelcreate'
 import {Menu} from '../app/menu'
 
 
@@ -113,3 +114,4 @@ import {Menu} from '../app/menu'
  export let Cognition = CognitionView;
  export let Add = ParentCreate;
  export let AddDomain = DomainCreate;
+ export let AddLevel = LevelCreate;
