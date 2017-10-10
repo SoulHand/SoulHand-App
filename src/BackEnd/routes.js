@@ -752,8 +752,8 @@ module.exports = function (app, express, Schema, __DIR__) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('El id no es valido!')
     }
-    Schema.Cognitions.findOne({_id: request.params.id}).populate("words").then((row) => {
-      if(row){
+    Schema.Cognitions.findOne({_id: ObjectId(request.params.id)}).populate("words").then((row) => {
+      if(!row){
         throw new ValidatorException("No existe el registro!");
       }
       response.send(row)
