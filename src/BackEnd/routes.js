@@ -710,6 +710,10 @@ module.exports = function (app, express, Schema, __DIR__) {
     if (Validator.isNull()(request.body.description)) {
       throw new ValidatorException('Es necesario una breve descripción!')
     }
+    if (!Validator.isJSON()(request.body.words)) {
+      throw new ValidatorException('Los conceptos no son validos!')
+		}
+		request.body.words = JSON.parse(request.body.words);
     Schema.Cognitions.findOne({name: request.body.name.toUpperCase()})
     .then((row) => {
         if(row){
@@ -717,7 +721,8 @@ module.exports = function (app, express, Schema, __DIR__) {
         }
         var cognition = new Schema.Cognitions({
           name: request.body.name.toUpperCase(),
-          description: request.body.description.toUpperCase()
+					description: request.body.description.toUpperCase(),
+					words: request.body.words
         });
         return cognition.save();
     }).then((data) => {
@@ -752,7 +757,7 @@ module.exports = function (app, express, Schema, __DIR__) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('El id no es valido!')
     }
-    Schema.Cognitions.findOne({_id: ObjectId(request.params.id)}).populate("words").then((row) => {
+		Schema.Cognitions.findOne({ _id: ObjectId(request.params.id) }).populate("words").then((row) => {
       if(!row){
         throw new ValidatorException("No existe el registro!");
       }
