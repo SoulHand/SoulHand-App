@@ -11,6 +11,7 @@ import * as Words from '../components/words'
 import * as Grade from '../components/grades'
 import * as Matters from '../components/matters'
 import * as Domain from '../components/domain'
+import * as Cognitions from '../components/cognitions'
 import * as Activity from '../components/activities'
 import {UserCreate} from '../components/users/usercreate'
 import {CognitionCreate} from '../components/objetive/cognitioncreate'
@@ -69,6 +70,11 @@ window.addEventListener("load",()=>{
           <Route path="get/:id" component={Matters.Get}/>
           <Route path="edit/:id" component={Matters.Modify}/>
           <Route path="create" component={Matters.Add}/>
+        </Route>
+        <Route path="/cognitions" onEnter={Auth}>
+          <IndexRoute component={Cognitions.Cognitions}/>
+          <Route path="get/:id" component={Cognitions.Get}/>
+          <Route path="create" component={Cognitions.Add}/>
         </Route>
         <Route path="/domains" onEnter={Auth}>
           <IndexRoute component={Domain.Domain}/>

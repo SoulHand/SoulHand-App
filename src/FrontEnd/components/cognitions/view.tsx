@@ -5,7 +5,7 @@ import {Level} from '../cards/level'
 import { ModalFree} from "../app"
 
 @withRouter
- export class View extends React.Component <Props.teacherView, CRUD.domain>{
+ export class View extends React.Component <Props.teacherView, CRUD.cognition>{
    public session: User.session;
    public init: boolean = false;
    constructor(props:Props.teacherView){
@@ -24,7 +24,7 @@ import { ModalFree} from "../app"
      event.target.reset();
      let p1 = ajax({
        method: "PUT",
-       url: `${window._BASE}/v1/learning/domain/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       url: `${window._BASE}/v1/knowedge/cognitions/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
        data: {
          words: JSON.stringify(this.state.words)
@@ -63,9 +63,9 @@ import { ModalFree} from "../app"
          message.MaterialSnackbar.showSnackbar(config);
        }
      });
-     p1.done((domain: CRUD.domain) => {
+     p1.done((cognition: CRUD.cognition) => {
        this.init = true;
-       this.setState(domain);
+       this.setState(cognition);
      });
      componentHandler.upgradeAllRegistered();
    }
@@ -96,17 +96,9 @@ import { ModalFree} from "../app"
                 <div className="mdl-grid mdl-color--white demo-content">
                   <div className="mdl-cell--6-col mdl-cell--middle">
                     <div className="mdl-textfield">
-                      <label className="mdl-input__expandable-holder">Nombre del dominio</label>
+                      <label className="mdl-input__expandable-holder">Nombre de la función cognitiva</label>
                       <div className="mdl-textfield__input">
                         {this.state.name}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mdl-cell--6-col mdl-cell--middle">
-                    <div className="mdl-textfield">
-                      <label className="mdl-input__expandable-holder">Numero de niveles</label>
-                      <div className="mdl-textfield__input">
-                        {this.state.levels.length} Niveles
                       </div>
                     </div>
                   </div>
@@ -139,19 +131,6 @@ import { ModalFree} from "../app"
                   </div>
                 </div>
               </div>
-              <div className="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
-                {this.state.levels.length == 0 && (
-                  <span>No posee niveles registrados</span>
-                )}
-                {
-                  this.state.levels.length > 0 &&
-                  this.state.levels.map((row) => {
-                    return (
-                      <Level session={this.session} level={row} key={row._id} domain={this.state.name} delete={this.delete.bind(this)} />
-                    );
-                  })
-                }
-              </div>
            </div>
            <dialog className="mdl-dialog" id="keyword-add" key="keyword-add">
              <form method="PUT" id="keyword" onSubmit={this.sendKey.bind(this)}>
@@ -183,30 +162,3 @@ import { ModalFree} from "../app"
      );
    }
  }
-
-/*
-<div className="mdl-grid mdl-color--white">
-                 <div className="mdl-cell--2-col mdl-cell--middle">
-                   <label className="mdl-input__expandable">Palabras claves</label>
-                 </div>
-                 <div className="mdl-cell--2-col mdl-cell--middle">
-                    <button id="add-keyword" className="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" onClick={this.showKey.bind(this)}>
-                      <i className="material-icons">add</i>
-                    </button>
-                    <div className="mdl-tooltip" data-mdl-for="add-keyword">
-                      Añadir una palabra clave
-                    </div>
-                 </div>
-                 <div className="mdl-cell--10-col mdl-cell--middle">
-                    {this.state.words.map((row) => {
-                      return (
-                        <span className="mdl-chip" key={row}>
-                          <span className="mdl-chip__text">{row}</span>
-                          <button type="button" className="mdl-chip__action" onClick={this.delete.bind(this, row)}><i className="material-icons">cancel</i></button>
-                        </span>
-                      );
-                    })}
-                 </div>
-                </div>
-              </div>
- */

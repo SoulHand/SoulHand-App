@@ -203,21 +203,19 @@ interface level{
     session: User.session
     domain: string
 	delete: Function
-  }
-  interface objetive{
-    objetive: CRUD.objetive
+}
+interface objetive{
+	objetive: CRUD.objetive
     session: User.session
     delete: Function
     domain?: string
     level?: string
     activity?: string
-  }
-  interface cognition{
-    cognition: CRUD.cognition
+}
+interface cognition{
+	cognition: CRUD.cognition
     session: User.session
-    delete: Function
-    domain: string
-    level: string
+	delete: Function
   }
   interface activity{
     activity: CRUD.activity
@@ -309,7 +307,7 @@ declare namespace CRUD{
 		_id:string
 		name:string
 		description:string
-		words: Array<string>
+		words: Array<any>
 	}
 	interface domain{
 		_id:string
