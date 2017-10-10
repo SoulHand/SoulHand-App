@@ -564,6 +564,13 @@ module.exports = function (app, express, Schema, __DIR__) {
       if (Validator.isNull()(request.body.name)) {
         throw new ValidatorException('Solo se aceptan textos categoricos')
       }
+      if (Validator.isNull()(request.body.description)) {
+        throw new ValidatorException('Es necesaria una descripción!')
+      }
+      if (!Validator.isJSON()(request.body.words)) {
+        throw new ValidatorException('No posee conceptos validos!')
+			}
+			request.body.words = JSON.parse(request.body.words);
       Schema.domainsLearning.findOne({name: request.body.name.toUpperCase()})
       .then((data) => {
         let DomainLearning = Schema.domainsLearning
@@ -572,8 +579,9 @@ module.exports = function (app, express, Schema, __DIR__) {
         }
         let domain = new DomainLearning({
           name: request.body.name,
-          description: request.body.description
-        })
+					description: request.body.description,
+					words: request.body.words
+				});
         return domain.save()
       }).then((data) => {
         response.send(data)
@@ -606,7 +614,7 @@ module.exports = function (app, express, Schema, __DIR__) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('El id es invalido!')
     }
-    Schema.domainsLearning.findOne({_id: request.params.id}).then((data) => {
+    Schema.domainsLearning.findOne({_id: request.params.id}).populate("words").then((data) => {
       if (!data) {
         throw new ValidatorException('No existe el dominio!')
       }
