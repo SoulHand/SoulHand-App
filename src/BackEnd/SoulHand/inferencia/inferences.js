@@ -14,8 +14,20 @@ class Inferences extends EventEmitter {
   }
 
   isContaint (str, keywords) {
-    var exp = new RegExp(keywords.join('|'), 'ig')
-    return exp.test(str)
+    if(typeof str == "string"){
+      var exp = new RegExp(keywords.join('|'), 'ig')
+      return exp.test(str)
+    }
+    if(typeof str == "object"){
+      for (var i in str) {
+        for(var j = 0, n = keywords.length; j<n; j++){
+          if(keywords[j] == str[i]){
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 
   ModusPones (premises, varGlobals) {
