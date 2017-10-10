@@ -1099,11 +1099,13 @@ module.exports = function (app, express, Schema, __DIR__) {
 		if (!request.body.exp){
 			request.body.exp = 10; // evaluador principal
 		}
-		request.body.words = [];
+		if (!request.body.words){
+			request.body.words = [];
+		}
 		var _keywords_title = WORDS.SeparatorWords(request.body.name);
 		var _keywords_description = WORDS.SeparatorWords(request.body.description);
 		var _concepts_title = [], _concepts_description = [], _concepts = [];
-		var _pendingWords = [], _verbs = [], _containts = [], _peoples = [];
+		var _pendingWords = [], _verbs = [], _containts = [], _peoples = [], _times = [];
 
 		Schema.LearningObjetive.findOne({ name: request.body.name }).then((row) => {
 			if (row) {
@@ -1155,7 +1157,10 @@ module.exports = function (app, express, Schema, __DIR__) {
 					return null;
 				}
 				return Schema.Hiperonimo.findOne({
-					"hiponimos.key": row.key
+					$or: [
+						{ "hiponimos.key": row.key },
+						{ "hiponimos.words": row.key }
+					]
 				});
 			});
 			return Promise.all(querys);
@@ -1193,42 +1198,38 @@ module.exports = function (app, express, Schema, __DIR__) {
 						time
 					]);
 				}
-				for (var j = 0, m = _concepts.length; j<m; j++){
+				var _conceptTemp = [];
+				for(var j = 0, v = _concepts.length; j < v; j++){
 					if (!_concepts[j]){
 						continue;
 					}
-					for (var k = 0, u = _concepts[j].hiponimos.length; k < u; k++){
-						if (_concepts[j].hiponimos[k].key != _verbs[i].key){
-							continue;
+					for (var k = 0, w = _concepts[j].hiponimos.length; k < w; k++){
+						if (_concepts[j].hiponimos[k].key == _verbs[i].key){
+							_conceptTemp.push(_concepts[j]);
 						}
-						_verbs[i] = [
-							_verbs[i],
-							_concepts[j],
-							_concepts[j].hiponimos[k]
-						];
-						console.log(_verbs[i][1]);
-						if (!/observa(ci[oó]n|ble)/ig.test(_verbs[i][1].concept)){
-							throw new ValidatorException(`La palabra "${_verbs[i][0].key}" no denota acción observable`);
-						}
-						break;
 					}
 				}
+				_times[i] = { time: time, concept: _conceptTemp};
 			}
-			var _domain = null;
-			for(var i = 0, n = _verbs.length; i<n; i++){
-				for(var j = i + 1; j<n; j++){
-					if (_verbs[i][1].concept != _verbs[j][1].concept){
-						throw new ValidatorException(`El objetivo describe dos acciones observables "${_verbs[i][0].key}" y "${_verbs[i][0].key}". Evite conflictos en sus observaciones.`);
-					}
+			var _range = 0;
+			var treeSintax = _concepts.map((row) => {
+				if(!row){
+					return null;
 				}
-				if (!_domain){
-					_domain = _verbs[i][1].concept;
-				}
-			}
+				_range++;
+				return row.concept;
+			});
+			_range /= treeSintax.length;
+			treeSintax = treeSintax.filter((row) => {
+				return !!row;
+			})
 			return Promise.all([
 				true,
-				_domain,
-				Schema.domainsLearning.findOne({ name: _domain.toUpperCase()})
+				{
+					tree: treeSintax,
+					radio: _range
+				},
+				Schema.events.findOne({ name: 'KEYWORDS-CONTEXT' })
 			]);
 		})
 		.then((datas) => {
@@ -1242,15 +1243,160 @@ module.exports = function (app, express, Schema, __DIR__) {
 					break;
 				}
 			}
-			console.log(datas);
-			response.status(400).send(datas[2]);
-		})
-		/*var _keywords_title = data[0];
-			var _keywords_description = data[1];
-			var _premises = data[2];
+			var _premises = datas[2];
 			if (!_premises) {
-				_premises = new EventClass({
+				_premises = new Schema.events({
 					name: 'KEYWORDS-CONTEXT',
+					objects: {
+						p1: 'tree', // Palabra
+						p2: 'radio', // Cantidad de repeticiones
+					},
+					premises: []
+				});
+				_premises.save();
+			}
+			var _consecuents = Events.ChainGetAll(_premises.premises, {
+				p1: datas[1].tree.join(" + "),
+				p2: datas[2].radio
+			});
+			var _keywords = [], _cognitions = [], _hiperonimo = _times[0].concept;
+			for (var i = 0, n = _consecuents.length; i < n; i++) {
+				if (/ERROR:\s/ig.test(_consecuents[i].q1)){
+					throw new ValidatorException(_consecuents[i].q1);
+				}
+				if (/KEYWORD:\s/ig.test(_consecuents[i].q1)){
+					_keywords.push(_consecuents[i].q1.trim());
+				}
+				if (/XP:\s/ig.test(_consecuents[i].q1)){
+					request.body.exp = parseFloat(_consecuents[i].q1);
+				}
+				if (/COGNITION:\s/ig.test(_consecuents[i].q1)){
+					_cognitions.push(_consecuents[i].q1.trim());
+				}
+				if (/HIPERONIMO:\s/ig.test(_consecuents[i].q1)){
+					_cognitions.push(_consecuents[i].q1.trim());
+				}
+			}
+			if (!_hiperonimo){
+				throw new ValidatorException("No es reconocible una acción observable.");
+			}
+			return {
+				keywords: _keywords,
+				cognitions: _cognitions,
+				hiperonimo: _hiperonimo
+			};
+		})
+		.then((data) => {
+			var querywords = [], _cognitions = [];
+			if(data.keywords.length == 0){
+				var _keywords = [];
+				var _words_temp = _keywords_title.concat(_keywords_description);
+				for (var i = 0, n = _words_temp.length; i<n; i++){
+					var isAdd = true;
+					for (var j = 0, m = _keywords.length; j<m; j++){
+						if (_words_temp[i] != _keywords[j]){
+							continue;
+						}
+						isAdd = false;
+						break;
+					}
+					if(isAdd){
+						_keywords.push(_words_temp[i]);
+					}
+				}
+				querywords = _keywords.map((row) => {
+					return Schema.LearningObjetive.find({
+						words: row
+					});
+				});
+			}
+			_cognitions = data.cognitions.map((row) => {
+				return Schema.Cognitions.findOne({_id: ObjectId(row)});
+			});
+			var querysDomain = data.hiperonimo.map((row) => {
+				return {
+					words: row._id
+				}
+			})
+			console.log(querysDomain);
+			return Promise.all([
+				data,
+				querywords,
+				_cognitions,
+				Schema.domainsLearning.findOne({
+					$or: querysDomain
+				})
+			]);
+		})
+		.then((datas) => {
+			var _keywords = datas[1];
+			if(!datas[3]){
+				throw new ValidatorException("No existe el dominio!");
+			}
+			if(datas[1].length > 0){
+				var max = 0;
+				var avg = datas[1].map((row) => {
+					var num = row.length;
+					max = Math.max(num, max);
+					return num;
+				});
+				avg = avg.map((row) => {
+					return row / max;
+				});
+				_keywords = datas[1].filter((row, index) => {
+					return avg[index] >= 0.5;
+				});
+			}
+			if(request.body.words){
+				for(var i = 0, n = request.body.words.length; i<n; i++){
+					var isAdd = true;
+					for(var j = 0, m = _keywords.length; j < m; j++){
+						if (request.body.words[i] != _keywords[j]) {
+							continue;
+						}
+						isAdd = false;
+						break;
+					}
+					if (isAdd) {
+						_keywords.push(request.body.words[i]);
+					}
+				}
+			}
+			var _level = ((domain, query) => {
+				for(var i = 0, n = domain.levels.length; i<n; i++){
+					for (var k = 0, u = domain.levels[i].words.length; k<u; k++){
+						for(var j = 0, m = query.hiperonimo.length; j<m; j++){
+							if (query.hiperonimo[j]._id.toString() == domain.levels[i].words[k].toString()){
+								return domain.levels[i];
+							}
+						}
+					}
+				}
+			})(datas[3], datas[0]);
+			if (!_level){
+				throw new ValidatorException("El objetivo es incoherente en acciones, el nivel y dominio no coinciden!");
+			}
+			var p1 = new Schema.LearningObjetive({
+				name: request.body.name,
+				description: request.body.description,
+				domain: datas[3],
+				level: _level,
+				words: _keywords,
+				cognitions: datas[0].cognitions,
+				exp: request.body.exp
+			});
+			return p1.save();
+		})
+		.then((data) => {
+			response.send(data);
+		})
+		//Schema.domainsLearning.findOne()
+		/*var _keywords_title = data[0];
+		var _keywords_description = data[1];
+		var _premises = data[2];
+		if (!_premises) {
+			_premises = new EventClass({
+				name: 'KEYWORDS-CONTEXT',
 					objects: {
 						p1: 'word', // Palabra
 						p2: 'word.length', // Cantidad de repeticiones
