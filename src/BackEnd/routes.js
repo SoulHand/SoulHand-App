@@ -1041,7 +1041,8 @@ module.exports = function (app, express, Schema, __DIR__) {
         throw new ValidatorException('EL id no es valido!')
       }
       Schema.domainsLearning.findOne({name: request.params.domain.toUpperCase()})
-      .then((data) => {
+			.populate("words")
+			.then((data) => {
         if (!data) {
           throw new ValidatorException('No existe el dominio!')
         }
