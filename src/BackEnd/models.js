@@ -146,7 +146,7 @@ structDb.domainsLearning = mongoose.Schema({
   name: {type: String, required: true, trim: true, uppercase: true},
   description: {type: String, required: true, trim: true, uppercase: true},
   levels: [structDb.nivelDomain],
-  words: []
+	words: [{ type: mongoose.Schema.ObjectId, ref: 'Hiperonimo' }]
 // words:[structDb.words]
 });
 
