@@ -105,7 +105,7 @@ module.exports = function (db) {
           if (_lexema.length < 3){
               continue;
           }
-          if (mode == WORDS.MORPHEM_CONJUGATION){
+          if (_mode == WORDS.MORPHEM_CONJUGATION){
             var time = WORDS.TIMES.INFINITY;
             if(/(o|e?s|a?s)^/ig.test(_morphema)){
               time = WORDS.TIMES.PRESENTE_PERFECT;
