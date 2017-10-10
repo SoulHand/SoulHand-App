@@ -1106,6 +1106,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 		var _keywords_description = WORDS.SeparatorWords(request.body.description);
 		var _concepts_title = [], _concepts_description = [], _concepts = [];
 		var _pendingWords = [], _verbs = [], _containts = [], _peoples = [], _times = [];
+		var _premises
 
 		Schema.LearningObjetive.findOne({ name: request.body.name }).then((row) => {
 			if (row) {
@@ -1243,13 +1244,14 @@ module.exports = function (app, express, Schema, __DIR__) {
 					break;
 				}
 			}
-			var _premises = datas[2];
+			_premises = datas[2];
 			if (!_premises) {
 				_premises = new Schema.events({
 					name: 'KEYWORDS-CONTEXT',
 					objects: {
-						p1: 'tree', // Palabra
+						p1: 'tree_join', // Palabra
 						p2: 'radio', // Cantidad de repeticiones
+						p3: 'tree', // Palabra
 					},
 					premises: []
 				});
@@ -1257,7 +1259,8 @@ module.exports = function (app, express, Schema, __DIR__) {
 			}
 			var _consecuents = Events.ChainGetAll(_premises.premises, {
 				p1: datas[1].tree.join(" + "),
-				p2: datas[2].radio
+				p2: datas[2].radio,
+				p3: datas[1].tree
 			});
 			var _keywords = [], _cognitions = [], _hiperonimo = _times[0].concept;
 			for (var i = 0, n = _consecuents.length; i < n; i++) {
@@ -1283,7 +1286,9 @@ module.exports = function (app, express, Schema, __DIR__) {
 			return {
 				keywords: _keywords,
 				cognitions: _cognitions,
-				hiperonimo: _hiperonimo
+				hiperonimo: _hiperonimo,
+				tree: datas[1].tree,
+				radio: datas[2].radio
 			};
 		})
 		.then((data) => {
@@ -1317,8 +1322,10 @@ module.exports = function (app, express, Schema, __DIR__) {
 				return {
 					words: row._id
 				}
-			})
-			console.log(querysDomain);
+			});
+			if (querysDomain.length == 0){
+				throw new ValidatorException("No se ha encontrado un dominio candidato");
+			}
 			return Promise.all([
 				data,
 				querywords,
@@ -1345,6 +1352,15 @@ module.exports = function (app, express, Schema, __DIR__) {
 				});
 				_keywords = datas[1].filter((row, index) => {
 					return avg[index] >= 0.5;
+				});
+				_keywords.forEach((row) => {
+						var _inference = new Schema.inferences({
+							premise: `p1 == "${data[0].tree.join(" + ")} || this.iscontaint(p3, ${JSON.stringify(data[0].tree)})"`,
+							consecuent: `q1 = "KEYWORD ${row}"`
+						});
+						console.log(_inference);
+						_premises.premises.push(_inference);
+					
 				});
 			}
 			if(request.body.words){
