@@ -21,9 +21,10 @@ var structDb = {
     name: {type: String, required: true, trim: true, uppercase: true}
   }),
   nivelDomain: mongoose.Schema({
-    name: {type: String, required: true, trim: true, uppercase: true},
+		name: {type: String, required: true, trim: true, uppercase: true},
+		description: { type: String, required: true, trim: true, uppercase: true },
     level: {type: Number},
-    words: []
+		words: [{ type: mongoose.Schema.ObjectId, ref: 'Hiperonimo' }]
   // words:[]
   }),
   physic: mongoose.Schema({
@@ -138,7 +139,7 @@ structDb.wordsPending = mongoose.Schema({
 structDb.Cognitions = mongoose.Schema({
   name: {type: String, required: true, trim: true, uppercase: true},
   description: {type: String, required: true, trim: true, uppercase: true},
-  words: []
+	words: [{ type: mongoose.Schema.ObjectId, ref: 'Hiperonimo' }]
 // words:[structDb.words]
 });
 
