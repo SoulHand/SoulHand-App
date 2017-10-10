@@ -1206,6 +1206,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 							_concepts[j],
 							_concepts[j].hiponimos[k]
 						];
+						console.log(_verbs[i][1]);
 						if (!/observa(ci[oó]n|ble)/ig.test(_verbs[i][1].concept)){
 							throw new ValidatorException(`La palabra "${_verbs[i][0].key}" no denota acción observable`);
 						}
@@ -1221,7 +1222,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 					}
 				}
 				if (!_domain){
-					_domain = _verbs[i][1].concept.replace(/[a-z\s]+\(([a-z]+)\)/ig, "$1");
+					_domain = _verbs[i][1].concept;
 				}
 			}
 			return Promise.all([
@@ -1260,6 +1261,10 @@ module.exports = function (app, express, Schema, __DIR__) {
 			//Schema.events.findOne({ name: 'KEYWORDS-CONTEXT' })
 			//return Schema.domainsLearning.find();
 		.catch((error) => {
+			if(_pendingWords.length > 0){
+				var KeywordException = require("./SoulHand/Exceptions/KeywordException.js");
+				error = new KeywordException({words: _pendingWords, error: error.message});
+			}
 			next(error)
 		})
 	});
