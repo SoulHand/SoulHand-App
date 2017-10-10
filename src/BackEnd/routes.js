@@ -827,16 +827,28 @@ module.exports = function (app, express, Schema, __DIR__) {
       if (Validator.isNull()(request.body.name)) {
         throw new ValidatorException('Solo se aceptan textos categoricos')
       }
+      if (Validator.isNull()(request.body.description)) {
+        throw new ValidatorException('Es necesaria una descripción')
+      }
       if (!Validator.isNumeric()(request.body.level)) {
         throw new ValidatorException('El nivel es numerico')
       }
-      Schema.domainsLearning.findOne({name: request.params.domain.toUpperCase()})
+      if (!Validator.isJSON()(request.body.words)) {
+        throw new ValidatorException('Conceptos no validos!')
+			}
+			request.body.words = JSON.parse(request.body.words);
+      Schema.domainsLearning.findOne({_id: ObjectId(request.params.domain)})
       .then((row) => {
+				if(!row){
+					throw new ValidatorException("No existe el dominio!");
+				}
         let Domain = Schema.nivelDomain
         var level = new Domain({
           name: request.body.name.toUpperCase(),
-          level: request.body.level
-        })
+					level: request.body.level,
+					description: request.body.description,
+					words: request.body.words
+        });
         row.levels.forEach((level2) => {
           if (level2.level === level.level || level2.name === level.name) {
             throw new ValidatorException('Ya existe un nivel similar!')
