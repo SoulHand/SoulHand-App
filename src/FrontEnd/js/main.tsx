@@ -37,6 +37,7 @@ window.addEventListener("load",()=>{
           <Route path="get/:id/morphemas/create" component={Words.setStudent}/>
           <Route path="create" component={Words.Add}/>
           <Route path="words" component={Words.Words.Word}/>
+          <Route path="words/get/:id" component={Words.Words.Get}/>
           <Route path="words/create" component={Words.Words.Add}/>
         </Route>
         <Route path="/terms" onEnter={Auth}>

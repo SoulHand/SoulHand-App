@@ -1404,6 +1404,8 @@ module.exports = function (app, express, Schema, __DIR__) {
 			return p1.save();
 		})
 		.then((data) => {
+			var _body = data.json();
+			_body.failures = _pendingWords;
 			response.send(data);
 		})
 		//Schema.domainsLearning.findOne()

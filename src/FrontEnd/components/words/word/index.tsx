@@ -106,6 +106,12 @@ export class Word extends React.Component<Props.teacherView, {}>{
                             </ul>
                           </td>
                           <td className="mdl-data-table__cell">
+                            <div onClick={(e) => {
+                              this.props.router.push(`words/words/get/${row._id}`);
+                            }} id={`view${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>visibility</div>
+                            <div className="mdl-tooltip" data-mdl-for={`view${row._id}`}>
+                              Ver
+                            </div>
                             <div onClick={this.delete.bind(this, row._id)} id={`delete${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>delete</div>
                             <div className="mdl-tooltip" data-mdl-for={`delete${row._id}`}>
                               Eliminar

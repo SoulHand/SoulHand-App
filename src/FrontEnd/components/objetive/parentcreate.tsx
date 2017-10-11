@@ -2,6 +2,7 @@ import * as React from 'react'
 import {withRouter} from 'react-router'
 import {Link} from 'react-router'
 import {FormUtils} from '../formutils'
+import { ModalApp } from "../app"
 import {ajax} from 'jquery'
 
 @withRouter
@@ -74,45 +75,33 @@ import {ajax} from 'jquery'
    }
    render(){
      return(
-       <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-       <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-        <div className="mdl-layout__drawer-button"><Link to={`/activity/get/${this.props.routeParams.activity}`}><i className="material-icons">&#xE5C4;</i></Link></div>
-         <div className="mdl-layout__header-row">
-           <span className="mdl-layout-title">SoulHand</span>
-           <div className="mdl-layout-spacer"></div>
-           <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" onClick={(e:any)=>{this.send(e)}}>
-             <i className="material-icons">check</i>
-           </button>
-         </div>
-       </header>
-          <main className="mdl-layout__content mdl-color--white-100">
-                  <table className="mdl-data-table mdl-js-data-table mdl-data-table--selectable resize">
-                    <thead>
-                      <tr>
-                        <th className="mdl-data-table__cell--non-numeric">Objetivo</th>
-                        <th>Dominio</th>
-                        <th>Nivel</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    {
-                      this.state.objetives.map((row) => {
-                        if (!row.domain || !row.level){
-                          return null;
-                        }
-                        return (
-                          <tr key={row._id} id={row._id}>
-                            <td className="mdl-data-table__cell--non-numeric" title={row.name}><span>{row.name}</span></td>
-                            <td title={row.domain.name}><span>{row.domain.name}</span></td>
-                            <td title={row.level.name}><span>{row.level.name}</span></td>
-                          </tr>
-                        );
-                      })
-                    }
-                    </tbody>
-                  </table>
-          </main>
-       </div>
+        <ModalApp success={this.send.bind(this)} title="Aceptar">
+         <table className="mdl-data-table mdl-js-data-table mdl-data-table--selectable resize">
+           <thead>
+             <tr>
+               <th className="mdl-data-table__cell--non-numeric">Objetivo</th>
+               <th>Dominio</th>
+               <th>Nivel</th>
+             </tr>
+           </thead>
+           <tbody>
+             {
+               this.state.objetives.map((row) => {
+                 if (!row.domain || !row.level) {
+                   return null;
+                 }
+                 return (
+                   <tr key={row._id} id={row._id}>
+                     <td className="mdl-data-table__cell--non-numeric" title={row.name}><span>{row.name}</span></td>
+                     <td title={row.domain.name}><span>{row.domain.name}</span></td>
+                     <td title={row.level.name}><span>{row.level.name}</span></td>
+                   </tr>
+                 );
+               })
+             }
+           </tbody>
+         </table>
+        </ModalApp>
      );
    }
  }

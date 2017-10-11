@@ -377,7 +377,20 @@ declare namespace compat {
 }
 
 declare namespace Words{
+	interface Taxon{
+		_id: string
+		key: string
+		description: string
+		words: Array<string>
+	}
+	interface Term{
+		_id: string
+		concept: string
+		description: string
+		hiponimos: Array<Taxon>
+	}
 	interface Concept{
+		_id: string
 		key:string
 		value: string
 	}
@@ -396,9 +409,11 @@ declare namespace Words{
 	interface word{
 		_id: string
 		key: string,
+		description: string,
 		lexema: Words.Lexema,
 		morphems: Array<Words.Morphema>,
 		concepts: Array<Concept>
+		terms: Array<Term>
 	}
 }
 

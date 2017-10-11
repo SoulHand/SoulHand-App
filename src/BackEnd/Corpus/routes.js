@@ -321,6 +321,32 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
         });
     });
     /**
+     * Obtener todos los lexemas
+     */
+    wordsURI.get('/:id', function (request, response, next) {
+        if(!Validator.isMongoId()(request.params.id)){
+            throw new ValidatorException("El id no es valido!");
+        }
+        Schema.words.findOne({_id: ObjectId(request.params.id)}).populate("lexema").populate("morphems").then((data) => {
+            var _body = data.toJSON();
+            return Promise.all([_body, Schema.Hiperonimo.find({ "hiponimos.key": _body.key })]);
+        })
+        .then((datas) => {
+            var body = datas[0];
+            var terms = datas[1].map((row) => {
+                row.hiponimos = row.hiponimos.filter((row2) => {
+                    return row2.key == body.key;
+                });
+                return row;
+            });
+            body.terms = terms;
+            response.send(body);
+        })
+        .catch((error) => {
+            next(error);
+        });
+    });
+    /**
      * Eliminar una palabra
      */
     wordsURI.delete('/:id', function (request, response, next) {
