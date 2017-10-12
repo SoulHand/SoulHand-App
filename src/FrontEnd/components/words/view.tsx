@@ -4,10 +4,13 @@ import {Link, withRouter} from 'react-router'
 import * as List from '../profiles/activity'
 import {ObjetiveActivity} from '../cards/objetiveactivity'
 import {StudentActivity} from '../cards/studentactivity'
+import { HeaderFree } from '../app/header'
+import { App, ModalFree } from '../app'
 
 @withRouter
 export class View extends React.Component <Props.teacherView, Words.Lexema>{
   public session: User.session;
+  public init: boolean = false;
   constructor(props:Props.teacherView){
     super(props)
     let str = localStorage.getItem("session");
@@ -23,6 +26,12 @@ export class View extends React.Component <Props.teacherView, Words.Lexema>{
       dataType: "json",
       data: null,
       crossDomain: true,
+      beforeSend: () => {
+        window.progress.start();
+      },
+      complete: () => {
+        window.progress.done();
+      },
       success: (data: Words.Lexema) => {
         this.setState(data);
       }
@@ -33,87 +42,84 @@ export class View extends React.Component <Props.teacherView, Words.Lexema>{
       method:"GET",
       url: `${window._BASE}/v1/words/lexemas/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
       dataType: "json",
-      data:null
+      data:null,
+      beforeSend: () => {
+        window.progress.start();
+      },
+      complete: () => {
+        window.progress.done();
+      }
     });
     p1.done((lexema: Words.Lexema) => {
+      this.init = true;
       this.setState(lexema)
     });
   }
   render(){
-    if(!this.state){
+    if (!this.init) {
       return (
-        <div className="mdl-grid mdl-color--white demo-content">
-          <div className="mdl-spinner mdl-js-spinner is-active"></div>
-        </div>
+        <ModalFree />
       );
     }
-    return(
-      <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-      <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-      <div className="mdl-layout__drawer-button"><Link to="/words"><i className="material-icons">&#xE5C4;</i></Link></div>
-        <div className="mdl-layout__header-row">
-          <span className="mdl-layout-title">SoulHand</span>
-          <div className="mdl-layout-spacer"></div>
-        </div>
-      </header>
-        <main className="mdl-layout__content mdl-color--white-100">
-          <div className="mdl-grid demo-content">
-            <div className="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
-                <div className="mdl-cell--6-col mdl-cell--middle">
-                  <div className="mdl-textfield">
-                    <label className="mdl-input__expandable-holder">Lexema</label>
-                    <div className="mdl-textfield__input">
-                      {this.state.key}
-                    </div>
+    return (
+      <div className="mdl-layout mdl-layout--fixed-header">
+        <HeaderFree title={"Lexema " + this.state.key} />
+        <div id="progress" className="mdl-progress mdl-js-progress mdl-progress__indeterminate progress hiden" />
+        <div className="demo-ribbon mdl-color--teal-400" />
+        <main className="demo-main mdl-layout__content">
+          <div className="demo-container mdl-grid">
+            <div className="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--10-col">
+              <div className="mdl-cell--6-col mdl-cell--middle">
+                <div className="mdl-textfield">
+                  <label className="mdl-input__expandable-holder">Palabra</label>
+                  <div className="mdl-textfield__input">
+                    {this.state.key}
                   </div>
                 </div>
-                <div className="mdl-cell--6-col mdl-cell--middle">
-                  <div className="mdl-textfield">
-                    <label className="mdl-input__expandable-holder">Expresión regular</label>
-                    <div className="mdl-textfield__input">
-                      {this.state.regexp}
-                    </div>
+              </div>
+              <div className="mdl-cell--6-col mdl-cell--middle">
+                <div className="mdl-textfield">
+                  <label className="mdl-input__expandable-holder">Expresión regular</label>
+                  <div className="mdl-textfield__input">
+                    {this.state.regexp}
                   </div>
                 </div>
+              </div>
             </div>
-            <div className="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
-              <h3 className="mdl-typografy mdl-text-center">Morfemas asociados</h3>
-              <table className="mdl-data-table mdl-js-data-table mdl-data-table resize">
-                <thead>
-                  <tr>
-                    <th className="mdl-data-table__cell--non-numeric td-ms-5">Palabra</th>
-                    <th className="td-ms-5">Expresión regular</th>
-                    <th className="td-ms-40">Inf. Léxica</th>
-                    <th className="td-ms-20"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {this.state.morphems.map((row) => {
-                      return (
-                        <tr key={row._id} id={row._id}>
-                          <td className="mdl-data-table__cell--non-numeric" title={row.key}><span>{row.key}</span></td>
-                          <td title={row.regexp}><span>{row.regexp}</span></td>
-                          <td>
-                            {row.concepts.map((concept, index) => {
-                              return (
-                                <span className="mdl-chip" key={concept.key + index}>
-                                  <span className="mdl-chip__text" title={concept.key}>{concept.value}</span>
-                                </span>
-                              );
-                            })}
-                          </td>
-                          <td>
-                            <div id={`row1delete${row._id}`} className="icon material-icons" onClick={this.remove.bind(this, [row._id])} style={{ cursor: "pointer" }}>delete</div>
-                            <div className="mdl-tooltip" data-mdl-for={`row1delete${row._id}`}>
-                              Eliminar
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                  })}
-                </tbody>
-              </table>
-            </div>
+          </div>
+          <div className="demo-content">
+            <span className="mdl-typography--title">Morfemas</span>
+            <ul className="demo-list-three mdl-list">
+              {
+                this.state.morphems.map((row) => {
+                  return (
+                    <li className="mdl-list__item mdl-list__item--three-line" key={row._id}>
+                      <span className="mdl-list__item-primary-content">
+                        <i className="material-icons mdl-list__item-avatar">chat</i>
+                        <span>{row.key}</span>
+                        <span className="mdl-list__item-text-body">
+                          {row.concepts.map((concept, index) => {
+                            return (
+                              <span className="mdl-chip" key={concept.key + index}>
+                                <span className="mdl-chip__text" title={concept.key}>{concept.value}</span>
+                              </span>
+                            );
+                          })}
+                        </span>
+                      </span>
+                      <span className="mdl-list__item-secondary-content">
+                        <div className="mdl-grip">
+                          <div id={`row1delete${row._id}`} className="icon material-icons" onClick={this.remove.bind(this, [row._id])} style={{ cursor: "pointer" }}>delete</div>
+                          <div className="mdl-tooltip" data-mdl-for={`row1delete${row._id}`}>
+                            Eliminar
+                          </div>
+                        </div>
+                      </span>
+                    </li>
+                  );
+                })
+              }
+            </ul>
           </div>
           <Link to={`/words/get/${this.props.routeParams.id}/morphemas/create`} className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
         </main>
