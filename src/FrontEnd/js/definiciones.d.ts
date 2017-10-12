@@ -303,12 +303,14 @@ declare namespace CRUD{
 		_id:string
 		_v:number
 		name:string
+		description: string
+		words: Array<Words.Term>
 	}
 	interface cognition{
 		_id:string
 		name:string
 		description:string
-		words: Array<any>
+		words: Array<Words.Term>
 	}
 	interface domain{
 		_id:string
@@ -317,7 +319,7 @@ declare namespace CRUD{
 		_v:number
 		levels: Array<level>
 		cognitions:Array<cognition>
-		words:Array<any>
+		words: Array<Words.Term>
 	}
 	interface level{
 		_id:string

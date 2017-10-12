@@ -11,8 +11,8 @@ import { App, ModalSearch } from '../app'
  export class Matter extends React.Component <{router: any}, {}>{
    public session: User.session;
    public deleteId: string = "";
-   public matters: Array<CRUD.grade>=[];
-   state: { matters:  Array<CRUD.grade>} = {
+   public matters: Array<CRUD.course>=[];
+   state: { matters:  Array<CRUD.course>} = {
      matters: []
    }
    public init: boolean = false;
@@ -65,7 +65,7 @@ import { App, ModalSearch } from '../app'
          window.progress.done();
        }
      });
-     p1.done((matters: Array<CRUD.grade>) => {
+     p1.done((matters: Array<CRUD.course>) => {
        this.matters = matters;
        this.init = true;
        this.setState({
@@ -115,7 +115,7 @@ import { App, ModalSearch } from '../app'
                      <i className="material-icons mdl-list__item-avatar">school</i>
                      <span>{row.name}</span>
                      <span className="mdl-list__item-text-body">
-                       {row._id}
+                       {row.description}
                      </span>
                    </span>
                    <span className="mdl-list__item-secondary-content">

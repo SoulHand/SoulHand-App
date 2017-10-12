@@ -461,13 +461,22 @@ module.exports = function (app, express, Schema, __DIR__) {
       if (Validator.isNull()(request.body.name)) {
         throw new ValidatorException('El nombre solo debe contener letras')
       }
+			if (Validator.isNull()(request.body.description)) {
+        throw new ValidatorException('Es necesario una descripción!')
+      }
+			if (!Validator.isJSON()(request.body.words)) {
+        throw new ValidatorException('Los conceptos son invalidos!')
+			}
+			request.body.words = JSON.parse(request.body.words);
       Schema.Courses.findOne({name: request.body.name.toUpperCase()})
       .then((data) => {
         if (data) {
           throw new ValidatorException('Ya existe el nombre de la materia')
         }
         let course = new Schema.Courses({
-          name: request.body.name
+					name: request.body.name,
+					description: request.body.description,
+					words: request.body.words
         })
         return course.save()
       }).then((data) => {
@@ -500,7 +509,9 @@ module.exports = function (app, express, Schema, __DIR__) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('El id es invalido!')
     }
-    Schema.Courses.findOne({_id: request.params.id}).then((data) => {
+		Schema.Courses.findOne({_id: request.params.id})
+		.populate("words")
+		.then((data) => {
       if (!data) {
         throw new ValidatorException('No existe la materia!')
       }

@@ -11,7 +11,9 @@ var structDb = {
     name: {type: String, required: true, trim: true, uppercase: true}
   }),
   Courses: mongoose.Schema({
-    name: {type: String, required: true, trim: true, uppercase: true}
+    name: {type: String, required: true, trim: true, uppercase: true},
+		description: {type: String, required: true, trim: true, uppercase: true},
+		words: [{ type: mongoose.Schema.ObjectId, ref: 'Hiperonimo' }]
   }),
   HistoryLearning: mongoose.Schema({
     description: {type: String, required: true, trim: true, uppercase: true},

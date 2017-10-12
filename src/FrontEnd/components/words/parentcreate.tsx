@@ -17,6 +17,20 @@ import {ajax} from 'jquery'
  			required:true
  		},
  		regexp:{
+        match: (fn: string) => {
+          if(!fn){
+            return true;
+          }
+          if (fn.trim() == ""){
+            return true;
+          }
+          try{
+            var regexp = new RegExp(fn, "ig");
+          }catch(error){
+            return false;
+          }
+          return true;
+        },
  			value:null
     }
  	};
@@ -82,10 +96,10 @@ import {ajax} from 'jquery'
               </div>
             </div>
             <div className="mdl-cell mdl-cell--6-col">
-              <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.description) ? 'is-invalid' : '')}>
+              <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.regexp) ? 'is-invalid' : '')}>
                 <textarea className="mdl-textfield__input" id="regexp" onChange={(e: any) => { this.getFields(e) }} />
                 <label className="mdl-textfield__label" htmlFor="regexp">Expresión regular (solo desarrolladores)</label>
-                <span className="mdl-textfield__error">No se admite la expresión</span>
+                <span className="mdl-textfield__error">No se admite la expresión regular</span>
               </div>
             </div>
           </div>

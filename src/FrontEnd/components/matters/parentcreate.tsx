@@ -53,6 +53,7 @@ import { App, ModalApp } from '../app'
     if (error) {
       return;
     }
+    values.words = JSON.stringify(values.words);
     ajax({
 			method:"POST",
 	        url: `${window._BASE}/v1/courses/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,

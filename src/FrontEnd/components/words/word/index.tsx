@@ -240,7 +240,7 @@ export class Word extends React.Component<Props.teacherView, {}>{
                 return (
                   <li className="mdl-list__item mdl-list__item--three-line" key={row._id}>
                     <span className="mdl-list__item-primary-content">
-                      <i className="material-icons mdl-list__item-avatar">chat</i>
+                      <i className="material-icons mdl-list__item-avatar" title="Palabra">chat</i>
                       <span>{row.key}</span>
                       <span className="mdl-list__item-text-body">
                         {tags}
@@ -266,14 +266,14 @@ export class Word extends React.Component<Props.teacherView, {}>{
             }
           </ul>
         </section>
-        <section className="mdl-layout__tab-panel is-active" id="lexems">
+        <section className="mdl-layout__tab-panel" id="lexems">
           <ul className="demo-list-three mdl-list">
             {
               this.state.lexems.map((row) => {
                 return (
                   <li className="mdl-list__item mdl-list__item--three-line" key={row._id}>
                     <span className="mdl-list__item-primary-content">
-                      <i className="material-icons mdl-list__item-avatar">chat</i>
+                      <i className="material-icons mdl-list__item-avatar" title="Lexema">chat_bubble_outline</i>
                       <span>{row.key}</span>
                       <span className="mdl-list__item-text-body">
                         {row.morphems.length} Morfemas
@@ -299,14 +299,14 @@ export class Word extends React.Component<Props.teacherView, {}>{
             }
           </ul>
         </section>
-        <section className="mdl-layout__tab-panel is-active" id="terms">
+        <section className="mdl-layout__tab-panel" id="terms">
           <ul className="demo-list-three mdl-list">
             {
               this.state.terms.map((row) => {
                 return (
                   <li className="mdl-list__item mdl-list__item--three-line" key={row._id}>
                     <span className="mdl-list__item-primary-content">
-                      <i className="material-icons mdl-list__item-avatar">chat</i>
+                      <i className="material-icons mdl-list__item-avatar"  title="Cat. gramátical">style</i>
                       <span>{row.concept}</span>
                       <span className="mdl-list__item-text-body">
                         {row.hiponimos.length} palabras
