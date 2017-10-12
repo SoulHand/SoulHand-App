@@ -7,6 +7,7 @@ import { ModalFree } from "../../app"
 export class View extends React.Component <Props.teacherView, Words.word>{
   public session: User.session;
   public init: boolean = false;
+  public morphems: Array<string> = [];
   constructor(props:Props.teacherView){
     super(props)
     let str = localStorage.getItem("session");
@@ -57,6 +58,9 @@ export class View extends React.Component <Props.teacherView, Words.word>{
     });
     p1.done((word: Words.word) => {
       this.init = true;
+      this.morphems = word.morphems.map((row) => {
+        return row.key;
+      });
       this.setState(word)
     });
   }
@@ -79,6 +83,20 @@ export class View extends React.Component <Props.teacherView, Words.word>{
                   </span>
                 );
               })}
+              <div className="mdl-grid">
+                <div className="mdl-cell--6-col mdl-cell--middle">
+                  <label className="mdl-input__expandable-holder">Flexema o raíz</label>
+                  <div className="mdl-textfield__input">
+                    {this.state.lexema.key}
+                  </div>
+                </div>
+                <div className="mdl-cell--6-col mdl-cell--middle">
+                  <label className="mdl-input__expandable-holder">Morfemas</label>
+                  <div className="mdl-textfield__input">
+                    {this.morphems.join(", ")}
+                  </div>
+                </div>
+              </div>
             </div>
             <h5>Definiciones</h5>
             <ul className="demo-list-three mdl-list">
@@ -104,7 +122,6 @@ export class View extends React.Component <Props.teacherView, Words.word>{
             </ul>
           </div>
         </div>
-        <Link to={`/words/get/${this.props.routeParams.id}/morphemas/create`} className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
       </ModalFree>
     );
   }
