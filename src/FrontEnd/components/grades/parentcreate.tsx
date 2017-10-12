@@ -75,7 +75,6 @@ import { App, ModalApp } from '../app'
             </div>
         </div>
        </ModalApp>
-       
      );
    }
  }
