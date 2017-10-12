@@ -1,20 +1,23 @@
 import * as React from 'react'
 import {ajax} from 'jquery'
-import {Link} from 'react-router'
+import { Link, withRouter } from 'react-router'
 import * as Cards from '../cards/grade'
 import {ParentCreate} from './parentcreate'
 import {View} from './view'
 import {Edit} from './edit'
-import {Menu} from '../app/menu'
+import { App, ModalSearch } from '../app'
 
 
- export class Grade extends React.Component <{}, {}>{
+@withRouter
+ export class Grade extends React.Component <{router: any}, {}>{
    public session: User.session;
    public grades: Array<CRUD.grade>=[];
+   public init: boolean = false;
+   public deleteId: string = "";
    state: { grades:  Array<CRUD.grade>} = {
      grades: []
    }
-   constructor(props:{}){
+   constructor(props:{router: any}){
      super(props)
      let str = localStorage.getItem("session");
      this.session = JSON.parse(str);
@@ -30,7 +33,48 @@ import {Menu} from '../app/menu'
    		this.setState({
  	      	grades : filter
  	    });
-   	}
+     }
+   show(id: string) {
+     var modal: any = document.getElementById("modal-delete");
+     this.deleteId = id;
+     if (!modal.showModal) {
+       window.dialogPolyfill.registerDialog(modal);
+     }
+     modal.showModal();
+   }
+   hiden() {
+     var modal: any = document.getElementById("modal-delete");
+     if (!modal.showModal) {
+       window.dialogPolyfill.registerDialog(modal);
+     }
+     this.deleteId = "";
+     modal.close();
+   }
+   delete() {
+     ajax({
+       method: "DELETE",
+       url: `${window._BASE}/v1/grades/${this.deleteId}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       dataType: "json",
+       data: null,
+       crossDomain: true,
+       beforeSend: () => {
+         window.progress.start();
+       },
+       complete: () => {
+         window.progress.done();
+       },
+       success: (data: CRUD.grade) => {
+         this.state.grades = this.grades.filter((row) => {
+           if (row._id === data._id) {
+             return false;
+           }
+           return true;
+         })
+         this.hiden();
+         this.setState(this.state);
+       }
+     });
+   }
    componentDidUpdate(){
      componentHandler.upgradeAllRegistered();
    }
@@ -39,62 +83,74 @@ import {Menu} from '../app/menu'
        method:"GET",
        url: `${window._BASE}/v1/grades/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
-       data:null
+       data:null,
+       beforeSend: () => {
+         window.progress.start();
+       },
+       complete: () => {
+         window.progress.done();
+       }
      });
      p1.done((grades: Array<CRUD.grade>) => {
        this.grades = grades;
+       this.init = true;
        this.setState({
          grades: grades
        })
      });
-   }
-   delete(teacher: People.teacher){
-     this.state.grades = this.grades.filter((row) => {
-       if (row._id === teacher._id) {
-         return false;
-       }
-       return true;
-     })
-     this.setState(this.state);
+     componentHandler.upgradeAllRegistered();
    }
    render(){
-     return(
-       <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-         <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-           <div className="mdl-layout__header-row">
-             <span className="mdl-layout-title">SoulHand</span>
-             <div className="mdl-layout-spacer"></div>
-             <div className="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
-               <label className="mdl-button mdl-js-button mdl-button--icon" htmlFor="search">
-                 <i className="material-icons">search</i>
-               </label>
-               <div className="mdl-textfield__expandable-holder">
-                 <input className="mdl-textfield__input" type="text" id="search" onChange={(e:any)=>{this.Filter(e)}}/>
-                 <label className="mdl-textfield__label" htmlFor="search">Ingrese su consulta...</label>
-               </div>
-             </div>
-             <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
-               <i className="material-icons">more_vert</i>
-             </button>
-             <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
-               <li className="mdl-menu__item">A cerca de</li>
-               <li className="mdl-menu__item">Contacto</li>
-               <li className="mdl-menu__item">Información legal</li>
-             </ul>
-           </div>
-         </header>
-          <Menu/>
-          <main className="mdl-layout__content mdl-color--white-100">
-          <div className="mdl-grid demo-content">
-             {this.state.grades.map((row) => {
-               return (
-               <Cards.Grade key={row._id} grade={row} session={this.session} delete={this.delete.bind(this)}/>
-               );
-             })}
-             <Link to="/grades/create" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
-          </div>
-          </main>
-       </div>
+
+     if (!this.init) {
+       return (
+         <App title="Palabras" />
+       );
+     }
+     return (
+       <ModalSearch filter={this.Filter.bind(this)} title="Grados" >
+           <ul className="demo-list-three mdl-list">
+             {
+               this.state.grades.map((row) => {
+                 return (
+                   <li className="mdl-list__item mdl-list__item--three-line" key={row._id}>
+                     <span className="mdl-list__item-primary-content">
+                       <i className="material-icons mdl-list__item-avatar">hourglass_empty</i>
+                       <span>{row.name}</span>
+                       <span className="mdl-list__item-text-body">
+                         {row._id}
+                       </span>
+                     </span>
+                     <span className="mdl-list__item-secondary-content">
+                       <div className="mdl-grip">
+                         <div onClick={(e) => {
+                           this.props.router.push(`/grades/get/${row._id}`);
+                         }} id={`view${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>visibility</div>
+                         <div className="mdl-tooltip" data-mdl-for={`view${row._id}`}>
+                           Ver
+                        </div>
+                         <div onClick={this.show.bind(this, row._id, "word")} id={`delete${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>delete</div>
+                         <div className="mdl-tooltip" data-mdl-for={`delete${row._id}`}>
+                           Eliminar
+                        </div>
+                       </div>
+                     </span>
+                   </li>
+                 );
+               })
+             }
+            </ul>
+            <Link to="/grades/create" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
+            <dialog className="mdl-dialog" id="modal-delete" key="modal-delete">
+              <div className="mdl-dialog__content mdl-dialog__actions--full-width">
+                ¿Desea eliminar el siguiente registro?
+                </div>
+              <div className="mdl-dialog__actions">
+                <button type="submit" className="mdl-button open" onClick={this.delete.bind(this)}>De acuerdo</button>
+                <button type="button" className="mdl-button close" onClick={this.hiden.bind(this)}>No estoy de acuerdo</button>
+              </div>
+            </dialog>
+       </ModalSearch>
      );
    }
  }

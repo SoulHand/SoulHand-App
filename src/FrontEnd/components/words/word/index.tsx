@@ -1,12 +1,10 @@
 import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link, withRouter} from 'react-router'
-import {Header} from '../../app/header'
 import {ParentCreate} from './parentcreate'
 import {AlumnCreate} from './alumncreate'
 import * as Objetive from '../../objetive/parentcreate'
 import {View} from './view'
-import {Menu} from '../../app/menu'
 import {ModalTabSearch, App} from '../../app'
 
 
@@ -17,6 +15,10 @@ export class Word extends React.Component<Props.teacherView, {}>{
   public words: Array<Words.word> = [];
   public lexems: Array<Words.Lexema> = [];
   public terms: Array<Words.Term> = [];
+  public deleteMode = {
+    type: "",
+    id: ""
+  };
   state: { words: Array<Words.word>, lexems: Array<Words.Lexema>, terms: Array<Words.Term>} = {
     words: [],
     lexems: [],
@@ -82,7 +84,13 @@ export class Word extends React.Component<Props.teacherView, {}>{
       method: "DELETE",
       url: `${window._BASE}/v1/words/${id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
       dataType: "json",
-      data: null
+      data: null,
+      beforeSend: () => {
+        window.progress.start();
+      },
+      complete: () => {
+        window.progress.done();
+      }
     });
     p1.done(() => {
       this.words = this.words.filter((row) => {
@@ -99,7 +107,13 @@ export class Word extends React.Component<Props.teacherView, {}>{
       method: "DELETE",
       url: `${window._BASE}/v1/words/lexemas/${id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
       dataType: "json",
-      data: null
+      data: null,
+      beforeSend: () => {
+        window.progress.start();
+      },
+      complete: () => {
+        window.progress.done();
+      }
     });
     p1.done(() => {
       this.lexems = this.lexems.filter((row) => {
@@ -116,7 +130,13 @@ export class Word extends React.Component<Props.teacherView, {}>{
       method: "DELETE",
       url: `${window._BASE}/v1/terms/${id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
       dataType: "json",
-      data: null
+      data: null,
+      beforeSend: () => {
+        window.progress.start();
+      },
+      complete: () => {
+        window.progress.done();
+      }
     });
     p1.done(() => {
       this.terms = this.terms.filter((row) => {
@@ -160,14 +180,45 @@ export class Word extends React.Component<Props.teacherView, {}>{
            lexems: filter2,
            terms: filter3
  	    });
-   	}
+     }
+  deleteVal(){
+    switch (this.deleteMode.type){
+      case "word":
+        this.delete(this.deleteMode.id);
+      break;
+      case "lexema":
+        this.delete2(this.deleteMode.id);
+      break;
+      case "term":
+        this.delete3(this.deleteMode.id);
+      break;
+    }
+    this.hiden();
+  }
+  show(id: string, type: string) {
+    var modal: any = document.getElementById("modal-delete");
+    this.deleteMode.type = type;
+    this.deleteMode.id = id;
+    if (!modal.showModal) {
+      window.dialogPolyfill.registerDialog(modal);
+    }
+    modal.showModal();
+  }
+  hiden() {
+    var modal: any = document.getElementById("modal-delete");
+    if (!modal.showModal) {
+      window.dialogPolyfill.registerDialog(modal);
+    }
+    this.deleteMode.type = "";
+    this.deleteMode.id = "";
+    modal.close();
+  }
   render(){
     if(!this.init){
       return (
         <App title="Palabras"/>
       );
     }
-    console.log(this.state);
     return(
       <ModalTabSearch filter={this.Filter.bind(this)} title="Palabras"
         menu = {[
@@ -203,7 +254,7 @@ export class Word extends React.Component<Props.teacherView, {}>{
                         <div className="mdl-tooltip" data-mdl-for={`view${row._id}`}>
                           Ver
                         </div>
-                        <div onClick={this.delete.bind(this, row._id)} id={`delete${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>delete</div>
+                        <div onClick={this.show.bind(this, row._id, "word")} id={`delete${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>delete</div>
                         <div className="mdl-tooltip" data-mdl-for={`delete${row._id}`}>
                           Eliminar
                         </div>
@@ -236,7 +287,7 @@ export class Word extends React.Component<Props.teacherView, {}>{
                         <div className="mdl-tooltip" data-mdl-for={`view${row._id}`}>
                           Ver
                         </div>
-                        <div onClick={this.delete2.bind(this, row._id)} id={`delete${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>delete</div>
+                        <div onClick={this.show.bind(this, row._id, "lexema")} id={`delete${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>delete</div>
                         <div className="mdl-tooltip" data-mdl-for={`delete${row._id}`}>
                           Eliminar
                         </div>
@@ -269,7 +320,7 @@ export class Word extends React.Component<Props.teacherView, {}>{
                         <div className="mdl-tooltip" data-mdl-for={`view${row._id}`}>
                           Ver
                                 </div>
-                        <div onClick={this.delete3.bind(this, row._id)} id={`delete${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>delete</div>
+                        <div onClick={this.show.bind(this, row._id, "term")} id={`delete${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>delete</div>
                         <div className="mdl-tooltip" data-mdl-for={`delete${row._id}`}>
                           Eliminar
                         </div>
@@ -302,6 +353,15 @@ export class Word extends React.Component<Props.teacherView, {}>{
             </li>
           </ul>
         </div>
+        <dialog className="mdl-dialog" id="modal-delete" key="modal-delete">
+            <div className="mdl-dialog__content mdl-dialog__actions--full-width">
+              ¿Desea eliminar el siguiente registro?
+            </div>
+            <div className="mdl-dialog__actions">
+              <button type="submit" className="mdl-button open" onClick={this.deleteVal.bind(this)}>De acuerdo</button>
+              <button type="button" className="mdl-button close" onClick={this.hiden.bind(this)}>No estoy de acuerdo</button>
+            </div>
+        </dialog>
       </ModalTabSearch>
     );
   }

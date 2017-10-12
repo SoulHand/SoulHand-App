@@ -87,9 +87,9 @@ import * as React from 'react'
            window.history.back();
         }}><i className="material-icons">&#xE5C4;</i></a></div>
         <div className="mdl-layout__header-row">
-           <Title title={this.props.label} />
+           <Title title={this.props.title} />
           <div className="mdl-layout-spacer"></div>
-          <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" onClick={this.props.success} title={this.props.title}>
+          <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" onClick={this.props.success} title={this.props.label}>
             <i className="material-icons">check</i>
           </button>
         </div>

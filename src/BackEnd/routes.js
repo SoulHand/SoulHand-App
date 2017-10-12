@@ -375,7 +375,18 @@ module.exports = function (app, express, Schema, __DIR__) {
     Schema.Grades.findOne({_id: request.params.id}).then((data) => {
       if (!data) {
         throw new ValidatorException('No existe el grado!')
-      }
+			}
+			return Promise.all([
+				data,
+				Schema.Students.find({"grade._id": ObjectId(data._id)})
+			]);
+		})
+		.then((data) => {
+			var _grade = data[0].toJSON();
+			_grade.students = data[1];
+			return _grade;
+		})
+		.then((data) => {
       response.send(data)
     }).catch((error) => {
       next(error)

@@ -2,10 +2,13 @@ import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link, withRouter} from 'react-router'
 import * as List from '../profiles/grade'
+import { HeaderFree } from '../app/header'
+import { App, ModalFree } from '../app'
 
 @withRouter
  export class View extends React.Component <Props.teacherView, {grade: CRUD.grade}>{
    public session: User.session;
+   public init: boolean = false;
    constructor(props:Props.teacherView){
      super(props)
      let str = localStorage.getItem("session");
@@ -23,7 +26,13 @@ import * as List from '../profiles/grade'
  	        url: `${window._BASE}/v1/grades/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
  	        dataType: "json",
  	        data:null,
- 	        crossDomain:true,
+          crossDomain:true,
+          beforeSend: () => {
+            window.progress.start();
+          },
+          complete: () => {
+            window.progress.done();
+          },
  	        success:(data: CRUD.grade)=>{
             this.props.router.replace('/grades');
  	        }
@@ -31,25 +40,54 @@ import * as List from '../profiles/grade'
    }
    componentDidMount(){
      let p1 = ajax({
-       method:"GET",
-       url: `${window._BASE}/v1/grades/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
-       dataType: "json",
-       data:null
+      method:"GET",
+      url: `${window._BASE}/v1/grades/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+      dataType: "json",
+      data:null,
+      beforeSend: () => {
+        window.progress.start();
+      },
+      complete: () => {
+        window.progress.done();
+      }
      });
      p1.done((grade: CRUD.grade) => {
+       this.init = true;
        this.setState({
          grade: grade
-       })
+       });
      });
    }
    render(){
-     let body = (
-       <div className="mdl-grid mdl-color--white demo-content">
-          <div className="mdl-spinner mdl-js-spinner is-active"></div>
-       </div>
+     if(!this.init){
+       return (
+         <ModalFree/>
+       );
+     }
+     return (
+        <div className="mdl-layout mdl-layout--fixed-header">
+         <HeaderFree title={this.state.grade.name} />
+          <div id="progress" className="mdl-progress mdl-js-progress mdl-progress__indeterminate progress hiden" />
+          <div className="demo-ribbon mdl-color--teal-400"/>
+          <main className="demo-main mdl-layout__content">
+            <div className="demo-container mdl-grid">
+              <div className="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--10-col">
+               <div className="mdl-cell--6-col mdl-cell--middle">
+                 <div className="mdl-textfield">
+                   <label className="mdl-input__expandable-holder">Nombre</label>
+                   <div className="mdl-textfield__input">
+                     {this.state.grade.name}
+                   </div>
+                 </div>
+               </div>
+              </div>
+            </div>
+          </main>
+        </div>
+       
      );
-     if(this.state.grade){
-       body = (<List.Grade grade={this.state.grade}/>);
+     /*if(this.state.grade){
+       body = ();
      }
      return(
        <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
@@ -74,6 +112,6 @@ import * as List from '../profiles/grade'
             {body}
           </main>
        </div>
-     );
+     );*/
    }
  }
