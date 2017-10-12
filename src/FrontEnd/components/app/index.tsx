@@ -11,7 +11,7 @@ import {Menu} from './menu'
    }
    render(){
      return(
-       <div className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+       <div className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
           <Header title={this.props.title}/>
           <div id="progress" className="mdl-progress mdl-js-progress mdl-progress__indeterminate progress hiden"/>
           <Menu/>
@@ -30,7 +30,7 @@ import {Menu} from './menu'
    }
    render(){
      return(
-       <div className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+       <div className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
           <HeaderSearch filter={this.props.filter} title={this.props.title}/>
           <div id="progress" className="mdl-progress mdl-js-progress mdl-progress__indeterminate progress hiden"/>
           <Menu/>
