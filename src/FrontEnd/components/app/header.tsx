@@ -22,7 +22,7 @@ import * as React from 'react'
   export class Header extends React.Component<PropHeadSimple, {}>{
     render(){
       return (
-        <header className="mdl-layout__header">
+        <header className="mdl-layout__header mdl-color-text--white">
           <div className="mdl-layout__header-row">
             <Title title={this.props.title}/>
             <div className="mdl-layout-spacer"></div>
@@ -42,7 +42,7 @@ import * as React from 'react'
   export class HeaderSearch extends React.Component<PropHeadFilter, {}>{
    render(){
      return (
-       <header className="mdl-layout__header">
+       <header className="mdl-layout__header mdl-color-text--white">
          <div className="mdl-layout__header-row">
            <Title title={this.props.title} />
            <div className="mdl-layout-spacer"></div>
@@ -63,7 +63,7 @@ import * as React from 'react'
   export class HeaderFree extends React.Component<{ menu?: any , title?: string}, {}>{
     render() {
       return (
-        <header className="mdl-layout__header">
+        <header className="mdl-layout__header mdl-color-text--white">
           <div className="mdl-layout__drawer-button"><a href="javascript:void(0);" onClick={(e) => {
             e.preventDefault();
             window.history.back();
@@ -81,8 +81,8 @@ import * as React from 'react'
  export class HeaderBack extends React.Component <{title ?: string, success: any, label?: string}, {}>{
    render(){
      return (
-       <header className="mdl-layout__header">
-         <div className="mdl-layout__drawer-button"><a href="javascript:void(0);" className="mdl-color-text--White" onClick={(e) => {
+       <header className="mdl-layout__header mdl-color-text--white">
+         <div className="mdl-layout__drawer-button"><a href="javascript:void(0);" onClick={(e) => {
            e.preventDefault();
            window.history.back();
         }}><i className="material-icons">&#xE5C4;</i></a></div>
@@ -101,7 +101,7 @@ import * as React from 'react'
 export class HeaderTabSearch extends React.Component<PropHeadFilter, {}>{
    render(){
      return (
-       <header className="mdl-layout__header">
+       <header className="mdl-layout__header mdl-color-text--white">
           <div className="mdl-layout__header-row">
               <Title title={this.props.title} />
               <div className="mdl-layout-spacer"></div>
