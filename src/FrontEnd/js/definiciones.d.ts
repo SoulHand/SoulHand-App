@@ -297,6 +297,7 @@ declare namespace CRUD{
 		_id:string
 		_v:number
 		name:string
+		students: Array<People.student>
 	}
 	interface course{
 		_id:string

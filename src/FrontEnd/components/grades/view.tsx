@@ -82,36 +82,39 @@ import { App, ModalFree } from '../app'
                </div>
               </div>
             </div>
+            <div className="demo-content">
+              <span className="mdl-typography--title">Alumnos activos</span>
+              <ul className="demo-list-three mdl-list">
+                {
+                  this.state.grade.students.map((row) => {
+                    return (
+                      <li className="mdl-list__item mdl-list__item--three-line" key={row._id}>
+                        <span className="mdl-list__item-primary-content">
+                          <i className="material-icons mdl-list__item-avatar">account_circle</i>
+                          <span>{row.data.name}</span>
+                          <span className="mdl-list__item-text-body">
+                            {row.exp} XP
+                        </span>
+                        </span>
+                        <span className="mdl-list__item-secondary-content">
+                          <div className="mdl-grip">
+                            <div onClick={(e) => {
+                              this.props.router.push(`/students/get/${row._id}`);
+                            }} id={`view${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>visibility</div>
+                            <div className="mdl-tooltip" data-mdl-for={`view${row._id}`}>
+                              Ver
+                            </div>
+                          </div>
+                        </span>
+                      </li>
+                    );
+                  })
+                }
+              </ul>
+            </div>
+            
           </main>
         </div>
-       
      );
-     /*if(this.state.grade){
-       body = ();
-     }
-     return(
-       <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-       <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-        <div className="mdl-layout__drawer-button"><Link to="/grades"><i className="material-icons">&#xE5C4;</i></Link></div>
-         <div className="mdl-layout__header-row">
-           <span className="mdl-layout-title">SoulHand</span>
-           <div className="mdl-layout-spacer"></div>
-           {this.state.grade && (
-             <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
-               <i className="material-icons">more_vert</i>
-             </button>
-           )}
-           <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
-             <li className="mdl-menu__item"><Link to={`/grades/edit/${this.props.routeParams.id}`}>Editar</Link></li>
-             <li className="mdl-menu__item"><Link to={`/grades/grade/edit/${this.props.routeParams.id}`}>Asignar grado</Link></li>
-             <li className="mdl-menu__item" onClick={(e)=>{this.delete()}}>Eliminar</li>
-           </ul>
-         </div>
-       </header>
-          <main className="mdl-layout__content mdl-color--white-100">
-            {body}
-          </main>
-       </div>
-     );*/
    }
  }
