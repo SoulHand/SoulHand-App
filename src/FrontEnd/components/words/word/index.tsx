@@ -302,7 +302,7 @@ export class Word extends React.Component<Props.teacherView, {}>{
             </li>
           </ul>
         </div>
-      </ModalSearch>
+      </ModalTabSearch>
     );
   }
 }
