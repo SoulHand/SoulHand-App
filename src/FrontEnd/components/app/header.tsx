@@ -82,7 +82,7 @@ import * as React from 'react'
    render(){
      return (
        <header className="mdl-layout__header">
-        <div className="mdl-layout__drawer-button"><a href="javascript:void(0);" onClick={(e) => {
+         <div className="mdl-layout__drawer-button"><a href="javascript:void(0);" className="mdl-color-text--White" onClick={(e) => {
            e.preventDefault();
            window.history.back();
         }}><i className="material-icons">&#xE5C4;</i></a></div>
