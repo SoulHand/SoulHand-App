@@ -84,10 +84,6 @@ import {ajax} from 'jquery'
      return(
         <ModalApp success={(e: any) => { this.send(e) }} label="Aceptar" title="Añadir un lexema">
           <div className="mdl-grid mdl-color--white">
-            <div className="mdl-cell mdl-cell--12-col">
-              <h3 className="mdl-typography--text-center display-1">Crear un lexema</h3>
-              <p>Los lexemas o raíz de una palabra permiten generar derivaciones y composición para la formación de palabras. Identificar los lexemas es fundamental para obtener información gramátical necesaria para la comprensión de los objetivos.</p>
-            </div>
             <div className="mdl-cell mdl-cell--6-col">
               <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.name) ? 'is-invalid' : '')}>
                 <input className="mdl-textfield__input" type="text" id="name" onChange={(e: any) => { this.getFields(e) }} />
