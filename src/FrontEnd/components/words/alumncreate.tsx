@@ -84,8 +84,9 @@ import { App, ModalApp } from '../app'
     componentHandler.upgradeAllRegistered();
   }
   addKey(e: React.EventHandler<any>): any {
-    if (this.concept.key.trim() == "") {
-      this.state.error.words = true;
+    if (this.concept.key.trim() == "" || this.concept.value.trim() == "") {
+      this.state.error.key = this.concept.key.trim() == "";
+      this.state.error.value = this.concept.value.trim() == "";
       this.setState({ error: this.state.error });
       return null;
     }
@@ -156,12 +157,12 @@ import { App, ModalApp } from '../app'
           <div className="mdl-cell--10-col mdl-cell--middle">
             <div className="mdl-grid">
               <div className="mdl-cell--5-col mdl-cell--middle" style={{ marginRight: "5px" }}>
-                <div className={"mdl-textfield mdl-textfield " + ((this.state.error.words) ? 'is-invalid' : '')}>
+                <div className={"mdl-textfield mdl-textfield " + ((this.state.error.key || this.state.error.concepts) ? 'is-invalid' : '')}>
                   <label className="label static" htmlFor="key">Tipo de concepto</label>
                   <select className="mdl-textfield__input" id="key" onChange={(e) => {
                     this.concept.key = e.target.value;
                     //this.concept.value = e.target.selectedOptions[0].label;
-                    this.state.error.words = false;
+                    this.state.error.key = false;
                     this.setState({ error: this.state.error });
                   }} value={this.concept.key}>
                     <option value="">Seleccione una opción</option>
@@ -176,12 +177,12 @@ import { App, ModalApp } from '../app'
                 </div>
               </div>
               <div className="mdl-cell--5-col mdl-cell--middle mdl-cell--3-col-phone" style={{ marginRight: "5px" }}>
-                <div className={"mdl-textfield mdl-textfield " + ((this.state.error.words) ? 'is-invalid' : '')}>
+                <div className={"mdl-textfield mdl-textfield " + ((this.state.error.value) ? 'is-invalid' : '')}>
                   <label className="label static" htmlFor="value">Valor</label>
                   <select className="mdl-textfield__input" id="value" onChange={(e) => {
                     this.concept.value = e.target.value;
                     //this.concept.value = e.target.selectedOptions[0].label;
-                    this.state.error.words = false;
+                    this.state.error.value = false;
                     this.setState({ error: this.state.error });
                   }} value={this.concept.value}>
                     <option value="">Seleccione una opción</option>

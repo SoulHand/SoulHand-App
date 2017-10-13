@@ -89,7 +89,7 @@ import { App, ModalApp } from '../../app'
       });
     }
     deleteItem(id: number) {
-      this.fields.words.value.splice(id, 1);
+      this.fields.term.value.splice(id, 1);
       this.titles.splice(id, 1);
       this.forceUpdate();
     }
@@ -125,7 +125,7 @@ import { App, ModalApp } from '../../app'
     }
     addKey(e: React.EventHandler<any>): any {
       if (this.concept.key.trim() == "") {
-        this.state.error.words = true;
+        this.state.error.term = true;
         this.setState({ error: this.state.error });
         return null;
       }
@@ -163,7 +163,7 @@ import { App, ModalApp } from '../../app'
             <div className="mdl-cell--6-col mdl-cell--middle">
               <div className="mdl-grid">
                 <div className="mdl-cell--9-col mdl-cell--middle mdl-cell--3-col-phone" style={{ marginRight: "5px" }}>
-                  <div className={"mdl-textfield mdl-textfield " + ((this.state.error.words) ? 'is-invalid' : '')}>
+                  <div className={"mdl-textfield mdl-textfield " + ((this.state.error.term) ? 'is-invalid' : '')}>
                     <label className="label static" htmlFor="term">Categoría gramátical</label>
                     <select className="mdl-textfield__input" id="term" onChange={(e) => {
                       this.concept.key = e.target.value;
