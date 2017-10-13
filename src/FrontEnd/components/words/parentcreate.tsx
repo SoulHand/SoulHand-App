@@ -82,7 +82,7 @@ import {ajax} from 'jquery'
    }
    render(){
      return(
-        <ModalApp success={(e: any) => { this.send(e) }} title="Aceptar">
+        <ModalApp success={(e: any) => { this.send(e) }} label="Aceptar" title="Añadir un lexema">
           <div className="mdl-grid mdl-color--white">
             <div className="mdl-cell mdl-cell--12-col">
               <h3 className="mdl-typography--text-center display-1">Crear un lexema</h3>
