@@ -112,7 +112,6 @@ export class View extends React.Component <Props.teacherView, Words.Term>{
               }
             </ul>
           </div>
-          <Link to={`/words/get/${this.props.routeParams.id}/morphemas/create`} className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
         </main>
       </div>
     );

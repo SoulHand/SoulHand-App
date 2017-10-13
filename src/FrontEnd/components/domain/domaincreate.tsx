@@ -183,7 +183,7 @@ import {ajax} from 'jquery'
              <div className="mdl-cell--12-col mdl-cell--middle">
                {this.fields.words.value.map((row: any, index: number) => {
                  return (
-                   <span className="mdl-chip" key={row}>
+                   <span className="mdl-chip" key={index}>
                      <span className="mdl-chip__text">{this.titles[index]}</span>
                      <button type="button" className="mdl-chip__action" onClick={this.deleteItem.bind(this, index)}><i className="material-icons">cancel</i></button>
                    </span>

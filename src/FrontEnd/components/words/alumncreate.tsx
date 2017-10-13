@@ -89,7 +89,10 @@ import { App, ModalApp } from '../app'
       this.setState({ error: this.state.error });
       return null;
     }
-    this.fields.concepts.value.push(this.concept.key);
+    this.fields.concepts.value.push({
+      key: this.concept.key,
+      value: this.concept.value
+    });
     this.titles.push(this.concept.value);
     this.concept = {
       key: "",
@@ -145,9 +148,9 @@ import { App, ModalApp } from '../app'
           </div>
           <div className="mdl-cell mdl-cell--6-col">
             <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.description) ? 'is-invalid' : '')}>
-              <textarea className="mdl-textfield__input" id="description" onChange={(e: any) => { this.getFields(e) }} />
-              <label className="mdl-textfield__label" htmlFor="description">Descripción*</label>
-              <span className="mdl-textfield__error">Es necesaria una descripción</span>
+              <textarea className="mdl-textfield__input" id="regexp" onChange={(e: any) => { this.getFields(e) }} />
+              <label className="mdl-textfield__label" htmlFor="regexp">Expresión regular (solo desarrolladores)*</label>
+              <span className="mdl-textfield__error">La expresión es invalida</span>
             </div>
           </div>
           <div className="mdl-cell--10-col mdl-cell--middle">
@@ -202,7 +205,7 @@ import { App, ModalApp } from '../app'
           <div className="mdl-cell--12-col mdl-cell--middle">
             {this.fields.concepts.value.map((row: any, index: number) => {
               return (
-                <span className="mdl-chip" key={row}>
+                <span className="mdl-chip" key={index}>
                   <span className="mdl-chip__text">{this.titles[index]}</span>
                   <button type="button" className="mdl-chip__action" onClick={this.deleteItem.bind(this, index)}><i className="material-icons">cancel</i></button>
                 </span>
