@@ -334,7 +334,7 @@ declare namespace CRUD{
       description: string
       name: string
       _id: string
-      words: Array<string>
+	  words: Array<string>
       dateCreated: string
       cognitions: Array<cognition>
       level: level
