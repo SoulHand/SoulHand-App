@@ -36,6 +36,20 @@ import { App, ModalApp } from '../../app'
         value:null,
         required:true
       },
+      lexem:{
+        match:(fn:string)=>{
+          return !validator.isNull()(fn);
+        },
+        value:null,
+        required:true
+      },
+      morphem:{
+        match:(fn:string)=>{
+          return !validator.isNull()(fn);
+        },
+        value:null,
+        required:true
+      },
       words:{
         value:null,
         required:true
@@ -43,9 +57,11 @@ import { App, ModalApp } from '../../app'
     };
     public term: string = "";
     public label: string = "";
-    state: { error: compat.Map, terms: Array<Words.Term>} = {
+    state: { error: compat.Map, terms: Array<Words.Term>, lexems: Array<Words.Lexema>, morphems: Array<Words.Morphema>} = {
       error:{},
-      terms: null
+      terms: null,
+      lexems: [],
+      morphems: []
     }
     send(event: any){
       var values: compat.Map = {};
@@ -114,10 +130,33 @@ import { App, ModalApp } from '../../app'
           var message: any = document.querySelector('.mdl-js-snackbar')
           message.MaterialSnackbar.showSnackbar(config);
         }
+      }), p2 = ajax({
+        method: "GET",
+        url: `${window._BASE}/v1/words/lexemas/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+        dataType: "json",
+        data: null,
+        beforeSend: () => {
+          window.progress.start();
+        },
+        complete: () => {
+          window.progress.done();
+        },
+        error: (data: any) => {
+          var state: CRUD.codeError = data.responseJSON;
+          var config = {
+            message: state.message,
+            timeout: window.settings.alert.delay
+          };
+          var message: any = document.querySelector('.mdl-js-snackbar')
+          message.MaterialSnackbar.showSnackbar(config);
+        }
       });
-      p1.done((lexema: any) => {
+      window.Promise.all([p1.done(), p2.done()]).then((data: any) => {
         this.init = true;
-        this.setState({ terms: lexema});
+        this.setState({
+          terms: data[0],
+          lexems: data[1]
+        });
       });
     }
     componentDidUpdate(){
@@ -136,6 +175,17 @@ import { App, ModalApp } from '../../app'
         value: ""
       };
       this.forceUpdate();
+    }
+    MoveLexem(e: any){
+      this.getFields(e);
+      var morphems: any = [];
+      this.state.lexems.forEach(element => {
+        if(element._id == this.fields.lexem.value){
+          morphems = element.morphems;
+          return;
+        }
+      });
+      this.setState({morphems: morphems});
     }
     render() {
       if (!this.init) {
@@ -158,6 +208,36 @@ import { App, ModalApp } from '../../app'
                 <textarea className="mdl-textfield__input" id="description" onChange={(e: any) => { this.getFields(e) }} />
                 <label className="mdl-textfield__label" htmlFor="description">Descripción*</label>
                 <span className="mdl-textfield__error">Es necesaria una descripción</span>
+              </div>
+            </div>
+            <div className="mdl-cell--6-col mdl-cell--middle mdl-cell--3-col-phone">
+              <div className={"mdl-textfield mdl-textfield " + ((this.state.error.lexem) ? 'is-invalid' : '')}>
+                <label className="label static" htmlFor="lexem">Lexema</label>
+                <select className="mdl-textfield__input" id="lexem" onChange={(e: any) => { this.MoveLexem(e) }}>
+                  <option value="">Seleccione una opción</option>
+                  {this.state.lexems.map((row) => {
+                    return (
+                      <option key={row._id} value={row._id}>{row.key}</option>
+
+                    )
+                  })}
+                </select>
+                <span className="mdl-textfield__error">Es necesario un concepto</span>
+              </div>
+            </div>
+            <div className="mdl-cell--6-col mdl-cell--middle mdl-cell--3-col-phone">
+              <div className={"mdl-textfield mdl-textfield " + ((this.state.error.morphem) ? 'is-invalid' : '')}>
+                <label className="label static" htmlFor="morphem">Morfema*</label>
+                <select className="mdl-textfield__input" id="morphem" onChange={(e: any) => { this.getFields(e) }}>
+                  <option value="">Seleccione una opción</option>
+                  {this.state.morphems.map((row) => {
+                    return (
+                      <option key={row._id} value={row._id}>{row.key}</option>
+
+                    )
+                  })}
+                </select>
+                <span className="mdl-textfield__error">Es necesario un concepto</span>
               </div>
             </div>
             <div className="mdl-cell--6-col mdl-cell--middle">
@@ -192,7 +272,7 @@ import { App, ModalApp } from '../../app'
             <div className="mdl-cell mdl-cell--6-col">
               <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.words) ? 'is-invalid' : '')}>
                 <textarea className="mdl-textfield__input" id="words" onChange={(e: any) => { this.getFields(e) }} />
-                <label className="mdl-textfield__label" htmlFor="words">Sinonimo (valido separadores)*</label>
+                <label className="mdl-textfield__label" htmlFor="words">Sinonimo (valido separadores)</label>
                 <span className="mdl-textfield__error">Las palabras deben estar separadas por coma (,)</span>
               </div>
             </div>

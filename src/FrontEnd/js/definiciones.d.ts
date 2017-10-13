@@ -216,6 +216,7 @@ interface cognition{
 	cognition: CRUD.cognition
     session: User.session
 	delete: Function
+	objetive?: string
   }
   interface activity{
     activity: CRUD.activity

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link, withRouter} from 'react-router'
-import {Cognition} from '../cards/cognition'
+import { CognitionObjective } from '../cards/cognition'
 import { App, ModalFree } from '../app'
 import { HeaderFree } from '../app/header'
 
@@ -114,7 +114,7 @@ import { HeaderFree } from '../app/header'
              {
                this.state.cognitions.map((row) => {
                  return (
-                   <Cognition session={this.session} cognition={row} key={row._id} delete={this.delete.bind(this)} domain={this.props.routeParams.domain} level={this.props.routeParams.level}/>
+                   <CognitionObjective session={this.session} cognition={row} key={row._id} delete={this.delete.bind(this)} objetive={this.props.routeParams.id}/>
                  );
                })
              }
