@@ -2031,6 +2031,40 @@ module.exports = function (app, express, Schema, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
+	cognitions.delete('/objetives/:id/cognition/:cognition', Auth.isAdmin.bind(Schema),
+  function (request, response, next) {
+    if (!Validator.isMongoId()(request.params.id)) {
+      throw new ValidatorException('El id es invalido!')
+    }
+    if (!Validator.isMongoId()(request.params.cognition)) {
+      throw new ValidatorException('El id es invalido!')
+    }
+    Schema.LearningObjetive.findOne({
+      _id: ObjectId(request.params.id)
+    }).then((obj) => {
+      if (!obj) {
+        throw new ValidatorException('No existe el objetivo')
+			}
+			for(var i = 0, n = obj.cognitions.length; i<n; i++){
+				if (obj.cognitions[i]._id.toString() == request.params.cognition.toString()){
+					obj.cognitions[i].remove();
+					return obj.save();
+				}
+			}
+			throw new ValidatorException('No existe la función cognitiva')
+    }).then((data) => {
+      response.send(data)
+    }).catch((error) => {
+      next(error)
+    })
+	})
+	
+  /*
+  * @api {delete} /:id Eliminar una categoria cognitiva
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
   cognitions.delete('/objetives/:id', Auth.isAdmin.bind(Schema),
   function (request, response, next) {
     if (!Validator.isMongoId()(request.params.id)) {
