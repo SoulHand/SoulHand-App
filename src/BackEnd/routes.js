@@ -919,7 +919,8 @@ module.exports = function (app, express, Schema, __DIR__) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('El id no es valido!')
     }
-    Schema.domainsLearning.findOne({name: request.params.domain.toUpperCase()})
+		Schema.domainsLearning.findOne({name: request.params.domain.toUpperCase()})
+		.populate("levels.words")
     .then((data) => {
       for (var i = 0, n = data.levels.length; i < n; i++) {
         if (data.levels[i]._id.toString() === request.params.id.toString()) {

@@ -154,6 +154,7 @@ import { ModalFree } from "../app"
                })
               }
             </div>
+            <Link to={`/domains/get/${this.props.routeParams.id}/level/create`} className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
           </main>
         </div>
      );
