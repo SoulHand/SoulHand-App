@@ -39,11 +39,11 @@ import { App, ModalApp } from '../../app'
       words:{
         value:null,
         required:true
-      } 		
+      }
     };
     public term: string = "";
     public label: string = "";
-    state: { error: compat.Map, terms: any} = {
+    state: { error: compat.Map, terms: Words.Term} = {
       error:{},
       terms: null
     }
@@ -89,8 +89,8 @@ import { App, ModalApp } from '../../app'
       });
     }
     deleteItem(id: number) {
-      this.fields.term.value.splice(id, 1);
-      this.fields.term.labels.splice(id, 1);
+      this.fields.words.value.splice(id, 1);
+      this.titles.splice(id, 1);
       this.forceUpdate();
     }
     componentDidMount() {
@@ -140,7 +140,7 @@ import { App, ModalApp } from '../../app'
     render() {
       if (!this.init) {
         return (
-          <ModalApp success={(e: any) => { console.warn("Esperando") }} title="Aceptar" />
+          <ModalApp success={(e: any) => { console.warn("Esperando") }} label="Aceptar" />
         );
       }
       return (

@@ -327,7 +327,7 @@ declare namespace CRUD{
 		description:string
 		level:number
 		_v:number
-		words: Array<string>
+		words: Array<Words.Term>
 	}
 	interface objetive{
       __v: number

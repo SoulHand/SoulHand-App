@@ -78,15 +78,14 @@ import {Menu} from '../app/menu'
      }
      return(
       <App>
-         <div className="mdl-grid demo-content">
-           {this.state.domains.length == 0 && (
-             <span>No posee dominios registrados</span>
-           )}
-           {this.state.domains.length > 0 && this.state.domains.map((row) => {
-             return (
-               <Cards.Domain key={row._id} domain={row} session={this.session} delete={this.delete.bind(this)} />
-             );
-           })}
+         <div className="mdl-grid">
+           {
+            this.state.domains.map((row) => {
+              return (
+                <Cards.Domain key={row._id} domain={row} session={this.session} delete={this.delete.bind(this)} />
+              );
+            })
+           }
          </div>
          <div className="fixed">
            <button id="add-menu" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></button>

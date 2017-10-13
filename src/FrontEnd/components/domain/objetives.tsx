@@ -2,6 +2,8 @@ import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link, withRouter} from 'react-router'
 import {Objetive} from '../cards/objetive'
+import { HeaderFree } from "../app/header"
+import { ModalFree } from "../app"
 
 @withRouter
 export class Objetives extends React.Component<Props.objetiveView, { objetives: Array<CRUD.objetive>, level: CRUD.level}>{
@@ -82,7 +84,22 @@ export class Objetives extends React.Component<Props.objetiveView, { objetives: 
        method:"GET",
        url: `${window._BASE}/v1/knowedge/${this.props.routeParams.domain}/level/${this.props.routeParams.level}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
-       data:null
+       data:null,
+       beforeSend: () => {
+         window.progress.start();
+       },
+       complete: () => {
+         window.progress.done();
+       },
+       error: (data: any) => {
+         var state: CRUD.codeError = data.responseJSON;
+         var config = {
+           message: state.message,
+           timeout: window.settings.alert.delay
+         };
+         var message: any = document.querySelector('.mdl-js-snackbar')
+         message.MaterialSnackbar.showSnackbar(config);
+       }
      });
      p1.done().then((level: CRUD.level) => {
        var p2 = ajax({
@@ -118,110 +135,75 @@ export class Objetives extends React.Component<Props.objetiveView, { objetives: 
      modal.close();
    }
    render(){
-     if(!this.init){
-       return null;
+     if (!this.init) {
+       return (
+         <ModalFree />
+       );
      }
-     let body: any = (
-       <div className="mdl-grid mdl-color--white demo-content">
-          <div className="mdl-spinner mdl-js-spinner is-active"></div>
-       </div>
-     );
-     return(
-       <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-       <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-        <div className="mdl-layout__drawer-button"><Link to="/domains"><i className="material-icons">&#xE5C4;</i></Link></div>
-         <div className="mdl-layout__header-row">
-           <span className="mdl-layout-title">SoulHand</span>
-           <div className="mdl-layout-spacer"></div>
-           <div className="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
-             <label className="mdl-button mdl-js-button mdl-button--icon" htmlFor="search">
-               <i className="material-icons">search</i>
-             </label>
-             <div className="mdl-textfield__expandable-holder">
-               <input className="mdl-textfield__input" type="text" id="search" onChange={(e:any)=>{this.Filter(e)}}/>
-               <label className="mdl-textfield__label" htmlFor="search">Ingrese su consulta...</label>
+     return (
+       <div className="mdl-layout mdl-layout--fixed-header">
+         <HeaderFree title={"Nivel de aprendizaje " + this.state.level.name} />
+         <div id="progress" className="mdl-progress mdl-js-progress mdl-progress__indeterminate progress hiden" />
+         <div className="demo-ribbon mdl-color--teal-400" />
+         <main className="demo-main mdl-layout__content">
+           <div className="demo-container mdl-grid">
+             <div className="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--10-col">
+               <div className="mdl-cell--6-col mdl-cell--middle">
+                 <div className="mdl-textfield">
+                   <label className="mdl-input__expandable-holder">Nombre</label>
+                   <div className="mdl-textfield__input">
+                     {this.state.level.name}
+                   </div>
+                 </div>
+               </div>
+               <div className="mdl-cell--12-col mdl-cell--middle">
+                 <label className="mdl-input__expandable-holder">Descripción</label>
+                 <div className="mdl-textfield__input">
+                   {this.state.level.description}
+                 </div>
+               </div>
              </div>
            </div>
-         </div>
-       </header>
-         <main className="mdl-layout__content mdl-color--white-100">
-           <div className="mdl-grid demo-content">
-             <div className="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
-               <div className="mdl-grid mdl-color--white demo-content">
-                 <div className="mdl-cell--6-col mdl-cell--middle">
-                   <div className="mdl-textfield">
-                     <label className="mdl-input__expandable-holder">Nombre del objetivo</label>
-                     <div className="mdl-textfield__input">
-                       {this.state.level.name}
-                     </div>
-                   </div>
-                 </div>
-                 <div className="mdl-cell--6-col mdl-cell--middle">
-                   <div className="mdl-textfield">
-                     <label className="mdl-input__expandable-holder">Numero de objetivos</label>
-                     <div className="mdl-textfield__input">
-                       {this.state.objetives.length} objetivos
-                      </div>
-                   </div>
-                 </div>
-                 <div className="mdl-cell--6-col mdl-cell--middle">
-                   <div className="mdl-textfield">
-                     <label className="mdl-input__expandable-holder">Descripción</label>
-                     <div className="mdl-textfield__input">
-                       {this.state.level.description}
-                     </div>
-                   </div>
-                 </div>
-               </div>
-               <div className="mdl-grid mdl-color--white">
-                 <div className="mdl-cell--2-col mdl-cell--middle">
-                   <label className="mdl-input__expandable">Palabras claves</label>
-                 </div>
-                 <div className="mdl-cell--2-col mdl-cell--middle">
-                   <button id="add-keyword" className="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" onClick={this.showKey.bind(this)}>
-                     <i className="material-icons">add</i>
-                   </button>
-                   <div className="mdl-tooltip" data-mdl-for="add-keyword">
-                     Añadir una palabra clave
-                    </div>
-                 </div>
-                 <div className="mdl-cell--10-col mdl-cell--middle">
-                   {this.state.level.words.map((row) => {
-                     return (
-                       <span className="mdl-chip" key={row}>
-                         <span className="mdl-chip__text">{row}</span>
-                         <button type="button" className="mdl-chip__action" onClick={this.deleteWord.bind(this, row)}><i className="material-icons">cancel</i></button>
-                       </span>
-                     );
-                   })}
-                 </div>
-               </div>
-             </div>
-             <div className="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+           <div className="demo-content">
+             <span className="mdl-typography--title">Categorías gramaticales</span>
+             <ul className="demo-list-three mdl-list">
                {
-                 this.state.objetives.map((row) => {
+                 this.state.level.words.map((row) => {
                    return (
-                     <Objetive session={this.session} objetive={row} key={row._id} delete={this.delete.bind(this)} domain={this.props.routeParams.domain} level={this.props.routeParams.level} />
+                     <li className="mdl-list__item mdl-list__item--three-line" key={row._id}>
+                       <span className="mdl-list__item-primary-content">
+                         <i className="material-icons mdl-list__item-avatar">account_circle</i>
+                         <span>{row.concept}</span>
+                         <span className="mdl-list__item-text-body">
+                           {row.description}
+                         </span>
+                       </span>
+                       <span className="mdl-list__item-secondary-content">
+                         <div className="mdl-grip">
+                           <div onClick={(e) => {
+                             this.props.router.push(`/terms/get/${row._id}`);
+                           }} id={`view${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>visibility</div>
+                           <div className="mdl-tooltip" data-mdl-for={`view${row._id}`}>
+                             Ver
+                            </div>
+                         </div>
+                       </span>
+                     </li>
                    );
                  })
                }
-             </div>
+             </ul>
            </div>
-           <dialog className="mdl-dialog" id="keyword-add" key="keyword-add">
-             <form method="PUT" id="keyword" onSubmit={this.sendKey.bind(this)}>
-               <div className="mdl-dialog__content mdl-dialog__actions--full-width">
-                 <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                   <input className="mdl-textfield__input" type="text" id="keyword" required={true} />
-                   <label className="mdl-textfield__label" htmlFor="name">Palabra clave*</label>
-                   <span className="mdl-textfield__error">Es requerido</span>
-                 </div>
-               </div>
-               <div className="mdl-dialog__actions">
-                 <button type="submit" className="mdl-button open">Añadir</button>
-                 <button type="button" className="mdl-button close" onClick={this.hidenKey.bind(this)}>Cerrar</button>
-               </div>
-             </form>
-           </dialog>
+           <span className="mdl-typography--title">Niveles de aprendizaje</span>
+           <div className="mdl-grid">
+             {
+               this.state.objetives.map((row) => {
+                 return (
+                   <Objetive session={this.session} objetive={row} key={row._id} delete={this.delete.bind(this)} domain={this.props.routeParams.domain} level={this.props.routeParams.level} />
+                 );
+               })
+             }
+           </div>
          </main>
        </div>
      );

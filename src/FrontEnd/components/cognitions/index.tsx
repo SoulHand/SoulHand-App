@@ -77,10 +77,7 @@ import {Menu} from '../app/menu'
      }
      return(
       <App>
-         <div className="mdl-grid demo-content">
-           {this.state.cognitions.length == 0 && (
-             <span>No posee funciones cognitivas registradas</span>
-           )}
+         <div className="mdl-grid">
            {this.state.cognitions.length > 0 && this.state.cognitions.map((row) => {
              return (
                <Cards.Cognition key={row._id} cognition={row} session={this.session} delete={this.delete.bind(this)} />

@@ -8,6 +8,13 @@ import {ajax} from 'jquery'
 @withRouter
  export class DomainCreate extends FormUtils<{router: any}, any>{
    public init = false;
+   public concept: any = {
+     key: "",
+     value: ""
+   };
+   public titles: Array<string> = [];
+   public term: string = "";
+   public label: string = "";
    public fields:compat.Map={
  		name:{
  			match:(fn:string)=>{
@@ -31,11 +38,6 @@ import {ajax} from 'jquery'
  			required:true
  		}
   };
-  public concept: any = {
-    key: "",
-    value: ""
-  };
-  public titles: Array<string> = [];
   state: {error: compat.Map, terms: any} = {
     error:{},
     terms: []
@@ -86,6 +88,20 @@ import {ajax} from 'jquery'
     this.titles.splice(id, 1);
     this.forceUpdate();
   }
+  addKey(e: React.EventHandler<any>): any {
+    if (this.concept.key.trim() == "") {
+      this.state.error.words = true;
+      this.setState({ error: this.state.error });
+      return null;
+    }
+    this.fields.words.value.push(this.concept.key);
+    this.titles.push(this.concept.value);
+    this.concept = {
+      key: "",
+      value: ""
+    };
+    this.forceUpdate();
+  }
    componentDidUpdate(){
      componentHandler.upgradeAllRegistered();
    }
@@ -119,16 +135,12 @@ import {ajax} from 'jquery'
    render(){
      if(!this.init){
        return (
-         <ModalApp success={(e: any) => {console.warn("Esperando")}} title="Aceptar"/>
+         <ModalApp success={(e: any) => {console.warn("Esperando")}} label="Aceptar"/>
        );
      }
      return(
-       <ModalApp success={(e: any) => { this.send(e) }} title="Aceptar">
+       <ModalApp success={(e: any) => { this.send(e) }} label="Aceptar" title="Añadir un dominio de aprendizaje">
            <div className="mdl-grid mdl-color--white">
-              <div className="mdl-cell mdl-cell--12-col">
-                <h3 className="mdl-typography--text-center display-1">Crear dominio de aprendizaje</h3>
-                <p>Los dominios permiten categorizar los objetivos basado en un grupo de comportamientos comunes entre sí.</p>
-              </div>
              <div className="mdl-cell mdl-cell--6-col">
                <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.name) ? 'is-invalid' : '')}>
                  <input className="mdl-textfield__input" type="text" id="name" onChange={(e: any) => { this.getFields(e) }} />
@@ -143,38 +155,28 @@ import {ajax} from 'jquery'
                  <span className="mdl-textfield__error">Es necesaria una descripción valida</span>
                </div>
              </div>
-             <div className="mdl-cell--4-col mdl-cell--middle">
-               <label className="label static" htmlFor="regexp">Tipo de concepto</label>
+             <div className={"mdl-textfield mdl-textfield " + ((this.state.error.words) ? 'is-invalid' : '')}>
+               <label className="label static" htmlFor="key">Categoría gramátical</label>
                <select className="mdl-textfield__input" id="key" onChange={(e) => {
                  this.concept.key = e.target.value;
                  this.concept.value = e.target.selectedOptions[0].label;
-                 this.forceUpdate();
-               }}>
+                 this.state.error.words = false;
+                 this.setState({ error: this.state.error });
+               }} value={this.concept.key}>
                  <option value="">Seleccione una opción</option>
                  {this.state.terms.map((row: any) => {
-                  return (
+                   return (
                      <option key={row._id} value={row._id}>{row.concept}</option>
-
-                  )
+                   )
                  })}
                </select>
+               <span className="mdl-textfield__error">Es necesario un concepto</span>
              </div>
              <div className="mdl-cell--1-col mdl-cell--middle" style={{ marginLeft: "5px" }}>
-               <button id="add-keyword" className="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" onClick={(e) => {
-                if (this.concept.key.trim() == ""){
-                  return null;
-                }
-                this.fields.words.value.push(this.concept.key);
-                this.titles.push(this.concept.value);
-                this.concept = {
-                  key: "",
-                  value: ""
-                };
-                this.forceUpdate();
-               }}>
-                 <i className="material-icons">add</i>
-               </button>
-               <div className="mdl-tooltip" data-mdl-for="add-keyword">
+              <button id="add-keyword" className="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" onClick={this.addKey.bind(this)}>
+                <i className="material-icons">add</i>
+              </button>
+              <div className="mdl-tooltip" data-mdl-for="add-keyword">
                  Añadir una palabra clave
               </div>
              </div>
