@@ -109,7 +109,7 @@ import { HeaderFree } from '../app/header'
                </div>
              </div>
            </div>
-           <span className="mdl-typography--title">Niveles de aprendizaje</span>
+           <span className="mdl-typography--title">Funciones cognitivas desarrolladas</span>
            <div className="mdl-grid">
              {
                this.state.cognitions.map((row) => {

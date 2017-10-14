@@ -6,7 +6,7 @@ import { ModalApp } from "../app"
 import {ajax} from 'jquery'
 
 @withRouter
- export class ParentCreate extends FormUtils<{router: any}, {}>{
+export class ParentCreate extends FormUtils<Props.objetiveView, {}>{
    public fields:compat.Map={
  		name:{
  			match:(fn:string)=>{
@@ -20,6 +20,14 @@ import {ajax} from 'jquery'
  				return !validator.isNull()(fn);
  			},
  			value:null,
+ 			required:true
+ 		},
+ 		words:{
+ 			value:null,
+ 			required:true
+ 		},
+ 		is_correct:{
+ 			value:false,
  			required:true
  		}
  	};
@@ -56,6 +64,8 @@ import {ajax} from 'jquery'
     if (error) {
       return;
     }
+    values.domain = this.props.routeParams.domain;
+    values.level = this.props.routeParams.level;
     ajax({
 			method:"POST",
 	        url: `${window._BASE}/v1/knowedge/objetives/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
@@ -93,7 +103,7 @@ import {ajax} from 'jquery'
    }
    render(){
      return(
-      <ModalApp success={this.send.bind(this)} title="Aceptar">
+      <ModalApp success={this.send.bind(this)} label="Aceptar" title="Añadir un objetivo (Modo experto)">
          <div className="mdl-grid mdl-color--white demo-content">
            <div className="mdl-cell mdl-cell--6-col">
              <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.name) ? 'is-invalid' : '')}>
@@ -103,11 +113,27 @@ import {ajax} from 'jquery'
              </div>
            </div>
            <div className="mdl-cell mdl-cell--6-col">
-             <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.name) ? 'is-invalid' : '')}>
+             <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.description) ? 'is-invalid' : '')}>
                <textarea className="mdl-textfield__input" type="text" id="description" onChange={(e: any) => { this.getFields(e) }} />
                <label className="mdl-textfield__label" htmlFor="description">Descripción del objetivo*</label>
                <span className="mdl-textfield__error">Es necesaria una descripción valida</span>
              </div>
+           </div>
+           <div className="mdl-cell mdl-cell--6-col">
+             <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.words) ? 'is-invalid' : '')}>
+               <input className="mdl-textfield__input" type="text" id="words" onChange={(e: any) => { this.getFields(e) }} />
+               <label className="mdl-textfield__label" htmlFor="words">Palabras claves</label>
+               <span className="mdl-textfield__error">Las palabras deben poseer un separador</span>
+             </div>
+           </div>
+           <div className="mdl-cell mdl-cell--6-col">
+              <label htmlFor="interprete" className="label static">
+                ¿Objetivo correcto?
+              </label>
+             <label htmlFor="interprete" className="mdl-switch mdl-js-switch">
+               <input type="checkbox" id="is_correct" className="mdl-switch__input" onChange={(e: any) => { this.getRadioButton(e) }} />
+               <span className="mdl-switch__label">No/Si</span>
+             </label>
            </div>
          </div>
          <dialog className="mdl-dialog" id="confirm-error" key="confirm-error">

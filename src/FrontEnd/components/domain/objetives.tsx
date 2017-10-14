@@ -183,9 +183,9 @@ export class Objetives extends React.Component<Props.objetiveView, { objetives: 
                            <div onClick={(e) => {
                              this.props.router.push(`/terms/get/${row._id}`);
                            }} id={`view${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>visibility</div>
-                           <div className="mdl-tooltip" data-mdl-for={`view${row._id}`}>
-                             Ver
-                            </div>
+                          <div className="mdl-tooltip" data-mdl-for={`view${row._id}`}>
+                            Ver
+                          </div>
                          </div>
                        </span>
                      </li>
@@ -194,7 +194,7 @@ export class Objetives extends React.Component<Props.objetiveView, { objetives: 
                }
              </ul>
            </div>
-           <span className="mdl-typography--title">Niveles de aprendizaje</span>
+           <span className="mdl-typography--title">Objetivos de aprendizaje</span>
            <div className="mdl-grid">
              {
                this.state.objetives.map((row) => {
@@ -204,6 +204,7 @@ export class Objetives extends React.Component<Props.objetiveView, { objetives: 
                })
              }
            </div>
+           <Link to={`/domains/${this.props.routeParams.domain}/objetives/${this.props.routeParams.level}/create`} className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
          </main>
        </div>
      );

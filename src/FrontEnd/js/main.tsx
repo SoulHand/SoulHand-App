@@ -9,6 +9,7 @@ import * as Student from '../components/student'
 import * as Parent from '../components/parent'
 import * as Words from '../components/words'
 import * as Grade from '../components/grades'
+import * as Rules from '../components/rules'
 import * as Matters from '../components/matters'
 import * as Domain from '../components/domain'
 import * as Cognitions from '../components/cognitions'
@@ -66,6 +67,12 @@ window.addEventListener("load",()=>{
           <Route path="edit/:id" component={Grade.Modify}/>
           <Route path="create" component={Grade.Add}/>
         </Route>
+        <Route path="/rules" onEnter={Auth}>
+          <IndexRoute component={Rules.Rules}/>
+          <Route path="get/:id" component={Rules.Get}/>
+          <Route path="get/:id/create" component={Rules.Add}/>
+          <Route path="edit/:id" component={Rules.Modify}/>
+        </Route>
         <Route path="/matters" onEnter={Auth}>
           <IndexRoute component={Matters.Matter}/>
           <Route path="get/:id" component={Matters.Get}/>
@@ -82,13 +89,13 @@ window.addEventListener("load",()=>{
           <Route path="get/:id" component={Domain.Get}/>
           <Route path="get/:id/level/create" component={Domain.AddLevel}/>
           <Route path=":domain/objetives/:level" component={Domain.Objetive}/>
+          <Route path=":domain/objetives/:level/create" component={Domain.Add}/>
           <Route path="create" component={Domain.AddDomain}/>
         </Route>
         <Route path="/objetives" onEnter={Auth}>
-          <Route path="get/:id" component={Domain.Cognition}/>
+          <Route path="get/:id" component={Domain.Cognition}/>  
           <Route path="get/:id/cognition" component={CognitionCreate}/>
           <Route path="create/:activity" component={Activity.setObjetive}/>
-          <Route path="create" component={Domain.Add}/>
         </Route>
         <Route path="/activity" onEnter={Auth}>
           <IndexRoute component={Activity.Activity}/>

@@ -3562,10 +3562,14 @@ module.exports = function (app, express, Schema, __DIR__) {
 		if(Validator.isNull()(request.body.consecuent)){
 			throw new ValidatorException("Es necesario una consecuencia");
 		}
-		if(Validator.isNull()(request.params.event)){
+		if(!Validator.isMongoId()(request.params.event)){
 			throw new ValidatorException("Solo se aceptan dominios validos");
 		}
-		domain.find({name:request.params.event.toUpperCase()}).then(function(row){
+		Schema.events.findOne({ _id: ObjectId(request.params.event) })
+		.then(function(row){
+			if(!row){
+				throw new ValidatorException("El evento no existe!");
+			}
 			var exp=new RegExp(`([xp-t][0-9]+)`,'g');
 			var var_dump={};
 			var matchs=request.body.premise.match(exp);
@@ -3678,15 +3682,19 @@ module.exports = function (app, express, Schema, __DIR__) {
 	* @var category<CategoryCoginitions>	objeto CRUD
 	*/
 	inferenURI.delete("/:event/inferences/:id",Auth.isAdmin.bind(Schema),function(request, response,next) {
+		if (!Validator.isMongoId()(request.params.id)){
+			throw new ValidatorException("No es valido el Id!");
+		}
 		var category=new CategoryCoginitions(Schema.events);
 		category.update({name:request.params.event.toUpperCase()},function(obj){
-			for(i in obj.premises){
+			for(var i = 0, n = obj.premises.length; i<n; i++){
+				console.log(obj.premises[i]._id, request.params.id);
 				if(obj.premises[i]._id.toString()==request.params.id.toString()){
 					obj.premises[i].remove();
-					break;
+					return obj;
 				}
 			}
-			return obj;
+			throw new ValidatorException("No existe el registro!");
 		}).then(function(data){
 			response.send(data);
 		}).catch(function(error){
