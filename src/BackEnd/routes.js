@@ -1126,7 +1126,8 @@ module.exports = function (app, express, Schema, __DIR__) {
 			request.body.words = [];
 		}
 		var _words = WORDS.SeparatorWords(request.body.description);
-		var _concepts = [], _pending = [], _radios = [], _morpholy = [];
+		var _concepts = [], _pending = [],
+				_radios = [], _morpholy = [], _conditions = [], _cognitions = [];
 		Schema.LearningObjetive.findOne({ name: request.body.name }).then((row) => {
 			if (row) {
 				throw new ValidatorException('Ya existe un objetivo con el mismo nombre!')
@@ -1155,7 +1156,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 				if (!row){
 					return null;
 				}
-				var exp = new RegExp(row, "ig");
+				var exp = new RegExp(row.key, "ig");
 				return Schema.LearningObjetive.count({ description: exp});
 			});
 			return Promise.all([querys, _ranges, Schema.LearningObjetive.count()]);
@@ -1172,22 +1173,52 @@ module.exports = function (app, express, Schema, __DIR__) {
 					_radios[i] = _ranges[i] /  _count;
 				}
 			}
-			return Schema.events.findOne({ name: 'KEYWORDS-SEARCH' });
+			return Promise.all([
+				Schema.events.findOne({ name: 'KEYWORDS-SEARCH' }),
+				Schema.events.findOne({ name: 'KEYWORDS-IS' })
+			]);
 		})
-		.then((event) => {
+			.then((rows) => {
+			var event = rows[0], eventTaxon = rows[1];
 			if (!event) {
+				/**
+				 * q1: Es palabra clave
+				 * q2: Es observable
+				 * q3: Es Acción
+				 */
 				event = new Schema.events({
 					name: 'KEYWORDS-SEARCH',
 					objects: {
 						p1: 'Palabra', // Palabra
-						p2: 'radio texto', // Cantidad de repeticiones
-						p3: 'información lexica', // Palabra
-						p4: 'información semantica', // Palabra
+						p2: 'radio texto', // Cantidad de repeticiones por objetivos
+						p3: 'información lexica', // conceptos gramaticales
+						p4: 'información semantica', // conceptos semanticos
 					},
 					premises: []
 				});
 				event.save();
 			}
+			if (!eventTaxon) {
+				/**
+				 * q4: condiciones
+				 * q5: funciones cognitivas
+				*/
+				eventTaxon = new Schema.events({
+					name: 'KEYWORDS-IS',
+					objects: {
+						p1: 'Palabra', // Palabra
+						p2: 'radio texto', // Cantidad de repeticiones por objetivos
+						p3: 'información lexica', // conceptos gramaticales
+						p4: 'información semantica', // conceptos semanticos
+						q1: "ES PALABRA CLAVE",
+						q2: "ES OBSERVABLE",
+						q3: "ES ACCIÓN"
+					},
+					premises: []
+				});
+				eventTaxon.save();
+			}
+			var _verbs = [], actions = [];
 			for(var i = 0, n = _morpholy.length; i<n; i++){
 				if(!_morpholy[i]){
 					continue;
@@ -1195,13 +1226,35 @@ module.exports = function (app, express, Schema, __DIR__) {
 				var _taxons = _morpholy[i].concepts.map((row) => {
 					return `${row.key}|${row.value}`;
 				});
-				var _consecuents = Events.ChainGetAll(_premises.premises, {
+				var _value = {
 					p1: _words[i],
 					p2: _radios[i],
-					p3: _taxons
-				});
-				console.log(_consecuents);
+					p3: _taxons,
+					p4: _concepts[i].concept
+				};
+				var _consecuent = Events.ChainGetOne(event.premises, _value);
+				if (_consecuent.q1){
+					request.body.words.push(_morpholy[i].key);
+				}
+				if (_consecuent.q2){
+					_verbs.push(_morpholy[i].key);
+				}
+				if (_consecuent.q3){
+					_verbs.push(_morpholy[i].key);
+				}
+				Object.assign(_value, _consecuent);
+				var _consecuents = Events.ChainGetAll(eventTaxon.premises, _value);
+				for(var j = 0, u = _consecuents.length; j < u; j++){
+					if (_consecuents[j].q4 && _consecuents[j].h >= 0.5){
+						_conditions.push(_consecuents[j].q4);
+					}
+					if (_consecuents[j].q5 && _consecuents[j].h >= 0.5){
+						_cognitions.push(_consecuents[j].q5);
+					}
+				}
+				console.log(_consecuent, request.body.words, _cognitions, _conditions);
 			}
+			throw new ValidatorException("No vale la pena vivir!");
 			return _morpholy;
 		})
 		.then((data) => {
