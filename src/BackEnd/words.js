@@ -17,6 +17,24 @@ module.exports.SeparatorWords = (str) => {
     return words;
 };
 
+module.exports.getPending = (words, _pendingWords) => {
+    for (var i = 0, n = words.length; i < n; i++) {
+        if (!words[i]) {
+            var isExist = false;
+            for (var j = 0, m = _pendingWords.length; j < m; j++) {
+                if (_pendingWords[j] == _keywords_src[i]) {
+                    isExist = true;
+                    break;
+                }
+            }
+            if (!isExist) {
+                _pendingWords.push(_keywords_src[i]);
+            }
+            continue;
+        }
+    }
+    return _pendingWords;
+}
 module.exports.getPendingWords = (words, _pendingWords,
     _keywords_src, _verbs, _containts, _peoples, CLASS_GRAMATICAL) => {
     for (var i = 0, n = words.length; i < n; i++) {
