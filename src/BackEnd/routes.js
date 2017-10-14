@@ -1127,7 +1127,9 @@ module.exports = function (app, express, Schema, __DIR__) {
 		}
 		var _words = WORDS.SeparatorWords(request.body.description);
 		var _concepts = [], _pending = [],
-				_radios = [], _morpholy = [], _conditions = [], _cognitions = [];
+				_radios = [], _morpholy = [],
+				_conditions = [], _cognitions = [],
+				_domains = [], _levels = [];
 		Schema.LearningObjetive.findOne({ name: request.body.name }).then((row) => {
 			if (row) {
 				throw new ValidatorException('Ya existe un objetivo con el mismo nombre!')
@@ -1202,6 +1204,8 @@ module.exports = function (app, express, Schema, __DIR__) {
 				/**
 				 * q4: condiciones
 				 * q5: funciones cognitivas
+				 * q6: dominios
+				 * q7: niveles
 				*/
 				eventTaxon = new Schema.events({
 					name: 'KEYWORDS-IS',
@@ -1251,8 +1255,19 @@ module.exports = function (app, express, Schema, __DIR__) {
 					if (_consecuents[j].q5 && _consecuents[j].h >= 0.5){
 						_cognitions.push(_consecuents[j].q5);
 					}
+					if (_consecuents[j].q6 && _consecuents[j].h >= 0.5){
+						_domains.push({
+							 _id: _consecuents[j].q6,
+							 h: _consecuents[j].h
+						});
+					}
+					if (_consecuents[j].q7 && _consecuents[j].h >= 0.5){
+						_levels.push({
+							 _id: _consecuents[j].q7,
+							 h: _consecuents[j].h
+						});
+					}
 				}
-				console.log(_consecuent, request.body.words, _cognitions, _conditions);
 			}
 			throw new ValidatorException("No vale la pena vivir!");
 			return _morpholy;
