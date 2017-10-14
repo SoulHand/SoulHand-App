@@ -1125,58 +1125,22 @@ module.exports = function (app, express, Schema, __DIR__) {
 		if (!request.body.words){
 			request.body.words = [];
 		}
-		var _keywords_title = WORDS.SeparatorWords(request.body.name);
-		var _keywords_description = WORDS.SeparatorWords(request.body.description);
-		var _concepts_title = [], _concepts_description = [], _concepts = [];
-		var _pendingWords = [], _verbs = [], _containts = [], _peoples = [], _times = [];
-		var _premises
-
+		var _words = WORDS.SeparatorWords(request.body.description);
+		var _concepts = [], _pending = [], _radios = [], _morpholy = [];
 		Schema.LearningObjetive.findOne({ name: request.body.name }).then((row) => {
 			if (row) {
 				throw new ValidatorException('Ya existe un objetivo con el mismo nombre!')
 			}
 			//procesando palabras claves
-			var _queryWords = _keywords_title.map((row) => {
+			var _queryWords = _words.map((row) => {
 				return Schema.words.findOne({ key: row });
 			});
 			return Promise.all(_queryWords);
 		})
 		.then((words) => {
-				WORDS.getPendingWords(words, _pendingWords,
-					_keywords_title, _verbs,
-					_containts, _peoples, WORDS.CLASS_GRAMATICAL)
-			_keywords_title = words;
-			var _queryWords = _keywords_description.map((row) => {
-				return Schema.words.findOne({ key: row });
-			});
-			return Promise.all(_queryWords);
-		})
-		.then((words) => {
-			WORDS.getPendingWords(words, _pendingWords,
-				_keywords_description, _verbs,
-				_containts, _peoples, WORDS.CLASS_GRAMATICAL)
-			_keywords_description = words;
-			Events.emit("new-words", _pendingWords);
-			if(_verbs.length == 0){
-				throw new ValidatorException("Es necesario por lo menos un verbo observable.");
-			}
-
-			var querys = _keywords_title.map((row) => {
-				if (!row) {
-					return null;
-				}
-				return Schema.Hiperonimo.findOne({
-					$or: [
-						{ "hiponimos.key": row.key},
-						{ "hiponimos.words": row.key}
-					]
-				});
-			});
-			return Promise.all(querys);
-		})
-		.then((rows) => {
-			_concepts_title = rows;
-			var querys = _keywords_description.map((row) => {
+			_pending = WORDS.getPending(words, _pending, _words);
+			_morpholy = words;
+			var querys = words.map((row) => {
 				if(!row){
 					return null;
 				}
@@ -1187,8 +1151,67 @@ module.exports = function (app, express, Schema, __DIR__) {
 					]
 				});
 			});
-			return Promise.all(querys);
+			var _ranges = words.map((row) => {
+				if (!row){
+					return null;
+				}
+				var exp = new RegExp(row, "ig");
+				return Schema.LearningObjetive.count({ description: exp});
+			});
+			return Promise.all([querys, _ranges, Schema.LearningObjetive.count()]);
 		})
+		.then((rows) => {
+			var _ranges = rows[1], _count = rows[2];
+			_concepts = rows[0];
+			for(var i = 0, n = _ranges.length; i<n; i++){
+				_radios[i] = 0;
+				if(!_ranges[i]){
+					continue;
+				}
+				if(_count >  0){
+					_radios[i] = _ranges[i] /  _count;
+				}
+			}
+			return Schema.events.findOne({ name: 'KEYWORDS-SEARCH' });
+		})
+		.then((event) => {
+			if (!event) {
+				event = new Schema.events({
+					name: 'KEYWORDS-SEARCH',
+					objects: {
+						p1: 'Palabra', // Palabra
+						p2: 'radio texto', // Cantidad de repeticiones
+						p3: 'información lexica', // Palabra
+						p4: 'información semantica', // Palabra
+					},
+					premises: []
+				});
+				event.save();
+			}
+			for(var i = 0, n = _morpholy.length; i<n; i++){
+				if(!_morpholy[i]){
+					continue;
+				}
+				var _taxons = _morpholy[i].concepts.map((row) => {
+					return `${row.key}|${row.value}`;
+				});
+				var _consecuents = Events.ChainGetAll(_premises.premises, {
+					p1: _words[i],
+					p2: _radios[i],
+					p3: _taxons
+				});
+				console.log(_consecuents);
+			}
+			return _morpholy;
+		})
+		.then((data) => {
+			response.send(data)
+		})
+
+
+
+
+/*
 		.then((rows) => {
 			_concepts_description = rows;
 			_concepts = _concepts_description.concat(_concepts_title);
@@ -1448,9 +1471,9 @@ module.exports = function (app, express, Schema, __DIR__) {
 			//Schema.events.findOne({ name: 'KEYWORDS-CONTEXT' })
 			//return Schema.domainsLearning.find();
 		.catch((error) => {
-			if(_pendingWords.length > 0){
+			if(_pending.length > 0){
 				var KeywordException = require("./SoulHand/Exceptions/KeywordException.js");
-				error = new KeywordException({words: _pendingWords, error: error.message});
+				error = new KeywordException({words: _pending, error: error.message});
 			}
 			next(error)
 		})
