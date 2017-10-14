@@ -248,6 +248,12 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
         if (!Validator.isJSON()(request.body.term)) {
             throw new ValidatorException("No existe el contexto!");
         }
+        if (!Validator.isMongoId()(request.body.lexem)) {
+            throw new ValidatorException("No existe el lexema!");
+        }
+        if (!Validator.isMongoId()(request.body.morphem)) {
+            throw new ValidatorException("No existe el Morfema!");
+        }
         if (Validator.isNull()(request.body.words)) {
             request.body.words = [];
         }else{
@@ -267,26 +273,49 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
         })
         Promise.all([
             Schema.Hiperonimo.find({$or: request.body.term}),
-            Schema.lexemas.find(),
+            Schema.lexemas.findOne({ _id: ObjectId(request.body.lexem)})
+                .populate("morphems.concepts"),
             Schema.words.findOne({ key: request.body.name })
         ])
         .then((rows) => {
             if(rows[0].length == 0){
                 throw new ValidatorException("El contexto no existe o no es valido!");
             }
+            if(!rows[1]){
+                throw new ValidatorException("No existe el lexema!");
+            }
             if(rows[2]){
                 return [rows[2], rows[0]];
             }
+            var _morphem = {
+                _id: null,
+                key: null
+            };
+            var _concepts = [];
+            var isExist = false;
+            for (var i = 0, n = rows[1].morphems.length; i<n; i++){
+                if (rows[1].morphems[i]){
+                    _morphem._id = rows[1].morphems[i]._id;
+                    _morphem.key = rows[1].morphems[i].key;
+                    _concepts = rows[1].morphems[i].concepts;
+                    isExist = true;
+                    break;
+                }
+            }
+            if (!isExist){
+                throw new ValidatorException("No existe el morfema!");
+            }
             var _word = new Schema.words({
                 key: request.body.name.trim(),
-                concepts: [],
-                morphems: []
+                concepts: _concepts,
+                morphems: [_morphem],
+                lexema: rows[1],
             });
-            var row = rows[1];
+            /*var row = rows[1];
             _word = WORDS.getMorphology(row, _word);
             if(!_word.lexema){
                 throw new ValidatorException("No se identificó el lexema de la palabra");
-            }
+            }*/
             return Promise.all([_word.save(), rows[0]]);
         })
         .then((data) => {
