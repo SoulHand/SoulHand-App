@@ -144,19 +144,19 @@ import {ajax} from 'jquery'
              <div className="mdl-cell mdl-cell--6-col">
                <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.name) ? 'is-invalid' : '')}>
                  <input className="mdl-textfield__input" type="text" id="name" onChange={(e: any) => { this.getFields(e) }} />
-                 <label className="mdl-textfield__label" htmlFor="name">Nombre del objetivo*</label>
+                 <label className="mdl-textfield__label" htmlFor="name">Nombre*</label>
                  <span className="mdl-textfield__error">Es necesaria un nombre valido con un verbo infinitivo</span>
                </div>
              </div>
              <div className="mdl-cell mdl-cell--6-col">
                <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.name) ? 'is-invalid' : '')}>
                  <textarea className="mdl-textfield__input" type="text" id="description" onChange={(e: any) => { this.getFields(e) }} />
-                 <label className="mdl-textfield__label" htmlFor="description">Descripción del objetivo*</label>
+                 <label className="mdl-textfield__label" htmlFor="description">Descripción*</label>
                  <span className="mdl-textfield__error">Es necesaria una descripción valida</span>
                </div>
              </div>
              <div className={"mdl-textfield mdl-textfield " + ((this.state.error.words) ? 'is-invalid' : '')}>
-               <label className="label static" htmlFor="key">Categoría gramátical</label>
+               <label className="label static" htmlFor="key">Función gramátical</label>
                <select className="mdl-textfield__input" id="key" onChange={(e) => {
                  this.concept.key = e.target.value;
                  this.concept.value = e.target.selectedOptions[0].label;

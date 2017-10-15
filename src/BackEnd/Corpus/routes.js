@@ -51,7 +51,7 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
      * Obtener todos los lexemas
      */
     LexemaURI.get('/', function (request, response, next) {
-        Schema.lexemas.find().then((rows) => {
+        Schema.lexemas.find().sort({ key: 1 }).then((rows) => {
             response.send(rows);
         })
         .catch((error) => {
@@ -342,7 +342,11 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
      * Obtener todos los lexemas
      */
     wordsURI.get('/', function (request, response, next) {
-        Schema.words.find().populate("lexema").populate("morphems").then((rows) => {
+        Schema.words.find()
+        .populate("lexema")
+        .populate("morphems")
+        .sort({ key: 1 })
+        .then((rows) => {
             response.send(rows);
         })
         .catch((error) => {
@@ -434,6 +438,7 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
      */
     TermsURI.get('/', function (request, response, next) {
         Schema.Hiperonimo.find()
+        .sort({concept: 1})
         .then((data) => {
             response.send(data);
         })

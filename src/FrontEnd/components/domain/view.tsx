@@ -115,7 +115,7 @@ import { ModalFree } from "../app"
               </div>
             </div>
             <div className="demo-content">
-              <span className="mdl-typography--title">Categorías gramaticales</span>
+              <span className="mdl-typography--title">Funciones gramaticales</span>
               <ul className="demo-list-three mdl-list">
                 {
                   this.state.words.map((row) => {
@@ -160,30 +160,3 @@ import { ModalFree } from "../app"
      );
    }
  }
-
-/*
-<div className="mdl-grid mdl-color--white">
-                 <div className="mdl-cell--2-col mdl-cell--middle">
-                   <label className="mdl-input__expandable">Palabras claves</label>
-                 </div>
-                 <div className="mdl-cell--2-col mdl-cell--middle">
-                    <button id="add-keyword" className="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" onClick={this.showKey.bind(this)}>
-                      <i className="material-icons">add</i>
-                    </button>
-                    <div className="mdl-tooltip" data-mdl-for="add-keyword">
-                      Añadir una palabra clave
-                    </div>
-                 </div>
-                 <div className="mdl-cell--10-col mdl-cell--middle">
-                    {this.state.words.map((row) => {
-                      return (
-                        <span className="mdl-chip" key={row}>
-                          <span className="mdl-chip__text">{row}</span>
-                          <button type="button" className="mdl-chip__action" onClick={this.delete.bind(this, row)}><i className="material-icons">cancel</i></button>
-                        </span>
-                      );
-                    })}
-                 </div>
-                </div>
-              </div>
- */
