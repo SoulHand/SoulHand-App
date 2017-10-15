@@ -102,10 +102,10 @@ import { App, ModalFree } from '../app'
                       <li className="mdl-list__item mdl-list__item--three-line" key={row._id}>
                         <span className="mdl-list__item-primary-content">
                           <i className="material-icons mdl-list__item-avatar">account_circle</i>
-                          <span>{row.premise}</span>
+                          <span>{row.premise} ({row.h})</span>
                           <span className="mdl-list__item-text-body">
                             {row.consecuent}
-                        </span>
+                          </span>
                         </span>
                         <span className="mdl-list__item-secondary-content">
                           <div className="mdl-grip">

@@ -18,15 +18,10 @@ import { HeaderFree } from '../app/header'
    componentDidUpdate(){
      componentHandler.upgradeAllRegistered();
    }
-   delete(cognition: CRUD.cognition){
-     let obj = this.cognitions.filter((row) => {
-       if (row._id === cognition._id) {
-         return false;
-       }
-       return true;
-     })
+   delete(cognition: CRUD.objetive){
+     this.cognitions = cognition.cognitions;
      this.setState({
-       cognitions: obj
+       cognitions: this.cognitions
      });
    }
    componentDidMount(){
