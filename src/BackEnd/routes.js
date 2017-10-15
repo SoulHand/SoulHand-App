@@ -1754,13 +1754,18 @@ module.exports = function (app, express, Schema, __DIR__) {
       if (!obj) {
         throw new ValidatorException('No existe el objetivo')
 			}
-			for(var i = 0, n = obj.cognitions.length; i<n; i++){
-				if (obj.cognitions[i]._id.toString() == request.params.cognition){
-					obj.cognitions[i].remove();
-					return obj.save();
+			var isExist = false;
+			obj.cognitions = obj.cognitions.filter((row) => {
+				var _bool = row.toString() != request.params.cognition;
+				if (!_bool){
+					isExist = true;
 				}
+				return _bool;
+			});
+			if (!isExist){
+				throw new ValidatorException('No existe la función cognitiva');
 			}
-			throw new ValidatorException('No existe la función cognitiva')
+			return obj.save();
     }).then((data) => {
       response.send(data)
     }).catch((error) => {
