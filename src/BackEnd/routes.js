@@ -1300,6 +1300,9 @@ module.exports = function (app, express, Schema, __DIR__) {
 							for(var k = 0, m = rows.length; k < m; k++){
 								_q3 = _q3 || !!rows;
 							}
+							if(_q3){
+								q1 = true;
+							}
 							var _inference = new Schema.inferences({
 								premise: `p1 == "${key.key}"`,
 								consecuent: `q1 = ${q1}; q2 = ${q2}; q3 = ${_q3}`,
