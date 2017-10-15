@@ -1574,7 +1574,8 @@ module.exports = function (app, express, Schema, __DIR__) {
       throw new ValidatorException("No es valido el objeto!");
     }
 		var _objetive, _rules, _cognitions = [],
-			_morphology = [], _concepts = [], _radios = [];
+			_morphology = [], _concepts = [],
+			_radios = [], _RULES_ADD= [];
 		request.body.data = JSON.parse(request.body.data);
 		var _cognitions = request.body.data.map((cognition) => {
 			if (!Validator.isMongoId()(cognition)) {
@@ -1589,7 +1590,8 @@ module.exports = function (app, express, Schema, __DIR__) {
 			Schema.events.findOne({ name: 'KEYWORDS-SEARCH' })
 		])
 		.then((rows) => {
-			var _rules = rows[3], _RULES_ADD = rows[0];
+			_rules = rows[3];
+			_RULES_ADD = rows[0];
 			if (!_rules) {
 				/**
 				 * q1: Es palabra clave
@@ -1701,27 +1703,28 @@ module.exports = function (app, express, Schema, __DIR__) {
 					p4: _concepts[i].concept
 				};
 				var _consecuent = Events.ChainGetOne(_rules.premises, _value);
-				console.log(_consecuent);
 				if(_consecuent.q3){
 					_value = Object.assign(_value, _consecuent);
 					var _consecuents = Events.ChainGetAll(_RULES_ADD.premises, _value);
-					for (var j = 0, m = _consecuents.length; j<m; j++){
-						if(_consecuents[j].q5){
-							var isAdd = true;
-							for(var k = 0, u = _cognitions.length; k < u; k++){
-								if (_consecuents[j].q5 == _cognitions[k]._id.toString()){
-									isAdd = false;
-									break;
-								}
+					for(var k = 0, u = _cognitions.length; k < u; k++){
+						var isAdd = true;
+						for (var j = 0, m = _consecuents.length; j < m; j++){
+							if (_consecuents[j].q5 == _cognitions[k]._id.toString()){
+								isAdd = false;
+								break;
 							}
-							if(isAdd){
-								var _inference = new Schema.inferences({
-									premise: `p1 == "${_morphology[i].key}"`,
-									consecuent: `q5 = "${_cognitions[k]._id}"`,
-									h: _radios[i] / _MAX
-								});
-								_RULES_ADD.premises.push(_inference);
+						}
+						if(isAdd){
+							var _h = 0.5;
+							if (_MAX > 0){
+								_h = _radios[i] / _MAX
 							}
+							var _inference = new Schema.inferences({
+								premise: `p1 == "${_morphology[i].key}"`,
+								consecuent: `q5 = "${_cognitions[k]._id}"`,
+								h: _h
+							});
+							_RULES_ADD.premises.push(_inference);
 						}
 					}
 					_RULES_ADD.save();
