@@ -169,7 +169,7 @@ structDb.LearningObjetive = mongoose.Schema({
     name: {type: String, trim: true, uppercase: true},
     level: {type: Number}
   },
-  cognitions: [structDb.Cognitions],
+	cognitions: [{ type: mongoose.Schema.ObjectId, ref: 'Cognitions' }],
   dateCreated: { type: Date, default: Date.now },
   words: []
 // words:[structDb.words]

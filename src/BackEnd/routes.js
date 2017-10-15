@@ -1124,12 +1124,23 @@ module.exports = function (app, express, Schema, __DIR__) {
 		}
 		if (!request.body.words){
 			request.body.words = [];
+		}else{
+			request.body.words = WORDS.SeparatorWords(request.body.words);
+			request.body.words = request.body.words.map((row) => {
+				return row.toUpperCase();
+			})
+		}
+		if (!request.body.is_correct){
+			request.body.is_correct = true;
+		}else{
+			request.body.is_correct = request.body.is_correct == "true";			
 		}
 		var _words = WORDS.SeparatorWords(request.body.description);
 		var _concepts = [], _pending = [],
 				_radios = [], _morpholy = [],
 				_conditions = [], _cognitions = [],
-				_domains = [], _levels = [];
+				_domains = [], _levels = [], _concepts_keywords = [],
+				_verbs = [];
 		Schema.LearningObjetive.findOne({ name: request.body.name }).then((row) => {
 			if (row) {
 				throw new ValidatorException('Ya existe un objetivo con el mismo nombre!')
@@ -1206,6 +1217,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 				 * q5: funciones cognitivas
 				 * q6: dominios
 				 * q7: niveles
+				 * q8: errores
 				*/
 				eventTaxon = new Schema.events({
 					name: 'KEYWORDS-IS',
@@ -1239,9 +1251,13 @@ module.exports = function (app, express, Schema, __DIR__) {
 				var _consecuent = Events.ChainGetOne(event.premises, _value);
 				if (_consecuent.q1){
 					request.body.words.push(_morpholy[i].key);
+					_concepts_keywords.push(_morpholy[i]);
 				}
 				if (_consecuent.q2){
-					_verbs.push(_morpholy[i].key);
+					_verbs.push({
+						word: _morpholy[i],
+						concept: _concepts[i]
+					});
 				}
 				if (_consecuent.q3){
 					_verbs.push(_morpholy[i].key);
@@ -1267,9 +1283,74 @@ module.exports = function (app, express, Schema, __DIR__) {
 							 h: _consecuents[j].h
 						});
 					}
+					if (_consecuents[j].q8 && _consecuents[j].h >= 0.5){
+						throw new ValidatorException(_consecuents[j].q8);
+					}
+				}
+				var _domain, _level;
+			}
+			if (_domains.length > 0){
+				var _max = 0;
+				for(var i = 0, n = _domains.length; i < n; i++){
+					if(max < _domains[i].h){
+						_domain = _domains[i]._id;
+						max = _domains[i].h;
+					}
 				}
 			}
-			throw new ValidatorException("No vale la pena vivir!");
+			if(request.body.domain){
+				_domain = request.body.domain;
+			}
+			if (_levels.length > 0){
+				var _max = 0;
+				for(var i = 0, n = _levels.length; i < n; i++){
+					if(max < _levels[i].h){
+						_level = _levels[i]._id;
+						max = _levels[i].h;
+					}
+				}
+			}
+			if(request.body.domain){
+				_domain = request.body.domain;
+			}
+			if(request.body.level){
+				_level = request.body.level;
+			}
+			/*for(var i = 0, n = _verbs.length; i<n; i++){
+				for (var j = 0, m = _verbs[i].concepts.length; j < m; j++) {
+					var _row = _verbs[i].concepts[j];
+					if (_row.key == WORDS.CONCEPTS.CLASS
+						|| _row.value == WORDS.CLASS_GRAMATICAL.VERB) {
+					}
+				}
+			}*/
+			if (!_domain || !_level){
+				throw new ValidatorException("No existe una acción observable");
+			}
+			if (!request.body.is_correct){
+				for(var i = 0, n = request.body.words.length; i<n; i++){
+					var _inference = new Schema.inferences({
+						premise: `p1 == "${request.body.words[i]}"`,
+						consecuent: `q1 = false; q2 = false; q3 = false`,
+						h: 1
+					});
+					event.premises.push(_inference);
+				}
+				console.log(event);
+				event.save();
+				/*
+				var _inference = new Schema.inferences({
+					premise: `this.isContaint(p1, ${JSON.stringify(request.body.words)})`,
+					consecuent: `q8 = "El objetivo no es factible.
+					Los Objetivos de Aprendizaje deben describir lo que el estudiante
+					pueda llevar a cabo con el tiempo y los recursos disponibles"`,
+					//consecuent: `q6 = "${_domain}; q7 = "${_level}"`,
+					h:0
+				});*/
+				throw new ValidatorException("Anulado inserción de objetivo por el usuario!. Ajustes aplicados");
+			}
+			console.log(_conditions, _cognitions, _level, _domain, request.body.words);
+			throw new ValidatorException("Aun no estamos en condiciones de responder!");
 			return _morpholy;
 		})
 		.then((data) => {

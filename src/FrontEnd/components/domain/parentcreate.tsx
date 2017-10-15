@@ -66,6 +66,7 @@ export class ParentCreate extends FormUtils<Props.objetiveView, {}>{
     }
     values.domain = this.props.routeParams.domain;
     values.level = this.props.routeParams.level;
+    values.is_correct = !!values.is_correct;
     ajax({
 			method:"POST",
 	        url: `${window._BASE}/v1/knowedge/objetives/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
@@ -130,7 +131,7 @@ export class ParentCreate extends FormUtils<Props.objetiveView, {}>{
               <label htmlFor="interprete" className="label static">
                 ¿Objetivo correcto?
               </label>
-             <label htmlFor="interprete" className="mdl-switch mdl-js-switch">
+              <label htmlFor="is_correct" className="mdl-switch mdl-js-switch">
                <input type="checkbox" id="is_correct" className="mdl-switch__input" onChange={(e: any) => { this.getRadioButton(e) }} />
                <span className="mdl-switch__label">No/Si</span>
              </label>
