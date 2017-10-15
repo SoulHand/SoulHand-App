@@ -1263,7 +1263,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 				if (_consecuent.q3){
 					_verbs.push(_morpholy[i].key);
 				}
-				if (!_consecuent) {
+				if (!_consecuent && request.body.is_correct) {
 					var _q1 = false, _q2 = false;
 					for (var j = 0, u = _morpholy[i].concepts.length; j < u; j++) {
 						var _concept = _morpholy[i].concepts[j];
@@ -1294,7 +1294,8 @@ module.exports = function (app, express, Schema, __DIR__) {
 									{ "levels.words": concept._id}
 								]
 							}),
-							Schema.Cognitions.findOne({ words: concept._id})
+							Schema.Cognitions.findOne({ words: concept._id}),
+							Schema.Courses.findOne({ words: concept._id})
 						]).then((rows) => {
 							var _q3 = false;
 							for(var k = 0, m = rows.length; k < m; k++){
