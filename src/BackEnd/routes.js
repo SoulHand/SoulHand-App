@@ -1178,7 +1178,6 @@ module.exports = function (app, express, Schema, __DIR__) {
 			var _ranges = rows[1], _count = rows[2];
 			_concepts = rows[0];
 			for(var i = 0, n = _ranges.length; i<n; i++){
-				console.log(_ranges[i], _count);
 				_radios[i] = 0;
 				if(!_ranges[i]){
 					continue;
@@ -1264,6 +1263,55 @@ module.exports = function (app, express, Schema, __DIR__) {
 				if (_consecuent.q3){
 					_verbs.push(_morpholy[i].key);
 				}
+				if (!_consecuent) {
+					var _q1 = false, _q2 = false;
+					for (var j = 0, u = _morpholy[i].concepts.length; j < u; j++) {
+						var _concept = _morpholy[i].concepts[j];
+						switch (_concept.key){
+							case WORDS.CONCEPTS.CLASS:
+								var _consecuent;
+								switch (_concept.value){
+									case WORDS.CLASS_GRAMATICAL.VERB:
+										q2 = true;
+										q1 = true;
+									break;
+									case WORDS.CLASS_GRAMATICAL.ADJECT:
+									case WORDS.CLASS_GRAMATICAL.SUSTANT:
+										q1 = true;
+									break;
+								}
+							break;
+							default:
+								continue;
+							break;
+						}
+					}
+					((key, concept, q1, q2) => {
+						Promise.all([
+							Schema.domainsLearning.findOne({
+								$or: [
+									{ words: concept._id},
+									{ "levels.words": concept._id}
+								]
+							}),
+							Schema.Cognitions.findOne({ words: concept._id})
+						]).then((rows) => {
+							var _q3 = false;
+							for(var k = 0, m = rows.length; k < m; k++){
+								_q3 = _q3 || !!rows;
+							}
+							var _inference = new Schema.inferences({
+								premise: `p1 == "${key.key}"`,
+								consecuent: `q1 = ${q1}; q2 = ${q2}; q3 = ${_q3}`,
+								h: 1
+							});
+							event.premises.push(_inference);
+							return event.save();
+						});
+
+					})(_morpholy[i], _concepts[i], _q1, _q2 )
+				}
+				event.save();
 				_value = Object.assign(_value, _consecuent);
 				var _consecuents = Events.ChainGetAll(eventTaxon.premises, _value);
 				for(var j = 0, u = _consecuents.length; j < u; j++){
