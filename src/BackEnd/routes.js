@@ -1175,7 +1175,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 			return Promise.all([querys, Promise.all(_ranges), Schema.LearningObjetive.count()]);
 		})
 		.then((rows) => {
-			var _ranges = rows[1], _count = rows[2];
+			var _ranges = rows[1], _count = rows[2], _MAX = 0;
 			_concepts = rows[0];
 			for(var i = 0, n = _ranges.length; i<n; i++){
 				_radios[i] = 0;
@@ -1185,6 +1185,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 				if(_count >  0){
 					_radios[i] = _ranges[i] /  _count;
 				}
+				_MAX = Math.max(_MAX, _radios[i]);
 			}
 			return Promise.all([
 				Schema.events.findOne({ name: 'KEYWORDS-SEARCH' }),
@@ -1297,17 +1298,20 @@ module.exports = function (app, express, Schema, __DIR__) {
 							Schema.Cognitions.findOne({ words: concept._id}),
 							Schema.Courses.findOne({ words: concept._id})
 						]).then((rows) => {
-							var _q3 = false;
+							var _q3 = false, _h = 0.5;
 							for(var k = 0, m = rows.length; k < m; k++){
 								_q3 = _q3 || !!rows;
 							}
 							if(_q3){
 								q1 = true;
 							}
+							if (_MAX > 0){
+								_h = _radios[i] / _MAX;
+							}
 							var _inference = new Schema.inferences({
 								premise: `p1 == "${key.key}"`,
 								consecuent: `q1 = ${q1}; q2 = ${q2}; q3 = ${_q3}`,
-								h: 1
+								h: _h
 							});
 							event.premises.push(_inference);
 							return event.save();
@@ -1697,14 +1701,15 @@ module.exports = function (app, express, Schema, __DIR__) {
 					p4: _concepts[i].concept
 				};
 				var _consecuent = Events.ChainGetOne(_rules.premises, _value);
+				console.log(_consecuent);
 				if(_consecuent.q3){
 					_value = Object.assign(_value, _consecuent);
-					var _consecuent = Events.ChainGetAll(_RULES_ADD.premises, _value);
-					for (var j = 0, m = _consecuent.length; j<m; j++){
-						if(_consecuent[j].q5){
+					var _consecuents = Events.ChainGetAll(_RULES_ADD.premises, _value);
+					for (var j = 0, m = _consecuents.length; j<m; j++){
+						if(_consecuents[j].q5){
 							var isAdd = true;
 							for(var k = 0, u = _cognitions.length; k < u; k++){
-								if (_consecuent[j].q5 == _cognitions[k]._id.toString()){
+								if (_consecuents[j].q5 == _cognitions[k]._id.toString()){
 									isAdd = false;
 									break;
 								}
