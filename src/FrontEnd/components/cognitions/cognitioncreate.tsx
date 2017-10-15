@@ -119,16 +119,12 @@ import {ajax} from 'jquery'
    render(){
      if(!this.init){
        return (
-         <ModalApp success={(e: any) => {console.warn("Esperando")}} title="Aceptar"/>
+         <ModalApp success={(e: any) => {console.warn("Esperando")}}/>
        );
      }
      return(
-       <ModalApp success={(e: any) => { this.send(e) }} title="Aceptar">
+       <ModalApp success={(e: any) => { this.send(e) }} label="Aceptar" title="Añadir una función cognitiva">
            <div className="mdl-grid mdl-color--white">
-              <div className="mdl-cell mdl-cell--12-col">
-                <h3 className="mdl-typography--text-center display-1">Crear función cognitiva</h3>
-                <p>Las funciones cognitivas permiten verbalizar acciones realizadas por el cerebro, permitiendo así medir el tiempo y frecuencia de respuesta ante ciertas actividades.</p>
-              </div>
              <div className="mdl-cell mdl-cell--6-col">
                <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.name) ? 'is-invalid' : '')}>
                  <input className="mdl-textfield__input" type="text" id="name" onChange={(e: any) => { this.getFields(e) }} />

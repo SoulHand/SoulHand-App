@@ -52,7 +52,7 @@ import { HeaderFree } from '../app/header'
      }
      return (
        <div className="mdl-layout mdl-layout--fixed-header">
-         <HeaderFree title={"Objetivo de aprendizaje" + this.state.name} />
+         <HeaderFree title={"Objetivo de aprendizaje " + this.state.name} />
          <div id="progress" className="mdl-progress mdl-js-progress mdl-progress__indeterminate progress hiden" />
          <div className="demo-ribbon mdl-color--teal-400" />
          <main className="demo-main mdl-layout__content">

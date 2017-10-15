@@ -922,6 +922,9 @@ module.exports = function (app, express, Schema, __DIR__) {
 		Schema.domainsLearning.findOne({name: request.params.domain.toUpperCase()})
 		.populate("levels.words")
     .then((data) => {
+			if(!data){
+				throw new ValidatorException("No existe el dominio!");
+			}
       for (var i = 0, n = data.levels.length; i < n; i++) {
         if (data.levels[i]._id.toString() === request.params.id.toString()) {
           return data.levels[i]
