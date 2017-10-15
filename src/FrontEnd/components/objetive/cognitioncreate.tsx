@@ -41,7 +41,7 @@ import {ajax} from 'jquery'
             _button.disabled = false;
           },
 	        success:(data:any)=>{
-	        	this.props.router.replace(`/activity/get/${this.props.routeParams.activity}`);
+            this.props.router.replace(`/objetives/get/${data._id}`);
 	        },
 	        error:(data:any)=>{
 	        	var state: CRUD.codeError = data.responseJSON;

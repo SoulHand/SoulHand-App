@@ -126,7 +126,7 @@ import { HeaderFree } from '../app/header'
               <li className="mdl-menu__item" onClick={(e) => {
                  this.props.router.push(`/objetives/get/${this.props.routeParams.id}/cognition`);
               }}>
-                 <i className="material-icons">explore</i> Asignar objetivos de aprendizaje
+                 <i className="material-icons">explore</i> Asignar funciones cognitivas
               </li>
              </ul>
            </div>
