@@ -74,7 +74,7 @@ declare let componentHandler: any;
 declare let APP: any;
 
 declare module "material-datetime-picker"{
-	//export function constructor(config: any): void
+	export function constructor(config: any): void
 	export function on(event: string, callback: Function): void
 }
 

@@ -4,10 +4,13 @@ import {Link, withRouter} from 'react-router'
 import * as List from '../profiles/activity'
 import {ObjetiveActivity} from '../cards/objetiveactivity'
 import {StudentActivity} from '../cards/studentactivity'
+import { App, ModalFree } from '../app'
+import { HeaderFree } from '../app/header'
 
 @withRouter
 export class View extends React.Component <Props.teacherView, CRUD.activity>{
   public session: User.session;
+  public init: boolean = false;
   constructor(props:Props.teacherView){
     super(props)
     let str = localStorage.getItem("session");
@@ -24,7 +27,7 @@ export class View extends React.Component <Props.teacherView, CRUD.activity>{
         data:null,
         crossDomain:true,
         success:(data: CRUD.activity)=>{
-          this.props.router.replace('/students');
+          this.props.router.replace('/activity');
         }
   });
   }
@@ -79,20 +82,101 @@ export class View extends React.Component <Props.teacherView, CRUD.activity>{
       method:"GET",
       url: `${window._BASE}/v1/activities/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
       dataType: "json",
-      data:null
+      data:null,
+      beforeSend: () => {
+        window.progress.start();
+      },
+      complete: () => {
+        window.progress.done();
+      }
     });
     p1.done((activity: CRUD.activity) => {
+      this.init = true;
       this.setState(activity)
     });
   }
   render(){
-    if(!this.state){
+    if (!this.init) {
       return (
-        <div className="mdl-grid mdl-color--white demo-content">
-          <div className="mdl-spinner mdl-js-spinner is-active"></div>
-        </div>
+        <ModalFree />
       );
     }
+    return (
+      <div className="mdl-layout mdl-layout--fixed-header">
+        <HeaderFree title={this.state.name} menu={
+          [
+            <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn" key="BUTTON1">
+              <i className="material-icons">more_vert</i>
+            </button>
+            ,
+            <ul className="mdl-menu mdl-js-menu mdl-js-ripple effect mdl-menu--bottom-right" htmlFor="hdrbtn" key="hdrbtn12">
+              {this.state && this.state.isCompleted == false && (
+                <li className="mdl-menu__item" onClick={this.completed.bind(this)}>Completar Actividad</li>
+              )}
+              <li className="mdl-menu__item" onClick={(e) => { this.delete() }}>Eliminar</li>
+            </ul>
+          ]
+        }/>
+        <div id="progress" className="mdl-progress mdl-js-progress mdl-progress__indeterminate progress hiden" />
+        <div className="demo-ribbon mdl-color--teal-400" />
+        <main className="demo-main mdl-layout__content">
+          <div className="demo-container mdl-grid">
+            <div className="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--10-col">
+              <List.Activity activity={this.state} />
+            </div>
+          </div>
+          <div className="demo-content">
+            <span className="mdl-typography--title">Objetivos a completar</span>
+            <ul className="demo-list-three mdl-list">
+              {
+                this.state.objetives.map((row) => {
+                // <ObjetiveActivity key={row._id} objetive={row} session={this.session} delete={this.remove.bind(this)} activity={this.state._id} />
+                if (!row.domain || !row.level) {
+                  return null;
+                }
+                return (
+                  <li className="mdl-list__item mdl-list__item--three-line" key={row._id}>
+                    <span className="mdl-list__item-primary-content">
+                      <i className="material-icons mdl-list__item-avatar">account_circle</i>
+                      <span>{row.name}</span>
+                      <span className="mdl-list__item-text-body">
+                        {row.description}
+                      </span>
+                    </span>
+                    <span className="mdl-list__item-secondary-content">
+                      <div className="mdl-grip">
+                        <div onClick={(e) => {
+                          this.props.router.replace(`/objetives/get/${row._id}`);
+                        }} id={`view1${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>visibility</div>
+                        <div className="mdl-tooltip" data-mdl-for={`view1${row._id}`}>
+                          Ver detalles
+                            </div>
+                        <div id={`row1delete${row._id}`} className="icon material-icons" onClick={this.deleteObjetive.bind(this, [row._id])} style={{ cursor: "pointer" }}>delete</div>
+                        <div className="mdl-tooltip" data-mdl-for={`row1delete${row._id}`}>
+                          Eliminar
+                        </div>
+                      </div>
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+          <div className="fixed">
+            <button id="add-menu" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></button>
+            <ul className="mdl-menu mdl-menu--top-right mdl-js-menu mdl-js-ripple-effect"
+              data-mdl-for="add-menu">
+              <li className="mdl-menu__item" onClick={(e) => {
+                this.props.router.replace(`/objetives/create/${this.props.routeParams.id}`);
+              }}><i className="material-icons">explore</i> Añadir objetivos</li>
+              <li className="mdl-menu__item" onClick={(e) => {
+                this.props.router.replace(`/activity/set/${this.props.routeParams.id}/student`);
+              }}><i className="material-icons">face</i> Añadir alumnos</li>
+            </ul>
+          </div>
+        </main>
+      </div>
+    );
     return(
       <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
       <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
@@ -106,17 +190,14 @@ export class View extends React.Component <Props.teacherView, CRUD.activity>{
             </button>
           )}
           <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
-            {this.state && this.state.isCompleted == false && (
-              <li className="mdl-menu__item" onClick={this.completed.bind(this)}>Completar Actividad</li>
-            )}            
-            <li className="mdl-menu__item" onClick={(e)=>{this.delete()}}>Eliminar</li>
+            
           </ul>
         </div>
       </header>
         <main className="mdl-layout__content mdl-color--white-100">
           <div className="mdl-grid demo-content">
             <div className="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
-              <List.Activity activity={this.state} />
+              
             </div>
             <div className="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col mdl-grid">
               <h3 className="mdl-typografy mdl-text-center">Objetivos asignados</h3>
@@ -131,40 +212,7 @@ export class View extends React.Component <Props.teacherView, CRUD.activity>{
                   </tr>
                 </thead>
                 <tbody>
-                  {this.state && this.state.objetives.map((row) => {
-                      // <ObjetiveActivity key={row._id} objetive={row} session={this.session} delete={this.remove.bind(this)} activity={this.state._id} />
-                      if (!row.domain || !row.level) {
-                        return null;
-                      }
-                      console.log(row);
-                      return (
-                        <tr key={row._id} id={row._id}>
-                          <td className="mdl-data-table__cell--non-numeric" title={row.name}><span>{row.name}</span></td>
-                          <td title={row.domain.name}><span>{row.domain.name}</span></td>
-                          <td>
-                            <span id={`viewtop1${row._id}`}>{row.level.level}</span>
-                            <div className="mdl-tooltip" data-mdl-for={`viewtop1${row._id}`}>
-                              {row.level.name}
-                            </div>
-                          </td>
-                          <td>
-                            {row.exp}
-                          </td>
-                          <td>
-                            <div onClick={(e) => {
-                              this.props.router.replace(`/objetives/get/${row._id}`);
-                            }} id={`view1${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>visibility</div>
-                            <div className="mdl-tooltip" data-mdl-for={`view1${row._id}`}>
-                              Ver detalles
-                            </div>
-                            <div id={`row1delete${row._id}`} className="icon material-icons" onClick={this.deleteObjetive.bind(this, [row._id])} style={{ cursor: "pointer" }}>delete</div>
-                            <div className="mdl-tooltip" data-mdl-for={`row1delete${row._id}`}>
-                              Eliminar
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                  })}
+                  
                 </tbody>
               </table>
             </div>
@@ -218,18 +266,7 @@ export class View extends React.Component <Props.teacherView, CRUD.activity>{
               </table>
             </div>
           </div>
-          <div className="fixed">
-            <button id="add-menu" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></button>
-            <ul className="mdl-menu mdl-menu--top-right mdl-js-menu mdl-js-ripple-effect"
-              data-mdl-for="add-menu">
-              <li className="mdl-menu__item" onClick={(e) => {
-                this.props.router.replace(`/objetives/create/${this.props.routeParams.id}`);
-              }}><i className="material-icons">explore</i> Añadir objetivos</li>
-              <li className="mdl-menu__item" onClick={(e) => {
-                this.props.router.replace(`/activity/set/${this.props.routeParams.id}/student`);
-              }}><i className="material-icons">face</i> Añadir alumnos</li>
-            </ul>
-          </div>
+          
         </main>
       </div>
     );
