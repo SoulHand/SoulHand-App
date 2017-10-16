@@ -3,10 +3,13 @@ import {ajax} from 'jquery'
 import {Link, withRouter} from 'react-router'
 import {Teacher} from '../cards/teacher'
 import * as List from '../profiles/teacher'
+import { App, ModalFree } from '../app'
+import { HeaderFree } from '../app/header'
 
 @withRouter
  export class View extends React.Component <Props.teacherView, Obj.teacher>{
    public session: User.session;
+   public init: boolean = false;
    constructor(props:Props.teacherView){
      super(props)
      let str = localStorage.getItem("session");
@@ -35,49 +38,57 @@ import * as List from '../profiles/teacher'
        method:"GET",
        url: `${window._BASE}/v1/people/teachers/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
-       data:null
+       data:null,
+       beforeSend: () => {
+         window.progress.start();
+       },
+       complete: () => {
+         window.progress.done();
+       }
      });
      p1.done((teacher: People.teacher) => {
+       this.init = true;
        this.setState({
          teacher: teacher
        })
      });
    }
    render(){
-     let body = (
-       <div className="mdl-grid mdl-color--white demo-content">
-          <div className="mdl-spinner mdl-js-spinner is-active"></div>
-       </div>
-     );
-     if(this.state.teacher){
-       body = (<List.Teacher teacher={this.state.teacher}/>);
+     if (!this.init) {
+       return (
+         <ModalFree />
+       );
      }
-     return(
-       <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-       <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-        <div className="mdl-layout__drawer-button"><Link to="/teachers"><i className="material-icons">&#xE5C4;</i></Link></div>
-         <div className="mdl-layout__header-row">
-           <span className="mdl-layout-title">SoulHand</span>
-           <div className="mdl-layout-spacer"></div>
-           {this.state.teacher && (
-             <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
+     return (
+       <div className="mdl-layout mdl-layout--fixed-header">
+         <HeaderFree title={this.state.student.data.name} menu={
+           [
+             <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn" key="BUTTON1">
                <i className="material-icons">more_vert</i>
              </button>
-           )}
-           <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
-             <li className="mdl-menu__item" onClick={(e) => {
-                 this.props.router.replace(`/teachers/edit/${this.props.routeParams.id}`);
+             ,
+             <ul className="mdl-menu mdl-js-menu mdl-js-ripple effect mdl-menu--bottom-right" htmlFor="hdrbtn" key="hdrbtn12">
+               <li className="mdl-menu__item" onClick={(e) => {
+                 this.props.router.push(`/teachers/edit/${this.props.routeParams.id}`);
                }}>Editar</li>
-             <li className="mdl-menu__item" onClick={(e) => {
-                 this.props.router.replace(`/teachers/grade/edit/${this.props.routeParams.id}`);
-             }}>Asignar grado</li>
-             <li className="mdl-menu__item" onClick={(e)=>{this.delete()}}>Eliminar</li>
-           </ul>
-         </div>
-       </header>
-          <main className="mdl-layout__content mdl-color--white-100">
-            {body}
-          </main>
+               <li className="mdl-menu__item" onClick={(e) => {
+                 this.props.router.push(`/teachers/grade/edit/${this.props.routeParams.id}`);
+               }}>Asignar grado</li>
+               <li className="mdl-menu__item" onClick={(e) => { this.delete() }}>Eliminar</li>
+             </ul>
+           ]
+         } />
+         <div id="progress" className="mdl-progress mdl-js-progress mdl-progress__indeterminate progress hiden" />
+         <div className="demo-ribbon mdl-color--teal-400" />
+         <main className="demo-main mdl-layout__content">
+           <div className="demo-container mdl-grid">
+             <div className="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--10-col">
+               <List.Teacher teacher={this.state.teacher} />
+             </div>
+            </div>
+            <div className="mdl-grid demo-content">
+            </div>
+         </main>
        </div>
      );
    }

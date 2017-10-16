@@ -2,13 +2,14 @@ import * as React from 'react'
 import {withRouter} from 'react-router'
 import {Link} from 'react-router'
 import {FormUtils} from '../formutils'
+import { ModalApp } from "../app"
 import {ajax} from 'jquery'
 
 @withRouter
  export class ParentCreate extends FormUtils<{router: any}, {}>{
    public fields:compat.Map={
  		dni:{
- 			match:validator.matches(/^[0-9]{5,11}$/i),
+ 			match:validator.matches(/^[0-9]{7,11}$/i),
  			value:null,
  			required:true
  		},
@@ -56,6 +57,7 @@ import {ajax} from 'jquery'
   send(event: any){
     var values: compat.Map = {};
     var error = false;
+    var _button = event.target;
     for(var i in this.fields){
       this.state.error[i] = !super.validate(this.fields[i].value, i);
       values[i] = this.fields[i].value;
@@ -71,20 +73,27 @@ import {ajax} from 'jquery'
 			method:"POST",
 	        url: `${window._BASE}/v1/people/teachers/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:values,
+          data:values,
+          beforeSend: () => {
+            window.progress.start();
+            _button.disabled = true;
+          },
+          complete: () => {
+            window.progress.done();
+            _button.disabled = false;
+          },
 	        success:(data:any)=>{
 	        	this.props.router.replace('/teachers');
 	        },
-	        error:(data:any)=>{
-	        	var state: CRUD.codeError = data.responseJSON;
+          error: (data: any) => {
+            var state: CRUD.codeError = data.responseJSON;
             var config = {
               message: state.message,
-              timeout: 2000
+              timeout: window.settings.alert.delay
             };
             var message: any = document.querySelector('.mdl-js-snackbar')
-            console.log(message);
             message.MaterialSnackbar.showSnackbar(config);
-	        }
+          }
 		});
   }
    componentDidMount(){
@@ -92,83 +101,70 @@ import {ajax} from 'jquery'
    }
    render(){
      return(
-       <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-       <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-        <div className="mdl-layout__drawer-button"><Link to="/teachers"><i className="material-icons">&#xE5C4;</i></Link></div>
-         <div className="mdl-layout__header-row">
-           <span className="mdl-layout-title">SoulHand</span>
-           <div className="mdl-layout-spacer"></div>
-           <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" onClick={(e:any)=>{this.send(e)}}>
-             <i className="material-icons">check</i>
-           </button>
-
-         </div>
-       </header>
-          <main className="mdl-layout__content mdl-color--white-100">
-          <div className="mdl-grid mdl-color--white demo-content">
-               <div className="mdl-cell mdl-cell--6-col">
-                <div className="mdl-grid">
-                   <div className="mdl-cell mdl-cell--2-col">
-                   <div className={"mdl-textfield mdl-js-textfield "+((this.state.error.dni) ? 'is-invalid' :'')}>
-                     <select className="mdl-textfield__input" id="nacionality" onChange={(e:any)=>{this.getFields(e)}}>
-                       <option value="V">V</option>
-                       <option value="E">E</option>
-                     </select>
-                    </div>
-                   </div>
-                   <div className="mdl-cell mdl-cell--4-col">
-                     <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.dni) ? 'is-invalid' :'')}>
-                       <input className="mdl-textfield__input" type="text" id="dni" pattern="^[0-9]{5,11}$" onChange={(e:any)=>{this.getFields(e)}}/>
-                       <label className="mdl-textfield__label" htmlFor="dni">Cedula*</label>
-                       <span className="mdl-textfield__error">Es necesaria un cedula valida</span>
-                     </div>
-                   </div>
-                </div>
-               </div>
-               <div className="mdl-cell mdl-cell--6-col">
-                  <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.name) ? 'is-invalid' :'')}>
-                   <input className="mdl-textfield__input" type="text" id="name" onChange={(e:any)=>{this.getFields(e)}}/>
-                   <label className="mdl-textfield__label" htmlFor="name">Nombre y Apellido*</label>
-                   <span className="mdl-textfield__error">Es necesaria un nombre valido</span>
+       <ModalApp success={(e: any) => { this.send(e) }} label="Aceptar" title="Añadir un dominio de aprendizaje">
+         <div className="mdl-grid mdl-color--white">
+           <div className="mdl-cell mdl-cell--6-col">
+             <div className="mdl-grid">
+               <div className="mdl-cell mdl-cell--2-col">
+                 <div className={"mdl-textfield mdl-js-textfield " + ((this.state.error.dni) ? 'is-invalid' : '')}>
+                   <select className="mdl-textfield__input" id="nacionality" onChange={(e: any) => { this.getFields(e) }}>
+                     <option value="V">V</option>
+                     <option value="E">E</option>
+                   </select>
                  </div>
                </div>
-               <div className="mdl-cell mdl-cell--6-col">
-                <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.tel) ? 'is-invalid' :'')}>
-                   <input className="mdl-textfield__input" type="tel" id="tel" pattern='^[+]?([\\d]{0,3})?[\\(\\.\\-\\s]?(([\\d]{1,3})[\\)\\.\\-\\s]*)?(([\\d]{3,5})[\\.\\-\\s]?([\\d]{4})|([\\d]{2}[\\.\\-\\s]?){4})$' onChange={(e:any)=>{this.getFields(e)}}/>
-                   <label className="mdl-textfield__label" htmlFor="tel">Telefono*</label>
-                   <span className="mdl-textfield__error">Es necesaria un telefono</span>
+               <div className="mdl-cell mdl-cell--4-col">
+                 <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.dni) ? 'is-invalid' : '')}>
+                   <input className="mdl-textfield__input" type="text" id="dni" pattern="^[0-9]{5,11}$" onChange={(e: any) => { this.getFields(e) }} />
+                   <label className="mdl-textfield__label" htmlFor="dni">Cedula*</label>
+                   <span className="mdl-textfield__error">Es necesaria un cedula valida</span>
                  </div>
-               </div>
-               <div className="mdl-cell mdl-cell--6-col">
-                <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.birthdate) ? 'is-invalid' :'')}>
-                   <input className="mdl-textfield__input" type="text" id="birthdate" pattern="^[0-9]{2}\-[0-9]{2}-[0-9]{4}$" onChange={(e:any)=>{this.getFields(e)}}/>
-                   <label className="mdl-textfield__label" htmlFor="birthdate">Fecha de nacimiento*</label>
-                   <span className="mdl-textfield__error">Es necesaria una fecha en formato d-m-Y</span>
-                 </div>
-               </div>
-               <div className="mdl-cell mdl-cell--6-col">
-                 <label className="label static" htmlFor="genero">Genero*</label>
-                 <select className="mdl-textfield__input" id="genero" onChange={(e:any)=>{this.getFields(e)}}>
-                   <option value="">Seleccione una opción</option>
-                   <option value="MASCULINO">MASCULINO</option>
-                   <option value="FEMENINO">FEMENINO</option>
-                 </select>
-                 {(this.state.error.genero) && (
-                   <span style={{color: "rgb(222, 50, 38)"}}>Seleccione un genero</span>
-                 )}
-               </div>
-               <div className="mdl-cell mdl-cell--6-col">
-                  <label htmlFor="interprete" className="label static">
-                    Interprete
-                  </label>
-                 <label htmlFor="interprete" className="mdl-switch mdl-js-switch">
-                   <input type="checkbox" id="interprete" className="mdl-switch__input" onChange={(e:any)=>{this.getRadioButton(e)}}/>
-                   <span className="mdl-switch__label">No/Si</span>
-                </label>
                </div>
              </div>
-          </main>
-       </div>
+           </div>
+           <div className="mdl-cell mdl-cell--6-col">
+             <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.name) ? 'is-invalid' : '')}>
+               <input className="mdl-textfield__input" type="text" id="name" onChange={(e: any) => { this.getFields(e) }} />
+               <label className="mdl-textfield__label" htmlFor="name">Nombre y Apellido*</label>
+               <span className="mdl-textfield__error">Es necesaria un nombre valido</span>
+             </div>
+           </div>
+           <div className="mdl-cell mdl-cell--6-col">
+             <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.tel) ? 'is-invalid' : '')}>
+               <input className="mdl-textfield__input" type="tel" id="tel" pattern='^[+]?([\\d]{0,3})?[\\(\\.\\-\\s]?(([\\d]{1,3})[\\)\\.\\-\\s]*)?(([\\d]{3,5})[\\.\\-\\s]?([\\d]{4})|([\\d]{2}[\\.\\-\\s]?){4})$' onChange={(e: any) => { this.getFields(e) }} />
+               <label className="mdl-textfield__label" htmlFor="tel">Telefono*</label>
+               <span className="mdl-textfield__error">Es necesaria un telefono</span>
+             </div>
+           </div>
+           <div className="mdl-cell mdl-cell--6-col">
+             <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.birthdate) ? 'is-invalid' : '')}>
+               <input className="mdl-textfield__input" type="text" id="birthdate" pattern="^[0-9]{2}\-[0-9]{2}-[0-9]{4}$" onChange={(e: any) => { this.getFields(e) }} />
+               <label className="mdl-textfield__label" htmlFor="birthdate">Fecha de nacimiento*</label>
+               <span className="mdl-textfield__error">Es necesaria una fecha en formato d-m-Y</span>
+             </div>
+           </div>
+           <div className="mdl-cell mdl-cell--6-col">
+             <label className="label static" htmlFor="genero">Genero*</label>
+             <select className="mdl-textfield__input" id="genero" onChange={(e: any) => { this.getFields(e) }}>
+               <option value="">Seleccione una opción</option>
+               <option value="MASCULINO">MASCULINO</option>
+               <option value="FEMENINO">FEMENINO</option>
+             </select>
+             {(this.state.error.genero) && (
+               <span style={{ color: "rgb(222, 50, 38)" }}>Seleccione un genero</span>
+             )}
+           </div>
+           <div className="mdl-cell mdl-cell--6-col">
+             <label htmlFor="interprete" className="label static">
+               Interprete
+                  </label>
+             <label htmlFor="interprete" className="mdl-switch mdl-js-switch">
+               <input type="checkbox" id="interprete" className="mdl-switch__input" onChange={(e: any) => { this.getRadioButton(e) }} />
+               <span className="mdl-switch__label">No/Si</span>
+             </label>
+           </div>
+         </div>
+       </ModalApp>
      );
    }
  }

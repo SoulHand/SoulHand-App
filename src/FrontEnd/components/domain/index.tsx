@@ -9,7 +9,6 @@ import {CognitionView} from './cognition'
 import { DomainCreate } from './domaincreate'
 import {ParentCreate} from './parentcreate'
 import { LevelCreate } from './levelcreate'
-import {Menu} from '../app/menu'
 
 
 @withRouter
