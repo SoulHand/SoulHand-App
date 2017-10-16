@@ -1,20 +1,22 @@
 import * as React from 'react'
 import {ajax} from 'jquery'
-import {Link} from 'react-router'
+import { Link, withRouter } from 'react-router'
 import * as Cards from '../cards/matter'
 import {ParentCreate} from './parentcreate'
 import {View} from './view'
 import {Edit} from './edit'
-import {Menu} from '../app/menu'
+import { App, ModalSearch } from '../app'
 
-
- export class Matter extends React.Component <{}, {}>{
+@withRouter
+ export class Matter extends React.Component <{router: any}, {}>{
    public session: User.session;
-   public matters: Array<CRUD.grade>=[];
-   state: { matters:  Array<CRUD.grade>} = {
+   public deleteId: string = "";
+   public matters: Array<CRUD.course>=[];
+   state: { matters:  Array<CRUD.course>} = {
      matters: []
    }
-   constructor(props:{}){
+   public init: boolean = false;
+   constructor(props:{router: any}){
      super(props)
      let str = localStorage.getItem("session");
      this.session = JSON.parse(str);
@@ -34,67 +36,118 @@ import {Menu} from '../app/menu'
    componentDidUpdate(){
      componentHandler.upgradeAllRegistered();
    }
+   show(id: string) {
+     var modal: any = document.getElementById("modal-delete");
+     this.deleteId = id;
+     if (!modal.showModal) {
+       window.dialogPolyfill.registerDialog(modal);
+     }
+     modal.showModal();
+   }
+   hiden() {
+     var modal: any = document.getElementById("modal-delete");
+     if (!modal.showModal) {
+       window.dialogPolyfill.registerDialog(modal);
+     }
+     this.deleteId = "";
+     modal.close();
+   }
    componentDidMount(){
      let p1 = ajax({
        method:"GET",
        url: `${window._BASE}/v1/courses/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
-       data:null
+       data:null,
+       beforeSend: () => {
+         window.progress.start();
+       },
+       complete: () => {
+         window.progress.done();
+       }
      });
-     p1.done((matters: Array<CRUD.grade>) => {
+     p1.done((matters: Array<CRUD.course>) => {
        this.matters = matters;
+       this.init = true;
        this.setState({
          matters: matters
        })
      });
    }
-   delete(teacher: People.teacher){
-     this.state.matters = this.matters.filter((row) => {
-       if (row._id === teacher._id) {
-         return false;
+   delete() {
+     ajax({
+       method: "DELETE",
+       url: `${window._BASE}/v1/courses/${this.deleteId}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       dataType: "json",
+       data: null,
+       crossDomain: true,
+       beforeSend: () => {
+         window.progress.start();
+       },
+       complete: () => {
+         window.progress.done();
+       },
+       success: (data: CRUD.grade) => {
+         this.state.matters = this.matters.filter((row) => {
+           if (row._id === data._id) {
+             return false;
+           }
+           return true;
+         })
+         this.hiden();
+         this.setState(this.state);
        }
-       return true;
-     })
-     this.setState(this.state);
+     });
    }
    render(){
-     return(
-       <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-         <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-           <div className="mdl-layout__header-row">
-             <span className="mdl-layout-title">SoulHand</span>
-             <div className="mdl-layout-spacer"></div>
-             <div className="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
-               <label className="mdl-button mdl-js-button mdl-button--icon" htmlFor="search">
-                 <i className="material-icons">search</i>
-               </label>
-               <div className="mdl-textfield__expandable-holder">
-                 <input className="mdl-textfield__input" type="text" id="search" onChange={(e:any)=>{this.Filter(e)}}/>
-                 <label className="mdl-textfield__label" htmlFor="search">Ingrese su consulta...</label>
-               </div>
-             </div>
-             <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
-               <i className="material-icons">more_vert</i>
-             </button>
-             <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
-               <li className="mdl-menu__item">A cerca de</li>
-               <li className="mdl-menu__item">Contacto</li>
-               <li className="mdl-menu__item">Información legal</li>
-             </ul>
-           </div>
-         </header>
-          <Menu/>
-          <main className="mdl-layout__content mdl-color--white-100">
-          <div className="mdl-grid demo-content">
-             {this.state.matters.map((row) => {
+     if (!this.init) {
+       return (
+         <App title="Palabras" />
+       );
+     }
+     return (
+       <ModalSearch filter={this.Filter.bind(this)} title="Áreas de aprendizaje" >
+         <ul className="demo-list-three mdl-list">
+           {
+             this.state.matters.map((row) => {
                return (
-               <Cards.Matter key={row._id} matter={row} session={this.session} delete={this.delete.bind(this)}/>
+                 <li className="mdl-list__item mdl-list__item--three-line" key={row._id}>
+                   <span className="mdl-list__item-primary-content">
+                     <i className="material-icons mdl-list__item-avatar">school</i>
+                     <span>{row.name}</span>
+                     <span className="mdl-list__item-text-body">
+                       {row.description}
+                     </span>
+                   </span>
+                   <span className="mdl-list__item-secondary-content">
+                     <div className="mdl-grip">
+                       <div onClick={(e) => {
+                         this.props.router.push(`/matters/get/${row._id}`);
+                       }} id={`view${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>visibility</div>
+                       <div className="mdl-tooltip" data-mdl-for={`view${row._id}`}>
+                         Ver
+                        </div>
+                       <div onClick={this.show.bind(this, row._id, "word")} id={`delete${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>delete</div>
+                       <div className="mdl-tooltip" data-mdl-for={`delete${row._id}`}>
+                         Eliminar
+                        </div>
+                     </div>
+                   </span>
+                 </li>
                );
-             })}
-             <Link to="/matters/create" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
-          </div>
-          </main>
-       </div>
+             })
+           }
+         </ul>
+         <Link to="/matters/create" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
+         <dialog className="mdl-dialog" id="modal-delete" key="modal-delete">
+           <div className="mdl-dialog__content mdl-dialog__actions--full-width">
+             ¿Desea eliminar el siguiente registro?
+                </div>
+           <div className="mdl-dialog__actions">
+             <button type="submit" className="mdl-button open" onClick={this.delete.bind(this)}>De acuerdo</button>
+             <button type="button" className="mdl-button close" onClick={this.hiden.bind(this)}>No estoy de acuerdo</button>
+           </div>
+         </dialog>
+       </ModalSearch>
      );
    }
  }

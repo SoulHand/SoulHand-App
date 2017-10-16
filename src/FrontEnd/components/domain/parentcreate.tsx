@@ -2,10 +2,11 @@ import * as React from 'react'
 import {withRouter} from 'react-router'
 import {Link} from 'react-router'
 import {FormUtils} from '../formutils'
+import { ModalApp } from "../app"
 import {ajax} from 'jquery'
 
 @withRouter
- export class ParentCreate extends FormUtils<{router: any}, {}>{
+export class ParentCreate extends FormUtils<Props.objetiveView, {}>{
    public fields:compat.Map={
  		name:{
  			match:(fn:string)=>{
@@ -20,14 +21,44 @@ import {ajax} from 'jquery'
  			},
  			value:null,
  			required:true
+ 		},
+ 		words:{
+ 			value:null,
+ 			required:true
+ 		},
+ 		is_correct:{
+       value:false,
+       required:true
+     },
+    is_observable:{
+ 			value:false,
+ 			required:true
  		}
  	};
   state: {error: compat.Map} = {
-    error:{}
+    error:{
+      error: null,
+      words: []
+    }
+  }
+  show() {
+    var modal: any = document.getElementById("confirm-error");
+    if (!modal.showModal) {
+      window.dialogPolyfill.registerDialog(modal);
+    }
+    modal.showModal();
+  }
+  hiden() {
+    var modal: any = document.getElementById("confirm-error");
+    if (!modal.showModal) {
+    }
+    window.dialogPolyfill.registerDialog(modal);
+    modal.close();
   }
   send(event: any){
     var values: compat.Map = {};
     var error = false;
+    var _button = event.target;
     for(var i in this.fields){
       this.state.error[i] = !super.validate(this.fields[i].value, i);
       values[i] = this.fields[i].value;
@@ -37,22 +68,51 @@ import {ajax} from 'jquery'
     if (error) {
       return;
     }
+    values.domain = this.props.routeParams.domain;
+    values.level = this.props.routeParams.level;
+    values.is_correct = !!values.is_correct;
+    values.is_observable = !!values.is_observable;
     ajax({
 			method:"POST",
 	        url: `${window._BASE}/v1/knowedge/objetives/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
-	        data:values,
+          data:values,
+          beforeSend: () => {
+            window.progress.start();
+            _button.disabled = true;
+          },
+          complete: () => {
+            window.progress.done();
+            _button.disabled = false;
+          },
 	        success:(data: CRUD.objetive)=>{
 	        	this.props.router.replace(`/objetives/get/${data._id}`);
 	        },
 	        error:(data:any)=>{
-	        	var state: CRUD.codeError = data.responseJSON;
+            var state: CRUD.codeError = data.responseJSON;
+            /*if (state.code == "152") {
+              this.setState({error: state.message});
+              this.show();
+            }else{
+              var config = {
+                message: state.message,
+                timeout: 2000
+              };
+              var message: any = document.querySelector('.mdl-js-snackbar')
+              message.MaterialSnackbar.showSnackbar(config);
+            }*/
+            var _text = "";
+            if(typeof state.message == "string"){
+              _text = state.message;
+            }else{
+              _text = state.message.message;
+            }
             var config = {
-              message: state.message,
-              timeout: 2000
-            };
-            var message: any = document.querySelector('.mdl-js-snackbar')
-            message.MaterialSnackbar.showSnackbar(config);
+                message: _text,
+                timeout: 30000
+              };
+              var message: any = document.querySelector('.mdl-js-snackbar')
+              message.MaterialSnackbar.showSnackbar(config);
 	        }
 		});
   }
@@ -61,37 +121,60 @@ import {ajax} from 'jquery'
    }
    render(){
      return(
-       <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-       <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-        <div className="mdl-layout__drawer-button"><Link to="/domains"><i className="material-icons">&#xE5C4;</i></Link></div>
-         <div className="mdl-layout__header-row">
-           <span className="mdl-layout-title">SoulHand</span>
-           <div className="mdl-layout-spacer"></div>
-           <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" onClick={(e:any)=>{this.send(e)}}>
-             <i className="material-icons">check</i>
-           </button>
-
-         </div>
-       </header>
-          <main className="mdl-layout__content mdl-color--white-100">
-          <div className="mdl-grid mdl-color--white demo-content">
-               <div className="mdl-cell mdl-cell--6-col">
-                  <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.name) ? 'is-invalid' :'')}>
-                   <input className="mdl-textfield__input" type="text" id="name" onChange={(e:any)=>{this.getFields(e)}}/>
-                   <label className="mdl-textfield__label" htmlFor="name">Nombre del objetivo*</label>
-                   <span className="mdl-textfield__error">Es necesaria un nombre valido con un verbo infinitivo</span>
-                 </div>
-               </div>
-               <div className="mdl-cell mdl-cell--6-col">
-                  <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label "+((this.state.error.name) ? 'is-invalid' :'')}>
-                   <textarea className="mdl-textfield__input" type="text" id="description" onChange={(e:any)=>{this.getFields(e)}}/>
-                   <label className="mdl-textfield__label" htmlFor="description">Descripción del objetivo*</label>
-                   <span className="mdl-textfield__error">Es necesaria una descripción valida</span>
-                 </div>
-               </div>
+      <ModalApp success={this.send.bind(this)} label="Aceptar" title="Añadir un objetivo (Modo experto)">
+         <div className="mdl-grid mdl-color--white demo-content">
+           <div className="mdl-cell mdl-cell--6-col">
+             <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.name) ? 'is-invalid' : '')}>
+               <input className="mdl-textfield__input" type="text" id="name" onChange={(e: any) => { this.getFields(e) }} />
+               <label className="mdl-textfield__label" htmlFor="name">Nombre del objetivo*</label>
+               <span className="mdl-textfield__error">Es necesaria un nombre valido con un verbo infinitivo</span>
              </div>
-          </main>
-       </div>
+           </div>
+           <div className="mdl-cell mdl-cell--6-col">
+             <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.description) ? 'is-invalid' : '')}>
+               <textarea className="mdl-textfield__input" type="text" id="description" onChange={(e: any) => { this.getFields(e) }} />
+               <label className="mdl-textfield__label" htmlFor="description">Descripción del objetivo*</label>
+               <span className="mdl-textfield__error">Es necesaria una descripción valida</span>
+             </div>
+           </div>
+           <div className="mdl-cell mdl-cell--6-col">
+              <label htmlFor="interprete" className="label static">
+                ¿Verbos observables?
+              </label>
+              <label htmlFor="is_observable" className="mdl-switch mdl-js-switch">
+               <input type="checkbox" id="is_observable" className="mdl-switch__input" onChange={(e: any) => { this.getRadioButton(e) }} />
+               <span className="mdl-switch__label">No/Si</span>
+             </label>
+           </div>
+           <div className="mdl-cell mdl-cell--6-col">
+             <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.words) ? 'is-invalid' : '')}>
+               <input className="mdl-textfield__input" type="text" id="words" onChange={(e: any) => { this.getFields(e) }} />
+               <label className="mdl-textfield__label" htmlFor="words">Palabras claves</label>
+               <span className="mdl-textfield__error">Las palabras deben poseer un separador</span>
+             </div>
+           </div>
+           <div className="mdl-cell mdl-cell--6-col">
+              <label htmlFor="interprete" className="label static">
+                ¿Palabras claves correctas?
+              </label>
+              <label htmlFor="is_correct" className="mdl-switch mdl-js-switch">
+               <input type="checkbox" id="is_correct" className="mdl-switch__input" onChange={(e: any) => { this.getRadioButton(e) }} />
+               <span className="mdl-switch__label">No/Si</span>
+             </label>
+           </div>
+         </div>
+         <dialog className="mdl-dialog" id="confirm-error" key="confirm-error">
+             <div className="mdl-dialog__content mdl-dialog__actions--full-width">
+               <h5>Lo sentimos</h5>
+               <p>{this.state.error.error}</p>
+               <p>No se lograron identificar {this.state.error.words.length} palabras puede contribuir a mejorar el conocimiento.</p>
+             </div>
+             <div className="mdl-dialog__actions">
+               <button type="submit" className="mdl-button open">Acepto</button>
+               <button type="button" className="mdl-button close" onClick={this.hiden.bind(this)}>No estoy de acuerdo</button>
+             </div>
+         </dialog>
+      </ModalApp>
      );
    }
  }

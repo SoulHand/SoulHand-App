@@ -74,7 +74,7 @@ declare let componentHandler: any;
 declare let APP: any;
 
 declare module "material-datetime-picker"{
-	//export function constructor(config: any): void
+	export function constructor(config: any): void
 	export function on(event: string, callback: Function): void
 }
 
@@ -216,6 +216,7 @@ interface cognition{
 	cognition: CRUD.cognition
     session: User.session
 	delete: Function
+	objetive?: string
   }
   interface activity{
     activity: CRUD.activity
@@ -297,17 +298,20 @@ declare namespace CRUD{
 		_id:string
 		_v:number
 		name:string
+		students: Array<People.student>
 	}
 	interface course{
 		_id:string
 		_v:number
 		name:string
+		description: string
+		words: Array<Words.Term>
 	}
 	interface cognition{
 		_id:string
 		name:string
 		description:string
-		words: Array<any>
+		words: Array<Words.Term>
 	}
 	interface domain{
 		_id:string
@@ -316,7 +320,7 @@ declare namespace CRUD{
 		_v:number
 		levels: Array<level>
 		cognitions:Array<cognition>
-		words:Array<any>
+		words: Array<Words.Term>
 	}
 	interface level{
 		_id:string
@@ -324,14 +328,14 @@ declare namespace CRUD{
 		description:string
 		level:number
 		_v:number
-		words: Array<string>
+		words: Array<Words.Term>
 	}
 	interface objetive{
       __v: number
       description: string
       name: string
       _id: string
-      words: Array<string>
+	  words: Array<string>
       dateCreated: string
       cognitions: Array<cognition>
       level: level
@@ -377,7 +381,20 @@ declare namespace compat {
 }
 
 declare namespace Words{
+	interface Taxon{
+		_id: string
+		key: string
+		description: string
+		words: Array<string>
+	}
+	interface Term{
+		_id: string
+		concept: string
+		description: string
+		hiponimos: Array<Taxon>
+	}
 	interface Concept{
+		_id: string
 		key:string
 		value: string
 	}
@@ -396,9 +413,11 @@ declare namespace Words{
 	interface word{
 		_id: string
 		key: string,
+		description: string,
 		lexema: Words.Lexema,
 		morphems: Array<Words.Morphema>,
 		concepts: Array<Concept>
+		terms: Array<Term>
 	}
 }
 

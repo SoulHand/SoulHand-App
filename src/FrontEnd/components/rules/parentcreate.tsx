@@ -6,14 +6,21 @@ import {ajax} from 'jquery'
 import { App, ModalApp } from '../app'
 
 @withRouter
- export class ParentCreate extends FormUtils<{router: any}, {}>{
+export class ParentCreate extends FormUtils<Props.teacherView, {}>{
    public fields:compat.Map={
- 		name:{
- 			match:(fn:string)=>{
- 				return !validator.isNull()(fn);
- 			},
- 			value:null,
- 			required:true
+    consecuent:{
+      match:(fn:string)=>{
+        return !validator.isNull()(fn);
+      },
+      value:null,
+      required:true
+ 		},
+    premise:{
+      match:(fn:string)=>{
+        return !validator.isNull()(fn);
+      },
+      value:null,
+      required:true
  		}
  	};
   state: {error: compat.Map} = {
@@ -34,7 +41,7 @@ import { App, ModalApp } from '../app'
     }
     ajax({
 			method:"POST",
-	        url: `${window._BASE}/v1/grades/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+          url: `${window._BASE}/v1/events/${this.props.routeParams.id}/inferences?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
 	        dataType: "json",
           data:values,
           beforeSend: () => {
@@ -46,7 +53,7 @@ import { App, ModalApp } from '../app'
             _button.removeAttribute("disabled");
           },
 	        success:(data:any)=>{
-	        	this.props.router.replace('/grades');
+            this.props.router.replace(`/rules/get/${this.props.routeParams.id}`);
 	        },
 	        error:(data:any)=>{
             var state: CRUD.codeError = data.responseJSON;
@@ -64,12 +71,19 @@ import { App, ModalApp } from '../app'
    }
    render(){
      return(
-       <ModalApp success={(e: any) => { this.send(e) }} label="Aceptar" title="Añadir un grado">
+       <ModalApp success={(e: any) => { this.send(e) }} label="Aceptar" title="Añadir una condición">
         <div className="mdl-grid mdl-color--white demo-content">
             <div className="mdl-cell mdl-cell--6-col">
-              <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.name) ? 'is-invalid' : '')}>
-                <input className="mdl-textfield__input" type="text" id="name" onChange={(e: any) => { this.getFields(e) }} />
-                <label className="mdl-textfield__label" htmlFor="name">Nombre*</label>
+              <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.premise) ? 'is-invalid' : '')}>
+                <input className="mdl-textfield__input" type="text" id="premise" onChange={(e: any) => { this.getFields(e) }} />
+                <label className="mdl-textfield__label" htmlFor="premise">Premisa*</label>
+                <span className="mdl-textfield__error">Es necesaria un nombre valido</span>
+              </div>
+            </div>
+            <div className="mdl-cell mdl-cell--6-col">
+              <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.consecuent) ? 'is-invalid' : '')}>
+                <input className="mdl-textfield__input" type="text" id="consecuent" onChange={(e: any) => { this.getFields(e) }} />
+                <label className="mdl-textfield__label" htmlFor="consecuent">Consecuente*</label>
                 <span className="mdl-textfield__error">Es necesaria un nombre valido</span>
               </div>
             </div>

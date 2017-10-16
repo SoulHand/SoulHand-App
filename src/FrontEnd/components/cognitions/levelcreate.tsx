@@ -125,16 +125,12 @@ export class LevelCreate extends FormUtils<{ router: any, routeParams: any}, any
   render() {
     if (!this.init) {
       return (
-        <ModalApp success={(e: any) => { console.warn("Esperando") }} title="Aceptar" />
+        <ModalApp success={(e: any) => { console.warn("Esperando") }} />
       );
     }
     return(
-      <ModalApp success={(e: any) => { this.send(e) }} title="Aceptar">
+      <ModalApp success={(e: any) => { this.send(e) }} label="Aceptar" title="Añadir una función cognitivo">
           <div className="mdl-grid mdl-color--white">
-            <div className="mdl-cell mdl-cell--12-col">
-              <h3 className="mdl-typography--text-center display-1">Crear nivel de aprendizaje</h3>
-              <p>Los niveles descomponen el comportamiento en acciones medibles según los conocimientos previos</p>
-            </div>
             <div className="mdl-cell mdl-cell--6-col">
               <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.name) ? 'is-invalid' : '')}>
                 <input className="mdl-textfield__input" type="text" id="name" onChange={(e: any) => { this.getFields(e) }} />
@@ -194,7 +190,7 @@ export class LevelCreate extends FormUtils<{ router: any, routeParams: any}, any
             <div className="mdl-cell--12-col mdl-cell--middle">
               {this.fields.words.value.map((row: any, index: number) => {
                 return (
-                  <span className="mdl-chip" key={row}>
+                  <span className="mdl-chip" key={index}>
                     <span className="mdl-chip__text">{this.titles[index]}</span>
                     <button type="button" className="mdl-chip__action" onClick={this.deleteItem.bind(this, index)}><i className="material-icons">cancel</i></button>
                   </span>

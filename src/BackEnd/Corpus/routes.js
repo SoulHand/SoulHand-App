@@ -51,7 +51,7 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
      * Obtener todos los lexemas
      */
     LexemaURI.get('/', function (request, response, next) {
-        Schema.lexemas.find().then((rows) => {
+        Schema.lexemas.find().sort({ key: 1 }).then((rows) => {
             response.send(rows);
         })
         .catch((error) => {
@@ -248,6 +248,12 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
         if (!Validator.isJSON()(request.body.term)) {
             throw new ValidatorException("No existe el contexto!");
         }
+        if (!Validator.isMongoId()(request.body.lexem)) {
+            throw new ValidatorException("No existe el lexema!");
+        }
+        if (!Validator.isMongoId()(request.body.morphem)) {
+            throw new ValidatorException("No existe el Morfema!");
+        }
         if (Validator.isNull()(request.body.words)) {
             request.body.words = [];
         }else{
@@ -267,26 +273,49 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
         })
         Promise.all([
             Schema.Hiperonimo.find({$or: request.body.term}),
-            Schema.lexemas.find(),
+            Schema.lexemas.findOne({ _id: ObjectId(request.body.lexem)})
+                .populate("morphems.concepts"),
             Schema.words.findOne({ key: request.body.name })
         ])
         .then((rows) => {
             if(rows[0].length == 0){
                 throw new ValidatorException("El contexto no existe o no es valido!");
             }
+            if(!rows[1]){
+                throw new ValidatorException("No existe el lexema!");
+            }
             if(rows[2]){
                 return [rows[2], rows[0]];
             }
+            var _morphem = {
+                _id: null,
+                key: null
+            };
+            var _concepts = [];
+            var isExist = false;
+            for (var i = 0, n = rows[1].morphems.length; i<n; i++){
+                if (rows[1].morphems[i]){
+                    _morphem._id = rows[1].morphems[i]._id;
+                    _morphem.key = rows[1].morphems[i].key;
+                    _concepts = rows[1].morphems[i].concepts;
+                    isExist = true;
+                    break;
+                }
+            }
+            if (!isExist){
+                throw new ValidatorException("No existe el morfema!");
+            }
             var _word = new Schema.words({
                 key: request.body.name.trim(),
-                concepts: [],
-                morphems: []
+                concepts: _concepts,
+                morphems: [_morphem],
+                lexema: rows[1],
             });
-            var row = rows[1];
+            /*var row = rows[1];
             _word = WORDS.getMorphology(row, _word);
             if(!_word.lexema){
                 throw new ValidatorException("No se identificó el lexema de la palabra");
-            }
+            }*/
             return Promise.all([_word.save(), rows[0]]);
         })
         .then((data) => {
@@ -313,8 +342,38 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
      * Obtener todos los lexemas
      */
     wordsURI.get('/', function (request, response, next) {
-        Schema.words.find().populate("lexema").populate("morphems").then((rows) => {
+        Schema.words.find()
+        .populate("lexema")
+        .populate("morphems")
+        .sort({ key: 1 })
+        .then((rows) => {
             response.send(rows);
+        })
+        .catch((error) => {
+            next(error);
+        });
+    });
+    /**
+     * Obtener todos los lexemas
+     */
+    wordsURI.get('/:id', function (request, response, next) {
+        if(!Validator.isMongoId()(request.params.id)){
+            throw new ValidatorException("El id no es valido!");
+        }
+        Schema.words.findOne({_id: ObjectId(request.params.id)}).populate("lexema").populate("morphems").then((data) => {
+            var _body = data.toJSON();
+            return Promise.all([_body, Schema.Hiperonimo.find({ "hiponimos.key": _body.key })]);
+        })
+        .then((datas) => {
+            var body = datas[0];
+            var terms = datas[1].map((row) => {
+                row.hiponimos = row.hiponimos.filter((row2) => {
+                    return row2.key == body.key;
+                });
+                return row;
+            });
+            body.terms = terms;
+            response.send(body);
         })
         .catch((error) => {
             next(error);
@@ -379,6 +438,7 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
      */
     TermsURI.get('/', function (request, response, next) {
         Schema.Hiperonimo.find()
+        .sort({concept: 1})
         .then((data) => {
             response.send(data);
         })

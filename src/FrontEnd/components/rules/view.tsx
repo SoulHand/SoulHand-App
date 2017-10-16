@@ -6,7 +6,7 @@ import { HeaderFree } from '../app/header'
 import { App, ModalFree } from '../app'
 
 @withRouter
- export class View extends React.Component <Props.teacherView, {grade: CRUD.grade}>{
+ export class View extends React.Component <Props.teacherView, {grade: any}>{
    public session: User.session;
    public init: boolean = false;
    constructor(props:Props.teacherView){
@@ -20,28 +20,28 @@ import { App, ModalFree } from '../app'
    componentDidUpdate(){
      componentHandler.upgradeAllRegistered();
    }
-   delete(){
+   delete(id: string){
      ajax({
  			method:"DELETE",
- 	        url: `${window._BASE}/v1/grades/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
- 	        dataType: "json",
- 	        data:null,
-          crossDomain:true,
-          beforeSend: () => {
-            window.progress.start();
-          },
-          complete: () => {
-            window.progress.done();
-          },
- 	        success:(data: CRUD.grade)=>{
-            this.props.router.replace('/grades');
- 	        }
+        url: `${window._BASE}/v1/events/${this.state.grade.name}/inferences/${id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+        dataType: "json",
+        data:null,
+        crossDomain:true,
+        beforeSend: () => {
+          window.progress.start();
+        },
+        complete: () => {
+          window.progress.done();
+        },
+        success:(data: any)=>{
+          this.setState({grade: data});
+        }
  		});
    }
    componentDidMount(){
      let p1 = ajax({
       method:"GET",
-      url: `${window._BASE}/v1/grades/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+      url: `${window._BASE}/v1/events/type/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
       dataType: "json",
       data:null,
       beforeSend: () => {
@@ -51,7 +51,7 @@ import { App, ModalFree } from '../app'
         window.progress.done();
       }
      });
-     p1.done((grade: CRUD.grade) => {
+     p1.done((grade: any) => {
        this.init = true;
        this.setState({
          grade: grade
@@ -80,29 +80,38 @@ import { App, ModalFree } from '../app'
                    </div>
                  </div>
                </div>
+               <div className="mdl-cell--12-col mdl-cell--middle">
+                 {
+                   Object.keys(this.state.grade.objects).map((key) => {
+                     return (
+                       <span className="mdl-chip" key={key}>
+                         <span className="mdl-chip__text" title={key}>{key}: {this.state.grade.objects[key]}</span>
+                       </span>
+                     );
+                   })
+                 }
+               </div>
               </div>
             </div>
             <div className="demo-content">
-              <span className="mdl-typography--title">Alumnos activos</span>
+              <span className="mdl-typography--title">Condicionales</span>
               <ul className="demo-list-three mdl-list">
                 {
-                  this.state.grade.students.map((row) => {
+                  this.state.grade.premises.map((row: any) => {
                     return (
                       <li className="mdl-list__item mdl-list__item--three-line" key={row._id}>
                         <span className="mdl-list__item-primary-content">
                           <i className="material-icons mdl-list__item-avatar">account_circle</i>
-                          <span>{row.data.name}</span>
+                          <span>{row.premise} ({row.h})</span>
                           <span className="mdl-list__item-text-body">
-                            {row.exp} XP
-                        </span>
+                            {row.consecuent}
+                          </span>
                         </span>
                         <span className="mdl-list__item-secondary-content">
                           <div className="mdl-grip">
-                            <div onClick={(e) => {
-                              this.props.router.push(`/students/get/${row._id}`);
-                            }} id={`view${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>visibility</div>
-                            <div className="mdl-tooltip" data-mdl-for={`view${row._id}`}>
-                              Ver
+                            <div onClick={this.delete.bind(this, row._id)} id={`delete${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>delete</div>
+                                <div className="mdl-tooltip" data-mdl-for={`delete${row._id}`}>
+                                  Eliminar
                             </div>
                           </div>
                         </span>
@@ -112,7 +121,7 @@ import { App, ModalFree } from '../app'
                 }
               </ul>
             </div>
-            
+            <Link to={`/rules/get/${this.props.routeParams.id}/create`} className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
           </main>
         </div>
      );

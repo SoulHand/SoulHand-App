@@ -2,15 +2,15 @@ import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link} from 'react-router'
 import * as Cards from '../cards/activity'
-import {Header} from '../app/header'
 import {ParentCreate} from './parentcreate'
 import {AlumnCreate} from './alumncreate'
 import * as Objetive from '../objetive/parentcreate'
 import {View} from './view'
-import {Menu} from '../app/menu'
+import { App } from '../app'
 
  export class Activity extends React.Component <{}, {}>{
    public session: User.session;
+   public init: boolean = false;
    public activities: Array<CRUD.activity>=[];
    state: { activities:  Array<CRUD.activity>} = {
      activities: []
@@ -41,10 +41,17 @@ import {Menu} from '../app/menu'
        method:"GET",
        url: `${window._BASE}/v1/activities/teacher?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
-       data:null
+       data:null,
+       beforeSend: () => {
+         window.progress.start();
+       },
+       complete: () => {
+         window.progress.done();
+       }
      });
      p1.done((activities: Array<CRUD.activity>) => {
        this.activities = activities;
+       this.init = true;
        this.setState({
          activities: activities
        })
@@ -60,43 +67,22 @@ import {Menu} from '../app/menu'
      this.setState(this.state);
    }
    render(){
-     return(
-       <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-         <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-           <div className="mdl-layout__header-row">
-             <span className="mdl-layout-title">SoulHand</span>
-             <div className="mdl-layout-spacer"></div>
-             <div className="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
-               <label className="mdl-button mdl-js-button mdl-button--icon" htmlFor="search">
-                 <i className="material-icons">search</i>
-               </label>
-               <div className="mdl-textfield__expandable-holder">
-                 <input className="mdl-textfield__input" type="text" id="search" onChange={(e:any)=>{this.Filter(e)}}/>
-                 <label className="mdl-textfield__label" htmlFor="search">Ingrese su consulta...</label>
-               </div>
-             </div>
-             <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
-               <i className="material-icons">more_vert</i>
-             </button>
-             <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
-               <li className="mdl-menu__item">A cerca de</li>
-               <li className="mdl-menu__item">Contacto</li>
-               <li className="mdl-menu__item">Información legal</li>
-             </ul>
-           </div>
-         </header>
-          <Menu/>
-          <main className="mdl-layout__content mdl-color--white-100">
-          <div className="mdl-grid demo-content">
-             {this.state.activities.map((row) => {
-               return (
-               <Cards.Activity key={row._id} activity={row} session={this.session} delete={this.delete.bind(this)}/>
-               );
-             })}
-             <Link to="/activity/create" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
-          </div>
-          </main>
-       </div>
+     if (!this.init) {
+       return (
+         <App />
+       );
+     }
+     return (
+       <App>
+         <div className="mdl-grid">
+           {this.state.activities.map((row) => {
+             return (
+               <Cards.Activity key={row._id} activity={row} session={this.session} delete={this.delete.bind(this)} />
+             );
+           })}
+         </div>
+        <Link to="/activity/create" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
+       </App>
      );
    }
  }

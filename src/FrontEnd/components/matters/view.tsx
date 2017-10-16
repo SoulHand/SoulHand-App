@@ -2,10 +2,13 @@ import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link, withRouter} from 'react-router'
 import * as List from '../profiles/matter'
+import { App, ModalFree } from '../app'
+import { HeaderFree } from '../app/header'
 
 @withRouter
  export class View extends React.Component <Props.teacherView, {matter: CRUD.course}>{
    public session: User.session;
+   public init: boolean = false;
    constructor(props:Props.teacherView){
      super(props)
      let str = localStorage.getItem("session");
@@ -34,44 +37,85 @@ import * as List from '../profiles/matter'
        method:"GET",
        url: `${window._BASE}/v1/courses/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
-       data:null
+       data:null,
+       beforeSend: () => {
+         window.progress.start();
+       },
+       complete: () => {
+         window.progress.done();
+       }
      });
      p1.done((matter: CRUD.course) => {
+       this.init = true;
        this.setState({
          matter: matter
        })
      });
    }
    render(){
-     let body = (
-       <div className="mdl-grid mdl-color--white demo-content">
-          <div className="mdl-spinner mdl-js-spinner is-active"></div>
-       </div>
-     );
-     if(this.state.matter){
-       body = (<List.Matter matter={this.state.matter}/>);
+     if (!this.init) {
+       return (
+         <ModalFree />
+       );
      }
-     return(
-       <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-       <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-        <div className="mdl-layout__drawer-button"><Link to="/matters"><i className="material-icons">&#xE5C4;</i></Link></div>
-         <div className="mdl-layout__header-row">
-           <span className="mdl-layout-title">SoulHand</span>
-           <div className="mdl-layout-spacer"></div>
-           {this.state.matter && (
-             <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
-               <i className="material-icons">more_vert</i>
-             </button>
-           )}
-           <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
-             <li className="mdl-menu__item"><Link to={`/matters/edit/${this.props.routeParams.id}`}>Editar</Link></li>
-             <li className="mdl-menu__item" onClick={(e)=>{this.delete()}}>Eliminar</li>
-           </ul>
-         </div>
-       </header>
-          <main className="mdl-layout__content mdl-color--white-100">
-            {body}
-          </main>
+     return (
+       <div className="mdl-layout mdl-layout--fixed-header">
+         <HeaderFree title={this.state.matter.name} />
+         <div id="progress" className="mdl-progress mdl-js-progress mdl-progress__indeterminate progress hiden" />
+         <div className="demo-ribbon mdl-color--teal-400" />
+         <main className="demo-main mdl-layout__content">
+           <div className="demo-container mdl-grid">
+             <div className="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--10-col">
+               <div className="mdl-cell--6-col mdl-cell--middle">
+                 <div className="mdl-textfield">
+                   <label className="mdl-input__expandable-holder">Nombre</label>
+                   <div className="mdl-textfield__input">
+                     {this.state.matter.name}
+                   </div>
+                 </div>
+               </div>
+               <div className="mdl-cell--6-col mdl-cell--middle">
+                 <div className="mdl-textfield">
+                   <label className="mdl-input__expandable-holder">Descripción</label>
+                   <div className="mdl-textfield__input">
+                     {this.state.matter.description}
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </div>
+           <div className="demo-content">
+             <span className="mdl-typography--title">Categorías gramaticales</span>
+             <ul className="demo-list-three mdl-list">
+               {
+                 this.state.matter.words.map((row) => {
+                   return (
+                     <li className="mdl-list__item mdl-list__item--three-line" key={row._id}>
+                       <span className="mdl-list__item-primary-content">
+                         <i className="material-icons mdl-list__item-avatar">account_circle</i>
+                         <span>{row.concept}</span>
+                         <span className="mdl-list__item-text-body">
+                           {row.description}
+                        </span>
+                       </span>
+                       <span className="mdl-list__item-secondary-content">
+                         <div className="mdl-grip">
+                           <div onClick={(e) => {
+                             this.props.router.push(`/terms/get/${row._id}`);
+                           }} id={`view${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>visibility</div>
+                           <div className="mdl-tooltip" data-mdl-for={`view${row._id}`}>
+                             Ver
+                            </div>
+                         </div>
+                       </span>
+                     </li>
+                   );
+                 })
+               }
+             </ul>
+           </div>
+
+         </main>
        </div>
      );
    }

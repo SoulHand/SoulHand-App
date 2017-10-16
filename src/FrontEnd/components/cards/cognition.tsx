@@ -45,3 +45,24 @@ import {Link} from 'react-router'
       );
     }
  }
+
+ export class CognitionObjective extends Cognition{
+    delete() {
+      ajax({
+        method: "DELETE",
+        url: `${window._BASE}/v1/knowedge/objetives/${this.props.objetive}/cognition/${this.props.cognition._id}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
+        dataType: "json",
+        data: null,
+        crossDomain: true,
+        beforeSend: () => {
+          window.progress.start();
+        },
+        complete: () => {
+          window.progress.done();
+        },
+        success: (data: People.student) => {
+          this.props.delete(data);
+        }
+      });
+    }
+ }

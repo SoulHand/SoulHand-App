@@ -23,13 +23,12 @@ import {UserBox} from './userbox'
           <div className="mdl-layout-spacer"></div>
           <Link to="/activity" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">forum</i>Mis Actividades</Link>
             <Link to="/domains" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i>Dominios</Link>
+            <Link to="/physic" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i>Desarrollo Físico</Link>
             <Link to="/cognitions" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i>Funciones cognitivas</Link>
             <div className="mdl-layout-spacer"></div>
-            <Link to="/matters" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">school</i>Materias</Link>
+            <Link to="/matters" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">school</i>Áreas de aprendizaje</Link>
             <Link to="/grades" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">recent_actors</i>Grados</Link>
-            <Link to="/words" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">recent_actors</i>Lexemas</Link>
             <Link to="/words/words" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">recent_actors</i>Palabras</Link>
-            <Link to="/terms" className="mdl-navigation__link"><i className="mdl-color-text--blue-grey-400 material-icons" role="presentation">recent_actors</i>Inf. semantica</Link>
           </nav>
        </div>
      );

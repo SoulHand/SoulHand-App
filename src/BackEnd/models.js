@@ -11,7 +11,9 @@ var structDb = {
     name: {type: String, required: true, trim: true, uppercase: true}
   }),
   Courses: mongoose.Schema({
-    name: {type: String, required: true, trim: true, uppercase: true}
+    name: {type: String, required: true, trim: true, uppercase: true},
+		description: {type: String, required: true, trim: true, uppercase: true},
+		words: [{ type: mongoose.Schema.ObjectId, ref: 'Hiperonimo' }]
   }),
   HistoryLearning: mongoose.Schema({
     description: {type: String, required: true, trim: true, uppercase: true},
@@ -31,6 +33,7 @@ var structDb = {
     date: {type: Date, default: Date.now},
     weight: {type: Number, required: true, min: 0},
     height: {type: Number, required: true, min: 0},
+    imc: {type: Number, required: true, min: 0, default: 0},
     age: {type: Number, required: true, min: 0}
   }),
   inferences: mongoose.Schema({
@@ -39,7 +42,7 @@ var structDb = {
     h: {type: Number, default: 1}
   }),
   weights: mongoose.Schema({
-    height: {type: Number, min: 0},
+    age: {type: Number, min: 0},
     min: {type: Number, min: 0},
     max: {type: Number, min: 0},
     genero: {type: String, trim: true, uppercase: true}
@@ -167,7 +170,7 @@ structDb.LearningObjetive = mongoose.Schema({
     name: {type: String, trim: true, uppercase: true},
     level: {type: Number}
   },
-  cognitions: [structDb.Cognitions],
+	cognitions: [{ type: mongoose.Schema.ObjectId, ref: 'Cognitions' }],
   dateCreated: { type: Date, default: Date.now },
   words: []
 // words:[structDb.words]

@@ -29,7 +29,6 @@ class Inferences extends EventEmitter {
     }
     return false;
   }
-
   ModusPones (premises, varGlobals) {
     var exp = new RegExp(`([xp-t][0-9]+)`, 'g')
     var consecuents = []
@@ -63,6 +62,7 @@ class Inferences extends EventEmitter {
       var vars = {}
       var consecuent = premise.consecuent.replace(exp, 'vars.$1')
       eval(consecuent)
+      vars.h = premise.h;
       matchs.push(vars)
     }
     return matchs
@@ -92,31 +92,15 @@ class Inferences extends EventEmitter {
   }
 
   ChainGetOne (premises, varGlobals) {
-    var exp = new RegExp('([p-t][0-9]+)', 'g')
-    var matchs = []
-    var premise
-    premises.forEach((row) => {
-      var condition = row.premise.replace(exp, 'varGlobals.$1')
-      var p1 = eval(condition)
-      if (p1) {
-        matchs.push(row)
+    var _consecuents = this.ChainGetAll(premises, varGlobals);
+    var _consecuent = false, max = 0;
+    for(var i = 0, n = _consecuents.length; i<n; i++){
+      if(max < _consecuents[i].h){
+        _consecuent = _consecuents[i];
+        max = _consecuents[i].h;
       }
-    })
-    if (matchs.length === 0) {
-      return false
     }
-    matchs.forEach((row) => {
-      if (!premise) {
-        premise = row
-      }
-      if (premise.h < row.h) {
-        premise = row
-      }
-    })
-    var vars = {}
-    var consecuent = premise.consecuent.replace(exp, 'vars.$1')
-    eval(consecuent)
-    return vars
+    return _consecuent;
   }
 
   propagation (premises, varGlobals) {

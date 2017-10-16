@@ -2,11 +2,13 @@ import * as React from 'react'
 import {withRouter} from 'react-router'
 import {Link} from 'react-router'
 import {FormUtils} from '../formutils'
+import { ModalApp, ModalFree } from '../app'
 import {ajax} from 'jquery'
 
 @withRouter
  export class ParentCreate extends FormUtils<{router: any, routeParams: any}, {}>{
    public activity: CRUD.activity;
+   public init: boolean = false;
    state: {objetives: Array<CRUD.objetive>} = {
      objetives: []
    }
@@ -16,6 +18,7 @@ import {ajax} from 'jquery'
   send(event: any){
     var fields: Array<string> = [];
     var objetives: any = document.querySelectorAll("tr[id] input[type='checkbox']");
+    var _button = event.target;
     for (var i in objetives){
       if (objetives[i].checked == true) {
         var parent: any = objetives[i].parentNode.parentNode.parentNode;
@@ -28,6 +31,14 @@ import {ajax} from 'jquery'
 	        dataType: "json",
 	        data:{
             data: JSON.stringify(fields)
+          },
+          beforeSend: () => {
+            window.progress.start();
+            _button.disabled = true;
+          },
+          complete: () => {
+            window.progress.done();
+            _button.removeAttribute("disabled");
           },
 	        success:(data:any)=>{
 	        	this.props.router.replace(`/activity/get/${this.props.routeParams.activity}`);
@@ -48,7 +59,13 @@ import {ajax} from 'jquery'
        method:"GET",
        url: `${window._BASE}/v1/activities/${this.props.routeParams.activity}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
-       data:null
+       data:null,
+       beforeSend: () => {
+         window.progress.start();
+       },
+       complete: () => {
+         window.progress.done();
+       }
      });
      let p2 = ajax({
        method:"GET",
@@ -59,6 +76,7 @@ import {ajax} from 'jquery'
      window.Promise.all([p1.done(), p2.done()]).then((rows: any) => {
        this.activity = rows[0];
         let objetives: Array<CRUD.objetive> = rows[1];
+        this.init  = true;
         objetives = objetives.filter((row) => {
           for ( var i in this.activity.objetives){
             if(this.activity.objetives[i]._id == row._id) {
@@ -73,46 +91,36 @@ import {ajax} from 'jquery'
      })
    }
    render(){
+     if (!this.init) {
+       return (
+         <ModalFree/>
+       );
+     }
      return(
-       <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-       <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-        <div className="mdl-layout__drawer-button"><Link to={`/activity/get/${this.props.routeParams.activity}`}><i className="material-icons">&#xE5C4;</i></Link></div>
-         <div className="mdl-layout__header-row">
-           <span className="mdl-layout-title">SoulHand</span>
-           <div className="mdl-layout-spacer"></div>
-           <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" onClick={(e:any)=>{this.send(e)}}>
-             <i className="material-icons">check</i>
-           </button>
-         </div>
-       </header>
-          <main className="mdl-layout__content mdl-color--white-100">
-                  <table className="mdl-data-table mdl-js-data-table mdl-data-table--selectable resize">
-                    <thead>
-                      <tr>
-                        <th className="mdl-data-table__cell--non-numeric">Objetivo</th>
-                        <th>Dominio</th>
-                        <th>Nivel</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    {
-                      this.state.objetives.map((row) => {
-                        if (!row.domain || !row.level){
-                          return null;
-                        }
-                        return (
-                          <tr key={row._id} id={row._id}>
-                            <td className="mdl-data-table__cell--non-numeric" title={row.name}><span>{row.name}</span></td>
-                            <td title={row.domain.name}><span>{row.domain.name}</span></td>
-                            <td title={row.level.name}><span>{row.level.name}</span></td>
-                          </tr>
-                        );
-                      })
-                    }
-                    </tbody>
-                  </table>
-          </main>
-       </div>
+        <ModalApp success={this.send.bind(this)} label="Aceptar" title="Asignar objetivos de aprendizaje">
+          <table className="mdl-data-table mdl-js-data-table mdl-data-table--selectable resize">
+            <thead>
+              <tr>
+                <th className="mdl-data-table__cell--non-numeric">Nombre</th>
+                <th>Dominio</th>
+                <th>Nivel</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+               this.state.objetives.map((row) => {
+                  return (
+                    <tr key={row._id} id={row._id}>
+                      <td className="mdl-data-table__cell--non-numeric" title={row.name}><span>{row.name}</span></td>
+                      <td title={row.domain.name}><span>{row.domain.name}</span></td>
+                      <td title={row.level.name}><span>{row.level.name}</span></td>
+                    </tr>
+                  );
+                })
+              }
+            </tbody>
+          </table>
+        </ModalApp>
      );
    }
  }
