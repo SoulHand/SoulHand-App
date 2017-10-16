@@ -27,6 +27,10 @@ export class ParentCreate extends FormUtils<Props.objetiveView, {}>{
  			required:true
  		},
  		is_correct:{
+       value:false,
+       required:true
+     },
+    is_observable:{
  			value:false,
  			required:true
  		}
@@ -67,6 +71,7 @@ export class ParentCreate extends FormUtils<Props.objetiveView, {}>{
     values.domain = this.props.routeParams.domain;
     values.level = this.props.routeParams.level;
     values.is_correct = !!values.is_correct;
+    values.is_observable = !!values.is_observable;
     ajax({
 			method:"POST",
 	        url: `${window._BASE}/v1/knowedge/objetives/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
@@ -121,6 +126,15 @@ export class ParentCreate extends FormUtils<Props.objetiveView, {}>{
              </div>
            </div>
            <div className="mdl-cell mdl-cell--6-col">
+              <label htmlFor="interprete" className="label static">
+                ¿Verbos observables?
+              </label>
+              <label htmlFor="is_observable" className="mdl-switch mdl-js-switch">
+               <input type="checkbox" id="is_observable" className="mdl-switch__input" onChange={(e: any) => { this.getRadioButton(e) }} />
+               <span className="mdl-switch__label">No/Si</span>
+             </label>
+           </div>
+           <div className="mdl-cell mdl-cell--6-col">
              <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.words) ? 'is-invalid' : '')}>
                <input className="mdl-textfield__input" type="text" id="words" onChange={(e: any) => { this.getFields(e) }} />
                <label className="mdl-textfield__label" htmlFor="words">Palabras claves</label>
@@ -129,7 +143,7 @@ export class ParentCreate extends FormUtils<Props.objetiveView, {}>{
            </div>
            <div className="mdl-cell mdl-cell--6-col">
               <label htmlFor="interprete" className="label static">
-                ¿Objetivo correcto?
+                ¿Palabras claves correctas?
               </label>
               <label htmlFor="is_correct" className="mdl-switch mdl-js-switch">
                <input type="checkbox" id="is_correct" className="mdl-switch__input" onChange={(e: any) => { this.getRadioButton(e) }} />

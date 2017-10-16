@@ -1152,7 +1152,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 				_radios = [], _morpholy = [],
 				_conditions = [], _cognitions = [],
 				_domains = [], _levels = [], _concepts_keywords = [],
-				_verbs = [], _actions = [];
+				_verbs = [], _actions = [], _keywords = [];
 		Schema.LearningObjetive.findOne({ name: request.body.name }).then((row) => {
 			if (row) {
 				throw new ValidatorException('Ya existe un objetivo con el mismo nombre!')
@@ -1274,7 +1274,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 						throw new MachineError(_consecuent.q10);
 					}
 					if (_consecuent.q1){
-						request.body.words.push(_morpholy[i].key);
+						_keywords.push(_morpholy[i].key);
 						_concepts_keywords.push(_morpholy[i]);
 						_value.q1 = _consecuent.q1;
 					}
@@ -1413,21 +1413,32 @@ module.exports = function (app, express, Schema, __DIR__) {
 						})(_morpholy[k], _concepts[k], _radios[k]);
 				}
 			}
+			var _new_keys = [];
+			for(var j = 0, m = request.body.words.length; j<m; j++){
+				var isExist = false;
+				for(var k = 0, u = _keywords.length; k<u; k++){
+					if(request.body.words[j] == _keywords[k]){
+						isExist = true;
+						break;
+					}
+				}
+				if(!isExist){
+					var _q1 = request.body.is_correct;
+					var _inference = new Schema.inferences({
+						premise: `p1 == "${request.body.words[j]}"`,
+						consecuent: `q1 = ${_q1}`,
+						h: 1
+					});
+					event.premises.push(_inference);
+					_new_keys.push(request.body.words[j]);
+				}
+			}
+			request.body.words = _keywords.concat(_new_keys);
 			if (!request.body.is_observable){
 				for(var k = 0, u = _verbs.length; k<u; k++){
 					var _inference = new Schema.inferences({
 						premise: `p1 == "${_verbs[k].word.key}"`,
 						consecuent: `q10 = "El verbo \\"${_verbs[k].word.key}\\" no es observable"`,
-						h: 1
-					});
-					event.premises.push(_inference);
-				}
-			}
-			if (!request.body.is_correct){
-				for(var i = 0, n = request.body.words.length; i<n; i++){
-					var _inference = new Schema.inferences({
-						premise: `p1 == "${request.body.words[i]}"`,
-						consecuent: `q1 = false`,
 						h: 1
 					});
 					event.premises.push(_inference);
