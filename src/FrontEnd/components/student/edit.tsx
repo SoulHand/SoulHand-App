@@ -95,6 +95,7 @@ import { App, ModalApp } from '../app'
    send(event: any){
      var values: compat.Map = {};
      var error = false;
+     var _button = event.target;
      for(var i in this.fields){
        this.state.error[i] = !super.validate(this.fields[i].value, i);
        values[i] = this.fields[i].value;
@@ -111,6 +112,14 @@ import { App, ModalApp } from '../app'
  	        dataType: "json",
  	        data:values,
           crossDomain: true,
+          beforeSend: () => {
+            window.progress.start();
+            _button.disabled = true;
+          },
+          complete: () => {
+            window.progress.done();
+            _button.removeAttribute("disabled");
+          },
  	        success:(data:any)=>{
  	        	this.props.router.replace(`/students/get/${this.props.routeParams.id}`);
  	        },

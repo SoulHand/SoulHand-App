@@ -4,10 +4,12 @@ import {ajax} from 'jquery'
 import {Link, withRouter} from 'react-router'
 import {Teacher} from '../cards/teacher'
 import * as List from '../profiles/teacher'
+import { App, ModalApp } from '../app'
 
 @withRouter
  export class SetGrade extends FormUtils <Props.teacherView, compat.Map>{
    public session: User.session;
+   public init: boolean = false;
    public fields:compat.Map={
  		grade:{
  			value:null,
@@ -26,6 +28,7 @@ import * as List from '../profiles/teacher'
      componentHandler.upgradeAllRegistered();
    }
    componentDidMount(){
+     window.progress.start();
      let p1 = ajax({
        method:"GET",
        url: `${window._BASE}/v1/people/teachers/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
@@ -39,8 +42,10 @@ import * as List from '../profiles/teacher'
        data:null
      });
      window.Promise.all([p1.done(), p2.done()]).then((data: any) => {
+       window.progress.done();
        let teacher: People.teacher = data[0];
        let grades: Array<CRUD.grade> = data[1];
+       this.init = true;
        this.setState({
          teacher: teacher,
          grades: grades,
@@ -56,6 +61,7 @@ import * as List from '../profiles/teacher'
    send(event: any){
      var values: compat.Map = {};
      var error = false;
+     var _button = event.target;
      for(var i in this.fields){
        this.state.error[i] = !super.validate(this.fields[i].value, i);
        values[i] = this.fields[i].value;
@@ -72,6 +78,14 @@ import * as List from '../profiles/teacher'
  	        dataType: "json",
  	        data:values,
           crossDomain: true,
+          beforeSend: () => {
+            window.progress.start();
+            _button.disabled = true;
+          },
+          complete: () => {
+            window.progress.done();
+            _button.removeAttribute("disabled");
+          },
  	        success:(data:any)=>{
  	        	this.props.router.replace(`/teachers/get/${this.props.routeParams.id}`);
  	        },
@@ -87,54 +101,35 @@ import * as List from '../profiles/teacher'
  		});
    }
    render(){
-     let body = (
-       <div className="mdl-grid mdl-color--white demo-content">
-          <div className="mdl-spinner mdl-js-spinner is-active"></div>
-       </div>
-     );
-     if(this.state.teacher){
-       body = (
-         <div className="mdl-grid mdl-color--white demo-content">
-          <div className="mdl-cell mdl-cell--6-col">
-            <label className="label static" htmlFor="grade">Grados*</label>
-            <select className="mdl-textfield__input" id="grade" onChange={(e:any)=>{this.getFields(e)}} value={this.state.grade}>
-                <option value="">Seleccione una opción</option>
-                {this.state.grades.map((row:CRUD.grade) => {
-                  if (this.state.teacher.grade && this.state.teacher.grade._id == row._id) {
-                    return (
-                      <option value={row._id} key={row._id} selected>{row.name}</option>
-                    );
-                  }
-                  return (
-                    <option value={row._id} key={row._id}>{row.name}</option>
-                  );
-                })}
-            </select>
-            {(this.state.error.genero) && (
-              <span style={{color: "rgb(222, 50, 38)"}}>Seleccione un grado</span>
-            )}
-          </div>
-         </div>
+     if (!this.init) {
+       return (
+         <App />
        );
      }
-     return(
-       <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-       <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-        <div className="mdl-layout__drawer-button"><Link to="/teachers"><i className="material-icons">&#xE5C4;</i></Link></div>
-         <div className="mdl-layout__header-row">
-           <span className="mdl-layout-title">SoulHand</span>
-           <div className="mdl-layout-spacer"></div>
-           {this.state.teacher && (
-             <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" onClick={(e:any)=>{this.send(e)}}>
-               <i className="material-icons">check</i>
-             </button>
-           )}
+     return (
+       <ModalApp success={(e: any) => { this.send(e) }} label="Aceptar" title="Editar docente">
+         <div className="mdl-grid mdl-color--white demo-content">
+           <div className="mdl-cell mdl-cell--6-col">
+             <label className="label static" htmlFor="grade">Grados*</label>
+             <select className="mdl-textfield__input" id="grade" onChange={(e: any) => { this.getFields(e) }} value={this.state.grade}>
+               <option value="">Seleccione una opción</option>
+               {this.state.grades.map((row: CRUD.grade) => {
+                 if (this.state.teacher.grade && this.state.teacher.grade._id == row._id) {
+                   return (
+                     <option value={row._id} key={row._id} selected>{row.name}</option>
+                   );
+                 }
+                 return (
+                   <option value={row._id} key={row._id}>{row.name}</option>
+                 );
+               })}
+             </select>
+             {(this.state.error.genero) && (
+               <span style={{ color: "rgb(222, 50, 38)" }}>Seleccione un grado</span>
+             )}
+           </div>
          </div>
-       </header>
-          <main className="mdl-layout__content mdl-color--white-100">
-            {body}
-          </main>
-       </div>
+       </ModalApp>
      );
    }
  }

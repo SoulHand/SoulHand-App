@@ -61,7 +61,7 @@ import { HeaderFree } from '../app/header'
      }
      return (
        <div className="mdl-layout mdl-layout--fixed-header">
-         <HeaderFree title={this.state.student.data.name} menu={
+         <HeaderFree title={this.state.teacher.data.name} menu={
            [
              <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn" key="BUTTON1">
                <i className="material-icons">more_vert</i>
