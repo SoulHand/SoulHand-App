@@ -1281,14 +1281,16 @@ module.exports = function (app, express, Schema, __DIR__) {
 					if (_consecuent.q2){
 						_verbs.push({
 							word: _morpholy[i],
-							concept: _concepts[i]
+							concept: _concepts[i],
+							range: _radios[i]
 						});
 						_value.q2 = _consecuent.q2;
 					}
 					if (_consecuent.q3){
 						_actions.push({
 							word: _morpholy[i],
-							concept: _concepts[i]
+							concept: _concepts[i],
+							range: _radios[i]
 						});
 						_value.q3 = _consecuent.q3;
 					}
@@ -1372,12 +1374,13 @@ module.exports = function (app, express, Schema, __DIR__) {
 						var _inference = new Schema.inferences({
 							premise: `p1 == "${_morpholy[k].key}"`,
 							consecuent: `q2 = true`,
-							h: 1
+							h: _radios[k]
 						});
 						event.premises.push(_inference);
 						_verbs.push({
 							word: _morpholy[k],
 							concept: _concepts[k],
+							range: _radios[k]
 						});
 						isNotVerbose = false;
 						break;
@@ -1427,7 +1430,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 					var _inference = new Schema.inferences({
 						premise: `p1 == "${request.body.words[j]}"`,
 						consecuent: `q1 = ${_q1}`,
-						h: 1
+						h: 0.55
 					});
 					event.premises.push(_inference);
 					_new_keys.push(request.body.words[j]);
@@ -1439,7 +1442,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 					var _inference = new Schema.inferences({
 						premise: `p1 == "${_verbs[k].word.key}"`,
 						consecuent: `q10 = "El verbo \\"${_verbs[k].word.key}\\" no es observable"`,
-						h: 1
+						h: 1 - _verbs[k].range
 					});
 					event.premises.push(_inference);
 				}
@@ -1453,23 +1456,28 @@ module.exports = function (app, express, Schema, __DIR__) {
 				throw new ValidatorException("Anulado inserción de objetivo por el usuario!. Ajustes aplicados");				
 			}
 			if(!_domain && request.body.domain){
-				var _inference = new Schema.inferences({
-					premise: `this.isContaint(p1, ${JSON.stringify(request.body.words)}) == true && q2 == true`,
-					consecuent: `q6 = "${request.body.domain}"`,
-					h: 1
-				});
-				eventTaxon.premises.push(_inference);
+				console.log(_verbs);
+				for(var j = 0, n = _verbs.length; j<n; j++){
+					var _inference = new Schema.inferences({
+						premise: `p1 == "${_verbs[j].word.key}" && q2 == true`,
+						consecuent: `q6 = "${request.body.domain}"`,
+						h: _verbs[j].range
+					});
+					eventTaxon.premises.push(_inference);					
+				}
 			}
 			if(request.body.domain){
 				_domain = request.body.domain;
 			}
 			if(!_level && request.body.level){
-				var _inference = new Schema.inferences({
-					premise: `this.isContaint(p1, ${JSON.stringify(request.body.words)}) == true && q2 == true`,
-					consecuent: `q7 = "${request.body.level}"`,
-					h: 1
-				});
-				eventTaxon.premises.push(_inference);
+				for(var j = 0, n = _verbs.length; j<n; j++){
+					var _inference = new Schema.inferences({
+						premise: `p1 == "${_verbs[j].word.key}" && q2 == true`,
+						consecuent: `q6 = "${request.body.level}"`,
+						h: _verbs[j].range
+					});
+					eventTaxon.premises.push(_inference);					
+				}
 			}
 			if(request.body.level){
 				_level = request.body.level;
