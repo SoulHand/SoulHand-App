@@ -9,6 +9,8 @@ var Validator = require('string-validator')
 var ValidatorException = require('./SoulHand/Exceptions/ValidatorException.js')
 var VoidException = require('./SoulHand/Exceptions/VoidException.js')
 var UserException = require('./SoulHand/Exceptions/UserException.js')
+var KeywordVoidException = require('./SoulHand/Exceptions/KeywordVoidException.js')
+var MachineError = require('./SoulHand/Exceptions/MachineError.js')
 // var basicAuth = require('basic-auth-connect')
 // const logger = require('winston')
 var Auth = require('./SoulHand/Auth.js')
@@ -1133,17 +1135,24 @@ module.exports = function (app, express, Schema, __DIR__) {
 				return row.toUpperCase();
 			})
 		}
+		//Las palabras son claves y accionables
 		if (!request.body.is_correct){
 			request.body.is_correct = true;
 		}else{
 			request.body.is_correct = request.body.is_correct == "true";			
+		}
+		//Los verbos son observables
+		if (!request.body.is_observable){
+			request.body.is_observable = true;
+		}else{
+			request.body.is_observable = request.body.is_observable == "true";			
 		}
 		var _words = WORDS.SeparatorWords(request.body.description);
 		var _concepts = [], _pending = [],
 				_radios = [], _morpholy = [],
 				_conditions = [], _cognitions = [],
 				_domains = [], _levels = [], _concepts_keywords = [],
-				_verbs = [];
+				_verbs = [], _actions = [];
 		Schema.LearningObjetive.findOne({ name: request.body.name }).then((row) => {
 			if (row) {
 				throw new ValidatorException('Ya existe un objetivo con el mismo nombre!')
@@ -1156,6 +1165,9 @@ module.exports = function (app, express, Schema, __DIR__) {
 		})
 		.then((words) => {
 			_pending = WORDS.getPending(words, _pending, _words);
+			if(_pending.length == _words.length){
+				throw new KeywordVoidException("No se pudo identificar una palabra clave!");
+			}
 			_morpholy = words;
 			var querys = words.map((row) => {
 				if(!row){
@@ -1192,16 +1204,18 @@ module.exports = function (app, express, Schema, __DIR__) {
 			}
 			return Promise.all([
 				Schema.events.findOne({ name: 'KEYWORDS-SEARCH' }),
-				Schema.events.findOne({ name: 'KEYWORDS-IS' })
+				Schema.events.findOne({ name: 'KEYWORDS-IS' }),
+				_MAX
 			]);
 		})
 			.then((rows) => {
-			var event = rows[0], eventTaxon = rows[1];
+			var event = rows[0], eventTaxon = rows[1], _MAX = rows[2];
 			if (!event) {
 				/**
 				 * q1: Es palabra clave
 				 * q2: Es observable
 				 * q3: Es Acción
+				 * q10: Errores
 				 */
 				event = new Schema.events({
 					name: 'KEYWORDS-SEARCH',
@@ -1253,77 +1267,33 @@ module.exports = function (app, express, Schema, __DIR__) {
 					p3: _taxons,
 					p4: _concepts[i].concept
 				};
-				var _consecuent = Events.ChainGetOne(event.premises, _value);
-				if (_consecuent.q1){
-					request.body.words.push(_morpholy[i].key);
-					_concepts_keywords.push(_morpholy[i]);
-				}
-				if (_consecuent.q2){
-					_verbs.push({
-						word: _morpholy[i],
-						concept: _concepts[i]
-					});
-				}
-				if (_consecuent.q3){
-					_verbs.push(_morpholy[i].key);
-				}
-				if (!_consecuent && request.body.is_correct) {
-					var _q1 = false, _q2 = false;
-					for (var j = 0, u = _morpholy[i].concepts.length; j < u; j++) {
-						var _concept = _morpholy[i].concepts[j];
-						switch (_concept.key){
-							case WORDS.CONCEPTS.CLASS:
-								var _consecuent;
-								switch (_concept.value){
-									case WORDS.CLASS_GRAMATICAL.VERB:
-										q2 = true;
-										q1 = true;
-									break;
-									case WORDS.CLASS_GRAMATICAL.ADJECT:
-									case WORDS.CLASS_GRAMATICAL.SUSTANT:
-										q1 = true;
-									break;
-								}
-							break;
-							default:
-								continue;
-							break;
-						}
+				var _consecuents = Events.ChainGetAll(event.premises, _value);
+				for(var k = 0, u = _consecuents.length; k<u; k++){
+					var _consecuent = _consecuents[k];
+					if (_consecuent.q10){
+						throw new MachineError(_consecuent.q10);
 					}
-					((key, concept, q1, q2) => {
-						Promise.all([
-							Schema.domainsLearning.findOne({
-								$or: [
-									{ words: concept._id},
-									{ "levels.words": concept._id}
-								]
-							}),
-							Schema.Cognitions.findOne({ words: concept._id}),
-							Schema.Courses.findOne({ words: concept._id})
-						]).then((rows) => {
-							var _q3 = false, _h = 0.5;
-							for(var k = 0, m = rows.length; k < m; k++){
-								_q3 = _q3 || !!rows;
-							}
-							if(_q3){
-								q1 = true;
-							}
-							if (_MAX > 0){
-								_h = _radios[i] / _MAX;
-							}
-							var _inference = new Schema.inferences({
-								premise: `p1 == "${key.key}"`,
-								consecuent: `q1 = ${q1}; q2 = ${q2}; q3 = ${_q3}`,
-								h: _h
-							});
-							event.premises.push(_inference);
-							return event.save();
+					if (_consecuent.q1){
+						request.body.words.push(_morpholy[i].key);
+						_concepts_keywords.push(_morpholy[i]);
+						_value.q1 = _consecuent.q1;
+					}
+					if (_consecuent.q2){
+						_verbs.push({
+							word: _morpholy[i],
+							concept: _concepts[i]
 						});
-
-					})(_morpholy[i], _concepts[i], _q1, _q2 )
-				}
-				event.save();
-				_value = Object.assign(_value, _consecuent);
+						_value.q2 = _consecuent.q2;
+					}
+					if (_consecuent.q3){
+						_actions.push({
+							word: _morpholy[i],
+							concept: _concepts[i]
+						});
+						_value.q3 = _consecuent.q3;
+					}
+				}				
+				//_value = Object.assign(_value, _consecuent);
 				var _consecuents = Events.ChainGetAll(eventTaxon.premises, _value);
 				for(var j = 0, u = _consecuents.length; j < u; j++){
 					if (_consecuents[j].q4 && _consecuents[j].h >= 0.5){
@@ -1345,7 +1315,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 						});
 					}
 					if (_consecuents[j].q8 && _consecuents[j].h >= 0.5){
-						throw new ValidatorException(_consecuents[j].q8);
+						throw new MachineError(_consecuents[j].q8);
 					}
 					if (_consecuents[j].q9 && _consecuents[j].h >= 0.5){
 						request.body.exp = parseFloat(_consecuents[j].q9);
@@ -1356,61 +1326,148 @@ module.exports = function (app, express, Schema, __DIR__) {
 			if (_domains.length > 0){
 				var _max = 0;
 				for(var i = 0, n = _domains.length; i < n; i++){
-					if(max < _domains[i].h){
+					if(_max < _domains[i].h){
 						_domain = _domains[i]._id;
-						max = _domains[i].h;
+						_max = _domains[i].h;
 					}
 				}
-			}
-			if(request.body.domain){
-				_domain = request.body.domain;
 			}
 			if (_levels.length > 0){
 				var _max = 0;
 				for(var i = 0, n = _levels.length; i < n; i++){
-					if(max < _levels[i].h){
+					if(_max < _levels[i].h){
 						_level = _levels[i]._id;
-						max = _levels[i].h;
+						_max = _levels[i].h;
 					}
 				}
 			}
-			if(request.body.domain){
-				_domain = request.body.domain;
-			}
-			if(request.body.level){
-				_level = request.body.level;
-			}
-			/*for(var i = 0, n = _verbs.length; i<n; i++){
-				for (var j = 0, m = _verbs[i].concepts.length; j < m; j++) {
-					var _row = _verbs[i].concepts[j];
-					if (_row.key == WORDS.CONCEPTS.CLASS
-						|| _row.value == WORDS.CLASS_GRAMATICAL.VERB) {
+			for(var k = 0, u = _morpholy.length; k < u; k++){
+				if(!_morpholy[k]){
+					continue;
+				}
+				var isExist = false;
+				for(var j = 0, mk = _verbs.length; j<mk; j++){
+					if(_verbs[j].word.key == _morpholy[k].key){
+						isExist = true;
+						break;
 					}
 				}
-			}*/
-			if (!_domain || !_level){
-				throw new ValidatorException("No existe una acción observable");
+				if(isExist){
+					continue;
+				}
+				for(var j = 0, mk = _actions.length; j<mk; j++){
+					if(_actions[j].word.key == _morpholy[k].key){
+						isExist = true;
+						break;
+					}
+				}
+				if(isExist){
+					continue;
+				}
+				var isNotVerbose = true;
+				for(var j = 0, mk = _morpholy[k].concepts.length; j<mk; j++){
+					if(
+						_morpholy[k].concepts[j].key == WORDS.CONCEPTS.CLASS
+						&& _morpholy[k].concepts[j].value == WORDS.CLASS_GRAMATICAL.VERB){
+						var _inference = new Schema.inferences({
+							premise: `p1 == "${_morpholy[k].key}"`,
+							consecuent: `q2 = true`,
+							h: 1
+						});
+						event.premises.push(_inference);
+						_verbs.push({
+							word: _morpholy[k],
+							concept: _concepts[k],
+						});
+						isNotVerbose = false;
+						break;
+					}
+				}
+				if(isNotVerbose){
+					((_key, _concept, _range) => {
+							Promise.all([
+								Schema.domainsLearning.findOne({
+									$or: [
+										{ words: _concept._id},
+										{ "levels.words": _concept._id}
+									]
+								}),
+								Schema.Cognitions.findOne({ words: _concept._id}),
+								Schema.Courses.findOne({ words: _concept._id})
+							]).then((rows) => {
+								var _q3 = false, _h = 0.5;
+								for(var k = 0, m = rows.length; k < m; k++){
+									_q3 = _q3 || !!rows;
+								}
+								if (_MAX > 0){
+									_h = _range / _MAX;
+								}
+								var _inference = new Schema.inferences({
+									premise: `p1 == "${_key.key}"`,
+									consecuent: `q3 = ${_q3}`,
+									h: _h
+								});
+								event.premises.push(_inference);
+								event.save();
+							});
+						})(_morpholy[k], _concepts[k], _radios[k]);
+				}
+			}
+			if (!request.body.is_observable){
+				for(var k = 0, u = _verbs.length; k<u; k++){
+					var _inference = new Schema.inferences({
+						premise: `p1 == "${_verbs[k].word.key}"`,
+						consecuent: `q10 = "El verbo \\"${_verbs[k].word.key}\\" no es observable"`,
+						h: 1
+					});
+					event.premises.push(_inference);
+				}
 			}
 			if (!request.body.is_correct){
 				for(var i = 0, n = request.body.words.length; i<n; i++){
 					var _inference = new Schema.inferences({
 						premise: `p1 == "${request.body.words[i]}"`,
-						consecuent: `q1 = false; q2 = false; q3 = false`,
+						consecuent: `q1 = false`,
 						h: 1
 					});
 					event.premises.push(_inference);
 				}
-				event.save();
-				/*
+			}
+			eventTaxon.save();
+			event.save();
+			if(request.body.words.length == 0){
+				throw new KeywordVoidException("No posee palabras claves!");
+			}
+			if(!request.body.is_correct || !request.body.is_observable){
+				throw new ValidatorException("Anulado inserción de objetivo por el usuario!. Ajustes aplicados");				
+			}
+			if(!_domain && request.body.domain){
 				var _inference = new Schema.inferences({
-					premise: `this.isContaint(p1, ${JSON.stringify(request.body.words)})`,
-					consecuent: `q8 = "El objetivo no es factible.
-					Los Objetivos de Aprendizaje deben describir lo que el estudiante
-					pueda llevar a cabo con el tiempo y los recursos disponibles"`,
-					//consecuent: `q6 = "${_domain}; q7 = "${_level}"`,
-					h:0
-				});*/
-				throw new ValidatorException("Anulado inserción de objetivo por el usuario!. Ajustes aplicados");
+					premise: `this.isContaint(p1, ${JSON.stringify(request.body.words)}) == true && q2 == true`,
+					consecuent: `q6 = "${request.body.domain}"`,
+					h: 1
+				});
+				eventTaxon.premises.push(_inference);
+			}
+			if(request.body.domain){
+				_domain = request.body.domain;
+			}
+			if(!_level && request.body.level){
+				var _inference = new Schema.inferences({
+					premise: `this.isContaint(p1, ${JSON.stringify(request.body.words)}) == true && q2 == true`,
+					consecuent: `q7 = "${request.body.level}"`,
+					h: 1
+				});
+				eventTaxon.premises.push(_inference);
+			}
+			if(request.body.level){
+				_level = request.body.level;
+			}
+			
+			eventTaxon.save();
+			event.save();
+			if (!_domain || !_level){
+				throw new ValidatorException("No existe una acción observable");
 			}
 			try{
 				return Promise.all([
@@ -1454,10 +1511,10 @@ module.exports = function (app, express, Schema, __DIR__) {
 			response.send(data)
 		})
 		.catch((error) => {
-			if(_pending.length > 0){
+			/*if(_pending.length > 0){
 				var KeywordException = require("./SoulHand/Exceptions/KeywordException.js");
 				error = new KeywordException({words: _pending, error: error.message});
-			}
+			}*/
 			next(error)
 		})
 	});
