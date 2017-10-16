@@ -97,7 +97,6 @@ import {ajax} from 'jquery'
      })
    }
    render(){
-     console.log(this.state.objetives);
      if (!this.init) {
        return (
          <ModalApp success={(e: any) => { console.warn("Esperando") }} />

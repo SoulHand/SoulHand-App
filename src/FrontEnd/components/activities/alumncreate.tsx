@@ -3,10 +3,12 @@ import {withRouter} from 'react-router'
 import {Link} from 'react-router'
 import {FormUtils} from '../formutils'
 import {ajax} from 'jquery'
+import { ModalApp } from "../app"
 
 @withRouter
  export class AlumnCreate extends FormUtils<{router: any, routeParams: any}, {}>{
    public activity: CRUD.activity;
+   public init = false;
    state: {students: Array<People.student>} = {
      students: []
    }
@@ -16,6 +18,7 @@ import {ajax} from 'jquery'
   send(event: any){
     var fields: Array<string> = [];
     var students: any = document.querySelectorAll("tr[id] input[type='checkbox']");
+    var _button = event.target;
     for (var i in students){
       if (students[i].checked == true) {
         var parent: any = students[i].parentNode.parentNode.parentNode;
@@ -28,6 +31,14 @@ import {ajax} from 'jquery'
 	        dataType: "json",
 	        data:{
             data: JSON.stringify(fields)
+          },
+          beforeSend: () => {
+            window.progress.start();
+            _button.disabled = true;
+          },
+          complete: () => {
+            window.progress.done();
+            _button.disabled = false;
           },
 	        success:(data:any)=>{
 	        	this.props.router.replace(`/activity/get/${this.props.routeParams.activity}`);
@@ -48,10 +59,17 @@ import {ajax} from 'jquery'
        method:"GET",
        url: `${window._BASE}/v1/activities/${this.props.routeParams.activity}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
-       data:null
+       data:null,
+       beforeSend: () => {
+         window.progress.start();
+       },
+       complete: () => {
+         window.progress.done();
+       }
      });
      p1.done().then((row: CRUD.activity) => {
        this.activity = row;
+       this.init = true;
        return ajax({
          method:"GET",
          url: `${window._BASE}/v1/people/students/grade/${row.grade._id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
@@ -73,41 +91,34 @@ import {ajax} from 'jquery'
      })
    }
    render(){
-     return(
-       <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-       <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-        <div className="mdl-layout__drawer-button"><Link to={`/activity/get/${this.props.routeParams.activity}`}><i className="material-icons">&#xE5C4;</i></Link></div>
-         <div className="mdl-layout__header-row">
-           <span className="mdl-layout-title">SoulHand</span>
-           <div className="mdl-layout-spacer"></div>
-           <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" onClick={(e:any)=>{this.send(e)}}>
-             <i className="material-icons">check</i>
-           </button>
-         </div>
-       </header>
-          <main className="mdl-layout__content mdl-color--white-100">
-                  <table className="mdl-data-table mdl-js-data-table mdl-data-table--selectable resize">
-                    <thead>
-                      <tr>
-                        <th className="mdl-data-table__cell--non-numeric">codigo escolar</th>
-                        <th>Nombre y apellido</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    {
-                      this.state.students.map((row) => {
-                        return (
-                          <tr key={row._id} id={row._id}>
-                            <td className="mdl-data-table__cell--non-numeric" title={row.data.dni}><span>{row.data.dni}</span></td>
-                            <td title={row.data.name}><span>{row.data.name}</span></td>
-                          </tr>
-                        );
-                      })
-                    }
-                    </tbody>
-                  </table>
-          </main>
-       </div>
+     if (!this.init) {
+       return (
+         <ModalApp success={(e: any) => { console.warn("Esperando") }} />
+       );
+     }
+     return (
+       <ModalApp success={(e: any) => { this.send(e) }} label="Aceptar" title={"Asignar funciones cognitivas objetivo " + this.activity.name}>
+         <table className="mdl-data-table mdl-js-data-table mdl-data-table--selectable resize">
+           <thead>
+             <tr>
+               <th className="mdl-data-table__cell--non-numeric">codigo escolar</th>
+               <th>Nombre y apellido</th>
+             </tr>
+           </thead>
+           <tbody>
+             {
+               this.state.students.map((row) => {
+                 return (
+                   <tr key={row._id} id={row._id}>
+                     <td className="mdl-data-table__cell--non-numeric" title={row.data.dni}><span>{row.data.dni}</span></td>
+                     <td title={row.data.name} className="mdl-data-table__cell--non-numeric"><span>{row.data.name}</span></td>
+                   </tr>
+                 );
+               })
+             }
+           </tbody>
+         </table>
+       </ModalApp>
      );
    }
  }
