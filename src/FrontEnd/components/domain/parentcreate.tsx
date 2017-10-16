@@ -90,7 +90,7 @@ export class ParentCreate extends FormUtils<Props.objetiveView, {}>{
 	        },
 	        error:(data:any)=>{
             var state: CRUD.codeError = data.responseJSON;
-            if (state.code == "152") {
+            /*if (state.code == "152") {
               this.setState({error: state.message});
               this.show();
             }else{
@@ -100,7 +100,19 @@ export class ParentCreate extends FormUtils<Props.objetiveView, {}>{
               };
               var message: any = document.querySelector('.mdl-js-snackbar')
               message.MaterialSnackbar.showSnackbar(config);
+            }*/
+            var _text = "";
+            if(typeof state.message == "string"){
+              _text = state.message;
+            }else{
+              _text = state.message.message;
             }
+            var config = {
+                message: _text,
+                timeout: 30000
+              };
+              var message: any = document.querySelector('.mdl-js-snackbar')
+              message.MaterialSnackbar.showSnackbar(config);
 	        }
 		});
   }

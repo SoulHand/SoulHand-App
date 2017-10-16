@@ -8,6 +8,7 @@ import * as Teacher from '../components/teacher'
 import * as Student from '../components/student'
 import * as Parent from '../components/parent'
 import * as Words from '../components/words'
+import * as Physic from '../components/physic'
 import * as Grade from '../components/grades'
 import * as Rules from '../components/rules'
 import * as Matters from '../components/matters'
@@ -45,6 +46,11 @@ window.addEventListener("load",()=>{
           <IndexRoute component={Words.Terms.Word}/>
           <Route path="get/:id" component={Words.Terms.Get} />
           <Route path="create" component={Words.Terms.Add}/>
+        </Route>
+        <Route path="/physic" onEnter={Auth}>
+          <IndexRoute component={Physic.Physic}/>
+          <Route path="weight/create" component={Physic.Add}/>
+          <Route path="height/create" component={Physic.Height}/>
         </Route>
         <Route path="/students" onEnter={Auth}>
           <IndexRoute component={Student.Student}/>

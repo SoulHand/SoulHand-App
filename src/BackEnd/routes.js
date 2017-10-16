@@ -1456,7 +1456,6 @@ module.exports = function (app, express, Schema, __DIR__) {
 				throw new ValidatorException("Anulado inserción de objetivo por el usuario!. Ajustes aplicados");				
 			}
 			if(!_domain && request.body.domain){
-				console.log(_verbs);
 				for(var j = 0, n = _verbs.length; j<n; j++){
 					var _inference = new Schema.inferences({
 						premise: `p1 == "${_verbs[j].word.key}" && q2 == true`,
@@ -1527,13 +1526,15 @@ module.exports = function (app, express, Schema, __DIR__) {
 			return p1.save();
 		})
 		.then((data) => {
-			response.send(data)
+			var _body = data.toJSON();
+			_body.pending = _pending;
+			response.send(_body);
 		})
 		.catch((error) => {
-			/*if(_pending.length > 0){
-				var KeywordException = require("./SoulHand/Exceptions/KeywordException.js");
-				error = new KeywordException({words: _pending, error: error.message});
-			}*/
+			error.message = {
+				keywords: _pending,
+				message: error.message
+			}
 			next(error)
 		})
 	});
@@ -1898,7 +1899,7 @@ module.exports = function (app, express, Schema, __DIR__) {
   */
   weightURI.post('/', Auth.isAdmin.bind(Schema),
   function (request, response, next) {
-    if (!Validator.isFloat()(request.body.height) || !Validator.isFloat()(request.body.min) || !Validator.isFloat()(request.body.max)) {
+    if (!Validator.isFloat()(request.body.age) || !Validator.isFloat()(request.body.min) || !Validator.isFloat()(request.body.max)) {
       throw new ValidatorException('Solo se aceptan numeros')
     }
     if ((request.body.max - request.body.min) <= 0 || request.body.min === 0 || request.body.max === 0) {
@@ -1908,14 +1909,14 @@ module.exports = function (app, express, Schema, __DIR__) {
       throw new ValidatorException('El genero es invalido')
     }
     var genero = request.body.genero.toUpperCase()
-    Schema.weights.findOne({height: request.body.height, genero: genero})
+    Schema.weights.findOne({age: request.body.age, genero: genero})
     .then((data) => {
       if (data) {
         throw new ValidatorException('Ya existe un registro similar!')
       }
       let Weights = Schema.weights
       let weight = new Weights({
-        height: request.body.height,
+        age: request.body.age,
         min: request.body.min,
         max: request.body.max,
         genero: genero
@@ -2844,7 +2845,8 @@ module.exports = function (app, express, Schema, __DIR__) {
 			var element = Schema.physic({
 				weight:request.body.weight,
 				height:request.body.height,
-				age:age
+				age:age,
+				imc: (request.body.weight / Math.pow(request.body.height, 2)) * 10e+3
 			});
 			data.physics.push(element);
 			Events.emit("physic-add",element,data);

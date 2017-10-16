@@ -2,14 +2,22 @@ import * as React from 'react'
 import {ajax} from 'jquery'
 import {Link, withRouter} from 'react-router'
 import * as List from '../profiles/student'
+import { App, ModalFree } from '../app'
+import { HeaderFree } from '../app/header'
 import { ProgressBar } from '../progressbar'
 import { LineChart } from "../linechart"
 
 @withRouter
-export class View extends React.Component<Props.teacherView, { student: People.student, report: any, graphs:any, weights: any, heights: any}>{
+export class View extends React.Component<Props.teacherView, any>{
    public session: User.session;
    public init: boolean = false;
-   public last: string = "/";
+   public state: { student: People.student, report: any, graphs:any, weights: any, heights: any} = {
+      student: null,
+      report: [],
+      graphs: [],
+      weights: [],
+      heights: []
+   }
    constructor(props:Props.teacherView){
      super(props)
      let str = localStorage.getItem("session");
@@ -41,6 +49,12 @@ export class View extends React.Component<Props.teacherView, { student: People.s
  	        dataType: "json",
  	        data:null,
  	        crossDomain:true,
+          beforeSend: () => {
+            window.progress.start();
+          },
+          complete: () => {
+            window.progress.done();
+          },
  	        success:(data: People.student)=>{
             this.props.router.replace('/students');
  	        }
@@ -50,6 +64,7 @@ export class View extends React.Component<Props.teacherView, { student: People.s
 
    }
    componentDidMount(){
+      window.progress.start();
      let p1 = ajax({
        method:"GET",
        url: `${window._BASE}/v1/people/students/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
@@ -73,18 +88,12 @@ export class View extends React.Component<Props.teacherView, { student: People.s
      });
      window.Promise.all([p1.done(), p2.done(), p3.done(), p4.done()]).then((rows: any) => {
        this.init = true;
+       window.progress.done();
        var graphs = [{
          name: rows[0].data.name,
          data: rows[0].activities.map((row: CRUD.ActivityMaked): Array<any> => {
            var time = new Date(row.dateCreated);
-           return [time.getTime(), ((row.isAdd == true) ? 1 : 0 * Math.random() * 100)];
-         })
-       }];
-       var graphs = [{
-         name: rows[0].data.name,
-         data: rows[0].activities.map((row: CRUD.ActivityMaked): Array<any> => {
-           var time = new Date(row.dateCreated);
-           return [time.getTime(), ((row.isAdd == true) ? 1 : 0 * Math.random() * 100)];
+           return [time.getTime(), row.exp];
          })
        }];
        var graphs2 = [
@@ -99,29 +108,43 @@ export class View extends React.Component<Props.teacherView, { student: People.s
           {
             name: "Altura Máxima",
             data: rows[0].physics.map((row: CRUD.physic) => {
-              var filter: Array<CRUD.height> = rows[2].filter((height: CRUD.height) => {
-                return Math.abs( row.age - height.age) <= 5;
+              var _min: Number, _height: CRUD.height;
+              rows[2].forEach((height: CRUD.height) => {
+                var _dist = Math.abs(row.age - height.age);
+                if(rows[0].data.genero == height.genero){
+                  if(_min == null || _min > _dist){
+                    _min = _dist;
+                    _height = height;
+                  }
+                }
               });
               var time = new Date(row.date);
               var sec = time.getTime();
-              if(filter.length == 0){
+              if(!_height){
                 return [sec, null];
               }
-              return [sec, filter[0].max];
+              return [sec, _height.max];
             })
           },
           {
             name: "Altura Minima",
             data: rows[0].physics.map((row: CRUD.physic) => {
-              var filter: Array<CRUD.height> = rows[2].filter((height: CRUD.height) => {
-                return Math.abs( row.age - height.age) <= 5;
+              var _min: Number, _height: CRUD.height;
+              rows[2].forEach((height: CRUD.height) => {
+                var _dist = Math.abs(row.age - height.age);
+                if(rows[0].data.genero == height.genero){
+                  if(_min == null || _min > _dist){
+                    _min = _dist;
+                    _height = height;
+                  }
+                }
               });
               var time = new Date(row.date);
               var sec = time.getTime();
-              if(filter.length == 0){
+              if(!_height){
                 return [sec, null];
               }
-              return [sec, filter[0].min];
+              return [sec, _height.min];
             })
           }
         ];
@@ -137,29 +160,43 @@ export class View extends React.Component<Props.teacherView, { student: People.s
           {
             name: "Peso Máximo",
             data: rows[0].physics.map((row: CRUD.physic) => {
-              var filter: Array<CRUD.weight> = rows[2].filter((height: CRUD.weight) => {
-                return Math.abs( row.height - height.height) <= 5;
+              var _min: Number, _weight: CRUD.weight;
+              rows[2].forEach((weight: CRUD.weight) => {
+                var _dist = Math.abs(row.height - weight.height);
+                if(rows[0].data.genero == weight.genero){
+                  if(_min == null || _min > _dist){
+                    _min = _dist;
+                    _weight = weight;
+                  }
+                }
               });
               var time = new Date(row.date);
               var sec = time.getTime();
-              if(filter.length == 0){
+              if(!_weight){
                 return [sec, null];
               }
-              return [sec, filter[0].max];
+              return [sec, _weight.max];
             })
           },
           {
-            name: "Altura Minima",
+            name: "Peso Minimo",
             data: rows[0].physics.map((row: CRUD.physic) => {
-              var filter: Array<CRUD.weight> = rows[2].filter((height: CRUD.weight) => {
-                return Math.abs(row.height - height.height) <= 5;
+              var _min: Number, _weight: CRUD.weight;
+              rows[2].forEach((weight: CRUD.weight) => {
+                var _dist = Math.abs(row.height - weight.height);
+                if(rows[0].data.genero == weight.genero){
+                  if(_min == null || _min > _dist){
+                    _min = _dist;
+                    _weight = weight;
+                  }
+                }
               });
               var time = new Date(row.date);
               var sec = time.getTime();
-              if(filter.length == 0){
+              if(!_weight){
                 return [sec, null];
               }
-              return [sec, filter[0].min];
+              return [sec, _weight.min];
             })
           }
         ];
@@ -173,9 +210,12 @@ export class View extends React.Component<Props.teacherView, { student: People.s
      });
    }
    render(){
-     if(!this.init){
-        return null;
+     if (!this.init) {
+       return (
+         <ModalFree />
+       );
      }
+
      var chart1 = {
        credits: false,
        chart: {
@@ -292,7 +332,7 @@ export class View extends React.Component<Props.teacherView, { student: People.s
          },
          tooltip: {
            headerFormat: '<b>{series.name}</b><br>',
-           pointFormat: '{point.x:%e. %b}: {point.y:.2f} cm'
+           pointFormat: '{point.x:%e. %b}: {point.y:.2f} kg'
          },
          plotOptions: {
            spline: {
@@ -302,150 +342,153 @@ export class View extends React.Component<Props.teacherView, { student: People.s
            }
          },
          series: this.state.graphs[2]
-       };
-     var _url = window.ReactPath || "/students";
-     return(
-       <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-       <header className="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
-        <div className="mdl-layout__drawer-button">
-        <Link to={_url}><i className="material-icons">&#xE5C4;</i></Link></div>
-         <div className="mdl-layout__header-row">
-           <span className="mdl-layout-title">SoulHand</span>
-           <div className="mdl-layout-spacer"></div>
-           {this.state.student && (
-             <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
+      };
+     return (
+       <div className= "mdl-layout mdl-layout--fixed-header">
+         <HeaderFree title={this.state.student.data.name} menu={
+           [
+             <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn" key="BUTTON1">
                <i className="material-icons">more_vert</i>
              </button>
-           )}
-           <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
-              <li className="mdl-menu__item" onClick={(e) => {
-                 this.props.router.replace(`/students/edit/${this.props.routeParams.id }`);
-              }}>Editar</li>
-              <li className="mdl-menu__item" onClick={(e) => {
-                this.props.router.replace(`/students/get/${this.props.routeParams.id}/objetives`);
-              }}>Conocimientos previos</li>
-             <li className="mdl-menu__item" onClick={(e)=>{this.delete()}}>Eliminar</li>
-           </ul>
-         </div>
-       </header>
-          <main className="mdl-layout__content mdl-color--white-100">
-            <div className="mdl-grid demo-content">
-              <div className="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
-                <List.Student student={this.state.student} />
-              </div>
-              <div className="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--8-col">
-                <LineChart id="HistoryActities" config={chart1} />
-                <LineChart id="HeightHistory" config={chart2} />
-                <LineChart id="WeightHistory" config={chart3} />
-              </div>
-              <div className="demo-cards mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing">
-                <div className="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
-                  <div className="mdl-card__title mdl-card--expand mdl-color--teal-300">
+             ,
+             <ul className="mdl-menu mdl-js-menu mdl-js-ripple effect mdl-menu--bottom-right" htmlFor="hdrbtn" key="hdrbtn12">
+               <li className="mdl-menu__item" onClick={(e) => {
+                 this.props.router.push(`/students/edit/${this.props.routeParams.id}`);
+               }
+               }>Editar</li>
+               <li className="mdl-menu__item" onClick={(e) => {
+                 this.props.router.push(`/students/get/${this.props.routeParams.id}/objetives`);
+               }
+               }>Conocimientos previos</li>
+             </ul>
+           ]
+         }/>
+         <div id="progress" className="mdl-progress mdl-js-progress mdl-progress__indeterminate progress hiden" />
+         <div className="demo-ribbon mdl-color--teal-400" />
+         <main className="demo-main mdl-layout__content">
+           <div className="demo-container mdl-grid">
+             <div className="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--10-col">
+               <List.Student student={this.state.student} />
+             </div>
+           </div>
+           <div className="mdl-grid demo-content">
+             <div className="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--8-col">
+               <LineChart id="HistoryActities" config={chart1} />
+               <LineChart id="HeightHistory" config={chart2} />
+               <LineChart id="WeightHistory" config={chart3} />
+             </div>
+             <div className="demo-cards mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing">
+               <div className="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
+                 <div className="mdl-card__title mdl-card--expand mdl-color--teal-300">
                    <h2 className="mdl-card__title-text mdl-typography--text-center">Puntos de experiencia</h2>
-                  </div>
-                  <div className="mdl-card__supporting-text mdl-color-text--grey-600">
+                 </div>
+                 <div className="mdl-card__supporting-text mdl-color-text--grey-600">
                    <h1 className="mdl-typography--text-center display-2">{this.state.student.exp} XP</h1>
-                </div>
-                  <div className="mdl-card__actions mdl-card--border">
+                 </div>
+                 <div className="mdl-card__actions mdl-card--border">
                    <Link to={`/students/get/${this.props.routeParams.id}/objetives`} className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver detalles</Link>
-                  </div>
-                </div>
-                {this.state.report.physic && (
-                  <div className="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
-                    <div className="mdl-card__title mdl-card--expand mdl-color--teal-300">
-                      <h2 className="mdl-card__title-text mdl-typography--text-center">Desarrollo físico</h2>
-                    </div>
-                    <div className="mdl-card__supporting-text mdl-color-text--grey-600">
-                      <div className="mdl-grid">
-                        <div className="mdl-cell mdl-cell--6-col">
-                          <p className="mdl-typography--text-center display-2">Altura</p>
-                          <p className="mdl-typography--text-center display-2">{this.state.report.physic.height} cm</p>
-                        </div>
-                        <div className="mdl-cell mdl-cell--6-col">
-                          <p className="mdl-typography--text-center display-2">Peso</p>
-                          <p className="mdl-typography--text-center display-2">{this.state.report.physic.weight} kg</p>
-                        </div>
-                      </div>
-                      <p className="mdl-typography--text-center">Registrado: {new Date(this.state.report.physic.date).toLocaleString()}</p>
-                    </div>
-                    <br />
-                    <div className="mdl-card__actions mdl-card--border">
-                      <a href="#" className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver detalles</a>
-                    </div>
-                  </div>
-                )}                
-              </div>
-              <div className="demo-graphs mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col mdl-grid">
-                <h3 className="mdl-typography--text-center">Historial de eventos</h3>
-                <table className="mdl-data-table mdl-js-data-table resize">
-                  <thead>
-                    <tr>
-                    <th className="mdl-data-table__cell--non-numeric td-ms-20">Fecha</th>
-                    <th className="mdl-data-table__cell--non-numeric td-ms-60">Registro</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {
-                      this.state.student.history.map((row) => {
-                        let date = new Date(row.dateCreated);
-                        return (
-                          <tr key={row._id}>
-                            <td className="mdl-data-table__cell--non-numeric"><span>{date.toLocaleString()}</span></td>
-                            <td className="mdl-data-table__cell--non-numeric" title={row.description}><span>{row.description}</span></td>
-                          </tr>
-                        );
-                      })
-                    }
-                  </tbody>
-                </table>
-              </div>
-              <dialog className="mdl-dialog" id="knowedge" key="knowedge">
-               <div className="mdl-dialog__content mdl-dialog__actions--full-width">
-                 <h3 className="mdl-typography--text-center">Conocimientos previos</h3>
-                 <table className="mdl-data-table mdl-js-data-table resize">
-                   <thead>
-                     <tr>
-                       <th className="mdl-data-table__cell--non-numeric td-ms-40">Objetivo</th>
-                       <th className="mdl-data-table__cell--non-numeric td-ms-20">Dominio</th>
-                       <th className="mdl-data-table__cell td-ms-15">Nivel</th>
-                       <th className="mdl-data-table__cell--non-numeric td-ms-25">Progreso</th>
-                     </tr>
-                   </thead>
-                   <tbody>
-                     {
-                       this.state.report.objetives.map((row: any) => {
-                         return (
-                           <tr key={"tr-" + row._id}>
-                             <td className="mdl-data-table__cell--non-numeric"><span>{row.objetive.name}</span></td>
-                             <td className="mdl-data-table__cell--non-numeric">{row.objetive.domain.name}</td>
-                             <td className="mdl-data-table__cell">{row.objetive.level.level}</td>
-                             <td className="mdl-data-table__cell--non-numeric">
-                               <ProgressBar title={`${row.exp} XP`} width={row.avg} />
-                             </td>
-                           </tr>
-                         );
-                       })
-                     }
-                   </tbody>
-                 </table>
-                </div>
-                <div className="mdl-dialog__actions">
-                 <button type="button" className="mdl-button close" onClick={this.hidenKnowEdge.bind(this)}>Cerrar</button>
-                </div>
-              </dialog>
-          </div>
-              <div className="fixed">
-                <button id="add-menu" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></button>
-                <ul className="mdl-menu mdl-menu--top-right mdl-js-menu mdl-js-ripple-effect"
-                  data-mdl-for="add-menu">
-                  <li className="mdl-menu__item" onClick={(e) => {
-                    this.props.router.replace(`/students/get/${this.props.routeParams.id}/physic/create`);
-                  }}>
-                    <i className="material-icons">assignment</i> Añadir un desarrollo físico
+                 </div>
+               </div>
+               {this.state.report.physic && (
+                 <div className="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
+                   <div className="mdl-card__title mdl-card--expand mdl-color--teal-300">
+                     <h2 className="mdl-card__title-text mdl-typography--text-center">Desarrollo físico</h2>
+                   </div>
+                   <div className="mdl-card__supporting-text mdl-color-text--grey-600">
+                     <div className="mdl-grid">
+                       <div className="mdl-cell mdl-cell--4-col">
+                         <p className="mdl-typography--text-center display-2">Altura</p>
+                         <p className="mdl-typography--text-center display-2">{this.state.report.physic.height} cm</p>
+                       </div>
+                       <div className="mdl-cell mdl-cell--4-col">
+                         <p className="mdl-typography--text-center display-2">Peso</p>
+                         <p className="mdl-typography--text-center display-2">{this.state.report.physic.weight} kg</p>
+                       </div>
+                       <div className="mdl-cell mdl-cell--4-col">
+                         <p className="mdl-typography--text-center display-2">IMC</p>
+                         <p className="mdl-typography--text-center display-2">{this.state.report.physic.imc.toFixed(2)}</p>
+                       </div>
+                     </div>
+                     <p className="mdl-typography--text-center">Registrado: {new Date(this.state.report.physic.date).toLocaleString()}</p>
+                   </div>
+                   <br />
+                   <div className="mdl-card__actions mdl-card--border">
+                     <a href="#" className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver detalles</a>
+                   </div>
+                 </div>
+               )}
+             </div>
+             <div className="demo-graphs mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col mdl-grid">
+               <h3 className="mdl-typography--text-center">Historial de eventos</h3>
+               <table className="mdl-data-table mdl-js-data-table resize">
+                 <thead>
+                   <tr>
+                     <th className="mdl-data-table__cell--non-numeric td-ms-20">Fecha</th>
+                     <th className="mdl-data-table__cell--non-numeric td-ms-60">Registro</th>
+                   </tr>
+                 </thead>
+                 <tbody>
+                   {
+                     this.state.student.history.map((row) => {
+                       let date = new Date(row.dateCreated);
+                       return (
+                         <tr key={row._id}>
+                           <td className="mdl-data-table__cell--non-numeric"><span>{date.toLocaleString()}</span></td>
+                           <td className="mdl-data-table__cell--non-numeric" title={row.description}><span>{row.description}</span></td>
+                         </tr>
+                       );
+                     })
+                   }
+                 </tbody>
+               </table>
+             </div>
+           </div>
+           <dialog className="mdl-dialog" id="knowedge" key="knowedge">
+             <div className="mdl-dialog__content mdl-dialog__actions--full-width">
+               <h3 className="mdl-typography--text-center">Conocimientos previos</h3>
+               <table className="mdl-data-table mdl-js-data-table resize">
+                 <thead>
+                   <tr>
+                     <th className="mdl-data-table__cell--non-numeric td-ms-40">Objetivo</th>
+                     <th className="mdl-data-table__cell--non-numeric td-ms-20">Dominio</th>
+                     <th className="mdl-data-table__cell td-ms-15">Nivel</th>
+                     <th className="mdl-data-table__cell--non-numeric td-ms-25">Progreso</th>
+                   </tr>
+                 </thead>
+                 <tbody>
+                   {
+                     this.state.report.objetives.map((row: any) => {
+                       return (
+                         <tr key={"tr-" + row._id}>
+                           <td className="mdl-data-table__cell--non-numeric"><span>{row.objetive.name}</span></td>
+                           <td className="mdl-data-table__cell--non-numeric">{row.objetive.domain.name}</td>
+                           <td className="mdl-data-table__cell">{row.objetive.level.level}</td>
+                           <td className="mdl-data-table__cell--non-numeric">
+                             <ProgressBar title={`${row.exp} XP`} width={row.avg} />
+                           </td>
+                         </tr>
+                       );
+                     })
+                   }
+                 </tbody>
+               </table>
+             </div>
+             <div className="mdl-dialog__actions">
+               <button type="button" className="mdl-button close" onClick={this.hidenKnowEdge.bind(this)}>Cerrar</button>
+             </div>
+           </dialog>
+           <div className="fixed">
+             <button id="add-menu" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></button>
+             <ul className="mdl-menu mdl-menu--top-right mdl-js-menu mdl-js-ripple-effect"
+               data-mdl-for="add-menu">
+               <li className="mdl-menu__item" onClick={(e) => {
+                 this.props.router.replace(`/students/get/${this.props.routeParams.id}/physic/create`);
+               }}>
+                 <i className="material-icons">assignment</i> Añadir un desarrollo físico
                   </li>
-                </ul>
-              </div>
-        </main>
+             </ul>
+           </div>
+         </main>   
        </div>
      );
    }

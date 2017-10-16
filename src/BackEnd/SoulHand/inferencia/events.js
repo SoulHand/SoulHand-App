@@ -13,10 +13,11 @@ module.exports = function (db) {
         var helpEvent = new Event({
           name: 'PHYSIC',
           objects: {
-            p1: 'physic.height',
-            p2: 'people.data.genero',
-            p3: 'physic.weight',
-            p4: 'physic.age'
+            p1: 'Altura',
+            p2: 'genero',
+            p3: 'peso',
+            p4: 'edad',
+            p5: 'imc'
           }
         })
         helpEvent.save()
@@ -26,7 +27,8 @@ module.exports = function (db) {
         p1: physic.height,
         p2: people.data.genero,
         p3: physic.weight,
-        p4: physic.age
+        p4: physic.age,
+        p5: physic.imc
       })
       if (!result) {
         return false
