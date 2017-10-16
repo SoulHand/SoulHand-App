@@ -83,7 +83,6 @@ import { ModalFree } from "../../app"
     if (count.count > 0) {
       count.progress = ((count.completed * 100) / count.count)
     }
-    console.log(count);
     this.setState({
       student: student,
       activity: data,
@@ -296,7 +295,7 @@ import { ModalFree } from "../../app"
                               <div id={`downTop${row._id}`} className="icon material-icons" onClick={(e) => { this.showFinaly(row._id, false) }} style={{ cursor: "pointer" }}>thumb_down</div>
                               <div className="mdl-tooltip" data-mdl-for={`downTop${row._id}`}>
                                 Dar por fallido
-                                </div>
+                              </div>
                             </div>
                           )}
                         </span>
