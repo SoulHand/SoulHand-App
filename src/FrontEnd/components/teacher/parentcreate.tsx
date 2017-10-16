@@ -101,7 +101,7 @@ import {ajax} from 'jquery'
    }
    render(){
      return(
-       <ModalApp success={(e: any) => { this.send(e) }} label="Aceptar" title="Añadir un dominio de aprendizaje">
+       <ModalApp success={(e: any) => { this.send(e) }} label="Aceptar" title="Añadir un docente">
          <div className="mdl-grid mdl-color--white">
            <div className="mdl-cell mdl-cell--6-col">
              <div className="mdl-grid">
