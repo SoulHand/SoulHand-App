@@ -2,14 +2,23 @@ import * as React from 'react';
 import 'string-validator'
 import {ajax} from 'jquery'
 import {withRouter} from 'react-router';
+import { FormUtils } from '../formutils'
+
 
 @withRouter
-export class UserCreate extends React.Component<Props.GenericRouter, {}> {
+export class UserCreate extends FormUtils<Props.GenericRouter, {}> {
 	public fields:compat.Map={
 		dni:{
-			match:validator.matches(/^[VE][0-9]{6,9}$/i),
+			match:validator.matches(/[0-9]{6,9}$/i),
 			value:null,
 			required:true
+		},
+		nacionality: {
+			match: (fn: string) => {
+				return !validator.isNull()(fn);
+			},
+			value: 'V',
+			required: true
 		},
 		username:{
 			match:validator.isAlphanumeric(),
@@ -22,10 +31,9 @@ export class UserCreate extends React.Component<Props.GenericRouter, {}> {
 			required:true
 		},
 		password:{
-			value:null,
-			required:true
-		},
-		confirm:{
+			match: (fn: string) => {
+				return !validator.isNull()(fn);
+			},
 			value:null,
 			required:true
 		}
@@ -36,58 +44,34 @@ export class UserCreate extends React.Component<Props.GenericRouter, {}> {
 			name:false,
 			password:false,
 			email:false,
-			confirm:false,
 			duplicated:false
 		}
 	}
   componentDidMount(){
     componentHandler.upgradeAllRegistered();
   }
-	public getFields(event:any){
-		this.fields[event.target.id].value=event.target.value;
-	}
-	public getRadioButton(event:any){
-		this.fields["interprete"].value= (event.target.id=="yes") ? true : undefined
-		this.setState({
-			radio:event.target.id
-		});
-	}
-	public validate(){
-		var value=true;
-		var state:compat.Map=this.state.error;
-		var data:compat.Map={
-			dni:null,
-			name:null,
-			password:null,
-			email:null,
-			confirm:null
-		};
-		for (var i in this.fields){
-			if( (this.fields[i].require && !this.fields[i].value) || (this.fields[i].match && !this.fields[i].match(this.fields[i].value))){
-				value=false;
-				state[i]=true;
-				continue;
-			}
-				data[i]=this.fields[i].value;
-				state[i]=false;
-		}
-		if(data.password!=data.confirm){
-			value=false;
-			state.duplicated=true;
-		}
-		state.server=null;
-		if(!value){
-			return false;
-		}
-		return data;
-	}
 	send(event:any){
 		event.preventDefault();
+		var values: compat.Map = {};
+		var error = false;
+		var _button = event.target;
+		for (var i in this.fields) {
+			this.state.error[i] = !super.validate(this.fields[i].value, i);
+			values[i] = this.fields[i].value;
+			error = error || this.state.error[i];
+		}
+		console.log(error, this.state.error);
+		this.setState(this.state);
+		if (error) {
+			return;
+		}
+		values.dni = values.nacionality + values.dni;
+		delete values.nacionality;
 		ajax({
 			method:"POST",
 	        url: `${window._BASE}/v1/users/`,
 	        dataType: "json",
-	        data:$(event.target).serialize(),
+					data: values,
 	        success:(data:any)=>{
 	        	this.props.router.replace('/auth');
 	        },
@@ -118,27 +102,47 @@ export class UserCreate extends React.Component<Props.GenericRouter, {}> {
          <div className="section__circle-container__circle mdl-color--primary"></div>
          <div className=" demo-container mdl-grid">
              <form className="form-signin" onSubmit={this.send.bind(this)}>
-                 <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                   <input className="mdl-textfield__input" type="text" name="dni" id="dni" pattern="^[VE][0-9]{6,9}$" onChange={(e:any)=>{this.getFields(e)}}/>
-                   <label className="mdl-textfield__label" htmlFor="dni">Documento de identidad*</label>
-                   <span className="mdl-textfield__error">Es obligatorio</span>
-                 </div>
-                 <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                   <input className="mdl-textfield__input" type="text" name="username" id="username" onChange={(e:any)=>{this.getFields(e)}}/>
-                   <label className="mdl-textfield__label" htmlFor="username">Nombre de Usuario*</label>
-                   <span className="mdl-textfield__error">Es obligatorio</span>
-                 </div>
-                 <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+								<div className="mdl-grid">
+									<div className="mdl-cell mdl-cell--2-col mdl-col-middle">
+										<div className={"mdl-textfield mdl-js-textfield " + ((this.state.error.dni) ? 'is-invalid' : '')}>
+											<select className="mdl-textfield__input" id="nacionality" onChange={(e: any) => { this.getFields(e) }}>
+												<option value="V">V</option>
+												<option value="E">E</option>
+											</select>
+										</div>
+									</div>
+									<div className="mdl-cell mdl-cell--4-col">
+										<div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.dni) ? 'is-invalid' : '')}>
+											<input className="mdl-textfield__input" type="text" id="dni" pattern="^[0-9]{5,11}$" onChange={(e: any) => { this.getFields(e) }} />
+											<label className="mdl-textfield__label" htmlFor="dni">Cedula*</label>
+											<span className="mdl-textfield__error">Es necesaria un cedula valida</span>
+										</div>
+									</div>
+								</div>
+								<div className="mdl-cell mdl-cell--6-col">
+									<div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.username) ? 'is-invalid' : '')}>
+										<input className="mdl-textfield__input" type="text" name="username" id="username" onChange={(e: any) => { this.getFields(e) }} />
+										<label className="mdl-textfield__label" htmlFor="username">Nombre de Usuario*</label>
+										<span className="mdl-textfield__error">Es obligatorio</span>
+									</div>
+								</div>
+								<div className="mdl-cell mdl-cell--6-col">
+									<div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.username) ? 'is-invalid' : '')}>
                    <input className="mdl-textfield__input" type="email" name="email" id="email" onChange={(e:any)=>{this.getFields(e)}}/>
                    <label className="mdl-textfield__label" htmlFor="email">Correo electrónico*</label>
                    <span className="mdl-textfield__error">Es obligatorio</span>
                  </div>
-                 <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+								</div>
+								<div className="mdl-cell mdl-cell--6-col">
+									<div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.password) ? 'is-invalid' : '')}>
                    <input className="mdl-textfield__input" type="password" name="password" id="password" onChange={(e:any)=>{this.getFields(e)}}/>
                    <label className="mdl-textfield__label" htmlFor="password">Contraseña</label>
                    <span className="mdl-textfield__error">Es obligatorio</span>
                  </div>
-                 <button className="mdl-button mdl-js-button mdl-button--raised button--colored" type="submit">Registrarse <i className="material-icons">navigate_next</i></button>
+								</div>
+								<div className="mdl-cell mdl-cell--12-col mdl-col-middle">
+                 <button className="mdl-button mdl-js-button mdl-button--raised button--colored" type="submit">Registrarse <i className="material-icons">navigate_next</i></button>                 
+								</div>
              </form>
          </div>
        </div>

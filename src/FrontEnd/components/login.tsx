@@ -61,9 +61,6 @@ import {withRouter, Link} from 'react-router'
                   </div>
                   <div className="mdl-grid">
                     <div className="mdl-cell mdl-cell--6-col">
-                      <a href="#/teachers/get/595f61a45d15193ac4cdf224">¿Se me olvidó la contraseña?</a>
-                    </div>
-                    <div className="mdl-cell mdl-cell--6-col">
                       <Link to="/registry">Registrarse</Link>
                     </div>
                   </div>
