@@ -5,6 +5,7 @@
 var mongoose = require("mongoose");
 var Validator = require('string-validator');
 var ValidatorException = require('../SoulHand/Exceptions/ValidatorException.js');
+var VoidException = require('../SoulHand/Exceptions/VoidException.js');
 var WORDS = require("../words.js");
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -75,6 +76,7 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
             next(error);
         });
     });
+    
     /**
      * Eliminar un lexema
      */
@@ -333,6 +335,28 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
         })
         .then((data) => {
             response.send(data);
+        })
+        .catch((error) => {
+            next(error);
+        });
+    });
+    /**
+     * Obtener un lexema
+     */
+    wordsURI.get('/info/:info', function (request, response, next) {
+        request.params.info = request.params.info.toUpperCase();
+        Promise.all([
+            Schema.words.findOne({ key: request.params.info})
+            .populate("lexema")
+            .populate("morphems"),
+            Schema.Hiperonimo.find({
+              "hiponimos.key": request.params.info
+            }),
+            Schema.wordsPending.find({
+              key: request.params.info
+            })
+        ]).then((row) => {
+            response.send(row);
         })
         .catch((error) => {
             next(error);

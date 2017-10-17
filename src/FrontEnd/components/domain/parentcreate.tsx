@@ -87,7 +87,10 @@ export class ParentCreate extends FormUtils<Props.objetiveView, {}>{
           },
 	        success:(data: CRUD.objetive)=>{
             var str = localStorage.getItem("words-pending");
-            var _words = JSON.parse(str);
+            var _words: Array<string> = [];
+            if (str) {
+              _words = JSON.parse(str);
+            }
             _words = _words.concat(data.pending);
             localStorage.setItem("word-pending", JSON.stringify(_words));
 	        	this.props.router.replace(`/objetives/get/${data._id}`);
@@ -95,12 +98,15 @@ export class ParentCreate extends FormUtils<Props.objetiveView, {}>{
 	        error:(data:any)=>{
             var state: CRUD.codeError = data.responseJSON;
             var str = localStorage.getItem("words-pending");
-            var _words = JSON.parse(str);
+            var _words: Array<string> = [];
+            if (str) {
+              _words = JSON.parse(str);
+            }
             _words = _words.concat(state.message.keywords);
             localStorage.setItem("word-pending", JSON.stringify(_words));
             var config = {
               message: state.message.message,
-              timeout: 30000
+              timeout: window.settings.alert.delay
             };
             var message: any = document.querySelector('.mdl-js-snackbar')
             message.MaterialSnackbar.showSnackbar(config);
