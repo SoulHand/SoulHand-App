@@ -279,7 +279,10 @@ declare namespace CRUD{
   }
   interface codeError{
   	code:string
-  	message:string
+  	message:{
+		keywords: Array<string>
+		message: string
+	}
   }
 
 	interface physic{
@@ -331,16 +334,17 @@ declare namespace CRUD{
 		words: Array<Words.Term>
 	}
 	interface objetive{
-      __v: number
-      description: string
-      name: string
-      _id: string
-	  words: Array<string>
-      dateCreated: string
-      cognitions: Array<cognition>
-      level: level
-			domain: domain
-			exp: number
+		__v: number
+		description: string
+		name: string
+		_id: string
+		words: Array<string>
+		dateCreated: string
+		cognitions: Array<cognition>
+		level: level
+		domain: domain
+		exp: number
+		pending?: Array<string>
   	}
 	interface activity{
 		name: string

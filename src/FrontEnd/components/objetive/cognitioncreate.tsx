@@ -47,7 +47,7 @@ import {ajax} from 'jquery'
 	        	var state: CRUD.codeError = data.responseJSON;
             var config = {
               message: state.message,
-              timeout: 2000
+              timeout: window.settings.alert.delay
             };
             var message: any = document.querySelector('.mdl-js-snackbar')
             message.MaterialSnackbar.showSnackbar(config);

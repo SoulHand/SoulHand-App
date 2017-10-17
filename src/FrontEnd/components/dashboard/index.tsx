@@ -33,104 +33,7 @@ import {LineChart} from "../linechart"
      p1.done((data: any) => {
        this.init = true;
        this.setState(data);
-       /*let parse = this.parseGraphs(activities);
-       this.setState({
-         activities: activities,
-         values: parse
-       });*/
      });
-   }
-   parseGraphs(activities: Array<CRUD.activity>){
-     let count: any = {
-       activities:{
-         completed: 0,
-         failed: 0,
-         pending: 0,
-         count: 0,
-         progress: 0,
-         categories: [],
-         domains: [],
-         completeds: []
-       },
-       objetives:{
-         completed: 0,
-         failed: 0,
-         pending: 0,
-         count: 0,
-         progress: 0,
-         categories: [],
-         domains: []
-       }       
-     };
-     let objetives: Array < CRUD.objetive > = [];
-     activities = activities.filter((row) => {
-       var date = new Date(row.dateCreated);
-       var days = (Date.now() - date.getTime()) / 8.64e+7;
-       return days <= 7;
-     });
-     count.activities.count = activities.length;
-     activities.forEach((row) => {
-       for (var i in row.objetives){
-         objetives.push(row.objetives[i]);
-       }
-     });
-     let categoryObjetives: compat.Map = {};
-     count.objetives.count = objetives.length;
-     activities.forEach((row) => {
-       if (row.isCompleted) {
-         count.activities.completed++;
-       } else {
-         count.activities.pending++;
-       }
-       var isAdd = count.activities.categories.filter((str: string) => {
-         return row.course.name == str;
-       });
-       if (isAdd.length == 0) {
-         var node = {
-           name: row.course.name,
-           data: [0, 0, 0, 0, 0, 0]
-         };
-         count.activities.categories.push(row.course.name);
-         count.activities.domains.push(node);
-         count.activities.completeds.push(node);
-       }
-     });
-     count.activities.domains = count.activities.domains.map((row: { name: string, data: Array<number> }, index: number) => {
-       activities.forEach((objetive) => {
-        var date = new Date(objetive.dateCreated);
-        var dayWeek = date.getDay();
-        if (objetive.course.name == row.name){
-          row.data[dayWeek]++;
-          if (objetive.isCompleted) {
-            count.activities.completeds[index].data[dayWeek]++;
-          }
-        }
-       });
-       return row;
-     });
-     objetives.forEach((row) => {
-       var isAdd = count.objetives.categories.filter((str: string) => {
-          return row.domain.name == str;
-        });
-        if(isAdd.length == 0){
-          count.objetives.categories.push(row.domain.name);
-          count.objetives.domains.push({
-            name: row.domain.name,
-            y: 0
-          });
-        }
-     });
-     count.objetives.domains = count.objetives.domains.map((row: {name: string, y:number}) => {
-        var counter = objetives.filter((objetive) => {
-          return objetive.domain.name == row.name;
-        });
-        row.y = counter.length;
-        return row;
-     });
-     if (count.activities.count > 0){
-       count.activities.progress = (count.activities.completed / count.activities.count) * 100;
-     }
-     return count;
    }
    render(){
      if(!this.init){
@@ -248,9 +151,14 @@ import {LineChart} from "../linechart"
           }
         },
         xAxis:{
-          categories:["dom", "Lun","Mart","Mier","Jue","Vier", "sab"],
+          categories:["Lun","Mart","Mier","Jue","Vier"],
           title:{
             text:"días de la semana"
+          }
+        },
+        yAxis:{
+          title:{
+            text:"Cantidad de materias asignadas"
           }
         },
         series: this.state.activities.domains
@@ -270,9 +178,14 @@ import {LineChart} from "../linechart"
           }
         },
         xAxis:{
-          categories:["dom", "Lun","Mart","Mier","Jue","Vier", "sab"],
+          categories:["Lun","Mart","Mier","Jue","Vier"],
           title:{
             text:"días de la semana"
+          }
+        },
+        yAxis:{
+          title:{
+            text:"Cantidad de materias completadas"
           }
         },
         series: this.state.activities.completeds

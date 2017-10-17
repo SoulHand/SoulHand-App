@@ -86,33 +86,24 @@ export class ParentCreate extends FormUtils<Props.objetiveView, {}>{
             _button.disabled = false;
           },
 	        success:(data: CRUD.objetive)=>{
+            var str = localStorage.getItem("words-pending");
+            var _words = JSON.parse(str);
+            _words = _words.concat(data.pending);
+            localStorage.setItem("word-pending", JSON.stringify(_words));
 	        	this.props.router.replace(`/objetives/get/${data._id}`);
 	        },
 	        error:(data:any)=>{
             var state: CRUD.codeError = data.responseJSON;
-            /*if (state.code == "152") {
-              this.setState({error: state.message});
-              this.show();
-            }else{
-              var config = {
-                message: state.message,
-                timeout: 2000
-              };
-              var message: any = document.querySelector('.mdl-js-snackbar')
-              message.MaterialSnackbar.showSnackbar(config);
-            }*/
-            var _text = "";
-            if(typeof state.message == "string"){
-              _text = state.message;
-            }else{
-              _text = state.message.message;
-            }
+            var str = localStorage.getItem("words-pending");
+            var _words = JSON.parse(str);
+            _words = _words.concat(state.message.keywords);
+            localStorage.setItem("word-pending", JSON.stringify(_words));
             var config = {
-                message: _text,
-                timeout: 30000
-              };
-              var message: any = document.querySelector('.mdl-js-snackbar')
-              message.MaterialSnackbar.showSnackbar(config);
+              message: state.message.message,
+              timeout: 30000
+            };
+            var message: any = document.querySelector('.mdl-js-snackbar')
+            message.MaterialSnackbar.showSnackbar(config);
 	        }
 		});
   }

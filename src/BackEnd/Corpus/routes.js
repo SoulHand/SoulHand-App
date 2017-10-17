@@ -516,4 +516,25 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
         });
     });
     app.use('/v1/terms', TermsURI);
+    /*
+    * Rutas para hiperonimos (terminos)
+    */
+    let PendingURI = express.Router();
+    /**
+     * Añadir una palabra
+     */
+    /**
+     * Obtener palabras pendientes
+     */
+    PendingURI.get('/', function (request, response, next) {
+        Schema.wordsPending.find()
+        .sort({ dateCreated: 1 })
+        .then((data) => {
+            response.send(data);
+        })
+        .catch((error) => {
+            next(error);
+        });
+    });
+    app.use('/v1/words/pendings', PendingURI);
 }

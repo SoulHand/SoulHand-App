@@ -25,8 +25,14 @@ import {withRouter, Link} from 'react-router'
  	        	this.props.router.replace(url.url || '/');
  	        },
  	        error:(data:any)=>{
- 	        	this.setState({error:"Nombre de usuario o contraseña incorrecta!"});
- 	        }
+            var state: CRUD.codeError = data.responseJSON;
+            var config = {
+              message: state.message,
+              timeout: window.settings.alert.delay
+            };
+            var message: any = document.querySelector('.mdl-js-snackbar')
+            message.MaterialSnackbar.showSnackbar(config);
+          }
  		});
  	}
    render(){

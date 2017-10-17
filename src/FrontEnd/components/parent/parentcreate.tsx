@@ -9,7 +9,7 @@ import {ajax} from 'jquery'
  export class ParentCreate extends FormUtils<{router: any}, {}>{
    public fields:compat.Map={
  		dni:{
- 			match:validator.matches(/^[0-9]{5,11}$/i),
+ 			match:validator.matches(/^[0-9]{6,11}$/i),
  			value:null,
  			required:true
  		},

@@ -72,21 +72,43 @@ module.exports = function (db) {
           concepts: [],
           morphems: []
         });
-        logger.info({ 
+        logger.info({
           message: `Nueva palabra ingresada ${_word.key}. Iniciando inferencia`
         });
         _word = WORDS.getMorphology(lexemas, _word);
-        if(!_word.lexema){
-          logger.warn({ 
-            message: `Nueva palabra ${_word.key} no fue localizado lexema!`
+        var _add = new db.wordsPending({
+          key: _word.key
+        });
+        _add.save();
+        logger.warn({
+          message: `Registrada palabra "${_add.key}" en pendientes. No localizada`
+        });
+        var morfems = _word.key.replace(_word.lexema.key, "");
+        if (!_word.lexema || _word.morphems.length == 0) {
+          logger.warn({
+            message: `Nueva palabra ${_word.key} no fue localizado lexema y/o morfema!`
           });
+          continue;
+        }
+        for (var j = 0, n = _word.morphems.length; j<n; j++){
+          morfems = morfems.replace(_word.morphems[j].key);
+        }
+        if (morfems.trim() == ""){
+          logger.warn({
+            message: `La palabra ${_word.key} posee morfemas no registrados.`
+          });
+          continue;
+        }
+        _word.lexema = _word.lexema._id;
+        _word.save();
+      }
+      /*if(!_word.lexema){
+          
           var _add = new db.wordsPending({
             key: _word.key
           });
           _add.save();
-          logger.warn({
-            message: `Registrada palabra "${_add.key}" en pendientes. No localizada`
-          });
+          
           var _lexema = _word.key.replace(WORDS.MORPHEM_CONJUGATION, '');
           var _morphema = _word.key.replace(_lexema, '');
           var _mode = WORDS.CLASS_GRAMATICAL.VERB;
@@ -211,7 +233,7 @@ module.exports = function (db) {
         });
         datas[i].hiponimos.push(_concept);
         datas[i].save();
-      }
+      }*/
     });
   })
   return Inference

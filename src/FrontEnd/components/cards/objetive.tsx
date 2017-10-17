@@ -29,7 +29,7 @@ import {Link} from 'react-router'
             </ul>
           </div>
           <div className="mdl-card__supporting-text mdl-color-text--grey-600">
-            {this.props.objetive._id}
+            {this.props.objetive.description}
           </div>
           <div className="mdl-card__actions mdl-card--border">
             <Link to={`/objetives/get/${this.props.objetive._id}`} className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver detalles</Link>

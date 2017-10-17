@@ -60,9 +60,6 @@ export class View extends React.Component<Props.teacherView, any>{
  	        }
  		});
    }
-   componentWillReceip(){
-
-   }
    componentDidMount(){
       window.progress.start();
      let p1 = ajax({
@@ -161,8 +158,8 @@ export class View extends React.Component<Props.teacherView, any>{
             name: "Peso Máximo",
             data: rows[0].physics.map((row: CRUD.physic) => {
               var _min: Number, _weight: CRUD.weight;
-              rows[2].forEach((weight: CRUD.weight) => {
-                var _dist = Math.abs(row.height - weight.height);
+              rows[3].forEach((weight: CRUD.weight) => {
+                var _dist = Math.abs(row.age - weight.age);
                 if(rows[0].data.genero == weight.genero){
                   if(_min == null || _min > _dist){
                     _min = _dist;
@@ -182,8 +179,8 @@ export class View extends React.Component<Props.teacherView, any>{
             name: "Peso Minimo",
             data: rows[0].physics.map((row: CRUD.physic) => {
               var _min: Number, _weight: CRUD.weight;
-              rows[2].forEach((weight: CRUD.weight) => {
-                var _dist = Math.abs(row.height - weight.height);
+              rows[3].forEach((weight: CRUD.weight) => {
+                var _dist = Math.abs(row.age - weight.age);
                 if(rows[0].data.genero == weight.genero){
                   if(_min == null || _min > _dist){
                     _min = _dist;
