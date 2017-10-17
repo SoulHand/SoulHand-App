@@ -91,7 +91,7 @@ module.exports.getMorphology = (row, _word) => {
     for (var i = 0, n = row.length; i < n; i++) {
         var _regexp = new RegExp(row[i].regexp, "ig");
         if (_regexp.test(_word.key)) {
-            _word.lexema = row[i]._id;
+            _word.lexema = row[i];
             var _rest = _word.key.replace(_regexp, '');
             var length = 0;
             for (var j = 0, m = row[i].morphems.length; j < m; j++) {

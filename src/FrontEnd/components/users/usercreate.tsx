@@ -1,7 +1,7 @@
 import * as React from 'react';
 import 'string-validator'
 import {ajax} from 'jquery'
-import {withRouter} from 'react-router';
+import {withRouter, Link} from 'react-router';
 import { FormUtils } from '../formutils'
 
 
@@ -102,6 +102,9 @@ export class UserCreate extends FormUtils<Props.GenericRouter, {}> {
          <div className="section__circle-container__circle mdl-color--primary"></div>
          <div className=" demo-container mdl-grid">
              <form className="form-signin" onSubmit={this.send.bind(this)}>
+						 		<div className="mdl-cell mdl-cell--4-col">
+									 <Link to="/">Regresar</Link>
+								</div>
 								<div className="mdl-grid">
 									<div className="mdl-cell mdl-cell--2-col mdl-col-middle">
 										<div className={"mdl-textfield mdl-js-textfield " + ((this.state.error.dni) ? 'is-invalid' : '')}>

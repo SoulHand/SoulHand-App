@@ -163,7 +163,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 				if (isAdd.length == 0) {
 					var node = {
 						name: row.course.name,
-						data: [0, 0, 0, 0, 0, 0]
+						data: [0, 0, 0, 0, 0]
 					};
 					count.activities.courses.push(row.course.name);
 					count.activities.domains.push(node);
@@ -174,8 +174,8 @@ module.exports = function (app, express, Schema, __DIR__) {
 			count.activities.domains = count.activities.domains.map((row, index) => {
 				activitiesAll.forEach((activity) => {
 					var date = new Date(activity.dateCreated);
-					var dayWeek = date.getDay();
-					if (activity.course.name == row.name) {
+					var dayWeek = date.getDay() - 1;
+					if (activity.course.name == row.name && dayWeek >= 0 && dayWeek <= 4) {
 						row.data[dayWeek]++;
 						if (activity.isCompleted) {
 							count.activities.completeds[index].data[dayWeek]++;
@@ -1119,7 +1119,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 			&& parseFloat(request.body.exp) <= 0) {
 			throw new ValidatorException('Los puntos de exp deben ser superiores a cero!');
 		}
-    request.body.name = request.body.name.toUpperCase()
+    	request.body.name = request.body.name.toUpperCase()
 		request.body.description = request.body.description.toUpperCase()
 		if (request.body.conditions){
 			request.body.conditions = JSON.parse(request.body.conditions);
@@ -1165,6 +1165,9 @@ module.exports = function (app, express, Schema, __DIR__) {
 		})
 		.then((words) => {
 			_pending = WORDS.getPending(words, _pending, _words);
+			if (_pending.length > 0 ) {
+				Events.emit("new-words", _pending);
+			}
 			if(_pending.length == _words.length){
 				throw new KeywordVoidException("No se pudo identificar una palabra clave!");
 			}
@@ -3543,8 +3546,8 @@ module.exports = function (app, express, Schema, __DIR__) {
 			if(!data[1]){
 				throw new ValidatorException("No existe el docente!");
 			}
-      if(!data[1].grade){
-				throw new ValidatorException("No existe el grado!");
+      		if(!data[1].grade){
+				throw new ValidatorException("No posee asignado un grado!");
 			}
 			var activity=new Schema.Activities({
 				name:request.body.name,
