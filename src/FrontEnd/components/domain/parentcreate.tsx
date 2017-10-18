@@ -86,24 +86,24 @@ export class ParentCreate extends FormUtils<Props.objetiveView, {}>{
             _button.disabled = false;
           },
 	        success:(data: CRUD.objetive)=>{
-            var str = localStorage.getItem("words-pending");
+            var str = sessionStorage.getItem("words-pending");
             var _words: Array<string> = [];
             if (str) {
               _words = JSON.parse(str);
             }
             _words = _words.concat(data.pending);
-            localStorage.setItem("word-pending", JSON.stringify(_words));
+            sessionStorage.setItem("word-pending", JSON.stringify(_words));
 	        	this.props.router.replace(`/objetives/get/${data._id}`);
 	        },
 	        error:(data:any)=>{
             var state: CRUD.codeError = data.responseJSON;
-            var str = localStorage.getItem("words-pending");
+            var str = sessionStorage.getItem("words-pending");
             var _words: Array<string> = [];
             if (str) {
               _words = JSON.parse(str);
             }
             _words = _words.concat(state.message.keywords);
-            localStorage.setItem("word-pending", JSON.stringify(_words));
+            sessionStorage.setItem("word-pending", JSON.stringify(_words));
             var config = {
               message: state.message.message,
               timeout: window.settings.alert.delay

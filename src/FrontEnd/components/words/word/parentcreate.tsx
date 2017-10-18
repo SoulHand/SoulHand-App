@@ -233,7 +233,6 @@ import { App, ModalApp } from '../../app'
                   {this.state.morphems.map((row) => {
                     return (
                       <option key={row._id} value={row._id}>{row.key}</option>
-
                     )
                   })}
                 </select>
