@@ -256,7 +256,6 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
         if (!Validator.isMongoId()(request.body.lexem)) {
             throw new ValidatorException("No existe el lexema!");
         }
-        
         if (Validator.isNull()(request.body.words)) {
             request.body.words = [];
         }else{
@@ -301,7 +300,7 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
             for(var i = 0, n = request.body.morphem.length; i<n; i++){
                 var isExist = false;
                 for(var j = 0, m = rows[1].morphems.length; j<m; j++){
-                    if(rows[1].morphems[j]._id.toString() == request.body.morphems[i]){
+                    if(rows[1].morphems[j]._id.toString() == request.body.morphem[i]){
                         _morphems.push({
                             _id: rows[1].morphems[j]._id,
                             key: rows[1].morphems[j].key
@@ -340,6 +339,7 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
             response.send(data);
         })
         .catch((error) => {
+            console.log(error);
             next(error);
         });
     });
