@@ -139,6 +139,10 @@ export class Words extends FormUtils<Props.GenericRouter, {}>{
   componentDidUpdate(){
     componentHandler.upgradeAllRegistered();
   }
+  finish(){
+    sessionStorage.removeItem("word-pending");
+    window.history.back();
+  }
    render(){
      if(this.words.length == 0){
        return(
@@ -183,7 +187,7 @@ export class Words extends FormUtils<Props.GenericRouter, {}>{
                         <div className="mdl-cell mdl-cell--9-col">
                         </div>
                         <div className="mdl-cell mdl-cell--2-col">
-                          <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" onClick={(e) => {window.history.back()}}>
+                          <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" onClick={this.finish.bind(this)}>
                             Finalizar
                           </button>
                         </div>

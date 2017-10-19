@@ -93,6 +93,7 @@ export class ParentCreate extends FormUtils<Props.objetiveView, {}>{
             }
             _words = _words.concat(data.pending);
             sessionStorage.setItem("word-pending", JSON.stringify(_words));
+            sessionStorage.removeItem("error");
 	        	this.props.router.replace(`/objetives/get/${data._id}`);
 	        },
 	        error:(data:any)=>{
@@ -104,12 +105,16 @@ export class ParentCreate extends FormUtils<Props.objetiveView, {}>{
             }
             _words = _words.concat(state.message.keywords);
             sessionStorage.setItem("word-pending", JSON.stringify(_words));
+            sessionStorage.removeItem("error");
             var config = {
               message: state.message.message,
               timeout: window.settings.alert.delay
             };
             var message: any = document.querySelector('.mdl-js-snackbar')
             message.MaterialSnackbar.showSnackbar(config);
+            if (state.code == "153") {
+              this.props.router.replace(`/errors/1/words/new`);            
+            }
 	        }
 		});
   }
