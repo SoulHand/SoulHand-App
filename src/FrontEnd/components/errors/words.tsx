@@ -90,7 +90,6 @@ export class Words extends FormUtils<Props.GenericRouter, {}>{
       };
   }
   replace_word(data: { lexema: Words.Lexema, morphems: Array<Words.word> }){
-    console.log(data);
     this.download.word = {
       lexema: data.lexema,
       morphems: data.morphems,
@@ -122,7 +121,24 @@ export class Words extends FormUtils<Props.GenericRouter, {}>{
     var is_valid: any = document.getElementById("correct-lex");
     if(is_valid.checked){
       this.props.router.replace(`/errors/4/words/new`);
+      return;
     }
+    let p1 = ajax({
+      method: "DELETE",
+      url: `${window._BASE}/v1/words/${this.download.word._id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+      dataType: "json",
+      data: null,
+      beforeSend: () => {
+        window.progress.start();
+      },
+      complete: () => {
+        window.progress.done();
+      }
+    });
+    p1.done((activity: any) => {
+      this.download.word = null;
+      this.forceUpdate();
+    });
   }
   new_word_step3(){
     sessionStorage.setItem("word-pending", JSON.stringify(this.data));
@@ -254,9 +270,16 @@ class WordStep1 extends React.Component<{words: Array<string>, next: Function}, 
 class WordStep2 extends React.Component<{load: Function, replace: Function, word: string, next: Function, session: User.session}, {word: Words.word, concepts: Array<Words.Term>, isPending:boolean}>{
    public init: boolean = false;
    componentDidMount() {
+     this.load(this.props);
+   }
+   componentWillReceiveProps(props:any){
+     this.init = false;
+     this.load(props);
+   }
+   load(props: any){
      let p1 = ajax({
        method: "GET",
-       url: `${window._BASE}/v1/words/info/${this.props.word}?PublicKeyId=${this.props.session.publicKeyId}&PrivateKeyId=${this.props.session.privateKeyId}`,
+       url: `${window._BASE}/v1/words/info/${props.word}?PublicKeyId=${props.session.publicKeyId}&PrivateKeyId=${props.session.privateKeyId}`,
        dataType: "json",
        data: null,
        beforeSend: () => {
