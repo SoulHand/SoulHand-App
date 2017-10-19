@@ -16,7 +16,7 @@ interface Window{
 	dialogPolyfill: any
 	ReactPath: string
 	WORDS: {
-
+		SeparatorWords: function(str: string):Array<string>
 		CONCEPTS: {
 			COUNT: string
 			GENERO: string

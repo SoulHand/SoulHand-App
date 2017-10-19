@@ -27,9 +27,9 @@ export class ParentCreate extends FormUtils<Props.objetiveView, {}>{
  			required:true
  		},
  		is_correct:{
-       value:false,
-       required:true
-     },
+      value:false,
+      required:true
+    },
     is_observable:{
  			value:false,
  			required:true

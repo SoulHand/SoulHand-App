@@ -100,6 +100,7 @@ window.addEventListener("load",()=>{
           <Route path="get/:id/level/create" component={Domain.AddLevel}/>
           <Route path=":domain/objetives/:level" component={Domain.Objetive}/>
           <Route path=":domain/objetives/:level/create" component={Domain.Add}/>
+          <Route path="objetives/create" component={Domain.AddPublic}/>
           <Route path="create" component={Domain.AddDomain}/>
         </Route>
         <Route path="/objetives" onEnter={Auth}>
