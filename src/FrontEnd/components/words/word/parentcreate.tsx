@@ -76,6 +76,7 @@ import { App, ModalApp } from '../../app'
         this.setState(this.state);
         return;
       }
+      values.morphem = JSON.stringify([values.morphem]);
       values.term = JSON.stringify(values.term);
       ajax({
           method:"POST",

@@ -76,6 +76,7 @@ window.addEventListener("load",()=>{
         </Route>
         <Route path="/errors" onEnter={Auth}>
           <Route path=":step/words/:type" component={Errors.Word}/>
+          <Route path=":step/objetives/:type" component={Errors.Objetive}/>
         </Route>
         <Route path="/rules" onEnter={Auth}>
           <IndexRoute component={Rules.Rules}/>

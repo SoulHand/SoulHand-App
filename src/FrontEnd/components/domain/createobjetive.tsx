@@ -119,7 +119,7 @@ export class CreateObjetive extends FormUtils<Props.objetiveView, {}>{
    }
    render(){
      return(
-      <ModalApp success={this.send.bind(this)} label="Aceptar" title="Añadir un objetivo (Modo experto)">
+      <ModalApp success={this.send.bind(this)} label="Aceptar" title="Añadir un objetivo">
          <div className="mdl-grid mdl-color--white demo-content">
            <div className="mdl-cell mdl-cell--6-col">
              <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.name) ? 'is-invalid' : '')}>

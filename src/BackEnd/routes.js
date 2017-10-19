@@ -1465,7 +1465,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 						consecuent: `q6 = "${request.body.domain}"`,
 						h: _verbs[j].range
 					});
-					eventTaxon.premises.push(_inference);					
+					eventTaxon.premises.push(_inference);
 				}
 			}
 			if(request.body.domain){

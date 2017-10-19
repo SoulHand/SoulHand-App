@@ -359,6 +359,13 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
               key: request.params.info
             })
         ]).then((row) => {
+            row[1] = row[1].map((row) => {
+                var _val = row.toJSON();
+                _val.hiponimos = row.hiponimos.filter((row2) => {
+                    return row2.key == request.params.info;
+                });
+                return _val;
+            });
             response.send(row);
         })
         .catch((error) => {
