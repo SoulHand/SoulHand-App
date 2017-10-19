@@ -8,6 +8,7 @@ import {Objetives} from './objetives'
 import {CognitionView} from './cognition'
 import { DomainCreate } from './domaincreate'
 import {ParentCreate} from './parentcreate'
+import { CreateObjetive} from './createobjetive'
 import { LevelCreate } from './levelcreate'
 
 
@@ -96,7 +97,7 @@ import { LevelCreate } from './levelcreate'
                <i className="material-icons">explore</i> Añadir un dominio de aprendizaje
                   </li>
              <li className="mdl-menu__item" onClick={(e) => {
-               this.props.router.push("/objetives/create");
+               this.props.router.push("/domains/objetives/create");
              }}>
                <i className="material-icons">lightbulb_outline</i> Añadir un objetivo de aprendizaje
                   </li>
@@ -111,5 +112,6 @@ import { LevelCreate } from './levelcreate'
  export let Objetive = Objetives;
  export let Cognition = CognitionView;
  export let Add = ParentCreate;
+ export let AddPublic = CreateObjetive;
  export let AddDomain = DomainCreate;
  export let AddLevel = LevelCreate;
