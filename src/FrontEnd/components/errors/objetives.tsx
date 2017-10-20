@@ -52,6 +52,10 @@ export class Objetives extends FormUtils<Props.GenericRouter, {}>{
         concepts: data[1],
         isPending: !!data[2]
       };
+      if (!data[0]){
+        this.props.router.push(`/errors/1/words/new`);
+        return;
+      }
       this.words_query = {
         key: data[0].key
       }
