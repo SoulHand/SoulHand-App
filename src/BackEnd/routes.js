@@ -1130,7 +1130,11 @@ module.exports = function (app, express, Schema, __DIR__) {
 		if (!request.body.words){
 			request.body.words = [];
 		}else{
-			request.body.words = WORDS.SeparatorWords(request.body.words);
+			if (Validator.isJSON()(request.body.words)){
+				request.body.words = JSON.parse(request.body.words);
+			}else{
+				request.body.words = WORDS.SeparatorWords(request.body.words);
+			}
 			request.body.words = request.body.words.map((row) => {
 				return row.toUpperCase();
 			})
@@ -1155,7 +1159,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 				_verbs = [], _actions = [], _keywords = [];
 		Schema.LearningObjetive.findOne({ name: request.body.name }).then((row) => {
 			if (row) {
-				throw new ValidatorException('Ya existe un objetivo con el mismo nombre!')
+				throw new MachineError('Ya existe un objetivo con el mismo nombre!')
 			}
 			//procesando palabras claves
 			var _queryWords = _words.map((row) => {
@@ -1297,7 +1301,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 						});
 						_value.q3 = _consecuent.q3;
 					}
-				}				
+				}
 				//_value = Object.assign(_value, _consecuent);
 				var _consecuents = Events.ChainGetAll(eventTaxon.premises, _value);
 				for(var j = 0, u = _consecuents.length; j < u; j++){
@@ -1456,9 +1460,9 @@ module.exports = function (app, express, Schema, __DIR__) {
 				throw new KeywordVoidException("No posee palabras claves!");
 			}
 			if(!request.body.is_correct || !request.body.is_observable){
-				throw new ValidatorException("Anulado inserción de objetivo por el usuario!. Ajustes aplicados");				
+				throw new MachineError("Anulado inserción de objetivo por el usuario!. Ajustes aplicados");				
 			}
-			if(!_domain && request.body.domain){
+			if(request.body.domain){
 				for(var j = 0, n = _verbs.length; j<n; j++){
 					var _inference = new Schema.inferences({
 						premise: `p1 == "${_verbs[j].word.key}" && q2 == true`,
@@ -1467,28 +1471,23 @@ module.exports = function (app, express, Schema, __DIR__) {
 					});
 					eventTaxon.premises.push(_inference);
 				}
-			}
-			if(request.body.domain){
 				_domain = request.body.domain;
 			}
-			if(!_level && request.body.level){
+			if(request.body.level){
 				for(var j = 0, n = _verbs.length; j<n; j++){
 					var _inference = new Schema.inferences({
 						premise: `p1 == "${_verbs[j].word.key}" && q2 == true`,
-						consecuent: `q6 = "${request.body.level}"`,
+						consecuent: `q7 = "${request.body.level}"`,
 						h: _verbs[j].range
 					});
 					eventTaxon.premises.push(_inference);					
 				}
-			}
-			if(request.body.level){
 				_level = request.body.level;
 			}
-			
 			eventTaxon.save();
 			event.save();
 			if (!_domain || !_level){
-				throw new ValidatorException("No existe una acción observable");
+				throw new MachineError("No existe una acción observable");
 			}
 			try{
 				return Promise.all([
@@ -1631,6 +1630,13 @@ module.exports = function (app, express, Schema, __DIR__) {
 					consecuent: `q2 = ${request.body.is_observable}`,
 					h: _range
 				}));
+				if (_isVerb && !request.body.is_observable) {
+					event.premises.push(new Schema.inferences({
+						premise: `p1 == "${request.body.key}"`,
+						consecuent: `q10 = "El verbo \\"${request.body.key }\\" no es observable"`,
+						h: _range
+					}));
+				}
 				return event.save();
 			})
 			.then((data) => {
@@ -1693,7 +1699,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 					event.save();
 				}
 				event.premises.push(new Schema.inferences({
-					premise: `this.isContaint(p1, "${JSON.stringify(request.body.words)}") == true`,
+					premise: `this.isContaint(p1, ${JSON.stringify(request.body.words)}) == true`,
 					consecuent: `q9 = ${request.body.exp}`,
 					h: _range
 				}));

@@ -144,9 +144,9 @@ export class ParentCreate extends FormUtils<Props.objetiveView, {}>{
                 ¿Verbos observables?
               </label>
               <label htmlFor="is_observable" className="mdl-switch mdl-js-switch">
-               <input type="checkbox" id="is_observable" className="mdl-switch__input" onChange={(e: any) => { this.getRadioButton(e) }} />
-               <span className="mdl-switch__label">No/Si</span>
-             </label>
+                <input type="checkbox" id="is_observable" className="mdl-switch__input" onChange={(e: any) => { this.getRadioButton(e) }} />
+                <span className="mdl-switch__label">No/Si</span>
+              </label>
            </div>
            <div className="mdl-cell mdl-cell--6-col">
              <div className={"mdl-textfield mdl-js-textfield mdl-textfield--floating-label " + ((this.state.error.words) ? 'is-invalid' : '')}>

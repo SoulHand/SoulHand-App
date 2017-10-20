@@ -110,6 +110,10 @@ export class CreateObjetive extends FormUtils<Props.objetiveView, {}>{
             message.MaterialSnackbar.showSnackbar(config);
             if (_words.length > 0) {
               this.props.router.push(`/errors/1/words/new`);
+              return;
+            }
+            if (state.code != "153") {
+              this.props.router.push(`/errors/1/objetives/new`);
             }
 	        }
 		});
