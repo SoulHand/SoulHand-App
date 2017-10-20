@@ -1541,6 +1541,171 @@ module.exports = function (app, express, Schema, __DIR__) {
 			next(error)
 		})
 	});
+  /*
+  * @api {post} /objetives/ Crear objetivo de aprendizaje
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  * @var category<CategoryCoginitions> objeto CRUD
+  */
+  cognitions.post('/objetives/datas', Auth.isAdmin.bind(Schema),
+  function (request, response, next) {
+			if (Validator.isNull()(request.body.key)){
+				throw new ValidatorException("Es necesario la palabra ha evaluar!");
+			}
+			request.body.key = request.body.key.toUpperCase();
+			request.body.is_observable = request.body.is_observable == "true";
+			request.body.is_correct = request.body.is_correct == "true";
+			var event;
+			Promise.all([
+				Schema.events.findOne({ name: 'KEYWORDS-SEARCH' }),
+				Schema.events.findOne({ name: 'KEYWORDS-IS' }),
+			])
+			.then((rows) => {
+				event = rows[0];
+				if (!event) {
+					/**
+					 * q1: Es palabra clave
+					 * q2: Es observable
+					 * q3: Es Acción
+					 * q10: Errores
+					 */
+					event = new Schema.events({
+						name: 'KEYWORDS-SEARCH',
+						objects: {
+							p1: 'Palabra', // Palabra
+							p2: 'radio texto', // Cantidad de repeticiones por objetivos
+							p3: 'información lexica', // conceptos gramaticales
+							p4: 'información semantica', // conceptos semanticos
+						},
+						premises: []
+					});
+					event.save();
+				}
+				var exp = new RegExp(request.body.key, "ig");
+				return Promise.all([
+					Schema.words.findOne({ key: request.body.key }),
+					Schema.Hiperonimo.find({
+						$or: [
+							{ "hiponimos.key": request.body.key },
+							{ "hiponimos.words": request.body.key }
+						]
+					}),
+					Schema.LearningObjetive.count(),
+					Schema.LearningObjetive.find({ description: { $regex: exp } }).count()
+				])
+			})
+			.then((datas) => {
+				var _word = datas[0], _hiperonimos = datas[1], _count = datas[2], _range = 0;
+				var _isVerb = false;
+				if(_count > 0){
+					_range = datas[2] / _count;
+				}
+				for(var i = 0, n = _word.concepts.length; i<n; i++){
+					var _concept = _word.concepts[i];
+					if(_concept.value == WORDS.CLASS_GRAMATICAL.VERB){
+						_isVerb = true;
+						break;
+					}
+				}
+				var _taxons = _word.concepts.map((row) => {
+					return `${row.key}|${row.value}`;
+				});
+				var _concepts_val = _hiperonimos.map((row) => {
+					return row.concept;
+				}).join("|");
+				var _value = {
+					p1: _word,
+					p2: _range,
+					p3: _taxons,
+					p4: _concepts_val
+				};
+				var _presupuesto = request.body.is_observable || request.body.is_correct;
+				event.premises.push(new Schema.inferences({
+					premise: `p1 == "${request.body.key}"`,
+					consecuent: `q1 = ${_presupuesto}`,
+					h: _range
+				}));
+				event.premises.push(new Schema.inferences({
+					premise: `p1 == "${request.body.key}"`,
+					consecuent: `q2 = ${request.body.is_observable}`,
+					h: _range
+				}));
+				return event.save();
+			})
+			.then((data) => {
+				response.send(data);
+			})
+			.catch((error) => {
+				next(error)
+			})
+	});
+  /*
+  * @api {post} /objetives/ Crear objetivo de aprendizaje
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  * @var category<CategoryCoginitions> objeto CRUD
+  */
+  cognitions.post('/objetives/exp', Auth.isAdmin.bind(Schema),
+  function (request, response, next) {
+			if (!Validator.isJSON()(request.body.words)){
+				throw new ValidatorException("Es necesario la !");
+			}
+			request.body.words = JSON.parse(request.body.words).map((row) => {
+				return row.toUpperCase();
+			});
+			var exp = new RegExp(request.body.words.join("|"), "ig");
+			var event;
+			Promise.all([
+				Schema.events.findOne({ name: 'KEYWORDS-IS' }),
+				Schema.LearningObjetive.count(),
+				Schema.LearningObjetive.find({ description: { $regex: exp } }).count()
+			])
+			.then((rows) => {
+				var _count = rows[1], _range = 0;
+				event = rows[0];
+				if (_count > 0) {
+					_range = rows[2] / _count;
+				}
+				if (!event) {
+					/**
+					 * q4: condiciones
+					 * q5: funciones cognitivas
+					 * q6: dominios
+					 * q7: niveles
+					 * q8: errores
+					 * q9: puntos de experiencia estimados
+					*/
+					event = new Schema.events({
+						name: 'KEYWORDS-IS',
+						objects: {
+							p1: 'Palabra', // Palabra
+							p2: 'radio texto', // Cantidad de repeticiones por objetivos
+							p3: 'información lexica', // conceptos gramaticales
+							p4: 'información semantica', // conceptos semanticos
+							q1: "ES PALABRA CLAVE",
+							q2: "ES OBSERVABLE",
+							q3: "ES ACCIÓN"
+						},
+						premises: []
+					});
+					event.save();
+				}
+				event.premises.push(new Schema.inferences({
+					premise: `this.isContaint(p1, "${JSON.stringify(request.body.words)}") == true`,
+					consecuent: `q9 = ${request.body.exp}`,
+					h: _range
+				}));
+				return event.save();
+			})
+			.then((data) => {
+				response.send(data);
+			})
+			.catch((error) => {
+				next(error)
+			})
+	});
 /*
 * @api {get} /objetives Obtener todos los objetivos
 * y dominio valido

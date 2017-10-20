@@ -18,6 +18,7 @@ interface ErrorReport {
 @withRouter
 export class Objetives extends FormUtils<Props.GenericRouter, {}>{
   public words: Array<string> = [];
+  public static: Array<string> = [];
   public init: boolean = false;
   public data: any;
   public error: ErrorReport;
@@ -114,28 +115,80 @@ export class Objetives extends FormUtils<Props.GenericRouter, {}>{
       var element = _words[i];
       keywords[i] = element.getAttribute("data-field");
     }
+    this.static = keywords.slice();
     this.data = keywords;
     this.now = this.data.shift();
     this.props.router.replace(`/errors/2/objetives/new`);
   }
   new_word_step2(e: any){
-    this.words_query = Object.assign(this.words_query, e);
-    this.now = this.data.shift();
-    console.log(this.now, this.data, this.words_query);
-    if (this.now){
-      this.forceUpdate();
-      return;
+    this.words_query.data = e;
+    var _datas:compat.Map = {};
+    for(var i = 0, n = e.length; i<n; i++){
+      _datas[e[i].name] = e[i].value;
     }
-    this.props.router.replace(`/errors/3/objetives/new`);
+    _datas.key = this.words_query.key;
+    ajax({
+      method: "POST",
+      url: `${window._BASE}/v1/knowedge/objetives/datas/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+      dataType: "json",
+      data: _datas,
+      beforeSend: () => {
+        window.progress.start();
+      },
+      complete: () => {
+        window.progress.done();
+      },
+      success: (data: Words.Lexema) => {
+        this.now = this.data.shift();
+        if (this.now) {
+          this.forceUpdate();
+          return;
+        }
+        this.props.router.replace(`/errors/3/objetives/new`);
+      },
+      error: (data: any) => {
+        var state: CRUD.codeError = data.responseJSON;
+        var config = {
+          message: state.message,
+          timeout: window.settings.alert.delay
+        };
+        var message: any = document.querySelector('.mdl-js-snackbar')
+        message.MaterialSnackbar.showSnackbar(config);
+      }
+    });
   }
   new_word_step3(){
-    sessionStorage.setItem("word-pending", JSON.stringify(this.data));
-    this.now = this.data.shift();
-    if(this.now){
-      this.props.router.replace(`/errors/2/objetives/new`);
-    }else{
-      this.props.router.replace(`/errors/5/objetives/new`);      
-    }
+    ajax({
+      method: "POST",
+      url: `${window._BASE}/v1/knowedge/objetives/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+      dataType: "json",
+      data: {},
+      beforeSend: () => {
+        window.progress.start();
+      },
+      complete: () => {
+        window.progress.done();
+      },
+      success: (data: Words.Lexema) => {
+        this.now = this.data.shift();
+        if (this.now) {
+          this.forceUpdate();
+          return;
+        }
+        this.props.router.replace(`/errors/3/objetives/new`);
+      },
+      error: (data: any) => {
+        var state: CRUD.codeError = data.responseJSON;
+        var config = {
+          message: state.message,
+          timeout: window.settings.alert.delay
+        };
+        var message: any = document.querySelector('.mdl-js-snackbar')
+        message.MaterialSnackbar.showSnackbar(config);
+      }
+    });
+    //sessionStorage.removeItem("objetive-pending");
+    this.props.router.replace(`/errors/4/objetives/new`);
   }
   componentDidMount(){
     componentHandler.upgradeAllRegistered();
@@ -144,7 +197,6 @@ export class Objetives extends FormUtils<Props.GenericRouter, {}>{
     componentHandler.upgradeAllRegistered();
   }
   finish(){
-    sessionStorage.removeItem("word-pending");
     window.history.back();
   }
    render(){
@@ -176,9 +228,9 @@ export class Objetives extends FormUtils<Props.GenericRouter, {}>{
               );
             break;
             case "3":
-              body = <WordStep3 word={this.now} next={this.new_word_step3.bind(this)} session={this.session} lexema={this.download.word.lexema._id} morphems={this.download.word.morphems.map((row) => {return row._id})}/>
+              body = <WordStep3 word={this.now} next={this.new_word_step3.bind(this)} session={this.session} keywords={this.static}/>
             break;
-            case "5":
+            case "4":
               body = (
                 <ModalFree title="Informe de errores">
                   <div className="mdl-grid demo-content">
@@ -302,6 +354,7 @@ class WordStep2 extends React.Component<{ load: Function, word: string, next: Fu
           }
         }
       ];
+     this.responses = [];
      return questions;
    }
    getQuestion():Question | boolean{
@@ -445,7 +498,7 @@ class WordStep2 extends React.Component<{ load: Function, word: string, next: Fu
     }
  }
 
-class Form extends FormUtils<{ word: string, next: Function, session: User.session, lexema?: any, morphems?: Array<string>}, {error: compat.Map, word?: Words.word, concepts?: Array<Words.Term>, isPending?: boolean, lexema?: Words.Lexema, morphem?: Words.Morphema, term?: Words.Term}>{
+class Form extends FormUtils<{ word: string, next: Function, session: User.session, lexema?: any, morphems?: Array<string>, keywords: Array<string>}, {error: compat.Map, word?: Words.word, concepts?: Array<Words.Term>, isPending?: boolean, lexema?: Words.Lexema, morphem?: Words.Morphema, term?: Words.Term}>{
    public init: boolean = false;
   state: { error: compat.Map, word?: Words.word, concepts?: Array<Words.Term>, isPending?: boolean, lexema?: Words.Lexema, morphem?: Words.Morphema, term?: Words.Term } = {
     error:{
@@ -482,7 +535,38 @@ class WordStep3 extends Form{
         this.setState(this.state);
         return;
       }
-      this.props.next(parseFloat(values.exp));
+      values.words = JSON.stringify(this.props.keywords);
+      ajax({
+        method: "POST",
+        url: `${window._BASE}/v1/knowedge/objetives/exp/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+        dataType: "json",
+        data: values,
+        beforeSend: () => {
+          window.progress.start();
+          _button.disabled = true;
+        },
+        complete: () => {
+          window.progress.done();
+          _button.disabled = false;
+        },
+        success: (data: CRUD.objetive) => {
+          this.props.next(data);
+        },
+        error: (data: any) => {
+          var state: CRUD.codeError = data.responseJSON;
+          var str = sessionStorage.getItem("words-pending");
+          var _words: Array<string> = [];
+          if (str) {
+            _words = JSON.parse(str);
+          }
+          var config = {
+            message: state.message.message,
+            timeout: window.settings.alert.delay
+          };
+          var message: any = document.querySelector('.mdl-js-snackbar')
+          message.MaterialSnackbar.showSnackbar(config);
+        }
+      });
     }
     componentDidMount(){
       componentHandler.upgradeAllRegistered();
