@@ -62,7 +62,7 @@ import {Link} from 'react-router'
               <div className="mdl-cell--1">
                 <div id={`toolp${this.props.activity._id}`} className="icon material-icons">event_note</div>
                 <div className="mdl-tooltip" data-mdl-for={`toolp${this.props.activity._id}`}>
-                  Fecha de expiración
+                  Fecha de expiración 
                 </div>
               </div>
               <div className="mdl-cell--6">

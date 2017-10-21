@@ -213,8 +213,10 @@ export class View extends React.Component<Props.teacherView, any>{
        );
      }
 
-     var chart1 = {
-       credits: false,
+     var chart1: Highcharts.Options = {
+       credits: {
+         enabled: false
+       },
        chart: {
          type: 'spline'
        },
@@ -255,8 +257,10 @@ export class View extends React.Component<Props.teacherView, any>{
          }
        },
        series: this.state.graphs[0]
-     }, chart2 = {
-       credits: false,
+     }, chart2: Highcharts.Options = {
+       credits: {
+         enabled: false
+       },
        chart: {
          type: 'spline'
        },
@@ -297,8 +301,10 @@ export class View extends React.Component<Props.teacherView, any>{
          }
        },
        series: this.state.graphs[1]
-       }, chart3 = {
-         credits: false,
+       }, chart3: Highcharts.Options = {
+         credits: {
+           enabled: false
+         },
          chart: {
            type: 'spline'
          },
@@ -393,17 +399,21 @@ export class View extends React.Component<Props.teacherView, any>{
                    </div>
                    <div className="mdl-card__supporting-text mdl-color-text--grey-600">
                      <div className="mdl-grid">
-                       <div className="mdl-cell mdl-cell--4-col">
+                       <div className="mdl-cell mdl-cell--3-col">
                          <p className="mdl-typography--text-center display-2">Altura</p>
                          <p className="mdl-typography--text-center display-2">{this.state.report.physic.height} cm</p>
                        </div>
-                       <div className="mdl-cell mdl-cell--4-col">
+                       <div className="mdl-cell mdl-cell--3-col">
                          <p className="mdl-typography--text-center display-2">Peso</p>
                          <p className="mdl-typography--text-center display-2">{this.state.report.physic.weight} kg</p>
                        </div>
-                       <div className="mdl-cell mdl-cell--4-col">
+                       <div className="mdl-cell mdl-cell--3-col">
                          <p className="mdl-typography--text-center display-2">IMC</p>
                          <p className="mdl-typography--text-center display-2">{this.state.report.physic.imc.toFixed(2)}</p>
+                       </div>
+                       <div className="mdl-cell mdl-cell--3-col">
+                         <p className="mdl-typography--text-center display-2">Edad</p>
+                         <p className="mdl-typography--text-center display-2">{this.state.report.physic.age}</p>
                        </div>
                      </div>
                      <p className="mdl-typography--text-center">Registrado: {new Date(this.state.report.physic.date).toLocaleString()}</p>
@@ -479,7 +489,7 @@ export class View extends React.Component<Props.teacherView, any>{
              <ul className="mdl-menu mdl-menu--top-right mdl-js-menu mdl-js-ripple-effect"
                data-mdl-for="add-menu">
                <li className="mdl-menu__item" onClick={(e) => {
-                 this.props.router.replace(`/students/get/${this.props.routeParams.id}/physic/create`);
+                 this.props.router.push(`/students/get/${this.props.routeParams.id}/physic/create`);
                }}>
                  <i className="material-icons">assignment</i> Añadir un desarrollo físico
                   </li>
