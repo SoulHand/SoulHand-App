@@ -1215,7 +1215,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 				_MAX
 			]);
 		})
-			.then((rows) => {
+		.then((rows) => {
 			var event = rows[0], eventTaxon = rows[1], _MAX = rows[2];
 			if (!event) {
 				/**
@@ -1598,7 +1598,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 				var _word = datas[0], _hiperonimos = datas[1], _count = datas[2], _range = 0;
 				var _isVerb = false;
 				if(_count > 0){
-					_range = datas[2] / _count;
+					_range = datas[3] / _count;
 				}
 				for(var i = 0, n = _word.concepts.length; i<n; i++){
 					var _concept = _word.concepts[i];
@@ -1614,23 +1614,56 @@ module.exports = function (app, express, Schema, __DIR__) {
 					return row.concept;
 				}).join("|");
 				var _value = {
-					p1: _word,
+					p1: _word.key,
 					p2: _range,
 					p3: _taxons,
 					p4: _concepts_val
 				};
 				var _presupuesto = request.body.is_observable || request.body.is_correct;
-				event.premises.push(new Schema.inferences({
-					premise: `p1 == "${request.body.key}"`,
-					consecuent: `q1 = ${_presupuesto}`,
-					h: _range
-				}));
-				event.premises.push(new Schema.inferences({
-					premise: `p1 == "${request.body.key}"`,
-					consecuent: `q2 = ${request.body.is_observable}`,
-					h: _range
-				}));
-				if (_isVerb && !request.body.is_observable) {
+				var _vars = {}, _basuras = [], _isDelete = false;
+				for (var j = 0, n = event.premises.length; j<n; j++){
+					var _consecuents = Events.ChainGetOne([event.premises[j]], _value, true);
+					if (!_consecuents){
+						continue;
+					}
+					if (event.premises[j].h < 0.5) {
+						if (_consecuents.q1 != undefined){
+							event.premises[j].consecuent = `q1 = ${_presupuesto}`;
+						}
+						if (_consecuents.q2 != undefined){
+							event.premises[j].consecuent = `q2 = ${request.body.is_observable}`;							
+							if (_isVerb && request.body.is_observable){
+								_isDelete = true;
+							}
+						}
+						if (_consecuents.q10 != undefined){
+							event.premises[j].consecuent = `q10 = "El verbo \\"${request.body.key}\\" no es observable"`;
+							if (_isDelete){
+								_basuras.push(j);
+							}
+						}
+						event.premises[j].h = _range;
+						_vars = Object.assign(_consecuents, _vars);
+					}
+				}
+				while (_basura = _basuras.pop()){
+					event.premises[_basura].remove();
+				}
+				if(_vars.q1 == undefined){
+					event.premises.push(new Schema.inferences({
+						premise: `p1 == "${request.body.key}"`,
+						consecuent: `q1 = ${_presupuesto}`,
+						h: _range
+					}));
+				}
+				if(_vars.q2 == undefined){
+					event.premises.push(new Schema.inferences({
+						premise: `p1 == "${request.body.key}"`,
+						consecuent: `q2 = ${request.body.is_observable}`,
+						h: _range
+					}));
+				}
+				if (_vars.q10 == undefined && _isVerb && !request.body.is_observable){
 					event.premises.push(new Schema.inferences({
 						premise: `p1 == "${request.body.key}"`,
 						consecuent: `q10 = "El verbo \\"${request.body.key }\\" no es observable"`,
@@ -1643,6 +1676,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 				response.send(data);
 			})
 			.catch((error) => {
+				console.log(error);
 				next(error)
 			})
 	});

@@ -91,10 +91,16 @@ class Inferences extends EventEmitter {
     return matchs
   }
 
-  ChainGetOne (premises, varGlobals) {
+  ChainGetOne (premises, varGlobals, get_all) {
+    if (get_all == undefined){
+      get_all = false;
+    }
     var _consecuents = this.ChainGetAll(premises, varGlobals);
     var _consecuent = false, max = 0;
     for(var i = 0, n = _consecuents.length; i<n; i++){
+      if (get_all && !_consecuent){
+        _consecuent = _consecuents[i];
+      }
       if(max < _consecuents[i].h){
         _consecuent = _consecuents[i];
         max = _consecuents[i].h;
