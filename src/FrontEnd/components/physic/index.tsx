@@ -103,17 +103,19 @@ export class Physic extends React.Component<Props.teacherView, {}>{
     });
   }
   Filter(event:any){
-       var filter = this.weights.filter((row)=>{
-          return event.target.value == row.height;
-       });
-       var filter2 = this.heights.filter((row)=>{
-         return event.target.value == row.age;
-       });
-       this.setState({
-           weigths : filter,
-           heights: filter2
-       });
-     }
+    var filter = this.weights.filter((row)=>{
+      var exp = new RegExp(event.target.value, "ig");
+      return  exp.test(row.age) || exp.test(row.weight);
+    });
+    var filter2 = this.heights.filter((row)=>{
+      var exp = new RegExp(event.target.value, "ig");
+      return exp.test(row.age) || exp.test(row.height);
+    });
+    this.setState({
+      weights : filter,
+      heights: filter2
+    });
+  }
   deleteVal(){
     switch (this.deleteMode.type){
       case "weight":

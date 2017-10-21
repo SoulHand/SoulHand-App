@@ -170,7 +170,7 @@ export class View extends React.Component <Props.teacherView, CRUD.activity>{
               </div>
             </div>
             <div className="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col">
-              <span className="mdl-typography--display-1">Objetivos a completar</span>
+              <span className="mdl-typography--display-1">Alumnos asignados</span>
               <ul className="demo-list-three mdl-list">
                 {
                   this.state.students.map((row) => {

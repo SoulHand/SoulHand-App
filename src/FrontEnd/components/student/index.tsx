@@ -4,7 +4,7 @@ import {Link} from 'react-router'
 import * as Cards from '../cards/student'
 import {Header} from '../app/header'
 import {View} from './view'
-import { App } from '../app'
+import { App, ModalSearch } from '../app'
 import {Edit} from './edit'
 import {SetGrade} from './setgrade'
 import {ParentCreate} from './parentcreate'
@@ -75,7 +75,7 @@ import * as Activities from './activity'
        );
      }
      return (
-       <App>
+       <ModalSearch filter={this.Filter.bind(this)} title="Alumnos">
          <div className="mdl-grid">
            {
               this.state.students.map((row) => {
@@ -85,7 +85,7 @@ import * as Activities from './activity'
               })
            }
          </div>
-       </App>
+       </ModalSearch>
      );
    }
  }
