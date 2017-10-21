@@ -1487,7 +1487,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 			eventTaxon.save();
 			event.save();
 			if (!_domain || !_level){
-				throw new MachineError("No existe una acción observable");
+				throw new ValidatorException("No existe una acción observable");
 			}
 			try{
 				return Promise.all([
