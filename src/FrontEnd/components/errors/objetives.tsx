@@ -363,8 +363,7 @@ class WordStep2 extends React.Component<{ load: Function, word: string, next: Fu
           this.props.next([]);
           return;
         }
-        this.state.question = _problem;
-        this.setState(this.state);
+        this.setState({ question: _problem});
       });
       componentHandler.upgradeAllRegistered();
     }

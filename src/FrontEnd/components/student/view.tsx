@@ -411,7 +411,7 @@ export class View extends React.Component<Props.teacherView, any>{
                          <p className="mdl-typography--text-center display-2">IMC</p>
                          <p className="mdl-typography--text-center display-2">{this.state.report.physic.imc.toFixed(2)}</p>
                        </div>
-                       <div className="mdl-cell mdl-cell--3-col">
+                       <div className="mdl-cell mdl-cell--2-col">
                          <p className="mdl-typography--text-center display-2">Edad</p>
                          <p className="mdl-typography--text-center display-2">{this.state.report.physic.age}</p>
                        </div>

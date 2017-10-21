@@ -126,5 +126,4 @@ export class View extends React.Component <Props.teacherView, Words.word>{
     );
   }
 }
-
-/* <StudentActivity key={row._id} student={row} session={this.session} delete={this.remove.bind(this)} activity={}/>
+// <StudentActivity key={row._id} student={row} session={this.session} delete={this.remove.bind(this)} activity={}/>

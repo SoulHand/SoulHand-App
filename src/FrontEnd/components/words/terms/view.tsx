@@ -29,7 +29,7 @@ export class View extends React.Component <Props.teacherView, Words.Term>{
       complete: () => {
         window.progress.done();
       },
-      success: (data: Words.Lexema) => {
+      success: (data: Words.Term) => {
         this.setState(data);
       }
     });

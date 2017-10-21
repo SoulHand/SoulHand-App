@@ -42,11 +42,10 @@ export class View extends React.Component <Props.teacherView, CRUD.activity>{
         data:null,
         crossDomain:true,
         success:(data: CRUD.activity)=>{
-          this.state.objetives = this.state.objetives.filter((row) => {
+          var _objetives = this.state.objetives.filter((row) => {
             return row._id != id;
           });
-          this.state.exp = data.exp;
-          this.setState(this.state);
+          this.setState({ objetives: _objetives, exp: data.exp});
         }
     });
   }
@@ -70,10 +69,10 @@ export class View extends React.Component <Props.teacherView, CRUD.activity>{
       data: null,
       crossDomain: true,
       success: (data: People.student) => {
-        this.state.students = this.state.students.filter((row) => {
+        var _students =  this.state.students.filter((row) => {
           return row._id != id;
         });
-        this.setState(this.state);
+        this.setState({ students: _students});
       }
     });
   }
@@ -221,5 +220,4 @@ export class View extends React.Component <Props.teacherView, CRUD.activity>{
     );
   }
 }
-
-/* <StudentActivity key={row._id} student={row} session={this.session} delete={this.remove.bind(this)} activity={}/>
+// <StudentActivity key={row._id} student={row} session={this.session} delete={this.remove.bind(this)} activity={}/>

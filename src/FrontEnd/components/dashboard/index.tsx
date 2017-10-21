@@ -40,8 +40,10 @@ import {LineChart} from "../linechart"
        return null;
      }
      var Colors = ["#90ed7d", "rgb(80, 67, 67)"];
-      var completeVsPending = {
-        credits: false,
+     var completeVsPending: Highcharts.Options = {
+        credits: {
+          enabled: false
+        },
         chart: {
             type: 'pie',
         },
@@ -90,8 +92,10 @@ import {LineChart} from "../linechart"
         }],
       };
       var Colors = ["#E19431", "#55BADF", "#90ed7d"];
-      var DomainObjetives = {
-        credits: false,
+      var DomainObjetives: Highcharts.Options = {
+        credits: {
+          enabled: false
+        },
         chart: {
           type: 'pie',
         },
@@ -136,8 +140,10 @@ import {LineChart} from "../linechart"
           data: this.state.objetives.domains
         }]
       };
-      var ObjetivesCompleted = {
-        credits: false,
+      var ObjetivesCompleted: Highcharts.Options = {
+        credits: {
+          enabled: false
+        },
         chart: {
             type: 'column'
         },
@@ -163,8 +169,10 @@ import {LineChart} from "../linechart"
         },
         series: this.state.activities.domains
       };
-      var ActivitieCompleted = {
-        credits: false,
+      var ActivitieCompleted: Highcharts.Options = {
+        credits: {
+          enabled: false
+        },
         chart: {
             type: 'column'
         },

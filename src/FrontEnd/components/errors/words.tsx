@@ -188,7 +188,7 @@ export class Words extends FormUtils<Props.GenericRouter, {}>{
               );
             break;
             case "4":
-              body = <WordStep3 word={this.now} next={this.new_word_step3.bind(this)} session={this.session} lexema={this.download.word.lexema._id} morphems={this.download.word.morphems.map((row) => {return row._id})}/>
+              body = <WordStep3 word={this.now} next={this.new_word_step3.bind(this)} session={this.session} lexema={this.download.word.lexema._id} morphems={this.download.word.morphems.map((row: Words.Morphema) => {return row._id})}/>
             break;
             case "5":
               body = (

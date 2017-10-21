@@ -7,10 +7,7 @@ interface ProgressStatic{
 interface Window{
 	settings:any
 	validator:any
-	Promise:{
-		all:any
-		race:any
-	}
+	Promise:any
 	_BASE: string
 	progress: ProgressStatic
 	dialogPolyfill: any
@@ -363,7 +360,7 @@ declare namespace CRUD{
 	}
 	interface weight{
 		_id:string
-		height:number
+		age:number
 		min:number
 		max:number
 		genero:string

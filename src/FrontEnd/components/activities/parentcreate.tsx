@@ -165,4 +165,5 @@ import * as moment from 'moment'
          </div>
        </ModalApp>
      );
+    }
  }

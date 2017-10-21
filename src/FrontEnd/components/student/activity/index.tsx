@@ -137,8 +137,10 @@ import { ModalFree } from "../../app"
       );
     }
     var Colors = ["#00C853", "#424242", "#F44336"];
-    var graficConfig = {
-      credits: false,
+    var graficConfig: Highcharts.Options = {
+      credits: {
+        enabled: false
+      },
       chart: {
         type: 'pie',
       },

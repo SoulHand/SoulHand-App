@@ -188,8 +188,8 @@ export class Objetives extends React.Component<Props.objetiveView, { objetives: 
                  <div className="mdl-cell--10-col mdl-cell--middle">
                    {this.state.level.words.map((row) => {
                      return (
-                       <span className="mdl-chip" key={row}>
-                         <span className="mdl-chip__text">{row}</span>
+                       <span className="mdl-chip" key={row._id}>
+                         <span className="mdl-chip__text">{row.concept}</span>
                          <button type="button" className="mdl-chip__action" onClick={this.deleteWord.bind(this, row)}><i className="material-icons">cancel</i></button>
                        </span>
                      );
