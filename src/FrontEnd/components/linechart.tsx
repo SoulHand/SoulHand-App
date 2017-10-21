@@ -2,14 +2,14 @@ import * as React from 'react'
 import {Chart} from 'highcharts'
 
 export class LineChart extends React.Component <Props.LineChart,{}>{
-	public chart:any;
+	public chart:Highcharts.ChartObject;
 	componentDidMount() {
 		this.chart = new Chart(this.props.id,this.props.config);
 	}
-	/*componentWillReceiveProps(props) {
-		//console.log(props);
-	  	//this.chart.highcharts().series[0].setData(props.data);
-	}*/
+	componentWillReceiveProps(props: Props.LineChart) {
+		this.chart.options = props.config;
+		this.chart.redraw();
+	}
 	render() {
 		let flex: any = {
 		  display:"block",

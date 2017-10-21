@@ -20,11 +20,12 @@ import "../../images/user.png"
              <span className="visuallyhidden">Accounts</span>
            </button>
            <ul className="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" htmlFor="accbtn">
-             <li className="mdl-menu__item"><i className="material-icons">people</i> Mi perfil</li>
              <li className="mdl-menu__item" onClick={this.destroy.bind(this)}><i className="material-icons">add</i>Cerrar sesión</li>
            </ul>
          </div>
        </header>
      );
-   }
- }
+    }
+  }
+  
+//<li className="mdl-menu__item"><i className="material-icons">people</i> Mi perfil</li>

@@ -250,7 +250,7 @@ declare namespace Props {
 	}
   interface LineChart{
 		id:string
-		config:any
+		config:Highcharts.Options
 		className ?: string
 		autoSize ?: boolean
 		title ?: string

@@ -100,6 +100,9 @@ import { ProgressBar} from '../../progressbar'
                  <tbody>
                    {
                      this.state.activities.map((row: CRUD.ActivityMaked) => {
+                       if (!row.objetive || !row.activity){
+                         return null;
+                       }
                        return (
                          <tr key={row._id}>
                            <td className="mdl-data-table__cell--non-numeric"><span>{row.objetive.name}</span></td>

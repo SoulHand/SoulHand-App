@@ -5,7 +5,7 @@ import * as Cards from '../cards/parent'
 import {ParentCreate} from './parentcreate'
 import {View} from './view'
 import {Edit} from './edit'
-import { App } from '../app'
+import { App, ModalSearch } from '../app'
 
 
  export class Parent extends React.Component <{}, {}>{
@@ -73,7 +73,7 @@ import { App } from '../app'
        );
       }
       return (
-        <App>
+        <ModalSearch filter={this.Filter.bind(this)} title="Representantes">
          <div className="mdl-grid">
             {this.state.parents.map((row) => {
               return (
@@ -82,7 +82,7 @@ import { App } from '../app'
             })}
           </div>
           <Link to="/parents/create" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
-       </App>
+        </ModalSearch>
      );
    }
  }

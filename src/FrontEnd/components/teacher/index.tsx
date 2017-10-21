@@ -3,7 +3,7 @@ import {ajax} from 'jquery'
 import {Link} from 'react-router'
 import * as Cards from '../cards/teacher'
 import {Header} from '../app/header'
-import { App } from '../app'
+import { App, ModalSearch } from '../app'
 import {View} from './view'
 import {Edit} from './edit'
 import {SetGrade} from './setgrade'
@@ -24,10 +24,7 @@ import {ParentCreate} from './parentcreate'
    Filter(event:any){
    		var filter=this.teachers.filter((row)=>{
    			var exp=new RegExp(event.target.value,"i");
-   			if(exp.test(row.data.name)==true || exp.test(row.data.dni)==true || (row.grade && exp.test(row.grade.name)==true)){
-   				return true;
-   			}
-   			return false;
+          return exp.test(row.data.name) == true || exp.test(row.data.dni) == true || (row.grade && exp.test(row.grade.name) == true);
    		});
    		this.setState({
  	      	teachers : filter
@@ -75,7 +72,7 @@ import {ParentCreate} from './parentcreate'
        );
      }
      return (
-       <App>
+       <ModalSearch filter={this.Filter.bind(this)} title="Docentes">
          <div className="mdl-grid">
            {this.state.teachers.map((row) => {
              return (
@@ -84,7 +81,7 @@ import {ParentCreate} from './parentcreate'
            })}
           </div>
           <Link to="/teachers/create" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--fab mdl-color--accent mdl-color-text--accent-contrast fixed"><i className="mdl-color-text--white-400 material-icons" role="presentation">add</i></Link>
-       </App>
+       </ModalSearch>
      );
    }
  }
