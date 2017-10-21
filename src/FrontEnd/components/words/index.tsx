@@ -101,7 +101,7 @@ export class Lexemas extends React.Component<Props.teacherView, {}>{
                           <td className="mdl-data-table__cell">{row.morphems.length}</td>
                           <td className="mdl-data-table__cell">
                             <div onClick={(e) => {
-                              this.props.router.replace(`words/get/${row._id}`);
+                              this.props.router.push(`words/get/${row._id}`);
                             }} id={`view${row._id}`} className="icon material-icons" style={{ cursor: "pointer" }}>visibility</div>
                             <div className="mdl-tooltip" data-mdl-for={`view${row._id}`}>
                               Ver

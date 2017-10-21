@@ -90,7 +90,8 @@ import * as moment from 'moment'
      const input: any = document.querySelector('.c-datepicker-input');
      var now = moment();
      //input.value = now.format("DD-MM-YYYY HH:mm:ss");
-     const picker = new MaterialDateTimePicker()
+     var Construct: any = MaterialDateTimePicker;
+     const picker = new Construct()
        .on('submit', (val: any) => {
          input.value = val.format("DD-MM-YYYY HH:mm:ss");
          this.fields.expire.value = input.value;
