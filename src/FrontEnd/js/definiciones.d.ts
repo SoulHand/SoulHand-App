@@ -285,6 +285,7 @@ declare namespace CRUD{
 	interface physic{
 		height: number
 		weight:number
+		imc:number
 		age: number
 		_id: string
 		date:string

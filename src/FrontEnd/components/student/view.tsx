@@ -399,7 +399,7 @@ export class View extends React.Component<Props.teacherView, any>{
                    </div>
                    <div className="mdl-card__supporting-text mdl-color-text--grey-600">
                      <div className="mdl-grid">
-                       <div className="mdl-cell mdl-cell--3-col">
+                       <div className="mdl-cell mdl-cell--4-col">
                          <p className="mdl-typography--text-center display-2">Altura</p>
                          <p className="mdl-typography--text-center display-2">{this.state.report.physic.height} cm</p>
                        </div>
@@ -420,7 +420,7 @@ export class View extends React.Component<Props.teacherView, any>{
                    </div>
                    <br />
                    <div className="mdl-card__actions mdl-card--border">
-                     <a href="#" className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver detalles</a>
+                     <Link to={`/students/get/${this.state.student._id}/physic`} className="mdl-button mdl-js-button mdl-js-ripple-effect">Ver detalles</Link>
                    </div>
                  </div>
                )}
