@@ -1100,7 +1100,7 @@ module.exports = function (app, express, Schema, __DIR__) {
   * @params next middleware dispara la proxima funcion
   * @var category<CategoryCoginitions> objeto CRUD
   */
-  cognitions.post('/objetives/', Auth.isAdmin.bind(Schema),
+	cognitions.post('/objetives/', Auth.isUser.bind(Schema),
   function (request, response, next) {
     if (Validator.isNull()(request.body.name)) {
       throw new ValidatorException('Es requerido un nombre')
@@ -1547,7 +1547,7 @@ module.exports = function (app, express, Schema, __DIR__) {
   * @params next middleware dispara la proxima funcion
   * @var category<CategoryCoginitions> objeto CRUD
   */
-  cognitions.post('/objetives/datas', Auth.isAdmin.bind(Schema),
+	cognitions.post('/objetives/datas', Auth.isUser.bind(Schema),
   function (request, response, next) {
 			if (Validator.isNull()(request.body.key)){
 				throw new ValidatorException("Es necesario la palabra ha evaluar!");
@@ -1556,9 +1556,29 @@ module.exports = function (app, express, Schema, __DIR__) {
 			request.body.is_observable = request.body.is_observable == "true";
 			request.body.is_correct = request.body.is_correct == "true";
 			var event;
+			/*if (isNotVerbose) {
+				((_key, _concept, _range) => {
+					.then((rows) => {
+						var _q3 = false, _h = 0.5;
+						for (var k = 0, m = rows.length; k < m; k++) {
+							_q3 = _q3 || !!rows;
+						}
+						if (_MAX > 0) {
+							_h = _range / _MAX;
+						}
+						var _inference = new Schema.inferences({
+							premise: `p1 == "${_key.key}"`,
+							consecuent: `q3 = ${_q3}`,
+							h: _h
+						});
+						event.premises.push(_inference);
+						event.save();
+					});
+				})(_morpholy[k], _concepts[k], _radios[k]);
+			}*/
 			Promise.all([
 				Schema.events.findOne({ name: 'KEYWORDS-SEARCH' }),
-				Schema.events.findOne({ name: 'KEYWORDS-IS' }),
+				Schema.events.findOne({ name: 'KEYWORDS-IS' })				
 			])
 			.then((rows) => {
 				event = rows[0];
@@ -1567,6 +1587,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 					 * q1: Es palabra clave
 					 * q2: Es observable
 					 * q3: Es Acción
+					 * p5: Es contenido
 					 * q10: Errores
 					 */
 					event = new Schema.events({
@@ -1591,7 +1612,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 						]
 					}),
 					Schema.LearningObjetive.count(),
-					Schema.LearningObjetive.find({ description: { $regex: exp } }).count()
+					Schema.LearningObjetive.find({ description: { $regex: exp } }).count(),
 				])
 			})
 			.then((datas) => {
@@ -1607,6 +1628,38 @@ module.exports = function (app, express, Schema, __DIR__) {
 						break;
 					}
 				}
+				var _queryDomains = _hiperonimos.map((row) => {
+					return {
+						$or: [
+							{ words: row._id },
+							{ "levels.words": row._id }
+						]
+					}
+				}), _queryCognition = _hiperonimos.map((row) => {
+					return {words: row._id};
+				}), _queryCourses = _hiperonimos.map((row) => {
+					return {words: row._id};
+				});
+				return Promise.all([
+					datas,
+					_range,
+					_isVerb,
+					Promise.all([
+						Schema.domainsLearning.findOne({
+							$or: _queryDomains
+						}).count(),
+						Schema.Cognitions.findOne({ $or: _queryCognition }).count(),
+						Schema.Courses.findOne({ $or: _queryCourses }).count()
+					])
+				]);
+			})
+			.then((datas) => {
+				var _word = datas[0][0], _hiperonimos = datas[0][1], _count = datas[0][2], _range = datas[1], _containers = datas[3];
+				var _isVerb = datas[2];
+				var _q3 = false, _p5 = datas[2][2] > 0;
+				for(var i = 0, n = _containers.length; i<n; i++){
+					_q3 = _q3 || _containers[i] > 0;
+				}
 				var _taxons = _word.concepts.map((row) => {
 					return `${row.key}|${row.value}`;
 				});
@@ -1619,7 +1672,10 @@ module.exports = function (app, express, Schema, __DIR__) {
 					p3: _taxons,
 					p4: _concepts_val
 				};
-				var _presupuesto = request.body.is_observable || request.body.is_correct;
+				var _presupuesto = (_q3 && request.body.is_observable) || request.body.is_correct;
+				if (!_presupuesto && !request.body.is_observable){
+					_range = 1 - _range;
+				}
 				var _vars = {}, _basuras = [], _isDelete = false;
 				for (var j = 0, n = event.premises.length; j<n; j++){
 					var _consecuents = Events.ChainGetOne([event.premises[j]], _value, true);
@@ -1635,6 +1691,12 @@ module.exports = function (app, express, Schema, __DIR__) {
 							if (_isVerb && request.body.is_observable){
 								_isDelete = true;
 							}
+						}
+						if (_consecuents.q3 != undefined){
+							event.premises[j].consecuent = `q3 = ${_q3}`;
+						}
+						if (_consecuents.p5 != undefined){
+							event.premises[j].consecuent = `p5 = ${_p5}`;
 						}
 						if (_consecuents.q10 != undefined){
 							event.premises[j].consecuent = `q10 = "El verbo \\"${request.body.key}\\" no es observable"`;
@@ -1663,6 +1725,20 @@ module.exports = function (app, express, Schema, __DIR__) {
 						h: _range
 					}));
 				}
+				if(_vars.q3 == undefined){
+					event.premises.push(new Schema.inferences({
+						premise: `p1 == "${request.body.key}"`,
+						consecuent: `q3 = ${_q3}`,
+						h: _range
+					}));
+				}
+				if(_vars.p5 == undefined){
+					event.premises.push(new Schema.inferences({
+						premise: `p1 == "${request.body.key}"`,
+						consecuent: `p5 = ${_p5}`,
+						h: _range
+					}));
+				}
 				if (_vars.q10 == undefined && _isVerb && !request.body.is_observable){
 					event.premises.push(new Schema.inferences({
 						premise: `p1 == "${request.body.key}"`,
@@ -1687,14 +1763,21 @@ module.exports = function (app, express, Schema, __DIR__) {
   * @params next middleware dispara la proxima funcion
   * @var category<CategoryCoginitions> objeto CRUD
   */
-  cognitions.post('/objetives/exp', Auth.isAdmin.bind(Schema),
+	cognitions.post('/objetives/exp', Auth.isUser.bind(Schema),
   function (request, response, next) {
 			if (!Validator.isJSON()(request.body.words)){
-				throw new ValidatorException("Es necesario la !");
+				throw new ValidatorException("Es necesario una palabra");
+			}
+			if (!Validator.isNumeric()(request.body.exp)){
+				throw new ValidatorException("Los puntos de experiencias debe ser un número");
 			}
 			request.body.words = JSON.parse(request.body.words).map((row) => {
 				return row.toUpperCase();
 			});
+			request.body.exp = parseFloat(request.body.exp);
+			if (request.body.exp <= 0 && request.body.exp > 100){
+				throw new ValidatorException("Los puntos de experiencias debe ser en una escala mayor a cero hasta el 100");
+			}
 			var exp = new RegExp(request.body.words.join("|"), "ig");
 			var event;
 			Promise.all([
