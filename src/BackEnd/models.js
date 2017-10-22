@@ -179,7 +179,7 @@ structDb.LearningObjetive = mongoose.Schema({
 structDb.Activities = mongoose.Schema({
   name: {type: String, trim: true, required: true, uppercase: true},
   description: {type: String, trim: true, required: true, uppercase: true},
-  objetives: [structDb.LearningObjetive],
+	objetives: [{ type: mongoose.Schema.ObjectId, ref: 'LearningObjetive' }],
   isCompleted: {type: Boolean,default: false},
   dateCreated: { type: Date, default: Date.now },
   dateCompleted: { type: Date },
@@ -191,7 +191,7 @@ structDb.Activities = mongoose.Schema({
   dateCreated: { type: Date, default: Date.now },
 	history: [],
 	exp: { type: Number, required: true, default: 0 }
-})
+});
 
 structDb.ActivitiesMaked = mongoose.Schema({
   activity: { type: mongoose.Schema.ObjectId, ref: 'Activities' },

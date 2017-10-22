@@ -186,7 +186,9 @@ module.exports = function (app, express, Schema, Events, __DIR__) {
             });
             for(var i = 0, n = lexema.morphems.length; i<n; i++){
                 if(lexema.morphems[i].key == _morphema.key){
-                    throw new ValidatorException("Ya existe una clave morfema igual!");
+                    lexema.morphems[i] = _morphema;
+                    return lexema.save();
+                    //throw new ValidatorException("Ya existe una clave morfema igual!");
                 }
             }
             lexema.morphems.push(_morphema);

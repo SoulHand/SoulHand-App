@@ -1620,16 +1620,30 @@ module.exports = function (app, express, Schema, __DIR__) {
 				}), _queryCourses = _hiperonimos.map((row) => {
 					return {words: row._id};
 				});
+				var _query1 = 0, _query2 = 0, _query3 = 0;
+				if (_queryDomains.length > 0) {
+					_query1 = Schema.domainsLearning.findOne({
+						$or: _queryDomains
+					}).count();
+				}
+				if (_queryCognition.length > 0) {
+					_query2 = Schema.Cognitions.findOne({
+						$or: _queryCognition
+					}).count();
+				}
+				if (_queryCourses.length > 0) {
+					_query3 = Schema.Courses.findOne({
+						$or: _queryCourses
+					}).count();
+				}
 				return Promise.all([
 					datas,
 					_range,
 					_isVerb,
 					Promise.all([
-						Schema.domainsLearning.findOne({
-							$or: _queryDomains
-						}).count(),
-						Schema.Cognitions.findOne({ $or: _queryCognition }).count(),
-						Schema.Courses.findOne({ $or: _queryCourses }).count()
+						_query1,
+						_query2,
+						_query3
 					])
 				]);
 			})
@@ -4034,6 +4048,133 @@ module.exports = function (app, express, Schema, __DIR__) {
 			next(error);
 		});
 	});
+	/*
+  * @api {get} / Obtener todos los objetivo de aprendizaje
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+	activityURI.get('/:id/objetives/',
+		function (request, response, next) {
+			if (!Validator.isMongoId()(request.params.id)) {
+				throw new ValidatorException('El id es invalido!')
+			}
+			var _rules, _RULES_ADD, _morphology, _activity;
+			Promise.all([
+				Schema.events.findOne({ name: 'KEYWORDS-IS' }),
+				Schema.Activities.findOne({ _id: ObjectId(request.params.id) }),
+				Schema.events.findOne({ name: 'KEYWORDS-SEARCH' })
+			]).
+				then((rows) => {
+					_rules = rows[2];
+					_RULES_ADD = rows[0];
+					if (!_rules) {
+						/**
+						 * q1: Es palabra clave
+						 * q2: Es observable
+						 * q3: Es Acción
+						*/
+						_rules = new Schema.events({
+							name: 'KEYWORDS-SEARCH',
+							objects: {
+								p1: 'Palabra', // Palabra
+								p2: 'radio texto', // Cantidad de repeticiones por objetivos
+								p3: 'información lexica', // conceptos gramaticales
+								p4: 'información semantica', // conceptos semanticos
+							},
+							premises: []
+						});
+						_rules.save();
+					}
+					if (!_RULES_ADD) {
+						/**
+						 * q4: condiciones
+						 * q5: funciones cognitivas
+						 * q6: dominios
+						 * q7: niveles
+						 * q8: errores
+						 * q9: puntos de experiencia estimados
+						*/
+						_RULES_ADD = new Schema.events({
+							name: 'KEYWORDS-IS',
+							objects: {
+								p1: 'Palabra', // Palabra
+								p2: 'radio texto', // Cantidad de repeticiones por objetivos
+								p3: 'información lexica', // conceptos gramaticales
+								p4: 'información semantica', // conceptos semanticos
+								q1: "ES PALABRA CLAVE",
+								q2: "ES OBSERVABLE",
+								q3: "ES ACCIÓN"
+							},
+							premises: []
+						});
+						_RULES_ADD.save();
+					}
+					if (!rows[1]) {
+						throw new ValidatorException('No existe el objetivo!')
+					}
+					_activity = rows[1];
+					var _premises = _activity.words.map((row) => {
+						if (!row) {
+							return null;
+						}
+						return Schema.words.findOne({ key: row });
+					});
+					return Promise.all(_premises);
+				})
+				.then((words) => {
+					_morphology = words;
+					var querys = words.map((row) => {
+						if (!row) {
+							return null;
+						}
+						return Schema.Hiperonimo.findOne({
+							$or: [
+								{ "hiponimos.key": row.key },
+								{ "hiponimos.words": row.key }
+							]
+						});
+					});
+					return Promise.all(querys);
+				})
+				.then((hiperonimos) => {
+					var _queryCognition = hiperonimos.map((row) => {
+						if (!row) {
+							return null;
+						}
+						return { words: row._id };
+					});
+					_queryCognition = _queryCognition.filter((row) => {
+						return !!row;
+					})
+					return Schema.Cognitions.findOne({ $or: _queryCognition });
+				})
+				.then((rows) => {
+					var _queryObjetives = rows.map((cognition) => {
+						return { cognitions: cognition._id};
+					});
+					return Promise.all([
+						Schema.LearningObjetive.find({ $or: _queryObjetives}),
+						Schema.LearningObjetive.find()
+					]);
+				})
+				.then((rows) => {
+					var _body = rows.map((col) => {
+						col = col.filter((row) => {
+							for (var i = 0, n = _activity.objetives.length; i < n; i++) {
+								if (_activity.objetives[i].toString() == row._id.toString()) {
+									return false;
+								}
+							}
+							return true;
+						});
+						return col;
+					})
+					response.send(_body);
+				}).catch((error) => {
+					next(error)
+				})
+		})
 	/*
 	* @api {post} /:domain/activities/:type Crear Categoria cognitiva
 	* @params request peticiones del cliente
