@@ -1556,26 +1556,6 @@ module.exports = function (app, express, Schema, __DIR__) {
 			request.body.is_observable = request.body.is_observable == "true";
 			request.body.is_correct = request.body.is_correct == "true";
 			var event;
-			/*if (isNotVerbose) {
-				((_key, _concept, _range) => {
-					.then((rows) => {
-						var _q3 = false, _h = 0.5;
-						for (var k = 0, m = rows.length; k < m; k++) {
-							_q3 = _q3 || !!rows;
-						}
-						if (_MAX > 0) {
-							_h = _range / _MAX;
-						}
-						var _inference = new Schema.inferences({
-							premise: `p1 == "${_key.key}"`,
-							consecuent: `q3 = ${_q3}`,
-							h: _h
-						});
-						event.premises.push(_inference);
-						event.save();
-					});
-				})(_morpholy[k], _concepts[k], _radios[k]);
-			}*/
 			Promise.all([
 				Schema.events.findOne({ name: 'KEYWORDS-SEARCH' }),
 				Schema.events.findOne({ name: 'KEYWORDS-IS' })				
@@ -1901,6 +1881,113 @@ module.exports = function (app, express, Schema, __DIR__) {
       next(error)
     })
   })
+  /*
+  * @api {get} / Obtener todos los objetivo de aprendizaje
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+  cognitions.get('/objetives/:id/cognitions',
+  function (request, response, next) {
+		if (!Validator.isMongoId()(request.params.id)) {
+			throw new ValidatorException('El id es invalido!')
+		}
+		var _rules, _RULES_ADD, _morphology, _objetive;
+		Promise.all([
+			Schema.events.findOne({ name: 'KEYWORDS-IS' }),
+			Schema.LearningObjetive.findOne({ _id: ObjectId(request.params.id) }),
+			Schema.events.findOne({ name: 'KEYWORDS-SEARCH' })
+		]).
+		then((rows) => {
+			_rules = rows[2];
+			_RULES_ADD = rows[0];
+			if (!_rules) {
+				/**
+				 * q1: Es palabra clave
+				 * q2: Es observable
+				 * q3: Es Acción
+				*/
+				_rules = new Schema.events({
+					name: 'KEYWORDS-SEARCH',
+					objects: {
+						p1: 'Palabra', // Palabra
+						p2: 'radio texto', // Cantidad de repeticiones por objetivos
+						p3: 'información lexica', // conceptos gramaticales
+						p4: 'información semantica', // conceptos semanticos
+					},
+					premises: []
+				});
+				_rules.save();
+			}
+			if (!_RULES_ADD) {
+				/**
+				 * q4: condiciones
+				 * q5: funciones cognitivas
+				 * q6: dominios
+				 * q7: niveles
+				 * q8: errores
+				 * q9: puntos de experiencia estimados
+				*/
+				_RULES_ADD = new Schema.events({
+					name: 'KEYWORDS-IS',
+					objects: {
+						p1: 'Palabra', // Palabra
+						p2: 'radio texto', // Cantidad de repeticiones por objetivos
+						p3: 'información lexica', // conceptos gramaticales
+						p4: 'información semantica', // conceptos semanticos
+						q1: "ES PALABRA CLAVE",
+						q2: "ES OBSERVABLE",
+						q3: "ES ACCIÓN"
+					},
+					premises: []
+				});
+				_RULES_ADD.save();
+			}
+			if (!rows[1]) {
+				throw new ValidatorException('No existe el objetivo!')
+			}
+			_objetive = rows[1];
+			var _premises = _objetive.words.map((row) => {
+				if (!row) {
+					return null;
+				}
+				return Schema.words.findOne({ key: row });
+			});
+			return Promise.all(_premises);
+		})
+		.then((words) => {
+			_morphology = words;
+			var querys = words.map((row) => {
+				if (!row) {
+					return null;
+				}
+				return Schema.Hiperonimo.findOne({
+					$or: [
+						{ "hiponimos.key": row.key },
+						{ "hiponimos.words": row.key }
+					]
+				});
+			});
+			return Promise.all(querys);
+		})
+		.then((hiperonimos) => {
+			var _queryCognition = hiperonimos.map((row) => {
+				if(!row){
+					return null;
+				}
+				return { words: row._id };
+			});
+			_queryCognition = _queryCognition.filter((row) => {
+				return !!row;
+			})
+			return Schema.Cognitions.find({ $or: _queryCognition});
+		})		
+    .then((rows) => {
+      response.send(rows)
+    }).catch((error) => {
+      next(error)
+    })
+  })
 
   /*
   * @api {put} /objetives/:id Editar un objetivo
@@ -1912,7 +1999,7 @@ module.exports = function (app, express, Schema, __DIR__) {
   Auth.isAdmin.bind(Schema), function (request, response, next) {
     if (!Validator.isMongoId()(request.params.id)) {
       throw new ValidatorException('El id es invalido!')
-    }
+		}
     Schema.LearningObjetive.findOne({
       _id: request.params.id
     }).then((row) => {
