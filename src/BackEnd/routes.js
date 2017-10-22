@@ -1983,7 +1983,15 @@ module.exports = function (app, express, Schema, __DIR__) {
 			return Schema.Cognitions.find({ $or: _queryCognition});
 		})		
     .then((rows) => {
-      response.send(rows)
+			var _body = rows.filter((row) => {
+				for(var i = 0, n = _objetive.cognitions.length; i<n; i++){
+					if (_objetive.cognitions[i].toString() == row._id.toString()){
+						return false;
+					}
+				}
+				return true;
+			});
+			response.send(_body);
     }).catch((error) => {
       next(error)
     })

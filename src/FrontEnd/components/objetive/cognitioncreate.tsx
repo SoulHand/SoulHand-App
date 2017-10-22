@@ -69,7 +69,7 @@ import {ajax} from 'jquery'
      });
      let p2 = ajax({
        method:"GET",
-       url: `${window._BASE}/v1/knowedge/cognitions/?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       url: `${window._BASE}/v1/knowedge/objetives/${this.props.routeParams.id}/cognitions?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
        data:null,
        beforeSend: () => {
@@ -83,14 +83,6 @@ import {ajax} from 'jquery'
        this.activity = rows[0];
        this.init = true;
         let objetives: Array<CRUD.cognition> = rows[1];
-        objetives = objetives.filter((row) => {
-          for ( var i in this.activity.cognitions){
-            if(this.activity.cognitions[i]._id == row._id) {
-              return false;
-            }
-          }
-          return true;
-        })
         this.setState({
           objetives: objetives
         })
@@ -103,12 +95,13 @@ import {ajax} from 'jquery'
        );
      }
      return (
-       <ModalApp success={(e: any) => { this.send(e) }} label="Aceptar" title={"Asignar funciones cognitivas objetivo " + this.activity.name}>
+       <ModalApp success={(e: any) => { this.send(e) }} label="Aceptar" title="Asignar funciones cognitivas">
+         <h4>{this.activity.name}</h4>
          <table className="mdl-data-table mdl-js-data-table mdl-data-table--selectable resize">
            <thead>
              <tr>
-               <th className="mdl-data-table__cell--non-numeric">Funcion cognitiva</th>
-               <th>Descripción</th>
+               <th className="mdl-data-table__cell--non-numeric td-ms-30">Funcion cognitiva</th>
+               <th className="mdl-data-table__cell--non-numeric td-ms-70">Descripción</th>
              </tr>
            </thead>
            <tbody>
@@ -117,7 +110,7 @@ import {ajax} from 'jquery'
                  return (
                    <tr key={row._id} id={row._id}>
                      <td className="mdl-data-table__cell--non-numeric" title={row.name}><span>{row.name}</span></td>
-                     <td title={row.description}><span>{row.description}</span></td>
+                     <td title={row.description} className="mdl-data-table__cell--non-numeric"><span>{row.description}</span></td>
                    </tr>
                  );
                })
