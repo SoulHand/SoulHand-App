@@ -83,6 +83,16 @@ export class Objetives extends FormUtils<Props.GenericRouter, {}>{
   }
   new_word_step2(e: any){
     this.words_query.data = e;
+    var isValid = false;
+    this.words_query.data.forEach((row: {name: string, value: boolean}) => {
+      isValid = isValid || row.value;
+    });
+    if(!isValid){
+      this.static = this.static.filter((row) => {
+        return row != this.words_query.key;
+      });
+    }
+    console.log(this.static);
     var _datas:compat.Map = {};
     for(var i = 0, n = e.length; i<n; i++){
       _datas[e[i].name] = e[i].value;

@@ -4054,7 +4054,7 @@ module.exports = function (app, express, Schema, __DIR__) {
   * @params response respuesta del servidor
   * @params next middleware dispara la proxima funcion
   */
-	activityURI.get('/:id/objetives/',
+	activityURI.get('/:id/objetives',
 		function (request, response, next) {
 			if (!Validator.isMongoId()(request.params.id)) {
 				throw new ValidatorException('El id es invalido!')
@@ -4114,6 +4114,9 @@ module.exports = function (app, express, Schema, __DIR__) {
 						throw new ValidatorException('No existe el objetivo!')
 					}
 					_activity = rows[1];
+					if (!_activity.words){
+						_activity.words = [];
+					}
 					var _premises = _activity.words.map((row) => {
 						if (!row) {
 							return null;
@@ -4147,20 +4150,28 @@ module.exports = function (app, express, Schema, __DIR__) {
 					_queryCognition = _queryCognition.filter((row) => {
 						return !!row;
 					})
-					return Schema.Cognitions.findOne({ $or: _queryCognition });
+					if (_queryCognition.length == 0){
+						return [];
+					}
+					return Schema.Cognitions.find({ $or: _queryCognition });
 				})
 				.then((rows) => {
 					var _queryObjetives = rows.map((cognition) => {
 						return { cognitions: cognition._id};
 					});
+					var _query1 = [];
+					if (_queryObjetives.length > 0){
+						_query1 = Schema.LearningObjetive.find({ $or: _queryObjetives});
+					}
 					return Promise.all([
-						Schema.LearningObjetive.find({ $or: _queryObjetives}),
+						_query1,
 						Schema.LearningObjetive.find()
 					]);
 				})
 				.then((rows) => {
-					var _body = rows.map((col) => {
-						col = col.filter((row) => {
+					var _body = [];
+					for(var i = 0, n = rows.length; i<n; i++){
+						_body[i] = rows[i].filter((row) => {
 							for (var i = 0, n = _activity.objetives.length; i < n; i++) {
 								if (_activity.objetives[i].toString() == row._id.toString()) {
 									return false;
@@ -4168,10 +4179,18 @@ module.exports = function (app, express, Schema, __DIR__) {
 							}
 							return true;
 						});
-						return col;
-					})
+					}
+					_body[1] = _body[1].filter((row) => {
+						for (var i = 0, n = _body[0].length; i < n; i++) {
+							if (_body[0][i].toString() == row._id.toString()) {
+								return false;
+							}
+						}
+						return true;
+					});
 					response.send(_body);
 				}).catch((error) => {
+					console.log(error);
 					next(error)
 				})
 		})
@@ -4193,6 +4212,9 @@ module.exports = function (app, express, Schema, __DIR__) {
 			}
 			if(!data[1]){
 				throw new ValidatorException("No existe la actividad!");
+			}
+			if (data[1].isCompleted == true) {
+				throw new ValidatorException("La actividad ya ha sido completada");
 			}
 			data[1].objetives.forEach((row)=>{
 					if(row._id.toString()==data[0]._id.toString()){
@@ -4234,9 +4256,12 @@ module.exports = function (app, express, Schema, __DIR__) {
 			if(!data[1]){
 				throw new ValidatorException("No existe la actividad!");
 			}
+			if(data[1].isCompleted == true){
+				throw new ValidatorException("La actividad ya ha sido completada");
+			}
       data[0].forEach((objetive) => {
         data[1].objetives.forEach((row)=>{
-          if(row._id.toString() === objetive._id.toString()){
+          if(row.toString() === objetive._id.toString()){
             throw new ValidatorException("El objetivo ya existe en la actividad!");
           }
         });
@@ -4273,6 +4298,9 @@ module.exports = function (app, express, Schema, __DIR__) {
 			}
 			if(data[1].grade.name!=data[0].grade.name){
 				throw new ValidatorException("No coinciden los grados!");
+			}
+			if (data[0].isCompleted == true) {
+				throw new ValidatorException("La actividad ya ha sido completada");
 			}
 			data[0].students.forEach((row)=>{
 					if(row._id.toString()==data[1]._id.toString()){
@@ -4314,6 +4342,9 @@ module.exports = function (app, express, Schema, __DIR__) {
 			if(!data[1]){
 				throw new ValidatorException("No existe la actividad!");
 			}
+			if (data[1].isCompleted == true) {
+				throw new ValidatorException("La actividad ya ha sido completada");
+			}
       data[0].forEach((student) => {
         data[1].students.forEach((row)=>{
           if(row._id.toString() === student._id.toString()){
@@ -4347,6 +4378,9 @@ module.exports = function (app, express, Schema, __DIR__) {
 			if(!data){
 				throw new ValidatorException("No existe la actividad!");
 			}
+			if (data.isCompleted == true) {
+				throw new ValidatorException("La actividad ya ha sido completada");
+			}
 			for(var i=0,n=data.students.length;i<n;i++){
 				var row=data.students[i];
 				if(row.toString()==request.params.student){
@@ -4376,14 +4410,19 @@ module.exports = function (app, express, Schema, __DIR__) {
 		if(!Validator.isMongoId()(request.params.objetive)){
 			throw new ValidatorException("El objetivo no es un id valido!");
 		}
-		Schema.Activities.findOne({_id:request.params.id}).then((data)=>{
+		Schema.Activities.findOne({_id:request.params.id})
+		.populate("objetives")
+		.then((data)=>{
 			if(!data){
 				throw new ValidatorException("No existe la actividad!");
+			}
+			if (data.isCompleted == true) {
+				throw new ValidatorException("La actividad ya ha sido completada");
 			}
       for (var i = 0, n=data.objetives.length; i < n; i++) {
         if(data.objetives[i]._id.toString()==request.params.objetive){
 					data.exp -= data.objetives[i].exp;
-					data.objetives[i].remove();
+					data.objetives.splice(i, 1);
           return data.save();
         }
       }
@@ -4449,7 +4488,10 @@ module.exports = function (app, express, Schema, __DIR__) {
 		if(!Validator.isMongoId()(request.params.id)){
 			throw new ValidatorException("El id es invalido!");
 		}
-		Schema.Activities.findOne({_id:request.params.id}).populate("students").then(function(rows){
+		Schema.Activities.findOne({_id:request.params.id})
+		.populate("students")
+		.populate("objetives")
+		.then(function(rows){
 			if(!rows){
 				throw new ValidatorException("No existe la actividad!");
 			}

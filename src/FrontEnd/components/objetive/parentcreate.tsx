@@ -9,20 +9,20 @@ import {ajax} from 'jquery'
  export class ParentCreate extends FormUtils<{router: any, routeParams: any}, {}>{
    public activity: CRUD.activity;
    public init: boolean = false;
-   state: {objetives: Array<CRUD.objetive>} = {
-     objetives: []
+   state: { objetives: Array<CRUD.objetive>, recomends: Array<CRUD.objetive>} = {
+     objetives: [],
+     recomends: []
    }
    componentDidUpdate(){
      componentHandler.upgradeAllRegistered();
    }
   send(event: any){
     var fields: Array<string> = [];
-    var objetives: any = document.querySelectorAll("tr[id] input[type='checkbox']");
+    var objetives: any = document.querySelectorAll("input[data-field]");
     var _button = event.target;
     for (var i in objetives){
       if (objetives[i].checked == true) {
-        var parent: any = objetives[i].parentNode.parentNode.parentNode;
-        fields.push(parent.id);
+        fields.push(objetives[i].getAttribute("data-field"));
       }
     }
     ajax({
@@ -69,7 +69,7 @@ import {ajax} from 'jquery'
      });
      let p2 = ajax({
        method:"GET",
-       url: `${window._BASE}/v1/knowedge/objetives?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       url: `${window._BASE}/v1/activities/${this.props.routeParams.activity}/objetives?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
        data:null
      });
@@ -86,7 +86,8 @@ import {ajax} from 'jquery'
           return true;
         })
         this.setState({
-          objetives: objetives
+          objetives: objetives[1],
+          recomends: objetives[0],
         })
      })
    }
@@ -98,28 +99,48 @@ import {ajax} from 'jquery'
      }
      return(
         <ModalApp success={this.send.bind(this)} label="Aceptar" title="Asignar objetivos de aprendizaje">
-          <table className="mdl-data-table mdl-js-data-table mdl-data-table--selectable resize">
-            <thead>
-              <tr>
-                <th className="mdl-data-table__cell--non-numeric">Nombre</th>
-                <th>Dominio</th>
-                <th>Nivel</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-               this.state.objetives.map((row) => {
-                  return (
-                    <tr key={row._id} id={row._id}>
-                      <td className="mdl-data-table__cell--non-numeric" title={row.name}><span>{row.name}</span></td>
-                      <td title={row.domain.name}><span>{row.domain.name}</span></td>
-                      <td title={row.level.name}><span>{row.level.name}</span></td>
-                    </tr>
-                  );
-                })
-              }
-            </tbody>
-          </table>
+          <span className="mdl-typography--title">Recomendados</span>
+          <ul className="demo-list-control mdl-list">
+            {this.state.recomends.map((word) => {
+              return (
+                <li className="mdl-list__item" key={word._id}>
+                  <span className="mdl-list__item-primary-content">
+                    <i className="material-icons  mdl-list__item-avatar">chat</i>
+                    <span>{word.name}</span>
+                    <span className="mdl-list__item-text-body">
+                      {word.description}
+                    </span>
+                  </span>
+                  <span className="mdl-list__item-secondary-action">
+                    <label className="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" htmlFor={`select-${word._id}`}>
+                      <input type="checkbox" id={`select-${word._id}`} className="mdl-checkbox__input" data-field={word._id} />
+                    </label>
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+          <span className="mdl-typography--title">Todas</span>
+          <ul className="demo-list-control mdl-list">
+            {this.state.objetives.map((word) => {
+              return (
+                <li className="mdl-list__item" key={word._id}>
+                  <span className="mdl-list__item-primary-content">
+                    <i className="material-icons  mdl-list__item-avatar">chat</i>
+                    <span>{word.name}</span>
+                    <span className="mdl-list__item-text-body">
+                      {word.description}
+                    </span>
+                  </span>
+                  <span className="mdl-list__item-secondary-action">
+                    <label className="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" htmlFor={`select-${word._id}`}>
+                      <input type="checkbox" id={`select-${word._id}`} className="mdl-checkbox__input" data-field={word._id} />
+                    </label>
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
         </ModalApp>
      );
    }
