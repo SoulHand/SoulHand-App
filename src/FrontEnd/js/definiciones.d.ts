@@ -69,6 +69,7 @@ interface Window{
 declare let validator: any;
 declare let componentHandler: any;
 declare let APP: any;
+declare let LICENSE: string;
 
 declare module "material-datetime-picker"{
 	export function constructor(config: any): void

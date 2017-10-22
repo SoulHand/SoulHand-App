@@ -2,6 +2,7 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Header, HeaderBack, HeaderFree, HeaderSearch, HeaderTabSearch} from './header'
 import {Menu} from './menu'
+import { Licenses} from './license'
 
 
  export class App extends React.Component <{title?: string}, {}>{
@@ -96,3 +97,5 @@ import {Menu} from './menu'
      );
    }
  }
+
+ export let License = Licenses;

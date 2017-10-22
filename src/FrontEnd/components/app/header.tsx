@@ -18,7 +18,6 @@ import * as React from 'react'
     }
   }
 
-
   export class Header extends React.Component<PropHeadSimple, {}>{
     render(){
       return (
@@ -30,7 +29,9 @@ import * as React from 'react'
               <i className="material-icons">more_vert</i>
             </button>
             <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
-              <li className="mdl-menu__item">A cerca de</li>
+              <li className="mdl-menu__item" onClick={(e) => {
+                window.history.pushState({}, null, "/#/license");
+              }}>A cerca de</li>
               <li className="mdl-menu__item">Contacto</li>
               <li className="mdl-menu__item">Información legal</li>
             </ul>

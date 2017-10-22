@@ -1,5 +1,7 @@
 var webpack = require('webpack')
 var path = require('path')
+const marked = require("marked");
+const renderer = new marked.Renderer();
 
 module.exports = {
   entry: {
@@ -36,6 +38,14 @@ module.exports = {
       {
         test: /\.json$/,
         loader: 'json-loader'
+      },
+      {
+        test: /\.md$/,
+        loader: "html-loader!markdown-loader",
+        options: {
+          pedantic: true,
+          renderer
+        }
       }
     ]
   },
@@ -49,7 +59,8 @@ module.exports = {
       React: 'react',
       ReactDOM: 'react-dom',
       ReactRouter: 'react-router',
-      'window.settings': path.join(__dirname, 'src/FrontEnd/settings.js')      
+      'window.settings': path.join(__dirname, 'src/FrontEnd/settings.js'),
+      "LICENSE": path.join(__dirname, 'LICENSE.md'),
     }),
     new webpack.DefinePlugin({
       NODE_ENV: 'development'

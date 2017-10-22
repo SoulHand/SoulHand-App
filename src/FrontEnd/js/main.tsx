@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {render} from 'react-dom'
 import {Route, Router, hashHistory, IndexRoute} from 'react-router'
-import {App} from '../components/app'
+import {App, License} from '../components/app'
 import {DashBoard} from '../components/dashboard'
 import {Login} from '../components/login'
 import * as Teacher from '../components/teacher'
@@ -120,6 +120,7 @@ window.addEventListener("load",()=>{
           <Route path="set/:activity/student" component={Activity.setStudent}/>
         </Route>
         <Route path="/auth" component={Login}/>
+        <Route path="/license" component={License}/>
         <Route path="/registry" component={UserCreate}/>
 	  	</Router>
 	  ), document.getElementById("app"));
