@@ -1990,30 +1990,33 @@ module.exports = function (app, express, Schema, __DIR__) {
 					p3: _taxons,
 					p4: _concepts[i].concept
 				};
+				var isAdd = true;
 				var _consecuent = Events.ChainGetOne(_rules.premises, _value);
-				if(_consecuent.q3){
-					_value = Object.assign(_value, _consecuent);
-					var _consecuents = Events.ChainGetAll(_RULES_ADD.premises, _value);
-					for(var k = 0, u = _cognitions.length; k < u; k++){
-						var isAdd = true;
+				_value = Object.assign(_value, _consecuent);
+				var _consecuents = Events.ChainGetAll(_RULES_ADD.premises, _value);
+				if (!_consecuent.q3){
+					isAdd = false;
+				}
+				for(var k = 0, u = _cognitions.length; k < u; k++){
+					if(_consecuent.q3){
 						for (var j = 0, m = _consecuents.length; j < m; j++){
 							if (_consecuents[j].q5 == _cognitions[k]._id.toString()){
 								isAdd = false;
 								break;
 							}
 						}
-						if(isAdd){
-							var _h = 0.5;
-							if (_MAX > 0){
-								_h = _radios[i] / _MAX
-							}
-							var _inference = new Schema.inferences({
-								premise: `p1 == "${_morphology[i].key}"`,
-								consecuent: `q5 = "${_cognitions[k]._id}"`,
-								h: _h
-							});
-							_RULES_ADD.premises.push(_inference);
+					}
+					if(isAdd){
+						var _h = 0.5;
+						if (_MAX > 0){
+							_h = _radios[i] / _MAX
 						}
+						var _inference = new Schema.inferences({
+							premise: `p1 == "${_morphology[i].key}"`,
+							consecuent: `q5 = "${_cognitions[k]._id}"`,
+							h: _h
+						});
+						_RULES_ADD.premises.push(_inference);
 					}
 					_RULES_ADD.save();
 				}
@@ -2028,7 +2031,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 		}).catch((error) => {
 			next(error)
 		})
-  })
+	})
 
   /*
   * @api {delete} /:id Eliminar una categoria cognitiva
