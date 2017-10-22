@@ -146,6 +146,11 @@ export class Objetives extends FormUtils<Props.GenericRouter, {}>{
       window.history.back();
       return;
     }
+    var _objetive: CRUD.objetive = this.save;
+    if(_objetive.cognitions.length == 0){
+      this.props.router.replace(`/objetives/get/${this.save._id}/cognition`);
+      return;
+    }
     this.props.router.replace(`/objetives/get/${this.save._id}`);
   }
    render(){
