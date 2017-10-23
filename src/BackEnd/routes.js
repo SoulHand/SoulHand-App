@@ -63,7 +63,8 @@ module.exports = function (app, express, Schema, __DIR__) {
 							}
 						}
 					]
-				}),
+				})
+				.populate("objetives"),
 				Schema.Activities.find({
 					$and: [
 						{teacher: row._id},
@@ -81,7 +82,8 @@ module.exports = function (app, express, Schema, __DIR__) {
 							isCompleted: false
 						}
 					]
-				}),
+				})
+				.populate("objetives"),
 				Schema.Activities.find({
 					$and: [
 						{teacher: row._id},
@@ -99,7 +101,8 @@ module.exports = function (app, express, Schema, __DIR__) {
 							isCompleted: true
 						}
 					]
-				}),
+				})
+				.populate("objetives"),
 				query
 				/*,
 				Schema.Activities.aggregate([
@@ -213,6 +216,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 			}
 			response.send(count);
 		}).catch(function(error){
+			console.log(error);
 			next(error);
 		});
 	});
@@ -3304,7 +3308,9 @@ module.exports = function (app, express, Schema, __DIR__) {
 			throw new ValidatorException("El id es invalido");
 		}
 
-    Schema.Activities.findOne({_id:request.params.activity}).then((activity) => {
+		Schema.Activities.findOne({_id:request.params.activity})
+		.populate("objetives")
+		.then((activity) => {
       if(!activity){
         throw new ValidatorException("No existe la actividad");
       }
@@ -3931,123 +3937,394 @@ module.exports = function (app, express, Schema, __DIR__) {
 		if(!Validator.isDate()(request.body.expire)){
 			throw new ValidatorException("Es necesaria una fecha de expiracion");
 		}
-    var expire = new Date(request.body.expire.replace(" ","T"))
-		if(expire.getTime() <= Date.now()){
+		request.body.expire = new Date(request.body.expire.replace(" ","T"))
+		if (request.body.expire.getTime() <= Date.now()){
 			throw new ValidatorException("La fecha ya expir");
 		}
 		var dni=request.user.people.dni;
 		if(request.body.teacher && request.user.isAdmin==true){
 			dni=request.body.teacher;
 		}
-		Promise.all([Schema.Courses.findOne({name:request.params.course.toUpperCase()}),Schema.Teachers.findOne({"data.dni":dni.toUpperCase()}),Events.get("ACTIVITY-ADD")]).then((data)=>{
-			if(!data[0]){
-				throw new ValidatorException("No existe la materia!");
-			}
-			if(!data[1]){
-				throw new ValidatorException("No existe el docente!");
-			}
-      		if(!data[1].grade){
-				throw new ValidatorException("No posee asignado un grado!");
-			}
-			var activity=new Schema.Activities({
-				name:request.body.name,
-				description:request.body.description,
-				objetives:[],
-				isCompleted:false,
-			   	dateExpire: expire,
-			   	teacher: data[1]._id,
-				student: [],
-				grade:data[1].grade,
-				course:data[0]
-			});
-			if(data[2]){
-				var result=Events.ChainGetOne(data[2].premises,{
-					p1:request.body.name,
-					p2:request.body.description,
-					p3:activity.dateExpire.getTime(),
-					p4:Date.now()
-				});
-				if(result.q1 && /Error\:/ig.test(result.q1)){
-					throw new ValidatorException(result.q1);
+		request.body.name = request.body.name.toUpperCase()
+		request.body.description = request.body.description.toUpperCase()
+		var _words = WORDS.SeparatorWords(request.body.description);
+		var _concepts = [], _pending = [],
+			_radios = [], _morpholy = [],
+			_conditions = [], _cognitions = [],
+			_domains = [], _levels = [], _concepts_keywords = [],
+			_verbs = [], _actions = [], _keywords = [];
+		var _queryWords = _words.map((row) => {
+			return Schema.words.findOne({ key: row });
+		});
+		Promise.all(_queryWords)
+			.then((words) => {
+				_pending = WORDS.getPending(words, _pending, _words);
+				if (_pending.length > 0) {
+					Events.emit("new-words", _pending);
 				}
-			}else{
-				var helpEvent=new Schema.events({
-					name:"ACTIVITY-ADD",
-					objects:{
-						p1:"request.body.name",
-						p2:"request.body.description",
-						p3:"activity.dateExpire.getTime()",
-						p4:"Date.now()"
+				_morpholy = words;
+				var querys = words.map((row) => {
+					if (!row) {
+						return null;
 					}
+					return Schema.Hiperonimo.findOne({
+						$or: [
+							{ "hiponimos.key": row.key },
+							{ "hiponimos.words": row.key }
+						]
+					});
 				});
-				helpEvent.save();
-			}
-			return Promise.all([activity,Events.get("ACTIVITY-OBJETIVES"),Schema.LearningObjetive.find()]);
-		}).then((row)=>{
-			if(!row[1]){
-				var helpEvent=new Schema.events({
-					name:"ACTIVITY-OBJETIVES",
-					objects:{
-						p1:"row[0].name",
-						p2:"row[0].description",
-						p3:"row[0].grade.name",
-						p4:"row[0].course.name",
-						p5:"objetives"
+				var _ranges = words.map((row) => {
+					if (!row) {
+						return null;
 					}
+					var exp = new RegExp(row.key, "ig");
+					return Schema.LearningObjetive.find({ description: { $regex: exp } }).count();
 				});
-				helpEvent.save();
-				return row[0].save();
-			}
-			var event=row[1];
-			while(true){
-				var objetives=row[0].objetives.map((row)=>{
-					return row.name+"|"+row.description;
-				});
-				var querys=Events.ChainGetAllBucle(event.premises,{
-					p1:row[0].name,
-					p2:row[0].description,
-					p3:row[0].grade.name,
-					p4:row[0].course.name,
-					p5:objetives
-				});
-				if(!querys){
-					return row[0].save();
+				return Promise.all([querys, Promise.all(_ranges), Schema.LearningObjetive.count()]);
+			})
+			.then((rows) => {
+				var _ranges = rows[1], _count = rows[2], _MAX = 0;
+				_concepts = rows[0];
+				for (var i = 0, n = _ranges.length; i < n; i++) {
+					_radios[i] = 0;
+					if (!_ranges[i]) {
+						continue;
+					}
+					if (_count > 0) {
+						_radios[i] = _ranges[i] / _count;
+					}
+					_MAX = Math.max(_MAX, _radios[i]);
 				}
-				querys.forEach((data)=>{
-					if(/ADD\:/ig.test(data.q1)){
-						var str=data.q1.replace(/ADD\:/ig,'');
-						for(var i=0,n=row[2].length;i<n;i++){
-							if(row[2][i].name==str){
-								var add=true;
-								row[0].objetives.forEach((row2)=>{
-									if(row2._id==str){
-										add=false;
-										return;
-									}
-								});
-								if(!add){
-									continue;
-								}
-								row[0].objetives.push(row[2][i]);
-							}
+				return Promise.all([
+					Schema.events.findOne({ name: 'KEYWORDS-SEARCH' }),
+					Schema.events.findOne({ name: 'KEYWORDS-IS' }),
+					_MAX
+				]);
+			})
+			.then((rows) => {
+				var event = rows[0], eventTaxon = rows[1], _MAX = rows[2];
+				if (!event) {
+					/**
+					 * q1: Es palabra clave
+					 * q2: Es observable
+					 * q3: Es Acción
+					 * q10: Errores
+					 */
+					event = new Schema.events({
+						name: 'KEYWORDS-SEARCH',
+						objects: {
+							p1: 'Palabra', // Palabra
+							p2: 'radio texto', // Cantidad de repeticiones por objetivos
+							p3: 'información lexica', // conceptos gramaticales
+							p4: 'información semantica', // conceptos semanticos
+						},
+						premises: []
+					});
+					event.save();
+				}
+				if (!eventTaxon) {
+					/**
+					 * q4: condiciones
+					 * q5: funciones cognitivas
+					 * q6: dominios
+					 * q7: niveles
+					 * q8: errores
+					 * q9: puntos de experiencia estimados
+					*/
+					eventTaxon = new Schema.events({
+						name: 'KEYWORDS-IS',
+						objects: {
+							p1: 'Palabra', // Palabra
+							p2: 'radio texto', // Cantidad de repeticiones por objetivos
+							p3: 'información lexica', // conceptos gramaticales
+							p4: 'información semantica', // conceptos semanticos
+							q1: "ES PALABRA CLAVE",
+							q2: "ES OBSERVABLE",
+							q3: "ES ACCIÓN"
+						},
+						premises: []
+					});
+					eventTaxon.save();
+				}
+				var _verbs = [], actions = [];
+				for (var i = 0, n = _morpholy.length; i < n; i++) {
+					if (!_morpholy[i]) {
+						continue;
+					}
+					var _taxons = _morpholy[i].concepts.map((row) => {
+						return `${row.key}|${row.value}`;
+					});
+					var _value = {
+						p1: _words[i],
+						p2: _radios[i],
+						p3: _taxons,
+						p4: _concepts[i].concept
+					};
+					var _consecuents = Events.ChainGetAll(event.premises, _value);
+					for (var k = 0, u = _consecuents.length; k < u; k++) {
+						var _consecuent = _consecuents[k];
+						if (_consecuent.q10) {
+							throw new MachineError(_consecuent.q10);
+						}
+						if (_consecuent.q1) {
+							_keywords.push(_morpholy[i].key);
+							_concepts_keywords.push(_morpholy[i]);
+							_value.q1 = _consecuent.q1;
+						}
+						if (_consecuent.q2) {
+							_verbs.push({
+								word: _morpholy[i],
+								concept: _concepts[i],
+								range: _radios[i]
+							});
+							_value.q2 = _consecuent.q2;
+						}
+						if (_consecuent.q3) {
+							_actions.push({
+								word: _morpholy[i],
+								concept: _concepts[i],
+								range: _radios[i]
+							});
+							_value.q3 = _consecuent.q3;
 						}
 					}
-					if(/DELETE\:/ig.test(data.q1)){
-						var str=data.q1.replace(/DELETE\:/ig);
-						row[0].objetives.forEach((row2)=>{
-							if(row2._id.toString()==str){
-								row2.remove();
-							}
+					/*
+					//_value = Object.assign(_value, _consecuent);
+					var _consecuents = Events.ChainGetAll(eventTaxon.premises, _value);
+					for (var j = 0, u = _consecuents.length; j < u; j++) {
+						if (_consecuents[j].q4 && _consecuents[j].h >= 0.5) {
+							_conditions.push(_consecuents[j].q4);
+						}
+						if (_consecuents[j].q5 && _consecuents[j].h >= 0.5) {
+							_cognitions.push(_consecuents[j].q5);
+						}
+						if (_consecuents[j].q6 && _consecuents[j].h >= 0.5) {
+							_domains.push({
+								_id: _consecuents[j].q6,
+								h: _consecuents[j].h
+							});
+						}
+						if (_consecuents[j].q7 && _consecuents[j].h >= 0.5) {
+							_levels.push({
+								_id: _consecuents[j].q7,
+								h: _consecuents[j].h
+							});
+						}
+						if (_consecuents[j].q8 && _consecuents[j].h >= 0.5) {
+							throw new MachineError(_consecuents[j].q8);
+						}
+						if (_consecuents[j].q9 && _consecuents[j].h >= 0.5) {
+							request.body.exp = parseFloat(_consecuents[j].q9);
+						}
+					}*/
+				}
+				return Promise.all([
+					Schema.Courses.findOne({ name: request.params.course.toUpperCase() }),
+					Schema.Teachers.findOne({ "data.dni": dni.toUpperCase() })
+				]);
+			})
+			.then((data) => {
+				if (!data[0]) {
+					throw new ValidatorException("No existe la materia!");
+				}
+				if (!data[1]) {
+					throw new ValidatorException("No existe el docente!");
+				}
+				if (!data[1].grade) {
+					throw new ValidatorException("No posee asignado un grado!");
+				}
+				var activity = new Schema.Activities({
+					name:request.body.name,
+					description:request.body.description,
+					objetives: _cognitions,
+					isCompleted:false,
+					dateExpire: request.body.expire,
+					teacher: data[1]._id,
+					student: [],
+					grade:data[1].grade,
+					course:data[0],
+					words: _keywords
+				});
+				return activity.save();
+			})
+			.then((data) => {
+				var _body = data.toJSON();
+				_body.pending = _pending;
+				response.send(_body);
+			})
+			.catch((error) => {
+				next(error)
+			})
+	});
+	/*
+  * @api {get} / Obtener todos los objetivo de aprendizaje
+  * @params request peticiones del cliente
+  * @params response respuesta del servidor
+  * @params next middleware dispara la proxima funcion
+  */
+	activityURI.get('/:id/students',
+		function (request, response, next) {
+			if (!Validator.isMongoId()(request.params.id)) {
+				throw new ValidatorException('El id es invalido!')
+			}
+			var _rules, _RULES_ADD, _morphology, _activity;
+			Promise.all([
+				Schema.events.findOne({ name: 'KEYWORDS-IS' }),
+				Schema.Activities.findOne({ _id: ObjectId(request.params.id) }),
+				Schema.events.findOne({ name: 'KEYWORDS-SEARCH' })
+			]).
+				then((rows) => {
+					_rules = rows[2];
+					_RULES_ADD = rows[0];
+					if (!_rules) {
+						/**
+						 * q1: Es palabra clave
+						 * q2: Es observable
+						 * q3: Es Acción
+						*/
+						_rules = new Schema.events({
+							name: 'KEYWORDS-SEARCH',
+							objects: {
+								p1: 'Palabra', // Palabra
+								p2: 'radio texto', // Cantidad de repeticiones por objetivos
+								p3: 'información lexica', // conceptos gramaticales
+								p4: 'información semantica', // conceptos semanticos
+							},
+							premises: []
+						});
+						_rules.save();
+					}
+					if (!_RULES_ADD) {
+						/**
+						 * q4: condiciones
+						 * q5: funciones cognitivas
+						 * q6: dominios
+						 * q7: niveles
+						 * q8: errores
+						 * q9: puntos de experiencia estimados
+						*/
+						_RULES_ADD = new Schema.events({
+							name: 'KEYWORDS-IS',
+							objects: {
+								p1: 'Palabra', // Palabra
+								p2: 'radio texto', // Cantidad de repeticiones por objetivos
+								p3: 'información lexica', // conceptos gramaticales
+								p4: 'información semantica', // conceptos semanticos
+								q1: "ES PALABRA CLAVE",
+								q2: "ES OBSERVABLE",
+								q3: "ES ACCIÓN"
+							},
+							premises: []
+						});
+						_RULES_ADD.save();
+					}
+					if (!rows[1]) {
+						throw new ValidatorException('No existe el objetivo!')
+					}
+					_activity = rows[1];
+					if (!_activity.words) {
+						_activity.words = [];
+					}
+					var _premises = _activity.words.map((row) => {
+						if (!row) {
+							return null;
+						}
+						return Schema.words.findOne({ key: row });
+					});
+					return Promise.all(_premises);
+				})
+				.then((words) => {
+					_morphology = words;
+					var querys = words.map((row) => {
+						if (!row) {
+							return null;
+						}
+						return Schema.Hiperonimo.findOne({
+							$or: [
+								{ "hiponimos.key": row.key },
+								{ "hiponimos.words": row.key }
+							]
+						});
+					});
+					return Promise.all(querys);
+				})
+				.then((hiperonimos) => {
+					var _queryCognition = hiperonimos.map((row) => {
+						if (!row) {
+							return null;
+						}
+						return { words: row._id };
+					});
+					_queryCognition = _queryCognition.filter((row) => {
+						return !!row;
+					})
+					if (_queryCognition.length == 0) {
+						return [];
+					}
+					return Schema.Cognitions.find({ $or: _queryCognition });
+				})
+				.then((rows) => {
+					var _queryObjetives = rows.map((cognition) => {
+						return { cognitions: cognition._id };
+					});
+					var _query1 = [];
+					if (_queryObjetives.length > 0) {
+						_query1 = Schema.LearningObjetive.find({ $or: _queryObjetives });
+					}
+					return _query1;
+				})
+				.then((rows) => {
+					var _query1 = [];
+					var _queryObjetives = rows.map((cognition) => {
+						return {
+							$and: [
+								{"activities.objetive": cognition._id},
+								{ "activities.isAdd": false}
+							]
+						};
+					});
+					if (_queryObjetives.length > 0) {
+						_query1 = Schema.Students.find({
+							$and: [
+								{"grade._id": _activity.grade._id},
+								{$or: _queryObjetives}
+							]
 						});
 					}
-				});
-			}
-		}).then((data)=>{
-			response.send(data);
-		}).catch(function(error){
-			next(error);
-		});
-	});
+					return Promise.all([
+						_query1,
+						Schema.Students.find({
+							"grade._id": _activity.grade._id
+						})
+					]);
+				})
+				.then((rows) => {
+					var _body = [];
+					for (var i = 0, n = rows.length; i < n; i++) {
+						_body[i] = rows[i].filter((row) => {
+							for (var i = 0, n = _activity.students.length; i < n; i++) {
+								if (_activity.students[i].toString() == row._id.toString()) {
+									return false;
+								}
+							}
+							return true;
+						});
+					}
+					_body[1] = _body[1].filter((row) => {
+						for (var i = 0, n = _body[0].length; i < n; i++) {
+							if (_body[0][i]._id.toString() == row._id.toString()) {
+								return false;
+							}
+						}
+						return true;
+					});
+					response.send(_body);
+				}).catch((error) => {
+					console.log(error);
+					next(error)
+				})
+		})
 	/*
   * @api {get} / Obtener todos los objetivo de aprendizaje
   * @params request peticiones del cliente
@@ -4182,7 +4459,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 					}
 					_body[1] = _body[1].filter((row) => {
 						for (var i = 0, n = _body[0].length; i < n; i++) {
-							if (_body[0][i].toString() == row._id.toString()) {
+							if (_body[0][i]._id.toString() == row._id.toString()) {
 								return false;
 							}
 						}
@@ -4190,7 +4467,6 @@ module.exports = function (app, express, Schema, __DIR__) {
 					});
 					response.send(_body);
 				}).catch((error) => {
-					console.log(error);
 					next(error)
 				})
 		})

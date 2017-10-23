@@ -77,17 +77,9 @@ import {ajax} from 'jquery'
        this.activity = rows[0];
         let objetives: Array<CRUD.objetive> = rows[1];
         this.init  = true;
-        objetives = objetives.filter((row) => {
-          for ( var i in this.activity.objetives){
-            if(this.activity.objetives[i]._id == row._id) {
-              return false;
-            }
-          }
-          return true;
-        })
         this.setState({
           objetives: objetives[1],
-          recomends: objetives[0],
+          recomends: objetives[0]
         })
      })
    }
@@ -103,7 +95,7 @@ import {ajax} from 'jquery'
           <ul className="demo-list-control mdl-list">
             {this.state.recomends.map((word) => {
               return (
-                <li className="mdl-list__item" key={word._id}>
+                <li className="mdl-list__item mdl-list__item--three-line" key={word._id}>
                   <span className="mdl-list__item-primary-content">
                     <i className="material-icons  mdl-list__item-avatar">chat</i>
                     <span>{word.name}</span>
@@ -124,7 +116,7 @@ import {ajax} from 'jquery'
           <ul className="demo-list-control mdl-list">
             {this.state.objetives.map((word) => {
               return (
-                <li className="mdl-list__item" key={word._id}>
+                <li className="mdl-list__item mdl-list__item--three-line" key={word._id}>
                   <span className="mdl-list__item-primary-content">
                     <i className="material-icons  mdl-list__item-avatar">chat</i>
                     <span>{word.name}</span>

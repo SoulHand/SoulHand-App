@@ -9,20 +9,20 @@ import { ModalApp } from "../app"
  export class AlumnCreate extends FormUtils<{router: any, routeParams: any}, {}>{
    public activity: CRUD.activity;
    public init = false;
-   state: {students: Array<People.student>} = {
-     students: []
+   state: { students: Array<People.student>, recomends: Array<People.student>} = {
+     students: [],
+     recomends: []
    }
    componentDidUpdate(){
      componentHandler.upgradeAllRegistered();
    }
   send(event: any){
     var fields: Array<string> = [];
-    var students: any = document.querySelectorAll("tr[id] input[type='checkbox']");
+    var objetives: any = document.querySelectorAll("input[data-field]");
     var _button = event.target;
-    for (var i in students){
-      if (students[i].checked == true) {
-        var parent: any = students[i].parentNode.parentNode.parentNode;
-        fields.push(parent.id);
+    for (var i in objetives) {
+      if (objetives[i].checked == true) {
+        fields.push(objetives[i].getAttribute("data-field"));
       }
     }
     ajax({
@@ -57,7 +57,7 @@ import { ModalApp } from "../app"
    componentDidMount(){
      let p1 = ajax({
        method:"GET",
-       url: `${window._BASE}/v1/activities/${this.props.routeParams.activity}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       url: `${window._BASE}/v1/activities/${this.props.routeParams.activity}/students?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
        data:null,
        beforeSend: () => {
@@ -67,26 +67,11 @@ import { ModalApp } from "../app"
          window.progress.done();
        }
      });
-     p1.done().then((row: CRUD.activity) => {
-       this.activity = row;
-       this.init = true;
-       return ajax({
-         method:"GET",
-         url: `${window._BASE}/v1/people/students/grade/${row.grade._id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
-         dataType: "json",
-         data:null
-       }).done();
-     }).then((row: Array<People.student>) => {
-       let students = row.filter((row) => {
-         for ( var i in this.activity.students){
-           if(this.activity.students[i]._id == row._id) {
-             return false;
-           }
-         }
-         return true;
-       })
+     p1.done((rows: any) => {
+      this.init = true;
        this.setState({
-         students: students
+         students: rows[1],
+         recomends: rows[0],
        })
      })
    }
@@ -97,27 +82,49 @@ import { ModalApp } from "../app"
        );
      }
      return (
-       <ModalApp success={(e: any) => { this.send(e) }} label="Aceptar" title={"Asignar funciones cognitivas objetivo " + this.activity.name}>
-         <table className="mdl-data-table mdl-js-data-table mdl-data-table--selectable resize">
-           <thead>
-             <tr>
-               <th className="mdl-data-table__cell--non-numeric">codigo escolar</th>
-               <th>Nombre y apellido</th>
-             </tr>
-           </thead>
-           <tbody>
-             {
-               this.state.students.map((row) => {
-                 return (
-                   <tr key={row._id} id={row._id}>
-                     <td className="mdl-data-table__cell--non-numeric" title={row.data.dni}><span>{row.data.dni}</span></td>
-                     <td title={row.data.name} className="mdl-data-table__cell--non-numeric"><span>{row.data.name}</span></td>
-                   </tr>
-                 );
-               })
-             }
-           </tbody>
-         </table>
+       <ModalApp success={(e: any) => { this.send(e) }} label="Aceptar" title={"Asignar alumnos"}>
+         <span className="mdl-typography--title">Recomendados</span>
+         <ul className="demo-list-control mdl-list">
+           {this.state.recomends.map((word) => {
+             return (
+               <li className="mdl-list__item mdl-list__item--three-line" key={word._id}>
+                 <span className="mdl-list__item-primary-content">
+                   <i className="material-icons  mdl-list__item-avatar">chat</i>
+                   <span>{word.data.name}</span>
+                   <span className="mdl-list__item-text-body">
+                     {word.exp} XP
+                   </span>
+                 </span>
+                 <span className="mdl-list__item-secondary-action">
+                   <label className="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" htmlFor={`select-${word._id}`}>
+                     <input type="checkbox" id={`select-${word._id}`} className="mdl-checkbox__input" data-field={word._id} />
+                   </label>
+                 </span>
+               </li>
+             );
+           })}
+         </ul>
+         <span className="mdl-typography--title">Todas</span>
+         <ul className="demo-list-control mdl-list">
+           {this.state.students.map((word) => {
+             return (
+               <li className="mdl-list__item mdl-list__item--three-line" key={word._id}>
+                 <span className="mdl-list__item-primary-content">
+                   <i className="material-icons  mdl-list__item-avatar">chat</i>
+                   <span>{word.data.name}</span>
+                   <span className="mdl-list__item-text-body">
+                     {word.exp} XP
+                   </span>
+                 </span>
+                 <span className="mdl-list__item-secondary-action">
+                   <label className="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" htmlFor={`select-${word._id}`}>
+                     <input type="checkbox" id={`select-${word._id}`} className="mdl-checkbox__input" data-field={word._id} />
+                   </label>
+                 </span>
+               </li>
+             );
+           })}
+         </ul>
        </ModalApp>
      );
    }

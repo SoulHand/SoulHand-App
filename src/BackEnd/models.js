@@ -190,7 +190,8 @@ structDb.Activities = mongoose.Schema({
   course: structDb.Courses,
   dateCreated: { type: Date, default: Date.now },
 	history: [],
-	exp: { type: Number, required: true, default: 0 }
+	exp: { type: Number, required: true, default: 0 },
+	words: [{ type: String, trim: true, uppercase: true }]
 });
 
 structDb.ActivitiesMaked = mongoose.Schema({
