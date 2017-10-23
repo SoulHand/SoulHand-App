@@ -212,7 +212,7 @@ module.exports = function (app, express, Schema, __DIR__) {
 				return row;
 			});
 			if(max > 0){
-				count.objetives.progress = (min / max) * 100;
+				count.objetives.progress = (1 - (min / max)) * 100;
 			}
 			response.send(count);
 		}).catch(function(error){

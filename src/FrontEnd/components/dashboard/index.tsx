@@ -164,7 +164,7 @@ import {LineChart} from "../linechart"
         },
         yAxis:{
           title:{
-            text:"Cantidad de materias asignadas"
+            text:"Cantidad de actividades asignadas"
           }
         },
         series: this.state.activities.domains
@@ -193,7 +193,7 @@ import {LineChart} from "../linechart"
         },
         yAxis:{
           title:{
-            text:"Cantidad de materias completadas"
+            text:"Cantidad de actividades completadas"
           }
         },
         series: this.state.activities.completeds
