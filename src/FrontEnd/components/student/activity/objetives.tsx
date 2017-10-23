@@ -8,7 +8,7 @@ import { HeaderFree } from '../../app/header'
 import { ProgressBar} from '../../progressbar'
 
 @withRouter
- export class Objetives extends React.Component <Props.teacherView, any>{
+ export class Objetives extends React.Component <Props.teacherView, People.student>{
    public session: User.session;
    public init: boolean = false;
    constructor(props:Props.teacherView){
@@ -22,7 +22,7 @@ import { ProgressBar} from '../../progressbar'
    componentDidMount(){
      let p1 = ajax({
        method:"GET",
-       url: `${window._BASE}/v1/reports/students/objetive/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
+       url: `${window._BASE}/v1/people/students/${this.props.routeParams.id}?PublicKeyId=${this.session.publicKeyId}&PrivateKeyId=${this.session.privateKeyId}`,
        dataType: "json",
        data:null,
        beforeSend: () => {
@@ -32,7 +32,7 @@ import { ProgressBar} from '../../progressbar'
          window.progress.done();
        }
      });
-     p1.done((data: any) => {
+     p1.done((data: People.student) => {
        this.init = true;
        this.setState(data);
      });
@@ -47,33 +47,28 @@ import { ProgressBar} from '../../progressbar'
        <ModalFree title="Conocimientos previos">
          <div className="mdl-grid demo-content">
            <div className="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--8-col">
-             <h3>Conocimientos previos</h3>
-             <table className="mdl-data-table mdl-js-data-table resize">
-               <thead>
-                 <tr>
-                   <th className="mdl-data-table__cell--non-numeric">Objetivo</th>
-                   <th>Dominio</th>
-                   <th>Nivel</th>
-                   <th>Progreso</th>
-                 </tr>
-               </thead>
-               <tbody>
-                 {
-                   this.state.objetives.map((row: any) => {
-                     return (
-                       <tr key={row._id}>
-                         <td className="mdl-data-table__cell--non-numeric"><span>{row.objetive.name}</span></td>
-                         <td className="mdl-data-table__cell">{row.objetive.domain.name}</td>
-                         <td className="mdl-data-table__cell">{row.objetive.level.level}</td>
-                         <td className="mdl-data-table__cell">
-                           <ProgressBar title={`${row.exp} exp`} width={row.avg} />
-                         </td>
-                       </tr>
-                     );
-                   })
-                 }
-               </tbody>
-             </table>
+              <h3>Conocimientos previos</h3>
+              <ul className="demo-list-three mdl-list">
+                {
+                  this.state.objetives.map((row) => {
+                   var _avg = (row.completed / this.state.activities.length) * 100;
+                    return (
+                      <li className="mdl-list__item mdl-list__item--three-line" key={row._id}>
+                        <span className="mdl-list__item-primary-content">
+                          <i className="material-icons mdl-list__item-avatar"  title="Cat. gramátical">style</i>
+                          <span>{row.objetive.name}</span>
+                          <span className="mdl-list__item-text-body">
+                            {(_avg >= 50) ? "Habilidad cognitiva" : "Conflicto cognitivo"}
+                          </span>
+                        </span>
+                        <span className="mdl-list__item-secondary-content" style={{ width: "120px"}}>
+                          <ProgressBar title={`${_avg} %`} width={_avg} />
+                        </span>
+                      </li>
+                    );
+                  })
+                }
+              </ul>
            </div>
            <div className="demo-cards mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing">
              <div className="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
@@ -88,33 +83,29 @@ import { ProgressBar} from '../../progressbar'
            {this.state.activities && (
              <div className="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--8-col">
                <h3>Historico de objetivos</h3>
-               <table className="mdl-data-table mdl-js-data-table resize">
-                 <thead>
-                   <tr>
-                     <th className="mdl-data-table__cell--non-numeric">Objetivo</th>
-                     <th>Actividad</th>
-                     <th>Descripción</th>
-                     <th>Estado</th>
-                   </tr>
-                 </thead>
-                 <tbody>
-                   {
-                     this.state.activities.map((row: CRUD.ActivityMaked) => {
-                       if (!row.objetive || !row.activity){
-                         return null;
-                       }
-                       return (
-                         <tr key={row._id}>
-                           <td className="mdl-data-table__cell--non-numeric"><span>{row.objetive.name}</span></td>
-                           <td className="mdl-data-table__cell">{row.activity.name}</td>
-                           <td className="mdl-data-table__cell">{row.description}</td>
-                           <td className="mdl-data-table__cell">{(row.isAdd) ? "Completado" : "Fallido"}</td>
-                         </tr>
-                       );
-                     })
-                   }
-                 </tbody>
-               </table>
+               <ul className="demo-list-three mdl-list">
+                 {
+                   this.state.activities.map((row) => {
+                     if (!row.objetive || !row.activity) {
+                       return null;
+                     }
+                     return (
+                       <li className="mdl-list__item mdl-list__item--three-line" key={row._id}>
+                         <span className="mdl-list__item-primary-content">
+                           <i className="material-icons mdl-list__item-avatar" title="Cat. gramátical">style</i>
+                           <span style={(!row.isAdd) ? { color: "#d50000" } :  { color: "rgb(41, 162, 63)"}}>{row.objetive.name}({(row.isAdd) ? "Completado" : "Fallido"})</span>
+                           <span className="mdl-list__item-text-body">
+                               {row.description}
+                           </span>
+                         </span>
+                         <span className="mdl-list__item-secondary-content">
+                            {row.exp} XP
+                         </span>
+                       </li>
+                     );
+                   })
+                 }
+               </ul>
              </div>
            )}
          </div>

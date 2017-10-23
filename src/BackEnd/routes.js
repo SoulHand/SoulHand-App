@@ -3086,7 +3086,10 @@ module.exports = function (app, express, Schema, __DIR__) {
 	* @var people<SubPeople>	objeto CRUD
 	*/
 	StudentsURI.get("/:id",function(request, response,next) {
-		Schema.Students.findOne({ _id: request.params.id }).populate("activities").then(function (data) {
+		Schema.Students.findOne({ _id: request.params.id })
+		.populate("activities.objetive")
+		.populate("activities.activity")
+		.then(function (data) {
 			if (!data) {
 				throw new ValidatorException("No existe el alumno!");
 			}
