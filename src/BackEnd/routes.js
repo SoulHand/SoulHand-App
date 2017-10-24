@@ -42,7 +42,7 @@ module.exports = function (app, express, Schema, __DIR__) {
       if (!row) {
         throw new ValidatorException('No existe el docente!')
 			}
-			var query = null;
+			var query = [];
 			if (row.grade) {
 				query = Schema.Students.find({
 					"grade._id": ObjectId(row.grade._id)
@@ -118,7 +118,7 @@ module.exports = function (app, express, Schema, __DIR__) {
     }).then(function(rows){
 			let activitiesAll = rows[0],
 					activitiesPending = rows[1],
-					activitiesCompleted = rows[2]
+					activitiesCompleted = rows[2],
 					students = rows[3];
 			let count = {
 				activities: {
@@ -210,6 +210,9 @@ module.exports = function (app, express, Schema, __DIR__) {
 				min = Math.min(min, row.y);
 				max = Math.max(max, row.y);
 				return row;
+			});
+			students.forEach((student) => {
+				count.objetives.completed = student.objetives.length;
 			});
 			if(max > 0){
 				count.objetives.progress = (1 - (min / max)) * 100;

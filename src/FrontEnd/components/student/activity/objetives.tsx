@@ -11,6 +11,7 @@ import { ProgressBar} from '../../progressbar'
  export class Objetives extends React.Component <Props.teacherView, People.student>{
    public session: User.session;
    public init: boolean = false;
+   public counter: Number = 0;
    constructor(props:Props.teacherView){
      super(props)
      let str = localStorage.getItem("session");
@@ -34,6 +35,18 @@ import { ProgressBar} from '../../progressbar'
      });
      p1.done((data: People.student) => {
        this.init = true;
+       var counter = data.activities.filter((row, index) => {
+         if(!row.activity || !row.objetive){
+          return false;
+         }
+         for (var i = 0, n = data.activities.length; i<n; i++){
+           if (data.activities[i]._id == row._id && index != i){
+              return false;
+           }
+         }
+         return true;
+       });
+       this.counter = counter.length;
        this.setState(data);
      });
    }
@@ -77,6 +90,22 @@ import { ProgressBar} from '../../progressbar'
                </div>
                <div className="mdl-card__supporting-text mdl-color-text--grey-600">
                  <h1 className="mdl-typography--text-center display-2">{this.state.exp} XP</h1>
+               </div>
+             </div>
+             <div className="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
+               <div className="mdl-card__title mdl-card--expand mdl-color--teal-300">
+                 <h2 className="mdl-card__title-text mdl-typography--text-center">Actividades realizadas</h2>
+               </div>
+               <div className="mdl-card__supporting-text mdl-color-text--grey-600">
+                 <h1 className="mdl-typography--text-center display-2">{this.counter}</h1>
+               </div>
+             </div>
+             <div className="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
+               <div className="mdl-card__title mdl-card--expand mdl-color--teal-300">
+                 <h2 className="mdl-card__title-text mdl-typography--text-center">Objetivos completados</h2>
+               </div>
+               <div className="mdl-card__supporting-text mdl-color-text--grey-600">
+                 <h1 className="mdl-typography--text-center display-2">{this.state.objetives.length}</h1>
                </div>
              </div>
            </div>
